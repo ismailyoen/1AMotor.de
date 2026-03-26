@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Meine Anfragen – 1A Motor</title>
+<style>
+:root{
+  --bg:#f5f7fa;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --border:#dbe3ea;
+  --dark-blue:#123a63;
+  --blue:#2b6cb0;
+  --light-blue:#72b6ff;
+  --success:#0f9d58;
+  --shadow:0 10px 30px rgba(18,58,99,0.08);
+  --radius:16px;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.45;
+}
+
+a{
+  text-decoration:none;
+  color:inherit;
+}
+
+.container{
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 20px;
+}
+
+.header{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.header-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding:18px 0;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:28px;
+  font-weight:800;
+  color:var(--dark-blue);
+}
+
+.logo-badge{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--dark-blue),var(--light-blue));
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:22px;
+  box-shadow:var(--shadow);
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  font-size:14px;
+  flex-wrap:wrap;
+}
+
+.cta-btn{
+  background:var(--dark-blue);
+  color:#fff;
+  padding:12px 18px;
+  border-radius:999px;
+  font-weight:700;
+}
+
+.page{
+  padding:28px 0 40px;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:24px;
+  align-items:start;
+}
+
+.sidebar,
+.panel{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.sidebar{
+  padding:18px;
+  position:sticky;
+  top:100px;
+}
+
+.user-box{
+  padding-bottom:18px;
+  margin-bottom:18px;
+  border-bottom:1px solid var(--border);
+}
+
+.user-box h2{
+  color:var(--dark-blue);
+  font-size:20px;
+  margin-bottom:6px;
+}
+
+.user-box p{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.menu{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.menu a{
+  padding:12px 14px;
+  border-radius:12px;
+  color:#334155;
+  font-size:14px;
+}
+
+.menu a.active,
+.menu a:hover{
+  background:#eef6ff;
+  color:var(--blue);
+  font-weight:700;
+}
+
+.content{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.page-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.page-head h1{
+  font-size:34px;
+  color:var(--dark-blue);
+  margin-bottom:6px;
+}
+
+.page-head p{
+  color:var(--muted);
+  font-size:15px;
+}
+
+.panel{
+  padding:20px;
+}
+
+.inquiry-list{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.inquiry-card{
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:#fff;
+  padding:18px;
+}
+
+.inquiry-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+
+.inquiry-top h3{
+  font-size:20px;
+  color:var(--dark-blue);
+  margin-bottom:4px;
+}
+
+.inquiry-sub{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  background:#fff;
+  border:1px solid var(--border);
+}
+
+.badge.new{
+  color:var(--blue);
+}
+
+.badge.read{
+  color:var(--success);
+}
+
+.badge.done{
+  color:#64748b;
+}
+
+.message-box{
+  background:#fbfdff;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  color:#334155;
+  font-size:14px;
+  white-space:pre-wrap;
+  margin-bottom:14px;
+}
+
+.thread{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:8px;
+}
+
+.thread-item{
+  max-width:75%;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  font-size:14px;
+}
+
+.thread-item.buyer{
+  background:#f8fbff;
+  color:#1f2937;
+  align-self:flex-start;
+}
+
+.thread-item.seller{
+  background:var(--dark-blue);
+  color:#fff;
+  align-self:flex-end;
+  border-color:var(--dark-blue);
+}
+
+.thread-meta{
+  display:block;
+  font-size:12px;
+  opacity:0.8;
+  margin-bottom:6px;
+}
+
+.empty-box{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+}
+
+.empty-box h3{
+  color:var(--dark-blue);
+  margin-bottom:8px;
+}
+
+.empty-box p{
+  color:var(--muted);
+}
+
+@media (max-width:980px){
+  .layout{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    position:static;
+  }
+}
+
+@media (max-width:640px){
+  .page-head h1{
+    font-size:28px;
+  }
+
+  .header-inner{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .thread-item{
+    max-width:100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-badge">1A</span>
+      <span>1A Motor</span>
+    </a>
+
+    <div class="header-actions">
+      <a href="index.html">Startseite</a>
+      <a href="suche.html">Suche</a>
+      <a href="meine-anfragen.html">Meine Anfragen</a>
+      <a href="login.html">Einloggen</a>
+      <a href="anzeige-erstellen.html" class="cta-btn">Anzeige erstellen</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container layout">
+    <aside class="sidebar">
+      <div class="user-box">
+        <h2>Meine Anfragen</h2>
+        <p>Deine Nachrichten mit Verkäufern</p>
+      </div>
+
+      <nav class="menu">
+        <a href="index.html">Startseite</a>
+        <a href="suche.html">Motor suchen</a>
+        <a href="meine-anfragen.html" class="active">Meine Anfragen</a>
+        <a href="login.html">Konto</a>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <div class="page-head">
+        <div>
+          <h1>Meine Anfragen</h1>
+          <p>Hier siehst du deine gesendeten Anfragen und die Antworten der Verkäufer.</p>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="inquiry-list" id="my-inquiries">
+          <div class="empty-box">
+            <h3>Anfragen werden geladen</h3>
+            <p>Bitte warte einen Moment.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="my-inquiries.js"></script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Registrieren – 1A Motor</title>
+
+<style>
+:root{
+--dark-blue:#123a63;
+--light-blue:#72b6ff;
+--bg:#f5f7fa;
+--border:#dbe3ea;
+--text:#1f2937;
+--muted:#6b7280;
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+header{
+background:white;
+border-bottom:1px solid var(--border);
+padding:16px 24px;
+}
+
+.logo{
+font-size:26px;
+font-weight:800;
+color:var(--dark-blue);
+text-decoration:none;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo-badge{
+background:linear-gradient(135deg,var(--dark-blue),var(--light-blue));
+color:white;
+padding:6px 10px;
+border-radius:10px;
+font-weight:bold;
+}
+
+main{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px 20px;
+}
+
+.register-card{
+background:white;
+width:100%;
+max-width:480px;
+padding:34px;
+border-radius:16px;
+border:1px solid var(--border);
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.register-card h1{
+font-size:26px;
+margin-bottom:8px;
+color:var(--dark-blue);
+}
+
+.register-card p{
+color:var(--muted);
+margin-bottom:24px;
+font-size:14px;
+}
+
+.form-group{
+margin-bottom:16px;
+}
+
+label{
+display:block;
+font-size:14px;
+margin-bottom:6px;
+}
+
+input, select{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid var(--border);
+font-size:14px;
+}
+
+input:focus, select:focus{
+outline:none;
+border-color:var(--light-blue);
+}
+
+.register-btn{
+width:100%;
+margin-top:10px;
+padding:13px;
+background:var(--dark-blue);
+color:white;
+border:none;
+border-radius:12px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.register-btn:hover{
+background:#2b6cb0;
+}
+
+.extra{
+margin-top:18px;
+text-align:center;
+font-size:14px;
+}
+
+.extra a{
+color:var(--dark-blue);
+font-weight:bold;
+text-decoration:none;
+}
+
+.extra a:hover{
+text-decoration:underline;
+}
+
+footer{
+text-align:center;
+padding:18px;
+font-size:13px;
+color:var(--muted);
+border-top:1px solid var(--border);
+background:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<a href="index.html" class="logo">
+<span class="logo-badge">1A</span>
+<span>Motor</span>
+</a>
+</header>
+
+<main>
+
+<div class="register-card">
+
+<h1>Konto erstellen</h1>
+<p>Registriere dich als Käufer oder Händler auf 1A Motor.</p>
+
+<form>
+
+<div class="form-group">
+<label>Kontotyp</label>
+<select>
+<option>Käufer</option>
+<option>Händler</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Vor- und Nachname</label>
+<input type="text" placeholder="Max Mustermann" required>
+</div>
+
+<div class="form-group">
+<label>E-Mail</label>
+<input type="email" placeholder="deine@email.de" required>
+</div>
+
+<div class="form-group">
+<label>Passwort</label>
+<input type="password" placeholder="Passwort erstellen" required>
+</div>
+
+<div class="form-group">
+<label>Passwort bestätigen</label>
+<input type="password" placeholder="Passwort wiederholen" required>
+</div>
+
+<button class="register-btn">Registrieren</button>
+
+</form>
+
+<div class="extra">
+<p>Bereits ein Konto?</p>
+<a href="login.html">Zum Login</a>
+</div>
+
+</div>
+
+</main>
+
+<footer>
+© 2026 1A Motor – Marktplatz für Fahrzeuge, Maschinen und Antriebstechnik
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>
