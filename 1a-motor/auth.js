@@ -86,42 +86,46 @@ function setupRegisterForm() {
 // ── Login ─────────────────────────────────────────────────────────────────────
 function setupLoginForm() {
   const pageTitle = document.title.toLowerCase();
-  if (!pageTitle.includes("login")) return;
+  const isLoginPage = pageTitle.includes("login") ||
+                      pageTitle.includes("einloggen") ||
+                      window.location.pathname.includes("login");
+  if (!isLoginPage) return;
 
-  const form = document.querySelector("form");
-  const submitBtn = form?.querySelector('button[type="submit"]');
+  const form      = document.getElementById("login-form") || document.querySelector("form");
+  const emailEl   = document.getElementById("login-email")    || document.querySelector('input[type="email"]');
+  const passEl    = document.getElementById("login-password") || document.querySelector('input[type="password"]');
+  const submitBtn = document.getElementById("login-btn")      || form?.querySelector('button[type="submit"]');
+  const msgEl     = document.getElementById("login-msg");
+
   if (!form) return;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const email    = document.querySelector('input[type="email"]')?.value?.trim() || "";
-    const password = document.querySelector('input[type="password"]')?.value || "";
+    const email    = emailEl?.value?.trim() || "";
+    const password = passEl?.value || "";
 
     if (!email || !password) {
-      showMsg(form, "Bitte E-Mail und Passwort eingeben.", "error"); return;
+      showMsg(form, "Bitte E-Mail und Passwort eingeben.", "error", msgEl); return;
     }
 
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Einloggen..."; }
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-    console.log("LOGIN DATA:", data);
-    console.log("LOGIN ERROR:", error);
-
     if (error) {
       let msg = "Login fehlgeschlagen.";
       if (error.message.includes("Invalid login credentials")) {
-        msg = "E-Mail oder Passwort falsch. Bitte erneut versuchen.";
+        msg = "E-Mail oder Passwort falsch.";
       } else if (error.message.includes("Email not confirmed")) {
         msg = "E-Mail noch nicht bestätigt. Bitte prüfe deinen Posteingang.";
       }
-      showMsg(form, msg, "error");
+      showMsg(form, msg, "error", msgEl);
       if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Einloggen"; }
       return;
     }
 
-    showMsg(form, "Login erfolgreich! Du wirst weitergeleitet...", "success");
+    showMsg(form, "✅ Login erfolgreich! Du wirst weitergeleitet...", "success", msgEl);
     setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
   });
 }
@@ -143,8 +147,9 @@ function setupLogoutLinks() {
 }
 
 // ── Hilfsfunktion: Nachricht anzeigen ─────────────────────────────────────────
-function showMsg(form, text, type) {
-  let el = document.getElementById("auth-msg");
+function showMsg(form, text, type, customEl) {
+  // Nutze existierendes Element (z.B. #login-msg) oder erstelle eines
+  let el = customEl || document.getElementById("auth-msg");
   if (!el) {
     el = document.createElement("div");
     el.id = "auth-msg";
@@ -155,6 +160,7 @@ function showMsg(form, text, type) {
     form.appendChild(el);
   }
   el.textContent = text;
+  el.style.display    = "block";
   el.style.background = type === "error" ? "#fef2f2" : "#f0fdf4";
   el.style.color       = type === "error" ? "#dc2626"  : "#16a34a";
   el.style.border      = type === "error" ? "1px solid #fecaca" : "1px solid #bbf7d0";
