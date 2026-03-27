@@ -123,7 +123,6 @@ function renderAuthHeader(actionsEl, user, seller) {
           <a href="dashboard.html">📊 Dashboard</a>
           <a href="meine-anzeigen.html">📋 Meine Anzeigen</a>
           <a href="anfragen.html">💬 Anfragen</a>
-          <a href="meine-anfragen.html">✉️ Nachrichten</a>
           <a href="anzeige-erstellen.html">➕ Anzeige erstellen</a>
           <a href="profil.html">⚙️ Profil</a>
           <div class="divider"></div>
@@ -192,6 +191,67 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+// ── data-guest-only / data-auth-only direkt steuern (für index.html) ────────
+function applyAuthVisibility(user, seller) {
+  // Elemente ein-/ausblenden
+  document.querySelectorAll("[data-guest-only]").forEach(el => {
+    el.style.display = user ? "none" : "";
+  });
+  document.querySelectorAll("[data-auth-only]").forEach(el => {
+    el.style.display = user ? "" : "none";
+  });
+
+  // Falls header-right existiert (index.html): Avatar-Button einfügen
+  const headerRight = document.querySelector(".header-right");
+  if (headerRight && user) {
+    const displayName = seller?.company_name || user.email || "Konto";
+    const initials = displayName.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase() || "?";
+
+    // Nur einmal einfügen
+    if (!document.getElementById("hdr-avatar-btn")) {
+      const avatarWrapper = document.createElement("div");
+      avatarWrapper.className = "auth-avatar-wrapper";
+      avatarWrapper.innerHTML = `
+        <button class="auth-avatar-btn" id="hdr-avatar-btn" type="button">
+          <span class="auth-avatar-circle">${initials}</span>
+          <span class="auth-avatar-name">${escapeHtml(displayName)}</span>
+          <span style="font-size:10px;margin-left:2px;">▾</span>
+        </button>
+        <div class="auth-dropdown" id="hdr-dropdown">
+          <div class="auth-dropdown-header">
+            <strong>${escapeHtml(displayName)}</strong>
+            <span>${escapeHtml(user.email || "")}</span>
+          </div>
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="meine-anzeigen.html">📋 Meine Anzeigen</a>
+          <a href="anfragen.html">💬 Anfragen</a>
+          <a href="meine-anfragen.html">✉️ Nachrichten</a>
+          <a href="anzeige-erstellen.html">➕ Anzeige erstellen</a>
+          <a href="profil.html">⚙️ Profil</a>
+          <div class="divider"></div>
+          <button class="logout-item" id="hdr-logout-btn">🚪 Abmelden</button>
+        </div>
+      `;
+
+      // Vor dem letzten Button (Anzeige erstellen) einfügen
+      const lastBtn = headerRight.querySelector("a:last-of-type");
+      headerRight.insertBefore(avatarWrapper, lastBtn);
+
+      // Dropdown Toggle
+      const btn = document.getElementById("hdr-avatar-btn");
+      const dropdown = document.getElementById("hdr-dropdown");
+      btn?.addEventListener("click", (e) => { e.stopPropagation(); dropdown?.classList.toggle("open"); });
+      document.addEventListener("click", () => dropdown?.classList.remove("open"));
+
+      // Logout
+      document.getElementById("hdr-logout-btn")?.addEventListener("click", async () => {
+        await supabaseClient.auth.signOut();
+        window.location.href = "index.html";
+      });
+    }
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
   injectStyles();
@@ -215,6 +275,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     seller = data || null;
   }
 
+  // Für index.html: data-guest/auth-only steuern + Avatar einfügen
+  applyAuthVisibility(user, seller);
+
+  // Für andere Seiten: header-actions komplett neu rendern
   if (actionsEl) {
     if (user) {
       renderAuthHeader(actionsEl, user, seller);
@@ -238,6 +302,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         .maybeSingle();
       currentSeller = data || null;
     }
+
+    applyAuthVisibility(currentUser, currentSeller);
 
     if (actionsEl) {
       if (currentUser) {
