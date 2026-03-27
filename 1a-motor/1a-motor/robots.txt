@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /meine-anzeigen.html
+Disallow: /anfragen.html
+Disallow: /profil.html
+Disallow: /anzeige-erstellen.html
+Disallow: /meine-anfragen.html
+
+Sitemap: https://1amotor.de/sitemap.xml
