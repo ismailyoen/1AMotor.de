@@ -1,256 +1,293 @@
-// ── 1A Motor – Anfragen mit Echtzeit-Chat ────────────────────────────────────
-// Supabase Realtime: Neue Nachrichten erscheinen sofort ohne Reload
-
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("anfragen-live.js geladen");
+  console.log("ANFRAGEN LIVE JS GELADEN");
 
   const inquiryList = document.getElementById("inquiry-list");
   const userBoxHeading = document.querySelector(".user-box h2");
-  const userBoxText    = document.querySelector(".user-box p");
+  const userBoxText = document.querySelector(".user-box p");
+
   if (!inquiryList) return;
 
-  showLoading(inquiryList);
+  inquiryList.innerHTML = `
+    <div class="empty-box">
+      <h3>Anfragen werden geladen</h3>
+      <p>Bitte kurz warten...</p>
+    </div>
+  `;
 
-  // ── Auth ──────────────────────────────────────────────────────────────────
-  let user = null;
   try {
-    const { data } = await supabaseClient.auth.getSession();
-    user = data?.session?.user || null;
+    const sessionResult = await supabaseClient.auth.getSession();
+    const user = sessionResult?.data?.session?.user;
+
     if (!user) {
-      const { data: u } = await supabaseClient.auth.getUser();
-      user = u?.user || null;
-    }
-  } catch(e) { console.error(e); }
-
-  if (!user) {
-    inquiryList.innerHTML = emptyBox("Nicht eingeloggt", "Bitte logge dich ein um deine Anfragen zu sehen.");
-    return;
-  }
-
-  // ── Seller Profil ─────────────────────────────────────────────────────────
-  const { data: seller, error: sellerErr } = await supabaseClient
-    .from("seller_profiles").select("id, company_name")
-    .eq("user_id", user.id).maybeSingle();
-
-  if (sellerErr || !seller) {
-    inquiryList.innerHTML = emptyBox("Kein Händlerprofil", "Für diesen Account wurde kein Händlerprofil gefunden.");
-    return;
-  }
-
-  if (userBoxHeading) userBoxHeading.textContent = seller.company_name || "Hallo";
-  if (userBoxText)    userBoxText.textContent    = user.email || "";
-
-  // ── Anfragen laden ────────────────────────────────────────────────────────
-  await loadAndRender(seller, user, inquiryList);
-});
-
-// ── Laden & Rendern ───────────────────────────────────────────────────────────
-async function loadAndRender(seller, user, container) {
-  const { data: inquiries, error } = await supabaseClient
-    .from("inquiries")
-    .select(`id, listing_id, name, email, message, status, created_at,
-             listings(id, title, seller_id)`)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    container.innerHTML = emptyBox("Fehler beim Laden", error.message);
-    return;
-  }
-
-  // Nur eigene Anfragen
-  const mine = (inquiries || []).filter(inq => {
-    const l = Array.isArray(inq.listings) ? inq.listings[0] : inq.listings;
-    return l?.seller_id === seller.id;
-  });
-
-  if (!mine.length) {
-    container.innerHTML = emptyBox("Noch keine Anfragen", "Sobald Käufer dir schreiben erscheinen die Anfragen hier.");
-    return;
-  }
-
-  // HTML rendern
-  container.innerHTML = mine.map(inq => renderInquiryCard(inq)).join("");
-
-  // Nachrichten laden + Realtime starten
-  for (const inq of mine) {
-    const msgs = await loadMessages(inq.id);
-    renderMessages(inq.id, inq, msgs);
-    subscribeToMessages(inq.id, inq, user);
-  }
-
-  // Event Delegation für Buttons
-  container.addEventListener("click", async (e) => {
-    // Status Button
-    const statusBtn = e.target.closest(".status-btn");
-    if (statusBtn) {
-      await updateStatus(statusBtn.dataset.id, statusBtn.dataset.status);
+      inquiryList.innerHTML = `
+        <div class="empty-box">
+          <h3>Nicht eingeloggt</h3>
+          <p>Bitte logge dich ein, um deine Anfragen zu sehen.</p>
+        </div>
+      `;
       return;
     }
-    // Senden Button
-    const sendBtn = e.target.closest(".send-btn");
-    if (sendBtn) {
-      await sendMessage(sendBtn.dataset.id, user);
+
+    const sellerResult = await supabaseClient
+      .from("seller_profiles")
+      .select("id, company_name")
+      .eq("user_id", user.id)
+      .single();
+
+    if (sellerResult.error || !sellerResult.data) {
+      console.error("SELLER PROFILE ERROR:", sellerResult.error);
+
+      if (userBoxHeading) userBoxHeading.textContent = "Kein Händlerprofil";
+      if (userBoxText) userBoxText.textContent = user.email || "";
+
+      inquiryList.innerHTML = `
+        <div class="empty-box">
+          <h3>Kein Händlerprofil gefunden</h3>
+          <p>Für diesen Benutzer existiert noch kein Eintrag in seller_profiles.</p>
+        </div>
+      `;
+      return;
     }
-  });
 
-  // Enter-Taste zum Senden (Shift+Enter = neue Zeile)
-  container.addEventListener("keydown", async (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      const ta = e.target.closest(".reply-input");
-      if (ta) {
-        e.preventDefault();
-        await sendMessage(ta.dataset.id, user);
-      }
+    const seller = sellerResult.data;
+
+    if (userBoxHeading) userBoxHeading.textContent = seller.company_name || "Hallo Händler";
+    if (userBoxText) userBoxText.textContent = user.email || "";
+
+    const { data: inquiries, error: inquiriesError } = await supabaseClient
+      .from("inquiries")
+      .select(`
+        id,
+        listing_id,
+        name,
+        email,
+        message,
+        status,
+        created_at,
+        listings (
+          id,
+          title,
+          seller_id
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    console.log("INQUIRIES RESULT:", inquiries);
+    console.log("INQUIRIES ERROR:", inquiriesError);
+
+    if (inquiriesError) {
+      inquiryList.innerHTML = `
+        <div class="empty-box">
+          <h3>Fehler beim Laden</h3>
+          <p>Die Anfragen konnten nicht geladen werden.</p>
+        </div>
+      `;
+      return;
     }
-  });
-}
 
-// ── Inquiry Card HTML ─────────────────────────────────────────────────────────
-function renderInquiryCard(inq) {
-  const listing = Array.isArray(inq.listings) ? inq.listings[0] : inq.listings;
-  const title   = listing?.title || "Anzeige";
-  const date    = fmt(inq.created_at);
-  const statusColor = inq.status === "Neu" ? "#2563eb" : inq.status === "Erledigt" ? "#059669" : "#6b7280";
+    const sellerInquiries = (inquiries || []).filter((inquiry) => {
+      const listingRelation = Array.isArray(inquiry.listings)
+        ? inquiry.listings[0]
+        : inquiry.listings;
 
-  return `
-  <article style="background:#fff;border:1px solid #dbe3ea;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(18,58,99,0.08);margin-bottom:20px;">
-
-    <!-- Kopf -->
-    <div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-      <div>
-        <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Anfrage zu</div>
-        <div style="font-size:16px;font-weight:700;color:#1a3a52;">${esc(title)}</div>
-        <div style="font-size:12px;color:#94a3b8;margin-top:3px;">${esc(inq.name || "–")} · ${esc(inq.email || "–")} · ${date}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="background:${statusColor}18;color:${statusColor};border:1px solid ${statusColor}40;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;">${esc(inq.status || "Neu")}</span>
-        <div style="display:flex;gap:6px;">
-          <button class="status-btn" data-id="${inq.id}" data-status="Neu"
-            style="padding:6px 12px;border-radius:999px;border:1px solid #dbe3ea;background:#fff;color:#1a3a52;font-size:12px;font-weight:700;cursor:pointer;">Neu</button>
-          <button class="status-btn" data-id="${inq.id}" data-status="Gelesen"
-            style="padding:6px 12px;border-radius:999px;border:1px solid #dbe3ea;background:#fff;color:#1a3a52;font-size:12px;font-weight:700;cursor:pointer;">Gelesen</button>
-          <button class="status-btn" data-id="${inq.id}" data-status="Erledigt"
-            style="padding:6px 12px;border-radius:999px;border:1px solid #059669;background:#ecfdf5;color:#059669;font-size:12px;font-weight:700;cursor:pointer;">Erledigt</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chat Bereich -->
-    <div style="padding:16px 20px;">
-
-      <!-- Nachrichten -->
-      <div id="chat-${inq.id}"
-        style="display:flex;flex-direction:column;gap:8px;min-height:80px;max-height:360px;overflow-y:auto;padding:4px 0 8px;scroll-behavior:smooth;">
-        <div style="font-size:13px;color:#94a3b8;text-align:center;">Nachrichten werden geladen…</div>
-      </div>
-
-      <!-- Realtime Indikator -->
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;margin-top:4px;">
-        <div id="rt-dot-${inq.id}" style="width:7px;height:7px;border-radius:50%;background:#94a3b8;"></div>
-        <span id="rt-label-${inq.id}" style="font-size:11px;color:#94a3b8;">Verbinde…</span>
-      </div>
-
-      <!-- Eingabe -->
-      <div style="display:flex;gap:8px;align-items:flex-end;">
-        <textarea
-          class="reply-input"
-          data-id="${inq.id}"
-          placeholder="Nachricht schreiben… (Enter = senden, Shift+Enter = neue Zeile)"
-          style="flex:1;min-height:48px;max-height:120px;padding:11px 14px;border-radius:10px;border:1.5px solid #dbe3ea;outline:none;font-size:14px;resize:none;font-family:inherit;transition:border-color .2s;"
-          rows="1"
-        ></textarea>
-        <button class="send-btn" data-id="${inq.id}"
-          style="background:#1a3a52;color:#fff;border:none;border-radius:10px;padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s;">
-          Senden ➤
-        </button>
-      </div>
-    </div>
-
-  </article>`;
-}
-
-// ── Nachrichten rendern ───────────────────────────────────────────────────────
-function renderMessages(inquiryId, inq, messages) {
-  const box = document.getElementById(`chat-${inquiryId}`);
-  if (!box) return;
-
-  // Erste Käufer-Nachricht (aus inquiry.message)
-  const first = `
-    <div style="align-self:flex-start;max-width:78%;">
-      <div style="font-size:11px;color:#94a3b8;margin-bottom:3px;padding-left:4px;">
-        👤 ${esc(inq.name || "Käufer")} · ${fmt(inq.created_at)}
-      </div>
-      <div style="background:#f4f7fb;border:1px solid #e2e8f0;border-radius:14px 14px 14px 4px;padding:10px 14px;font-size:14px;color:#1f2937;white-space:pre-wrap;">${esc(inq.message || "")}</div>
-    </div>`;
-
-  if (!messages.length) {
-    box.innerHTML = first + `<div style="font-size:12px;color:#94a3b8;text-align:center;margin-top:6px;">Noch keine Antwort.</div>`;
-    return;
-  }
-
-  box.innerHTML = first + messages.map(msg => {
-    const isSeller = msg.sender_type === "seller";
-    return `
-      <div style="align-self:${isSeller ? "flex-end" : "flex-start"};max-width:78%;">
-        <div style="font-size:11px;color:#94a3b8;margin-bottom:3px;padding-${isSeller ? "right" : "left"}:4px;text-align:${isSeller ? "right" : "left"};">
-          ${isSeller ? "🏪 Du" : "👤 Käufer"} · ${fmt(msg.created_at)}
-        </div>
-        <div style="
-          background:${isSeller ? "#1a3a52" : "#f4f7fb"};
-          color:${isSeller ? "#fff" : "#1f2937"};
-          border:1px solid ${isSeller ? "#1a3a52" : "#e2e8f0"};
-          border-radius:${isSeller ? "14px 14px 4px 14px" : "14px 14px 14px 4px"};
-          padding:10px 14px;font-size:14px;white-space:pre-wrap;">
-          ${esc(msg.message || "")}
-        </div>
-      </div>`;
-  }).join("");
-
-  // Scroll nach unten
-  box.scrollTop = box.scrollHeight;
-}
-
-// ── Supabase Realtime ─────────────────────────────────────────────────────────
-const activeChannels = {};
-
-function subscribeToMessages(inquiryId, inq, user) {
-  // Alten Channel aufräumen
-  if (activeChannels[inquiryId]) {
-    supabaseClient.removeChannel(activeChannels[inquiryId]);
-  }
-
-  const channel = supabaseClient
-    .channel(`chat-${inquiryId}`)
-    .on("postgres_changes", {
-      event: "INSERT",
-      schema: "public",
-      table: "inquiry_messages",
-      filter: `inquiry_id=eq.${inquiryId}`
-    }, async (payload) => {
-      console.log("📨 Neue Nachricht empfangen:", payload.new);
-      // Alle Nachrichten neu laden und rendern
-      const msgs = await loadMessages(inquiryId);
-      renderMessages(inquiryId, inq, msgs);
-    })
-    .subscribe((status) => {
-      const dot   = document.getElementById(`rt-dot-${inquiryId}`);
-      const label = document.getElementById(`rt-label-${inquiryId}`);
-      if (status === "SUBSCRIBED") {
-        if (dot)   { dot.style.background = "#10b981"; }
-        if (label) { label.textContent = "Echtzeit aktiv"; label.style.color = "#10b981"; }
-      } else if (status === "CHANNEL_ERROR") {
-        if (dot)   { dot.style.background = "#ef4444"; }
-        if (label) { label.textContent = "Verbindungsfehler"; label.style.color = "#ef4444"; }
-      } else {
-        if (dot)   { dot.style.background = "#f59e0b"; }
-        if (label) { label.textContent = "Verbinde…"; label.style.color = "#f59e0b"; }
-      }
+      return listingRelation?.seller_id === seller.id;
     });
 
-  activeChannels[inquiryId] = channel;
-}
+    if (!sellerInquiries.length) {
+      inquiryList.innerHTML = `
+        <div class="empty-box">
+          <h3>Noch keine Anfragen vorhanden</h3>
+          <p>Sobald Käufer dir schreiben, erscheinen die Anfragen hier.</p>
+        </div>
+      `;
+      return;
+    }
 
-// ── Nachricht laden ───────────────────────────────────────────────────────────
+    inquiryList.innerHTML = sellerInquiries.map((inquiry) => {
+      const listingRelation = Array.isArray(inquiry.listings)
+        ? inquiry.listings[0]
+        : inquiry.listings;
+
+      const listingTitle = listingRelation?.title || "Anzeige";
+      const statusClass = getStatusClass(inquiry.status);
+      const formattedDate = new Date(inquiry.created_at).toLocaleString("de-DE");
+
+      return `
+        <article class="inquiry-card" style="background:#fff;border:1px solid #dbe3ea;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 10px 30px rgba(18,58,99,0.08);">
+          <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+            <div>
+              <h3 style="font-size:20px;color:#123a63;margin-bottom:6px;">Anfrage zu: ${escapeHtml(listingTitle)}</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:14px;color:#475569;font-size:14px;">
+                <span><strong>Name:</strong> ${escapeHtml(inquiry.name || "-")}</span>
+                <span><strong>E-Mail:</strong> ${escapeHtml(inquiry.email || "-")}</span>
+                <span><strong>Datum:</strong> ${formattedDate}</span>
+              </div>
+            </div>
+
+            <div>
+              <span class="badge ${statusClass}" style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700;background:#fff;border:1px solid #dbe3ea;">
+                ${escapeHtml(inquiry.status || "Neu")}
+              </span>
+            </div>
+          </div>
+
+          <div class="message-box" style="background:#fbfdff;border:1px solid #dbe3ea;border-radius:14px;padding:14px;color:#334155;font-size:14px;white-space:pre-wrap;margin-bottom:14px;">
+            ${escapeHtml(inquiry.message || "")}
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+            <button class="status-btn" data-id="${inquiry.id}" data-status="Neu" style="padding:10px 14px;border-radius:999px;border:1px solid #dbe3ea;background:#fff;color:#123a63;font-weight:700;font-size:13px;cursor:pointer;">
+              Neu
+            </button>
+            <button class="status-btn" data-id="${inquiry.id}" data-status="Gelesen" style="padding:10px 14px;border-radius:999px;border:1px solid #dbe3ea;background:#fff;color:#123a63;font-weight:700;font-size:13px;cursor:pointer;">
+              Gelesen
+            </button>
+            <button class="status-btn" data-id="${inquiry.id}" data-status="Erledigt" style="padding:10px 14px;border-radius:999px;border:1px solid #dbe3ea;background:#fff;color:#123a63;font-weight:700;font-size:13px;cursor:pointer;">
+              Erledigt
+            </button>
+          </div>
+
+          <div class="chat-box" style="margin-top:14px;padding-top:14px;border-top:1px solid #dbe3ea;">
+            <div class="chat-messages" id="chat-${inquiry.id}" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;max-height:400px;overflow-y:auto;">
+              <div style="font-size:12px;color:#6b7280;">Nachrichten werden geladen...</div>
+            </div>
+
+            <textarea
+              placeholder="Antwort schreiben..."
+              class="reply-input"
+              data-id="${inquiry.id}"
+              style="width:100%;min-height:90px;padding:12px;border-radius:10px;border:1px solid #dbe3ea;outline:none;font-size:14px;resize:vertical;box-sizing:border-box;"
+            ></textarea>
+
+            <button
+              class="reply-btn"
+              data-id="${inquiry.id}"
+              style="margin-top:10px;padding:10px 16px;background:#123a63;color:white;border:none;border-radius:999px;font-weight:700;cursor:pointer;"
+            >
+              Antwort senden
+            </button>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    // Initial messages laden
+    for (const inquiry of sellerInquiries) {
+      const messages = await loadMessages(inquiry.id);
+      const chatBox = document.getElementById(`chat-${inquiry.id}`);
+      renderMessages(chatBox, inquiry, messages);
+    }
+
+    // ── Supabase Realtime: Live-Chat ──────────────────────────────────
+    const inquiryIds = sellerInquiries.map((i) => i.id);
+
+    supabaseClient
+      .channel("seller-chat-live")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "inquiry_messages",
+        },
+        async (payload) => {
+          const newMsg = payload.new;
+
+          // Nur für Anfragen dieses Händlers
+          if (!inquiryIds.includes(newMsg.inquiry_id)) return;
+
+          // Eigene Nachrichten nicht nochmal einblenden (bereits optimistisch gerendert)
+          if (newMsg.sender_user_id === user.id) return;
+
+          const chatBox = document.getElementById(`chat-${newMsg.inquiry_id}`);
+          if (!chatBox) return;
+
+          const inquiry = sellerInquiries.find((i) => i.id === newMsg.inquiry_id);
+          const messages = await loadMessages(newMsg.inquiry_id);
+          renderMessages(chatBox, inquiry, messages);
+        }
+      )
+      .subscribe();
+    // ─────────────────────────────────────────────────────────────────
+
+    inquiryList.addEventListener("click", async (e) => {
+      const statusBtn = e.target.closest(".status-btn");
+      if (statusBtn) {
+        const inquiryId = statusBtn.dataset.id;
+        const nextStatus = statusBtn.dataset.status;
+
+        const { error } = await supabaseClient
+          .from("inquiries")
+          .update({ status: nextStatus })
+          .eq("id", inquiryId);
+
+        if (error) {
+          console.error("STATUS UPDATE ERROR:", error);
+          alert("Status konnte nicht geändert werden.");
+          return;
+        }
+
+        window.location.reload();
+        return;
+      }
+
+      const replyBtn = e.target.closest(".reply-btn");
+      if (!replyBtn) return;
+
+      const inquiryId = replyBtn.dataset.id;
+      const textarea = document.querySelector(`.reply-input[data-id="${inquiryId}"]`);
+      const message = textarea?.value?.trim() || "";
+
+      if (!message) {
+        alert("Bitte zuerst eine Antwort eingeben.");
+        return;
+      }
+
+      replyBtn.disabled = true;
+      replyBtn.textContent = "Wird gesendet...";
+
+      const { error } = await supabaseClient
+        .from("inquiry_messages")
+        .insert([
+          {
+            inquiry_id: inquiryId,
+            sender_type: "seller",
+            sender_user_id: user.id,
+            message
+          }
+        ]);
+
+      if (error) {
+        console.error("REPLY ERROR:", error);
+        alert("Antwort konnte nicht gespeichert werden.");
+        replyBtn.disabled = false;
+        replyBtn.textContent = "Antwort senden";
+        return;
+      }
+
+      textarea.value = "";
+
+      // Optimistisch aktualisieren (ohne auf Realtime zu warten)
+      const inquiry = sellerInquiries.find((item) => item.id === inquiryId);
+      const messages = await loadMessages(inquiryId);
+      const chatBox = document.getElementById(`chat-${inquiryId}`);
+      renderMessages(chatBox, inquiry, messages);
+
+      replyBtn.disabled = false;
+      replyBtn.textContent = "Antwort senden";
+    });
+  } catch (err) {
+    console.error("ANFRAGEN INIT ERROR:", err);
+
+    inquiryList.innerHTML = `
+      <div class="empty-box">
+        <h3>Unerwarteter Fehler</h3>
+        <p>Die Anfragen konnten nicht geladen werden.</p>
+      </div>
+    `;
+  }
+});
+
 async function loadMessages(inquiryId) {
   const { data, error } = await supabaseClient
     .from("inquiry_messages")
@@ -258,82 +295,72 @@ async function loadMessages(inquiryId) {
     .eq("inquiry_id", inquiryId)
     .order("created_at", { ascending: true });
 
-  if (error) { console.error("LOAD MSGS ERROR:", error); return []; }
+  if (error) {
+    console.error("LOAD MESSAGES ERROR:", error);
+    return [];
+  }
+
   return data || [];
 }
 
-// ── Nachricht senden ──────────────────────────────────────────────────────────
-async function sendMessage(inquiryId, user) {
-  const ta  = document.querySelector(`.reply-input[data-id="${inquiryId}"]`);
-  const btn = document.querySelector(`.send-btn[data-id="${inquiryId}"]`);
-  const msg = ta?.value?.trim() || "";
+function renderMessages(container, inquiry, messages) {
+  if (!container) return;
 
-  if (!msg) return;
+  const baseMessage = `
+    <div style="align-self:flex-start;max-width:80%;background:#f4f7fb;border:1px solid #dbe3ea;border-radius:14px;padding:10px 12px;">
+      <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Käufer · ${formatDate(inquiry.created_at)}</div>
+      <div style="white-space:pre-wrap;color:#1f2937;font-size:14px;">${escapeHtml(inquiry.message || "")}</div>
+    </div>
+  `;
 
-  btn.disabled    = true;
-  btn.textContent = "…";
-
-  const { error } = await supabaseClient
-    .from("inquiry_messages")
-    .insert([{
-      inquiry_id:     inquiryId,
-      sender_type:    "seller",
-      sender_user_id: user.id,
-      message:        msg
-    }]);
-
-  btn.disabled    = false;
-  btn.textContent = "Senden ➤";
-
-  if (error) {
-    console.error("SEND ERROR:", error);
-    alert("Nachricht konnte nicht gesendet werden: " + error.message);
+  if (!messages.length) {
+    container.innerHTML = `
+      ${baseMessage}
+      <div style="font-size:12px;color:#6b7280;">Noch keine Antworten.</div>
+    `;
     return;
   }
 
-  if (ta) ta.value = "";
-  // Realtime übernimmt die Anzeige — kein manuelles Reload nötig
+  container.innerHTML = `
+    ${baseMessage}
+    ${messages.map((msg) => `
+      <div style="
+        align-self:${msg.sender_type === "seller" ? "flex-end" : "flex-start"};
+        max-width:80%;
+        background:${msg.sender_type === "seller" ? "#123a63" : "#f4f7fb"};
+        color:${msg.sender_type === "seller" ? "#fff" : "#1f2937"};
+        border:1px solid ${msg.sender_type === "seller" ? "#123a63" : "#dbe3ea"};
+        border-radius:14px;
+        padding:10px 12px;
+      ">
+        <div style="font-size:12px;opacity:0.8;margin-bottom:4px;">
+          ${msg.sender_type === "seller" ? "Händler" : "Käufer"} · ${formatDate(msg.created_at)}
+        </div>
+        <div style="white-space:pre-wrap;font-size:14px;">${escapeHtml(msg.message || "")}</div>
+      </div>
+    `).join("")}
+  `;
+
+  // Scroll ans Ende
+  container.scrollTop = container.scrollHeight;
 }
 
-// ── Status updaten ────────────────────────────────────────────────────────────
-async function updateStatus(inquiryId, status) {
-  const { error } = await supabaseClient
-    .from("inquiries").update({ status }).eq("id", inquiryId);
-
-  if (error) { alert("Status konnte nicht geändert werden."); return; }
-
-  // Nur den Badge updaten, kein full reload
-  const cards = document.querySelectorAll(`[data-id="${inquiryId}"]`);
-  cards.forEach(c => {
-    const badge = c.closest("article")?.querySelector('[style*="border-radius:999px"]');
-    if (badge) {
-      const color = status === "Neu" ? "#2563eb" : status === "Erledigt" ? "#059669" : "#6b7280";
-      badge.textContent = status;
-      badge.style.background = color + "18";
-      badge.style.color = color;
-      badge.style.border = `1px solid ${color}40`;
-    }
-  });
+function getStatusClass(status) {
+  if (status === "Neu") return "new";
+  if (status === "Gelesen") return "read";
+  return "done";
 }
 
-// ── Hilfsfunktionen ───────────────────────────────────────────────────────────
-function showLoading(el) {
-  el.innerHTML = `<div style="padding:32px;text-align:center;color:#6b7280;">Anfragen werden geladen…</div>`;
+function formatDate(value) {
+  if (!value) return "-";
+  return new Date(value).toLocaleString("de-DE");
 }
 
-function emptyBox(title, text) {
-  return `<div style="background:#fff;border:1px solid #dbe3ea;border-radius:16px;padding:32px;text-align:center;">
-    <div style="font-size:36px;margin-bottom:12px;">📭</div>
-    <h3 style="color:#1a3a52;margin-bottom:6px;">${esc(title)}</h3>
-    <p style="color:#6b7280;">${esc(text)}</p>
-  </div>`;
-}
-
-function fmt(v) {
-  if (!v) return "–";
-  return new Date(v).toLocaleString("de-DE", { day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" });
-}
-
-function esc(v) {
-  return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

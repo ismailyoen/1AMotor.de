@@ -1,214 +1,272 @@
-// ── 1A Motor – Käufer Anfragen mit Echtzeit-Chat ─────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("my-inquiries");
   if (!container) return;
 
-  container.innerHTML = `<div style="padding:32px;text-align:center;color:#6b7280;">Anfragen werden geladen…</div>`;
+  container.innerHTML = `
+    <div style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:20px;">
+      Anfragen werden geladen...
+    </div>
+  `;
 
-  // Auth
-  let user = null;
   try {
-    const { data } = await supabaseClient.auth.getSession();
-    user = data?.session?.user;
+    const sessionResult = await supabaseClient.auth.getSession();
+    const user = sessionResult?.data?.session?.user;
+
     if (!user) {
-      const { data: u } = await supabaseClient.auth.getUser();
-      user = u?.user || null;
-    }
-  } catch(e) {}
-
-  if (!user) {
-    container.innerHTML = emptyBox("Nicht eingeloggt", "Bitte logge dich ein um deine Anfragen zu sehen.");
-    return;
-  }
-
-  // Anfragen laden
-  const { data: inquiries, error } = await supabaseClient
-    .from("inquiries")
-    .select(`id, listing_id, name, email, message, status, created_at, listings(id, title)`)
-    .eq("buyer_user_id", user.id)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    container.innerHTML = emptyBox("Fehler beim Laden", error.message);
-    return;
-  }
-
-  if (!inquiries?.length) {
-    container.innerHTML = emptyBox("Noch keine Anfragen", "Du hast noch keine Anfragen gestellt. Schau dir Anzeigen an und kontaktiere Händler.");
-    return;
-  }
-
-  container.innerHTML = inquiries.map(inq => renderBuyerCard(inq)).join("");
-
-  // Nachrichten + Realtime
-  for (const inq of inquiries) {
-    const msgs = await loadMessages(inq.id);
-    renderMessages(inq.id, inq, msgs);
-    subscribeToMessages(inq.id, inq, user);
-  }
-
-  // Events
-  container.addEventListener("click", async (e) => {
-    const sendBtn = e.target.closest(".send-btn");
-    if (sendBtn) await sendMessage(sendBtn.dataset.id, user);
-  });
-
-  container.addEventListener("keydown", async (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      const ta = e.target.closest(".reply-input");
-      if (ta) { e.preventDefault(); await sendMessage(ta.dataset.id, user); }
-    }
-  });
-});
-
-function renderBuyerCard(inq) {
-  const listing = Array.isArray(inq.listings) ? inq.listings[0] : inq.listings;
-  const title   = listing?.title || "Anzeige";
-  const statusColor = inq.status === "Erledigt" ? "#059669" : inq.status === "Gelesen" ? "#6b7280" : "#2563eb";
-
-  return `
-  <article style="background:#fff;border:1px solid #dbe3ea;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(18,58,99,0.08);margin-bottom:20px;">
-    <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-      <div>
-        <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Deine Anfrage zu</div>
-        <div style="font-size:15px;font-weight:700;color:#1a3a52;">${esc(title)}</div>
-        <div style="font-size:12px;color:#94a3b8;margin-top:2px;">${fmt(inq.created_at)}</div>
-      </div>
-      <span style="background:${statusColor}18;color:${statusColor};border:1px solid ${statusColor}40;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;">${esc(inq.status || "Neu")}</span>
-    </div>
-
-    <div style="padding:14px 18px;">
-      <div id="chat-${inq.id}" style="display:flex;flex-direction:column;gap:8px;min-height:80px;max-height:320px;overflow-y:auto;scroll-behavior:smooth;padding-bottom:6px;">
-        <div style="font-size:13px;color:#94a3b8;text-align:center;">Nachrichten werden geladen…</div>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:6px;margin:8px 0;">
-        <div id="rt-dot-${inq.id}" style="width:7px;height:7px;border-radius:50%;background:#94a3b8;"></div>
-        <span id="rt-label-${inq.id}" style="font-size:11px;color:#94a3b8;">Verbinde…</span>
-      </div>
-
-      <div style="display:flex;gap:8px;align-items:flex-end;">
-        <textarea class="reply-input" data-id="${inq.id}"
-          placeholder="Antworten… (Enter = senden)"
-          rows="1"
-          style="flex:1;min-height:44px;max-height:100px;padding:10px 13px;border-radius:10px;border:1.5px solid #dbe3ea;outline:none;font-size:13px;resize:none;font-family:inherit;"></textarea>
-        <button class="send-btn" data-id="${inq.id}"
-          style="background:#1a3a52;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">
-          Senden ➤
-        </button>
-      </div>
-    </div>
-  </article>`;
-}
-
-function renderMessages(inquiryId, inq, messages) {
-  const box = document.getElementById(`chat-${inquiryId}`);
-  if (!box) return;
-
-  const first = `
-    <div style="align-self:flex-end;max-width:78%;">
-      <div style="font-size:11px;color:#94a3b8;margin-bottom:3px;text-align:right;padding-right:4px;">
-        👤 Du · ${fmt(inq.created_at)}
-      </div>
-      <div style="background:#1a3a52;color:#fff;border-radius:14px 14px 4px 14px;padding:10px 14px;font-size:14px;white-space:pre-wrap;">${esc(inq.message || "")}</div>
-    </div>`;
-
-  if (!messages.length) {
-    box.innerHTML = first + `<div style="font-size:12px;color:#94a3b8;text-align:center;margin-top:6px;">Noch keine Antwort vom Händler.</div>`;
-    return;
-  }
-
-  box.innerHTML = first + messages.map(msg => {
-    const isBuyer = msg.sender_type === "buyer";
-    return `
-      <div style="align-self:${isBuyer ? "flex-end" : "flex-start"};max-width:78%;">
-        <div style="font-size:11px;color:#94a3b8;margin-bottom:3px;text-align:${isBuyer ? "right" : "left"};padding-${isBuyer ? "right" : "left"}:4px;">
-          ${isBuyer ? "👤 Du" : "🏪 Händler"} · ${fmt(msg.created_at)}
+      container.innerHTML = `
+        <div style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:20px;">
+          <h3 style="margin-bottom:10px;color:#123a63;">Nicht eingeloggt</h3>
+          <p style="color:#6b7280;">Bitte logge dich ein, um deine Anfragen zu sehen.</p>
         </div>
-        <div style="
-          background:${isBuyer ? "#1a3a52" : "#f4f7fb"};
-          color:${isBuyer ? "#fff" : "#1f2937"};
-          border-radius:${isBuyer ? "14px 14px 4px 14px" : "14px 14px 14px 4px"};
-          padding:10px 14px;font-size:14px;white-space:pre-wrap;">
-          ${esc(msg.message || "")}
+      `;
+      return;
+    }
+
+    console.log("BUYER USER:", user);
+
+    const { data: inquiries, error } = await supabaseClient
+      .from("inquiries")
+      .select(`
+        id,
+        listing_id,
+        buyer_user_id,
+        name,
+        email,
+        message,
+        status,
+        created_at,
+        listings (
+          id,
+          title
+        )
+      `)
+      .eq("buyer_user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    console.log("MY INQUIRIES:", inquiries);
+    console.log("MY INQUIRIES ERROR:", error);
+
+    if (error) {
+      container.innerHTML = `
+        <div style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:20px;">
+          <h3 style="margin-bottom:10px;color:#123a63;">Fehler beim Laden</h3>
+          <p style="color:#6b7280;">Die Anfragen konnten nicht geladen werden.</p>
         </div>
-      </div>`;
-  }).join("");
+      `;
+      return;
+    }
 
-  box.scrollTop = box.scrollHeight;
-}
+    if (!inquiries || !inquiries.length) {
+      container.innerHTML = `
+        <div style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:20px;">
+          <h3 style="margin-bottom:10px;color:#123a63;">Noch keine Anfragen vorhanden</h3>
+          <p style="color:#6b7280;">Sobald du eine Anfrage sendest, erscheint sie hier.</p>
+        </div>
+      `;
+      return;
+    }
 
-const activeChannels = {};
+    container.innerHTML = inquiries.map((inquiry) => {
+      const listingRelation = Array.isArray(inquiry.listings)
+        ? inquiry.listings[0]
+        : inquiry.listings;
 
-function subscribeToMessages(inquiryId, inq, user) {
-  if (activeChannels[inquiryId]) supabaseClient.removeChannel(activeChannels[inquiryId]);
+      const listingTitle = listingRelation?.title || "Anzeige";
+      const formattedDate = new Date(inquiry.created_at).toLocaleString("de-DE");
 
-  const channel = supabaseClient
-    .channel(`buyer-chat-${inquiryId}`)
-    .on("postgres_changes", {
-      event: "INSERT", schema: "public",
-      table: "inquiry_messages",
-      filter: `inquiry_id=eq.${inquiryId}`
-    }, async () => {
-      const msgs = await loadMessages(inquiryId);
-      renderMessages(inquiryId, inq, msgs);
-    })
-    .subscribe((status) => {
-      const dot   = document.getElementById(`rt-dot-${inquiryId}`);
-      const label = document.getElementById(`rt-label-${inquiryId}`);
-      if (status === "SUBSCRIBED") {
-        if (dot)   dot.style.background = "#10b981";
-        if (label) { label.textContent = "Echtzeit aktiv"; label.style.color = "#10b981"; }
-      } else if (status === "CHANNEL_ERROR") {
-        if (dot)   dot.style.background = "#ef4444";
-        if (label) { label.textContent = "Verbindungsfehler"; label.style.color = "#ef4444"; }
+      return `
+        <article style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 10px 30px rgba(18,58,99,0.08);">
+          <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+            <div>
+              <h3 style="font-size:20px;color:#123a63;margin-bottom:6px;">Anfrage zu: ${escapeHtml(listingTitle)}</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:14px;color:#475569;font-size:14px;">
+                <span><strong>Datum:</strong> ${formattedDate}</span>
+                <span><strong>Status:</strong> ${escapeHtml(inquiry.status || "Neu")}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#f4f7fb;border:1px solid #dbe3ea;border-radius:14px;padding:12px 14px;margin-bottom:14px;">
+            <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Deine ursprüngliche Nachricht</div>
+            <div style="white-space:pre-wrap;color:#1f2937;font-size:14px;">${escapeHtml(inquiry.message || "")}</div>
+          </div>
+
+          <div id="buyer-chat-${inquiry.id}" style="display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;margin-bottom:12px;">
+            <div style="font-size:12px;color:#6b7280;">Antworten werden geladen...</div>
+          </div>
+
+          <div style="border-top:1px solid #dbe3ea;padding-top:14px;margin-top:4px;">
+            <textarea
+              placeholder="Nachricht schreiben..."
+              class="buyer-reply-input"
+              data-id="${inquiry.id}"
+              style="width:100%;min-height:80px;padding:12px;border-radius:10px;border:1px solid #dbe3ea;outline:none;font-size:14px;resize:vertical;box-sizing:border-box;"
+            ></textarea>
+            <button
+              class="buyer-reply-btn"
+              data-id="${inquiry.id}"
+              style="margin-top:10px;padding:10px 16px;background:#123a63;color:white;border:none;border-radius:999px;font-weight:700;cursor:pointer;font-size:14px;"
+            >
+              Nachricht senden
+            </button>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    // Initial messages laden
+    for (const inquiry of inquiries) {
+      const messages = await loadMessages(inquiry.id);
+      const chatBox = document.getElementById(`buyer-chat-${inquiry.id}`);
+      renderMessages(chatBox, messages);
+    }
+
+    // ── Supabase Realtime: Live-Chat ──────────────────────────────────
+    const inquiryIds = inquiries.map((i) => i.id);
+
+    supabaseClient
+      .channel("buyer-chat-live")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "inquiry_messages",
+        },
+        async (payload) => {
+          const newMsg = payload.new;
+
+          // Nur für eigene Anfragen
+          if (!inquiryIds.includes(newMsg.inquiry_id)) return;
+
+          // Eigene Nachrichten nicht nochmal einblenden
+          if (newMsg.sender_user_id === user.id) return;
+
+          const chatBox = document.getElementById(`buyer-chat-${newMsg.inquiry_id}`);
+          if (!chatBox) return;
+
+          const messages = await loadMessages(newMsg.inquiry_id);
+          renderMessages(chatBox, messages);
+        }
+      )
+      .subscribe();
+    // ─────────────────────────────────────────────────────────────────
+
+    // Käufer-Antwort senden
+    container.addEventListener("click", async (e) => {
+      const replyBtn = e.target.closest(".buyer-reply-btn");
+      if (!replyBtn) return;
+
+      const inquiryId = replyBtn.dataset.id;
+      const textarea = document.querySelector(`.buyer-reply-input[data-id="${inquiryId}"]`);
+      const message = textarea?.value?.trim() || "";
+
+      if (!message) {
+        alert("Bitte zuerst eine Nachricht eingeben.");
+        return;
       }
+
+      replyBtn.disabled = true;
+      replyBtn.textContent = "Wird gesendet...";
+
+      const { error: sendError } = await supabaseClient
+        .from("inquiry_messages")
+        .insert([
+          {
+            inquiry_id: inquiryId,
+            sender_type: "buyer",
+            sender_user_id: user.id,
+            message
+          }
+        ]);
+
+      if (sendError) {
+        console.error("BUYER REPLY ERROR:", sendError);
+        alert("Nachricht konnte nicht gespeichert werden.");
+        replyBtn.disabled = false;
+        replyBtn.textContent = "Nachricht senden";
+        return;
+      }
+
+      textarea.value = "";
+
+      // Optimistisch aktualisieren
+      const messages = await loadMessages(inquiryId);
+      const chatBox = document.getElementById(`buyer-chat-${inquiryId}`);
+      renderMessages(chatBox, messages);
+
+      replyBtn.disabled = false;
+      replyBtn.textContent = "Nachricht senden";
     });
 
-  activeChannels[inquiryId] = channel;
-}
+  } catch (err) {
+    console.error("MY INQUIRIES INIT ERROR:", err);
+
+    container.innerHTML = `
+      <div style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:20px;">
+        <h3 style="margin-bottom:10px;color:#123a63;">Unerwarteter Fehler</h3>
+        <p style="color:#6b7280;">Die Seite konnte nicht geladen werden.</p>
+      </div>
+    `;
+  }
+});
 
 async function loadMessages(inquiryId) {
   const { data, error } = await supabaseClient
-    .from("inquiry_messages").select("*")
+    .from("inquiry_messages")
+    .select("*")
     .eq("inquiry_id", inquiryId)
     .order("created_at", { ascending: true });
-  if (error) return [];
+
+  if (error) {
+    console.error("LOAD BUYER MESSAGES ERROR:", error);
+    return [];
+  }
+
   return data || [];
 }
 
-async function sendMessage(inquiryId, user) {
-  const ta  = document.querySelector(`.reply-input[data-id="${inquiryId}"]`);
-  const btn = document.querySelector(`.send-btn[data-id="${inquiryId}"]`);
-  const msg = ta?.value?.trim() || "";
-  if (!msg) return;
+function renderMessages(container, messages) {
+  if (!container) return;
 
-  btn.disabled = true; btn.textContent = "…";
+  if (!messages.length) {
+    container.innerHTML = `
+      <div style="font-size:13px;color:#6b7280;">Noch keine Antwort vom Händler.</div>
+    `;
+    return;
+  }
 
-  const { error } = await supabaseClient.from("inquiry_messages").insert([{
-    inquiry_id: inquiryId, sender_type: "buyer",
-    sender_user_id: user.id, message: msg
-  }]);
+  container.innerHTML = messages.map((msg) => `
+    <div style="
+      align-self:${msg.sender_type === "seller" ? "flex-start" : "flex-end"};
+      max-width:80%;
+      background:${msg.sender_type === "seller" ? "#123a63" : "#f4f7fb"};
+      color:${msg.sender_type === "seller" ? "#fff" : "#1f2937"};
+      border:1px solid ${msg.sender_type === "seller" ? "#123a63" : "#dbe3ea"};
+      border-radius:14px;
+      padding:10px 12px;
+    ">
+      <div style="font-size:12px;opacity:0.8;margin-bottom:4px;">
+        ${msg.sender_type === "seller" ? "Händler" : "Du"} · ${formatDate(msg.created_at)}
+      </div>
+      <div style="white-space:pre-wrap;font-size:14px;">${escapeHtml(msg.message || "")}</div>
+    </div>
+  `).join("");
 
-  btn.disabled = false; btn.textContent = "Senden ➤";
-
-  if (error) { alert("Fehler: " + error.message); return; }
-  if (ta) ta.value = "";
+  // Scroll ans Ende
+  container.scrollTop = container.scrollHeight;
 }
 
-function emptyBox(title, text) {
-  return `<div style="background:#fff;border:1px solid #dbe3ea;border-radius:16px;padding:32px;text-align:center;">
-    <div style="font-size:36px;margin-bottom:12px;">📭</div>
-    <h3 style="color:#1a3a52;margin-bottom:6px;">${title}</h3>
-    <p style="color:#6b7280;">${text}</p>
-  </div>`;
+function formatDate(value) {
+  if (!value) return "-";
+  return new Date(value).toLocaleString("de-DE");
 }
 
-function fmt(v) {
-  if (!v) return "–";
-  return new Date(v).toLocaleString("de-DE", { day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" });
-}
-
-function esc(v) {
-  return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
