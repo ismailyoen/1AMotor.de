@@ -123,6 +123,7 @@ function renderAuthHeader(actionsEl, user, seller) {
           <a href="dashboard.html">📊 Dashboard</a>
           <a href="meine-anzeigen.html">📋 Meine Anzeigen</a>
           <a href="anfragen.html">💬 Anfragen</a>
+          <a href="meine-anfragen.html">✉️ Nachrichten</a>
           <a href="anzeige-erstellen.html">➕ Anzeige erstellen</a>
           <a href="profil.html">⚙️ Profil</a>
           <div class="divider"></div>

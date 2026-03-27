@@ -2,8 +2,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   console.log("ANFRAGEN LIVE JS GELADEN");
 
   const inquiryList = document.getElementById("inquiry-list");
-  const userBoxHeading = document.querySelector(".user-box h2");
-  const userBoxText = document.querySelector(".user-box p");
+  const sidebarName  = document.querySelector(".profile-name");
+  const sidebarEmail = document.querySelector(".profile-email");
+  const sidebarAvatar = document.getElementById("sidebar-avatar");
 
   if (!inquiryList) return;
 
@@ -36,9 +37,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (sellerResult.error || !sellerResult.data) {
       console.error("SELLER PROFILE ERROR:", sellerResult.error);
-
-      if (userBoxHeading) userBoxHeading.textContent = "Kein Händlerprofil";
-      if (userBoxText) userBoxText.textContent = user.email || "";
+      if (sidebarName)  sidebarName.textContent  = "Kein Händlerprofil";
+      if (sidebarEmail) sidebarEmail.textContent = user.email || "";
 
       inquiryList.innerHTML = `
         <div class="empty-box">
@@ -50,9 +50,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const seller = sellerResult.data;
+    const displayName = seller.company_name || user.email || "Händler";
+    const initials = displayName.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase() || "?";
 
-    if (userBoxHeading) userBoxHeading.textContent = seller.company_name || "Hallo Händler";
-    if (userBoxText) userBoxText.textContent = user.email || "";
+    if (sidebarAvatar) sidebarAvatar.textContent = initials;
+    if (sidebarName)   sidebarName.textContent   = displayName;
+    if (sidebarEmail)  sidebarEmail.textContent  = user.email || "";
 
     const { data: inquiries, error: inquiriesError } = await supabaseClient
       .from("inquiries")
