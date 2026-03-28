@@ -84,7 +84,7 @@
       flex-shrink: 0;
     }
     .logo-name { font-size: 22px; font-weight: 800; color: var(--dark); letter-spacing: -.3px; }
-    .logo-tagline { font-size: 10.5px; color: var(--muted); font-weight: 500; margin-top: -2px; }
+    
 
     /* Suchleiste */
     .search-bar {
@@ -183,13 +183,24 @@
     ══════════════════════════════════════ */
     .hero {
       background: linear-gradient(135deg, var(--dark) 0%, #142336 55%, #1a3350 100%);
-      padding: 56px 0 48px;
+      padding: 80px 0 72px;
       position: relative; overflow: hidden;
+    }
+    /* Hero Hintergrundbild */
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(13,27,42,0.88) 0%, rgba(13,27,42,0.55) 42%, rgba(13,27,42,0.15) 100%),
+        url("hero-bg.png");
+      background-size: cover;
+      background-position: center right;
+      background-repeat: no-repeat;
+      z-index: 0;
     }
     /* Dezente Linien-Textur */
     .hero::before {
       content: "";
-      position: absolute; inset: 0; pointer-events: none;
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
       background-image:
         linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
@@ -522,7 +533,25 @@
     }
     .ad-caption strong { color: rgba(255,255,255,.9); font-weight: 700; }
     .ad-caption span { font-size: 11px; }
-  </style>
+  
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
+</style>
 </head>
 <body>
 
@@ -548,10 +577,7 @@
 
     <a href="index.html" class="logo">
       <div class="logo-mark">1A</div>
-      <div>
-        <div class="logo-name">Motor</div>
-        <div class="logo-tagline">Motorenmarktplatz</div>
-      </div>
+      <div class="logo-name">Motor</div>
     </a>
 
     <div class="search-bar">
@@ -616,6 +642,7 @@
 
 <!-- ══ HERO ══ -->
 <section class="hero">
+  <div class="hero-bg"></div>
   <div class="container hero-inner">
     <div>
       <div class="hero-pill">⚙️ Deutschlands Motorenmarktplatz</div>
@@ -630,16 +657,7 @@
       <span id="stat-dealers" style="display:none;"></span>
       <span id="stat-categories" style="display:none;"></span>
     </div>
-    <!-- Werbebanner -->
-    <div class="ad-banner">
-      <div class="ad-label">Werbung</div>
-      <div class="ad-img">
-        <img src="werbung-schroegel.png" alt="Joachim Schrögel Imbissbetrieb Bad Kreuznach" />
-      </div>
-      <div class="ad-caption">
-        <strong>Joachim Schrögel</strong> – Imbissbetrieb Bad Kreuznach
-        <span>📞 0671 – 75491</span>
-      </div>
+
     </div>
   </div>
 </section>

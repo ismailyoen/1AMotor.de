@@ -38,7 +38,7 @@
   }
   .logo-text { display: flex; flex-direction: column; }
   .logo-name { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
-  .logo-tagline { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 500; }
+  
   .header-link { color: rgba(255,255,255,0.65); font-size: 14px; font-weight: 600; text-decoration: none; transition: color .15s; }
   .header-link:hover { color: var(--sky); }
   main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 20px 48px; }
@@ -107,18 +107,33 @@
   .modal-btn.primary { background: #1e3a52; color: #fff; }
   .modal-btn.secondary { background: var(--bg); color: #334155; border: 1px solid var(--border); }
   .modal-msg { font-size: 13px; margin-top: 10px; text-align: center; }
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
 </style>
 </head>
 <body>
 
 <header>
   <a href="index.html" class="logo">
-    <div class="logo-mark">1A</div>
-    <div class="logo-text">
+      <div class="logo-mark">1A</div>
       <div class="logo-name">Motor</div>
-      <div class="logo-tagline">Motorenmarktplatz</div>
-    </div>
-  </a>
+    </a>
   <a href="registrieren.html" class="header-link">Noch kein Konto? Registrieren →</a>
 </header>
 

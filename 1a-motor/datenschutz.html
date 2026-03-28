@@ -29,7 +29,7 @@
     display:flex; align-items:center; gap:10px;
     font-size:24px; font-weight:800; color:var(--dark-blue);
   }
-  .logo-badge{
+   .logo-img-new{
     width:40px; height:40px; border-radius:10px;
     background:linear-gradient(135deg,var(--dark-blue),#72b6ff);
     display:grid; place-items:center; color:#fff; font-size:17px; font-weight:900;
@@ -78,6 +78,24 @@
   }
   footer a{ color:var(--muted); margin:0 8px; }
   footer a:hover{ color:var(--dark-blue); text-decoration:none; }
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
 </style>
 </head>
 <body>
@@ -85,8 +103,8 @@
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <span class="logo-badge">1A</span>
-      <span>Motor</span>
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
     </a>
     <a href="index.html" class="back-link">← Zurück zur Startseite</a>
   </div>
@@ -111,7 +129,7 @@
           <strong>Ismail Yön</strong> · 1A Motor<br />
           In der Breite 12 · 71116 Gärtringen · Deutschland<br />
           Telefon: 01785648456<br />
-          E-Mail: <a href="mailto:info@1amotor.de">info@1amotor.de</a>
+          E-Mail: <a href="/cdn-cgi/l/email-protection#0960676f6649386864667d667b276d6c"><span class="__cf_email__" data-cfemail="e38a8d858ca3d2828e8c978c91cd8786">[email&#160;protected]</span></a>
         </p>
       </div>
 
@@ -150,7 +168,7 @@
         <li><strong>Widerspruch</strong> (Art. 21 DSGVO): Widerspruch gegen die Verarbeitung</li>
         <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO): Export deiner Daten</li>
       </ul>
-      <p>Zur Ausübung dieser Rechte wende dich an: <a href="mailto:info@1amotor.de">info@1amotor.de</a></p>
+      <p>Zur Ausübung dieser Rechte wende dich an: <a href="/cdn-cgi/l/email-protection#1d74737b725d2c7c707269726f337978"><span class="__cf_email__" data-cfemail="6c05020a032c5d0d010318031e420809">[email&#160;protected]</span></a></p>
 
       <h2>6. Beschwerderecht</h2>
       <p>Du hast das Recht, dich bei der zuständigen Datenschutzaufsichtsbehörde zu beschweren. Für Baden-Württemberg ist dies der Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg.</p>
@@ -170,14 +188,4 @@
 </main>
 
 <footer>
-  <div class="container">
-    © 2026 1A Motor &nbsp;|&nbsp;
-    <a href="impressum.html">Impressum</a>
-    <a href="datenschutz.html">Datenschutz</a>
-    <a href="agb.html">AGB</a>
-    <a href="kontakt.html">Kontakt</a>
-  </div>
-</footer>
-
-</body>
-</html>
+  <

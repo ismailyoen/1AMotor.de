@@ -28,7 +28,7 @@
     display:flex; align-items:center; gap:10px;
     font-size:24px; font-weight:800; color:var(--dark-blue);
   }
-  .logo-badge{
+   .logo-img-new{
     width:40px; height:40px; border-radius:10px;
     background:linear-gradient(135deg,var(--dark-blue),var(--light-blue));
     display:grid; place-items:center; color:#fff; font-size:17px; font-weight:900;
@@ -122,6 +122,24 @@
   @media(max-width:720px){
     .grid{ grid-template-columns:1fr; }
   }
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
 </style>
 </head>
 <body>
@@ -129,8 +147,8 @@
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <span class="logo-badge">1A</span>
-      <span>Motor</span>
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
     </a>
     <a href="index.html" class="back-link">← Zurück zur Startseite</a>
   </div>
@@ -200,7 +218,7 @@
           <div class="contact-icon">✉️</div>
           <div>
             <div class="contact-label">E-Mail</div>
-            <div class="contact-value"><a href="mailto:info@1amotor.de">info@1amotor.de</a></div>
+            <div class="contact-value"><a href="/cdn-cgi/l/email-protection#f49d9a929bb4c595999b809b86da9091"><span class="__cf_email__" data-cfemail="dcb5b2bab39cedbdb1b3a8b3aef2b8b9">[email&#160;protected]</span></a></div>
           </div>
         </div>
 
@@ -241,17 +259,8 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   document.getElementById("contact-form").addEventListener("submit", function(e) {
     e.preventDefault();
     const btn = this.querySelector(".submit-btn");
-    btn.disabled = true;
-    btn.textContent = "Wird gesendet...";
-    setTimeout(() => {
-      document.getElementById("cf-success").style.display = "block";
-      btn.style.display = "none";
-    }, 800);
-  });
-</script>
-</body>
-</html>
+   
