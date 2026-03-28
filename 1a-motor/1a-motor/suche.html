@@ -11,8 +11,9 @@
   <meta property="og:title" content="Motorensuche – 1A Motor" />
   <meta property="og:description" content="Über 100 Motorkategorien. Automotoren, Industriemotoren, Bootsmotoren und mehr günstig kaufen." />
   <meta property="og:image" content="https://1amotor.de/images/og-image.jpg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Suche – 1A Motor</title>
+<link rel="stylesheet" href="zoom-fix.css" />
 <style>
   :root{
     --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280;
@@ -21,15 +22,16 @@
     --shadow-lg:0 12px 40px rgba(18,58,99,0.13); --radius:14px;
   }
   *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
-  body{ background:var(--bg); color:var(--text); line-height:1.5; }
+  html{ font-size:100%; }
+  body{ background:var(--bg); color:var(--text); line-height:1.5; overflow-x:hidden; min-width:320px; }
   a{ text-decoration:none; color:inherit; }
-  .container{ max-width:1400px; margin:0 auto; padding:0 20px; }
+  .container{ max-width:1400px; margin:0 auto; padding:0 clamp(12px,2vw,20px); width:100%; min-width:0; }
 
   /* ── Header ── */
   .header{ background:#fff; border-bottom:2px solid var(--border); position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(18,58,99,0.06); }
   .header-inner{ display:grid; grid-template-columns:180px 1fr auto; gap:16px; align-items:center; padding:12px 0; }
   .logo{ display:flex; align-items:center; gap:10px; font-size:22px; font-weight:800; color:var(--dark-blue); }
-  .logo-badge{ width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,var(--dark-blue),var(--light-blue)); display:grid; place-items:center; color:#fff; font-size:17px; font-weight:900; }
+  
 
   /* Header Searchbox */
   .header-search{ display:flex; align-items:center; border:2px solid var(--dark-blue); border-radius:999px; overflow:hidden; background:#fff; }
@@ -123,6 +125,64 @@
   @media(max-width:1200px){ .listing-grid{ grid-template-columns:repeat(2,1fr); } }
   @media(max-width:980px){ .search-layout{ grid-template-columns:1fr; } .sidebar{ position:static; } .header-inner{ grid-template-columns:auto 1fr; } .header-actions{ display:none; } }
   @media(max-width:640px){ .listing-grid{ grid-template-columns:1fr; } .listing-grid.list-view .listing-card{ grid-template-columns:1fr; } .header-search select{ display:none; } }
+
+  @media (max-width: 768px) {
+    .container { padding: 0 14px; }
+    .header-inner { grid-template-columns: 1fr auto !important; gap: 10px; padding: 10px 0; }
+    .header-search { display: none; }
+    .header-actions { gap: 8px; }
+    .sell-btn { padding: 8px 12px; font-size: 12px; }
+    .results-layout { grid-template-columns: 1fr !important; }
+    .filters-sidebar { display: none; position: static; }
+    .filters-sidebar.open { display: block; }
+    .mob-filter-toggle { display: flex !important; }
+    .results-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+    .search-hero { padding: 20px 0 !important; }
+    .search-hero h1 { font-size: 22px !important; }
+    .search-bar-hero { flex-direction: column; border-radius: 12px !important; }
+    .search-bar-hero input, .search-bar-hero select, .search-bar-hero button { border-radius: 8px !important; width: 100%; }
+    .toolbar { grid-template-columns: 1fr !important; }
+    .results-info { font-size: 13px; }
+    .listing-card { flex-direction: column; }
+    .card-image { height: 160px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .results-grid { grid-template-columns: 1fr !important; }
+    
+    .logo { font-size: 16px; }
+  }
+
+  /* Mobile Filter Toggle Button */
+  .mob-filter-toggle {
+    display: none;
+    align-items: center; gap: 8px;
+    background: #fff; border: 1.5px solid #dbe3ea;
+    border-radius: 10px; padding: 10px 16px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; color: #1a3a52;
+    margin-bottom: 14px; width: 100%;
+    justify-content: center;
+  }
+
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
 </style>
 </head>
 <body>
@@ -131,8 +191,8 @@
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <span class="logo-badge">1A</span>
-      <span>Motor</span>
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
     </a>
     <div class="header-search">
       <input type="text" id="search-input" placeholder="Motor, Hersteller, Modell oder Teilenummer..." />

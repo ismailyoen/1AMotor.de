@@ -42,13 +42,7 @@
     display:flex; align-items:center; gap:10px;
     font-size:24px; font-weight:800; color:var(--dark-blue);
   }
-  .logo-badge{
-    width:42px; height:42px; border-radius:11px;
-    background:linear-gradient(135deg,var(--dark-blue),var(--light-blue));
-    display:grid; place-items:center; color:#fff;
-    font-size:18px; font-weight:900;
-    box-shadow:0 4px 12px rgba(18,58,99,0.25);
-  }
+  
   .header-actions{ display:flex; align-items:center; gap:12px; font-size:14px; }
 
   /* ── Layout ── */
@@ -298,6 +292,75 @@
     .stats-grid{ grid-template-columns:1fr 1fr; }
     .page-head h1{ font-size:22px; }
   }
+
+  /* ═══════════════════════════════════════
+     MOBILE RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .container { padding: 0 14px; }
+    .header-inner { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
+    .logo { font-size: 18px; }
+    .logo-badge, .logo-mark { width: 34px; height: 34px; font-size: 14px; }
+    .header-actions { display: none; }
+    .layout { grid-template-columns: 1fr !important; }
+    .sidebar { position: static !important; top: auto !important; }
+    .page-head h1 { font-size: 22px !important; }
+    .page-head p { font-size: 13px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .stat-value { font-size: 22px !important; }
+    .panel { padding: 14px !important; }
+    .table-wrap { overflow-x: auto; }
+    .table { min-width: 600px; }
+    .bottom-grid { grid-template-columns: 1fr !important; }
+    .listing-grid { grid-template-columns: 1fr !important; }
+    .listing-card { grid-template-columns: 1fr !important; }
+    .card-image { min-height: 180px !important; }
+    .filter-bar { flex-direction: column; }
+    .filter-bar input, .filter-bar select { width: 100%; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr !important; }
+    .plan-grid { grid-template-columns: 1fr !important; }
+    .info-grid, .bottom-grid { grid-template-columns: 1fr !important; }
+    .plan-card.featured { transform: none; }
+    .nav-item { padding: 9px 10px; font-size: 13px; }
+    .profile-name { font-size: 14px; }
+    .tab-bar { flex-wrap: wrap; }
+    .tab { font-size: 12px; padding: 6px 10px; }
+    .msg { max-width: 90% !important; }
+    .reply-box { flex-direction: column; }
+    .reply-input { width: 100%; }
+    .chat-messages { max-height: 250px; }
+    .page { padding: 16px 0 32px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .logo-name { font-size: 18px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .page-head { flex-direction: column; align-items: flex-start !important; }
+    .page-head .new-btn, .page-head a { width: 100%; text-align: center; }
+    .action-links { flex-wrap: wrap; }
+    .inq-header { flex-direction: column; }
+    .inq-meta { flex-direction: column; gap: 4px; }
+    .sidebar-profile { padding: 16px 14px; }
+  }
+
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
 </style>
 </head>
 <body>
@@ -305,8 +368,8 @@
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <span class="logo-badge">1A</span>
-      <span>Motor</span>
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
     </a>
     <div class="header-actions">
       <!-- auth-header.js befüllt dies -->
@@ -337,7 +400,7 @@
           <span class="nav-icon">📋</span> Meine Anzeigen
         </a>
         <a href="anfragen.html" class="nav-item">
-          <span class="nav-icon">💬</span> Anfragen
+          <span class="nav-icon">💬</span> Nachrichten
         </a>
         <a href="profil.html" class="nav-item">
           <span class="nav-icon">⚙️</span> Profil

@@ -247,13 +247,22 @@ function setupInquiryForm(listing) {
       return;
     }
 
+    // ── Login-Prüfung ─────────────────────────────────────────────
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const buyerUserId = sessionData?.session?.user?.id || null;
+
+    if (!buyerUserId) {
+      // Nicht eingeloggt → zur Login-Seite weiterleiten
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+      return;
+    }
+    // ─────────────────────────────────────────────────────────────
+
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = "Wird gesendet...";
     }
-
-    const { data: sessionData } = await supabaseClient.auth.getSession();
-    const buyerUserId = sessionData?.session?.user?.id || null;
 
     console.log("BUYER USER ID:", buyerUserId);
 
@@ -293,6 +302,16 @@ function setupInquiryForm(listing) {
         </a>
       </div>
     `;
+  });
+
+  // ── Login-Hinweis anzeigen wenn nicht eingeloggt ──────────────────────────
+  supabaseClient.auth.getSession().then(({ data }) => {
+    if (!data?.session?.user) {
+      const hint = document.createElement("div");
+      hint.style.cssText = "background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#92400e;";
+      hint.innerHTML = `⚠️ Du musst <a href="login.html" style="color:#1a5fa8;font-weight:700;">eingeloggt sein</a>, um eine Nachricht zu senden.`;
+      form.insertBefore(hint, form.firstChild);
+    }
   });
 }
 

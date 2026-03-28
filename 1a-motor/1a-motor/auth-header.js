@@ -193,12 +193,21 @@ function escapeHtml(value) {
 
 // ── data-guest-only / data-auth-only direkt steuern (für index.html) ────────
 function applyAuthVisibility(user, seller) {
-  // Elemente ein-/ausblenden
+  // Gast-Elemente: nur anzeigen wenn NICHT eingeloggt
   document.querySelectorAll("[data-guest-only]").forEach(el => {
     el.style.display = user ? "none" : "";
   });
+
+  // Auth-Elemente in der TOPBAR anzeigen (Mein Konto / Nachrichten oben)
+  // Aber in .header-right NICHT – dort übernimmt der Avatar-Button
   document.querySelectorAll("[data-auth-only]").forEach(el => {
-    el.style.display = user ? "" : "none";
+    // Wenn das Element in .header-right liegt → immer versteckt lassen
+    // (Avatar-Button ersetzt diese Buttons)
+    if (el.closest(".header-right")) {
+      el.style.display = "none";
+    } else {
+      el.style.display = user ? "" : "none";
+    }
   });
 
   // Falls header-right existiert (index.html): Avatar-Button einfügen
@@ -224,8 +233,7 @@ function applyAuthVisibility(user, seller) {
           </div>
           <a href="dashboard.html">📊 Dashboard</a>
           <a href="meine-anzeigen.html">📋 Meine Anzeigen</a>
-          <a href="anfragen.html">💬 Anfragen</a>
-          <a href="meine-anfragen.html">✉️ Nachrichten</a>
+          <a href="meine-anfragen.html">💬 Nachrichten</a>
           <a href="anzeige-erstellen.html">➕ Anzeige erstellen</a>
           <a href="profil.html">⚙️ Profil</a>
           <div class="divider"></div>
