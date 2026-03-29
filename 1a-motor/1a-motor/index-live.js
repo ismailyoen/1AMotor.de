@@ -80,9 +80,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (sidebarCategoryList) {
       sidebarCategoryList.innerHTML = categories.length
         ? categories.slice(0, 12).map(cat => `
-            <label><input type="checkbox" disabled /> ${escapeHtml(cat.name)}</label>
+            <a href="suche.html?category=${encodeURIComponent(cat.name)}" style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:#334155;font-weight:500;padding:4px 0;text-decoration:none;transition:color .15s;" onmouseover="this.style.color='#1a5fa8'" onmouseout="this.style.color='#334155'">
+              <span style="width:7px;height:7px;border-radius:50%;background:#1a5fa8;flex-shrink:0;opacity:0.5;"></span>
+              ${escapeHtml(cat.name)}
+            </a>
           `).join("")
-        : `<label><input type="checkbox" checked disabled /> Keine Kategorien gefunden</label>`;
+        : `<span style="font-size:13px;color:#9ca3af;">Keine Kategorien gefunden</span>`;
     }
 
     const statCategories = document.getElementById("stat-categories");
@@ -156,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     listings = data || [];
 
     if (resultsInfo) {
-      resultsInfo.textContent = `${listings.length} aktuelle Angebote aus Supabase`;
+      resultsInfo.style.display = "none";
     }
   }
 

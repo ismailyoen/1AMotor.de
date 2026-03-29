@@ -2,9 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>1A Motor – Marktplatz für Motoren & Antriebe</title>
-  <link rel="stylesheet" href="zoom-fix.css" />
   <meta name="description" content="1A Motor – Deutschlands Marktplatz für Motoren, Antriebe und Maschinentechnik. Fahrzeugmotoren, Industriemotoren, Bootsmotoren kaufen und verkaufen." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://1amotor.de/" />
@@ -37,11 +36,10 @@
       --max:     1360px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 100%; }
-    body { font-family: 'Outfit', Arial, sans-serif; background: var(--bg); color: var(--dark); line-height: 1.5; overflow-x: hidden; min-width: 320px; }
+    body { font-family: 'Outfit', Arial, sans-serif; background: var(--bg); color: var(--dark); line-height: 1.5; }
     a { text-decoration: none; color: inherit; }
     img { max-width: 100%; display: block; }
-    .container { max-width: var(--max); margin: 0 auto; padding: 0 clamp(12px, 2vw, 24px); width: 100%; min-width: 0; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
 
     /* ══════════════════════════════════════
        TOPBAR
@@ -72,8 +70,7 @@
     }
     .header-inner {
       display: flex; align-items: center;
-      gap: clamp(8px, 1.5vw, 20px); padding: 12px 0;
-      flex-wrap: nowrap; min-width: 0;
+      gap: 20px; padding: 12px 0;
     }
 
     /* Logo */
@@ -91,7 +88,7 @@
 
     /* Suchleiste */
     .search-bar {
-      flex: 1 1 auto; min-width: 0; display: flex; align-items: stretch;
+      flex: 1; display: flex; align-items: stretch;
       border: 1.5px solid var(--border);
       border-radius: var(--r); overflow: hidden;
       transition: border-color .2s, box-shadow .2s;
@@ -124,7 +121,7 @@
     .search-submit svg { width: 15px; height: 15px; }
 
     /* Header Rechts */
-    .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: nowrap; }
+    .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .hdr-btn {
       font-size: 13px; font-weight: 600; font-family: inherit;
       padding: 9px 16px; border-radius: 8px; cursor: pointer;
@@ -301,8 +298,8 @@
     ══════════════════════════════════════ */
     .main-wrap {
       max-width: var(--max); margin: 28px auto 52px;
-      padding: 0 clamp(12px, 2vw, 24px);
-      display: grid; grid-template-columns: minmax(200px, 256px) minmax(0, 1fr);
+      padding: 0 24px;
+      display: grid; grid-template-columns: 256px 1fr;
       gap: 24px; align-items: start;
     }
 
@@ -365,7 +362,7 @@
     .view-all-link:hover { text-decoration: underline; }
 
     /* ── Listing Grid ── */
-    .listing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .listing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .listing-card {
       background: var(--white); border: 1px solid var(--border);
       border-radius: var(--r); overflow: hidden; display: block;
@@ -468,53 +465,48 @@
     .footer-bottom-links a:hover { color: rgba(255,255,255,.6); }
 
     /* ══════════════════════════════════════
-       RESPONSIVE  (reagiert auf echte Breite UND Browser-Zoom)
+       RESPONSIVE
     ══════════════════════════════════════ */
     @media (max-width: 1100px) {
       .hero-inner { grid-template-columns: 1fr; }
       .hero-card { display: none; }
       .hero-stats { grid-template-columns: repeat(3, 1fr); }
       .main-wrap { grid-template-columns: 1fr; }
-      .sidebar { display: none; position: static; max-height: none; }
+      .sidebar { display: none; position: static; }
       .sidebar.open { display: block; }
       .mob-filter-btn { display: flex; }
-      /* auto-fill passt sich dem verfügbaren Platz an */
-      .listing-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+      .listing-grid { grid-template-columns: repeat(2, 1fr); }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .newsletter-inner { grid-template-columns: 1fr; gap: 14px; }
     }
 
-    @media (max-width: 860px) {
-      /* Sekundäre Header-Buttons ausblenden wenn eng */
-      .header-right .hdr-btn-ghost { display: none; }
-      .header-right .hdr-btn-outline { display: none; }
-      .search-bar select { display: none; }
-    }
-
     @media (max-width: 768px) {
       .topbar .top-left { display: none; }
+      .header-right .hdr-btn-ghost { display: none; }
       .mob-toggle { display: flex; }
+      .search-bar select { display: none; }
       .hero { padding: 36px 0 30px; }
-      .hero h1 { font-size: clamp(22px, 5vw, 30px); }
+      .hero h1 { font-size: 30px; }
       .hero-stats { grid-template-columns: 1fr 1fr; }
       .hero-cta { flex-direction: column; align-items: flex-start; }
       .hero-cta a { width: 100%; justify-content: center; text-align: center; }
-      .listing-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .listing-grid { grid-template-columns: 1fr; }
       .panel-head { flex-direction: column; align-items: flex-start; }
       .features-grid { grid-template-columns: 1fr 1fr; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 480px) {
-      .container, .main-wrap { padding: 0 14px; }
-      .hero h1 { font-size: clamp(20px, 6vw, 26px); }
+      .container, .main-wrap { padding: 0 16px; }
+      .hero h1 { font-size: 26px; }
       .hero-stats { grid-template-columns: 1fr 1fr; }
       .features-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
       .footer-bottom { flex-direction: column; gap: 8px; }
       .newsletter-form { flex-direction: column; }
       .newsletter-form input { min-width: 0; width: 100%; }
+      .header-right .hdr-btn-outline { display: none; }
     }
 
     /* ── Werbebanner ── */
@@ -573,8 +565,7 @@
       <a href="datenschutz.html">Datenschutz</a>
     </div>
     <div class="top-right">
-      <a href="dashboard.html" data-auth-only style="display:none;">👤 Mein Konto</a>
-      <a href="meine-anfragen.html" data-auth-only style="display:none;">💬 Nachrichten</a>
+      <!-- Bewusst leer – Konto/Nachrichten sind im Avatar-Dropdown oben rechts -->
     </div>
   </div>
 </div>
@@ -608,12 +599,7 @@
       <a href="registrieren.html" data-guest-only>
         <button class="hdr-btn hdr-btn-outline"><span data-i18n="nav.register">Registrieren</span></button>
       </a>
-      <a href="dashboard.html" data-auth-only style="display:none;">
-        <button class="hdr-btn hdr-btn-ghost">👤 Konto</button>
-      </a>
-      <a href="meine-anfragen.html" data-auth-only style="display:none;">
-        <button class="hdr-btn hdr-btn-ghost">💬 Nachrichten</button>
-      </a>
+      <!-- Avatar-Dropdown wird hier von auth-header.js eingefügt wenn eingeloggt -->
       <a href="anzeige-erstellen.html">
         <button class="hdr-btn hdr-btn-primary">＋ Anzeige erstellen</button>
       </a>
@@ -842,6 +828,13 @@
   // Mobile Hamburger
   document.getElementById("mob-toggle")?.addEventListener("click", () => {
     document.getElementById("mob-nav")?.classList.toggle("open");
+  });
+
+  // Logout (Mobile Nav)
+  document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
   });
 
   // Mobile Filter
