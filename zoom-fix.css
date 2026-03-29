@@ -1,0 +1,202 @@
+/*
+ * ══════════════════════════════════════════════════════════════
+ *  1A Motor – Global Zoom Fix & Responsive Scale System
+ *  Einbinden in alle HTML-Seiten VOR den seitenspezifischen Styles:
+ *  <link rel="stylesheet" href="zoom-fix.css" />
+ * ══════════════════════════════════════════════════════════════
+ *
+ *  PROBLEM: Bei Strg+/Strg- (Browser-Zoom) brechen Layouts zusammen,
+ *  weil feste px-Werte nicht mit dem Zoom skalieren.
+ *
+ *  LÖSUNG:
+ *  1. html font-size auf 100% (= Browser-Standard, respektiert Zoom)
+ *  2. min-width auf Container gesetzt → kein Zusammenbrechen
+ *  3. Alle kritischen Layout-Elemente mit flex-shrink:0 / min-width:0
+ *  4. overflow-x:hidden auf body verhindert horizontalen Scroll
+ *  5. Viewport-Meta bleibt auf initial-scale=1.0 (kein user-scalable=no!)
+ */
+
+/* ── Basis-Reset für Zoom-Stabilität ─────────────────────────── */
+html {
+  font-size: 100%;          /* Respektiert Browser-Zoom vollständig */
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%; /* Verhindert automatische Schriftanpassung */
+  text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;        /* Kein horizontaler Scroll beim Verkleinern */
+  min-width: 320px;          /* Absolute Untergrenze */
+}
+
+/* ── Container: stabile Breite ───────────────────────────────── */
+.container {
+  min-width: 0;              /* Flex-Kinder dürfen schrumpfen */
+  width: 100%;
+}
+
+/* ── Header: nie umbrechen ───────────────────────────────────── */
+.header,
+.header-inner {
+  min-width: 0;
+}
+
+/* Logo nie quetschen */
+.logo,
+.logo-mark {
+  flex-shrink: 0 !important;
+}
+
+/* ── Suchleiste: skaliert mit Flexbox ───────────────────────── */
+.search-bar,
+.header-search {
+  min-width: 0;
+  flex: 1 1 200px;           /* Kann schrumpfen aber nicht unter 200px */
+}
+
+.search-bar input,
+.header-search input {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* Kategorie-Dropdown: erst bei engem Viewport ausblenden */
+@media (max-width: 900px) {
+  .search-bar select,
+  .header-search select {
+    display: none;
+  }
+}
+
+/* ── Header-Buttons: Priorität beim Schrumpfen ───────────────── */
+.header-right,
+.header-actions {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+/* Sekundäre Buttons ausblenden wenn eng */
+@media (max-width: 860px) {
+  .hdr-btn-ghost:not(.hdr-btn-primary) {
+    display: none;
+  }
+  .hdr-btn-outline {
+    display: none;
+  }
+}
+
+/* ── Grid-Layouts: reagieren auf Zoom ───────────────────────── */
+
+/* index.html Listing Grid */
+.listing-grid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+/* index.html Main Wrap */
+.main-wrap {
+  grid-template-columns: minmax(220px, 256px) 1fr;
+}
+
+@media (max-width: 900px) {
+  .main-wrap {
+    grid-template-columns: 1fr !important;
+  }
+  .sidebar {
+    position: static !important;
+    top: auto !important;
+    max-height: none !important;
+    display: none;
+  }
+  .sidebar.open {
+    display: block;
+  }
+  .mob-filter-btn {
+    display: flex !important;
+  }
+}
+
+/* suche.html Layout */
+.search-layout {
+  grid-template-columns: minmax(220px, 260px) 1fr;
+}
+
+@media (max-width: 900px) {
+  .search-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Dashboard / interne Seiten: 2-Spalten Layout ────────────── */
+.layout {
+  grid-template-columns: minmax(200px, 240px) 1fr;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr !important;
+  }
+  .layout .sidebar {
+    position: static !important;
+  }
+}
+
+/* ── Hero Section ────────────────────────────────────────────── */
+.hero-inner {
+  grid-template-columns: 1fr minmax(300px, 380px);
+}
+
+@media (max-width: 900px) {
+  .hero-inner {
+    grid-template-columns: 1fr !important;
+  }
+  .hero-card {
+    display: none;
+  }
+}
+
+/* ── Features Grid ───────────────────────────────────────────── */
+.features-grid {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+/* ── Footer Grid ─────────────────────────────────────────────── */
+.footer-grid {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+/* ── Tabellen: horizontaler Scroll ───────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  min-width: 540px;
+}
+
+/* ── Allgemeine Flex-Sicherheit ───────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+/* Text nie aus Container laufen lassen */
+h1, h2, h3, h4, h5, h6, p, span, a, td, th, li {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── Bilder und Medien immer responsive ─────────────────────── */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Print-Skalierung (Bonus) ────────────────────────────────── */
+@media print {
+  body {
+    font-size: 12pt;
+  }
+  .header, .footer, .sidebar, .mob-filter-btn {
+    display: none !important;
+  }
+}

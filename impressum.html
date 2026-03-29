@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Impressum – 1A Motor</title>
+<style>
+  :root{
+    --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280;
+    --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0;
+    --shadow:0 4px 20px rgba(18,58,99,0.08); --radius:14px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
+  body{ background:var(--bg); color:var(--text); line-height:1.6; }
+  a{ text-decoration:none; color:var(--blue); }
+  a:hover{ text-decoration:underline; }
+  .container{ max-width:860px; margin:0 auto; padding:0 20px; }
+
+  .header{
+    background:#fff; border-bottom:2px solid var(--border);
+    position:sticky; top:0; z-index:50;
+    box-shadow:0 2px 12px rgba(18,58,99,0.06);
+  }
+  .header-inner{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; gap:16px;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-size:24px; font-weight:800; color:var(--dark-blue);
+  }
+   .logo-img-new{
+    width:40px; height:40px; border-radius:10px;
+    background:linear-gradient(135deg,var(--dark-blue),#72b6ff);
+    display:grid; place-items:center; color:#fff; font-size:17px; font-weight:900;
+  }
+  .back-link{ font-size:14px; color:var(--blue); font-weight:600; }
+
+  .page{ padding:40px 0 60px; }
+
+  .breadcrumb{
+    font-size:13px; color:var(--muted); margin-bottom:24px;
+    display:flex; gap:8px; align-items:center;
+  }
+  .breadcrumb a{ color:var(--muted); }
+  .breadcrumb a:hover{ color:var(--dark-blue); text-decoration:none; }
+
+  .card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:36px 40px; margin-bottom:18px;
+  }
+  .card h1{
+    font-size:28px; color:var(--dark-blue); margin-bottom:6px; font-weight:800;
+  }
+  .card .subtitle{
+    color:var(--muted); font-size:14px; margin-bottom:28px;
+    padding-bottom:20px; border-bottom:1px solid var(--border);
+  }
+  h2{
+    font-size:16px; color:var(--dark-blue); font-weight:700;
+    margin:24px 0 10px;
+  }
+  h2:first-of-type{ margin-top:0; }
+  p{ font-size:14px; color:#374151; margin-bottom:10px; line-height:1.7; }
+  .info-block{
+    background:#f8fafc; border:1px solid var(--border);
+    border-radius:10px; padding:16px 18px; margin-bottom:14px;
+  }
+  .info-block p{ margin:0; line-height:1.8; }
+  .info-block strong{ color:var(--dark-blue); }
+
+  .notice-box{
+    background:#fffbeb; border:1px solid #fcd34d;
+    border-radius:10px; padding:14px 18px; margin-top:20px;
+  }
+  .notice-box p{ margin:0; font-size:13px; color:#92400e; }
+
+  footer{
+    margin-top:40px; padding:20px 0;
+    border-top:1px solid var(--border);
+    text-align:center; font-size:12px; color:var(--muted);
+  }
+  footer a{ color:var(--muted); margin:0 8px; }
+  footer a:hover{ color:var(--dark-blue); text-decoration:none; }
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+    <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="index.html">Startseite</a>
+      <span>›</span>
+      <span>Impressum</span>
+    </div>
+
+    <div class="card">
+      <h1>Impressum</h1>
+      <p class="subtitle">Angaben gemäß § 5 TMG (Telemediengesetz)</p>
+
+      <h2>Anbieter & Verantwortlicher</h2>
+      <div class="info-block">
+        <p>
+          <strong>Ismail Yön</strong><br />
+          1A Motor<br />
+          In der Breite 12<br />
+          71116 Gärtringen<br />
+          Deutschland
+        </p>
+      </div>
+
+      <h2>Kontakt</h2>
+      <div class="info-block">
+        <p>
+          <strong>Telefon:</strong> 01785648456<br />
+          <strong>E-Mail:</strong> <a href="/cdn-cgi/l/email-protection#e881868e87a8d98985879c879ac68c8d"><span class="__cf_email__" data-cfemail="6f060109002f5e0e02001b001d410b0a">[email&#160;protected]</span></a>
+        </p>
+      </div>
+
+      <h2>Umsatzsteuer-Identifikationsnummer</h2>
+      <div class="info-block">
+        <p>
+
+        </p>
+      </div>
+
+      <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+      <div class="info-block">
+        <p>
+          Ismail Yön<br />
+          In der Breite 12<br />
+          71116 Gärtringen
+        </p>
+      </div>
+
+      <h2>Plattform der EU-Kommission zur Online-Streitbeilegung</h2>
+      <p>
+        Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+        <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>
+      </p>
+      <p>Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+
+      <h2>Haftung für Inhalte</h2>
+      <p>Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen.</p>
+
+      <h2>Haftung für Links</h2>
+      <p>Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
+
+      <h2>Urheberrecht</h2>
+      <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Beiträge Dritter sind als solche gekennzeichnet. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
+
+  
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    © 2026 1A Motor &nbsp;|&nbsp;
+    <a href="impressum.html">Impressum</a>
+    <a href="datenschutz.h

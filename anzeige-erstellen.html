@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link rel="stylesheet" href="zoom-fix.css" />
+<title>Anzeige erstellen – 1A Motor</title>
+<style>
+  :root{ --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0; --light-blue:#72b6ff; --success:#059669; --warning:#d97706; --danger:#dc2626; --shadow:0 4px 20px rgba(18,58,99,0.08); --shadow-lg:0 12px 40px rgba(18,58,99,0.13); --radius:14px; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ font-size:100%; }
+  .bogus{ font-family:Arial,Helvetica,sans-serif; }
+  body{ overflow-x:hidden; min-width:320px; background:var(--bg); color:var(--text); line-height:1.5; }
+  a{ text-decoration:none; color:inherit; }
+  .container{ max-width:1200px; margin:0 auto; padding:0 clamp(12px,2vw,20px); }
+
+  /* Header */
+  .header{ background:#fff; border-bottom:2px solid var(--border); position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(18,58,99,0.06); }
+  .header-inner{ display:flex; justify-content:space-between; align-items:center; gap:18px; padding:14px 0; }
+  .logo{ display:flex; align-items:center; gap:10px; font-size:24px; font-weight:800; color:var(--dark-blue); }
+  
+  .header-actions{ display:flex; align-items:center; gap:12px; font-size:14px; }
+  .header-actions a{ color:#334155; font-weight:600; }
+
+  .page{ padding:28px 0 60px; }
+
+  /* Step Indicator */
+  .steps{ display:flex; align-items:center; gap:0; margin-bottom:28px; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; box-shadow:var(--shadow); overflow-x:auto; }
+  .step{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .step-num{ width:28px; height:28px; border-radius:50%; background:#e2e8f0; color:#64748b; font-size:12px; font-weight:800; display:grid; place-items:center; flex-shrink:0; }
+  .step.done .step-num{ background:var(--success); color:#fff; }
+  .step.active .step-num{ background:var(--dark-blue); color:#fff; }
+  .step-label{ font-size:13px; font-weight:600; color:var(--muted); white-space:nowrap; }
+  .step.active .step-label{ color:var(--dark-blue); }
+  .step.done .step-label{ color:var(--success); }
+  .step-sep{ flex:1; height:2px; background:#e2e8f0; margin:0 10px; min-width:20px; }
+  .step.done + .step-sep{ background:var(--success); }
+
+  /* Layout */
+  .layout{ display:grid; grid-template-columns:1fr 300px; gap:22px; align-items:start; }
+
+  /* Form Card */
+  .form-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .section-head{ padding:18px 22px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#f8fafc,#fff); display:flex; align-items:center; gap:10px; }
+  .section-icon{ width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--dark-blue),#2a5278); display:grid; place-items:center; color:#fff; font-size:15px; flex-shrink:0; }
+  .section-head h2{ font-size:16px; color:var(--dark-blue); font-weight:700; }
+  .section-head p{ font-size:12px; color:var(--muted); margin-top:1px; }
+  .section-body{ padding:20px 22px; }
+  .section-divider{ height:1px; background:var(--border); }
+
+  /* Form Fields */
+  .grid-2{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .form-group{ display:flex; flex-direction:column; gap:5px; }
+  .form-group + .form-group{ margin-top:0; }
+  label{ font-size:13px; font-weight:700; color:#334155; }
+  label .req{ color:var(--danger); margin-left:2px; }
+  input,select,textarea{ width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:10px; outline:none; font-size:14px; background:#fff; transition:border-color .15s,box-shadow .15s; }
+  input:focus,select:focus,textarea:focus{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(43,108,176,0.1); }
+  textarea{ min-height:130px; resize:vertical; }
+  .helper{ font-size:12px; color:var(--muted); margin-top:3px; }
+
+  /* Bild Upload */
+  .upload-zone{
+    border:2px dashed #c5d9ea; background:#f8fbff; border-radius:12px;
+    padding:28px 20px; text-align:center; cursor:pointer;
+    transition:border-color .2s, background .2s; margin-bottom:14px;
+  }
+  .upload-zone:hover, .upload-zone.drag-over{ border-color:var(--blue); background:#eff6ff; }
+  .upload-zone .upload-icon{ font-size:32px; margin-bottom:8px; }
+  .upload-zone p{ color:var(--muted); font-size:14px; margin-bottom:8px; }
+  .upload-zone strong{ color:var(--dark-blue); }
+  .upload-label{ display:inline-flex; align-items:center; gap:6px; background:var(--dark-blue); color:#fff; padding:9px 16px; border-radius:999px; font-weight:700; font-size:13px; cursor:pointer; transition:background .15s; }
+  .upload-label:hover{ background:var(--blue); }
+
+  .preview-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .preview-item{
+    aspect-ratio:1; border-radius:10px; border:1px solid var(--border);
+    background:linear-gradient(135deg,#dfe7ef,#f2f7fb);
+    display:grid; place-items:center; color:var(--muted); font-size:22px;
+    position:relative; overflow:hidden;
+  }
+  .preview-item img{ width:100%; height:100%; object-fit:cover; }
+  .preview-item .remove-img{
+    position:absolute; top:4px; right:4px;
+    width:20px; height:20px; border-radius:50%;
+    background:rgba(0,0,0,0.5); color:#fff; font-size:12px;
+    display:grid; place-items:center; cursor:pointer;
+    border:none; line-height:1;
+  }
+  .preview-item.main-img::after{ content:"Hauptbild"; position:absolute; bottom:4px; left:4px; background:var(--dark-blue); color:#fff; font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; }
+
+  /* Checkboxes */
+  .checkbox-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .check-item{ display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--border); border-radius:9px; background:#f8fbff; cursor:pointer; font-size:13px; color:#334155; transition:border-color .15s, background .15s; }
+  .check-item:hover{ border-color:var(--blue); background:#eff6ff; }
+  .check-item input{ width:auto; margin:0; }
+
+  /* Sidebar */
+  .sidebar{ display:flex; flex-direction:column; gap:16px; position:sticky; top:86px; }
+  .tip-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .tip-head{ padding:14px 16px; background:linear-gradient(135deg,#1e3a52,#2a5278); }
+  .tip-head h3{ font-size:14px; font-weight:700; color:#fff; }
+  .tip-list{ padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+  .tip-item{ display:flex; gap:9px; align-items:flex-start; font-size:13px; color:#475569; }
+  .tip-dot{ width:6px; height:6px; border-radius:50%; background:var(--light-blue); flex-shrink:0; margin-top:5px; }
+
+  .progress-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; }
+  .progress-card h3{ font-size:14px; font-weight:700; color:var(--dark-blue); margin-bottom:12px; }
+  .progress-item{ display:flex; align-items:center; gap:8px; font-size:13px; padding:5px 0; color:var(--muted); }
+  .progress-item .check{ width:18px; height:18px; border-radius:50%; border:1.5px solid #d1d5db; display:grid; place-items:center; font-size:10px; flex-shrink:0; }
+  .progress-item.filled .check{ background:var(--success); border-color:var(--success); color:#fff; }
+  .progress-item.filled{ color:#334155; }
+  .progress-bar-wrap{ background:#e2e8f0; border-radius:999px; height:6px; margin-top:12px; }
+  .progress-bar{ background:linear-gradient(90deg,var(--dark-blue),var(--light-blue)); height:6px; border-radius:999px; transition:width .3s; }
+
+  /* Action Bar */
+  .action-bar{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:18px 22px; border-top:1px solid var(--border); background:#fafbfc; }
+  .action-bar-right{ display:flex; gap:10px; }
+  .btn-back{ background:#fff; color:var(--dark-blue); border:1px solid var(--border); border-radius:10px; padding:11px 18px; font-size:14px; font-weight:700; cursor:pointer; }
+  .btn-draft{ background:#f1f5f9; color:#334155; border:1px solid var(--border); border-radius:10px; padding:11px 18px; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s; }
+  .btn-draft:hover{ background:#e2e8f0; }
+  .btn-publish{ background:var(--dark-blue); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s; display:flex; align-items:center; gap:8px; }
+  .btn-publish:hover{ background:var(--blue); }
+  .btn-publish:disabled{ opacity:.6; cursor:not-allowed; }
+  /* ── Upload Status Overlay ── */
+  .upload-overlay{
+    position:fixed; inset:0; background:rgba(13,27,42,0.75);
+    display:none; align-items:center; justify-content:center;
+    z-index:9999; backdrop-filter:blur(4px);
+  }
+  .upload-overlay.active{ display:flex; }
+  .upload-box{
+    background:#fff; border-radius:20px; padding:36px 40px;
+    max-width:420px; width:90%; text-align:center;
+    box-shadow:0 24px 64px rgba(0,0,0,0.25);
+  }
+  .upload-spinner{
+    width:56px; height:56px; border-radius:50%;
+    border:5px solid #e2e8f0; border-top-color:var(--dark-blue);
+    animation:spin .8s linear infinite; margin:0 auto 18px;
+  }
+  @keyframes spin{ to{transform:rotate(360deg)} }
+  .upload-box h3{ font-size:18px; font-weight:800; color:var(--dark-blue); margin-bottom:8px; }
+  .upload-box .upload-step{ font-size:14px; color:var(--muted); margin-bottom:18px; min-height:22px; }
+  .upload-track{ background:#e2e8f0; border-radius:999px; height:8px; overflow:hidden; margin-bottom:10px; }
+  .upload-fill{
+    height:100%; border-radius:999px;
+    background:linear-gradient(90deg,var(--dark-blue),var(--light-blue));
+    transition:width .4s ease; width:0%;
+  }
+  .upload-pct{ font-size:13px; font-weight:700; color:var(--dark-blue); }
+
+  /* Erfolg */
+  .upload-success{ display:none; }
+  .upload-success .success-icon{ font-size:52px; margin-bottom:12px; }
+  .upload-success h3{ font-size:20px; font-weight:800; color:var(--success); margin-bottom:6px; }
+  .upload-success p{ font-size:14px; color:var(--muted); }
+
+  /* Button während Upload */
+  .btn-publish.uploading{
+    background:#93a8be !important; cursor:not-allowed !important;
+    pointer-events:none;
+  }
+  .btn-publish .btn-spinner{
+    display:none; width:16px; height:16px; border-radius:50%;
+    border:2px solid rgba(255,255,255,0.4); border-top-color:#fff;
+    animation:spin .7s linear infinite;
+  }
+  .btn-publish.uploading .btn-spinner{ display:block; }
+  .btn-publish.uploading .btn-icon{ display:none; }
+
+
+  /* Edit Mode Banner */
+  .edit-banner{ background:linear-gradient(135deg,#1e3a52,#2a5278); color:#fff; padding:12px 22px; display:none; align-items:center; gap:10px; font-size:14px; }
+  .edit-banner.show{ display:flex; }
+  .edit-banner strong{ font-weight:700; }
+
+  @media(max-width:1100px){ .layout{ grid-template-columns:1fr; } .sidebar{ position:static; } }
+  @media(max-width:760px){ .grid-2,.grid-3,.grid-4,.checkbox-grid{ grid-template-columns:1fr; } .preview-grid{ grid-template-columns:repeat(3,1fr); } .steps{ gap:0; } .step-label{ display:none; } }
+
+  /* ═══════════════════════════════════════
+     MOBILE RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .container { padding: 0 14px; }
+    .header-inner { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
+    .logo { font-size: 18px; }
+    .logo-badge, .logo-mark { width: 34px; height: 34px; font-size: 14px; }
+    .header-actions { display: none; }
+    .layout { grid-template-columns: 1fr !important; }
+    .sidebar { position: static !important; top: auto !important; }
+    .page-head h1 { font-size: 22px !important; }
+    .page-head p { font-size: 13px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .stat-value { font-size: 22px !important; }
+    .panel { padding: 14px !important; }
+    .table-wrap { overflow-x: auto; }
+    .table { min-width: 600px; }
+    .bottom-grid { grid-template-columns: 1fr !important; }
+    .listing-grid { grid-template-columns: 1fr !important; }
+    .listing-card { grid-template-columns: 1fr !important; }
+    .card-image { min-height: 180px !important; }
+    .filter-bar { flex-direction: column; }
+    .filter-bar input, .filter-bar select { width: 100%; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr !important; }
+    .plan-grid { grid-template-columns: 1fr !important; }
+    .info-grid, .bottom-grid { grid-template-columns: 1fr !important; }
+    .plan-card.featured { transform: none; }
+    .nav-item { padding: 9px 10px; font-size: 13px; }
+    .profile-name { font-size: 14px; }
+    .tab-bar { flex-wrap: wrap; }
+    .tab { font-size: 12px; padding: 6px 10px; }
+    .msg { max-width: 90% !important; }
+    .reply-box { flex-direction: column; }
+    .reply-input { width: 100%; }
+    .chat-messages { max-height: 250px; }
+    .page { padding: 16px 0 32px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .logo-name { font-size: 18px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .page-head { flex-direction: column; align-items: flex-start !important; }
+    .page-head .new-btn, .page-head a { width: 100%; text-align: center; }
+    .action-links { flex-wrap: wrap; }
+    .inq-header { flex-direction: column; }
+    .inq-meta { flex-direction: column; gap: 4px; }
+    .sidebar-profile { padding: 16px 14px; }
+  }
+
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+    <div class="header-actions">
+      <a href="dashboard.html">← Dashboard</a>
+      <a href="meine-anzeigen.html">Meine Anzeigen</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container">
+
+    <!-- Step Indicator -->
+    <div class="steps">
+      <div class="step active" id="step-1">
+        <div class="step-num">1</div>
+        <div class="step-label">Grunddaten</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step" id="step-2">
+        <div class="step-num">2</div>
+        <div class="step-label">Preis & Ort</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step" id="step-3">
+        <div class="step-num">3</div>
+        <div class="step-label">Technik</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step" id="step-4">
+        <div class="step-num">4</div>
+        <div class="step-label">Beschreibung</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step" id="step-5">
+        <div class="step-num">5</div>
+        <div class="step-label">Bilder</div>
+      </div>
+    </div>
+
+    <div class="layout">
+
+      <!-- Formular -->
+      <div>
+        <form id="listing-form">
+
+          <!-- Edit Mode Banner -->
+          <div class="edit-banner" id="edit-banner">
+            ✏️ <strong>Bearbeitungsmodus</strong> — Du bearbeitest eine bestehende Anzeige.
+          </div>
+
+          <!-- 1. Grunddaten -->
+          <div class="form-card" style="margin-bottom:16px;">
+            <div class="section-head">
+              <div class="section-icon">📋</div>
+              <div><h2>1. Grunddaten</h2><p>Titel, Kategorie, Hersteller und Zustand</p></div>
+            </div>
+            <div class="section-body">
+              <div class="form-group" style="margin-bottom:14px;">
+                <label for="titel">Anzeigentitel <span class="req">*</span></label>
+                <input id="titel" type="text" placeholder="z. B. Mercedes OM651 Dieselmotor – geprüft – sofort verfügbar" />
+                <span class="helper">Nutze: Hersteller + Modell + Zustand + Besonderheit</span>
+              </div>
+              <div class="form-group" style="margin-bottom:14px;">
+                <label for="kategorie">Kategorie <span class="req">*</span></label>
+                <select id="kategorie">
+                  <option value="">Bitte auswählen...</option>
+                  <optgroup label="Fahrzeugmotoren">
+                    <option value="automotor">Automotor</option>
+                    <option value="dieselmotor-auto">Dieselmotor Auto</option>
+                    <option value="benzinmotor-auto">Benzinmotor Auto</option>
+                    <option value="hybridmotor">Hybridmotor</option>
+                    <option value="elektromotor-auto">Elektromotor Auto</option>
+                    <option value="motorradmotor">Motorradmotor</option>
+                    <option value="roller-motor">Roller Motor</option>
+                    <option value="lkw-motor">LKW Motor</option>
+                    <option value="busmotor">Busmotor</option>
+                    <option value="traktormotor">Traktormotor</option>
+                    <option value="landmaschinenmotor">Landmaschinenmotor</option>
+                    <option value="baumaschinenmotor">Baumaschinenmotor</option>
+                    <option value="baggermotor">Baggermotor</option>
+                    <option value="radlader-motor">Radlader Motor</option>
+                    <option value="gabelstapler-motor">Gabelstapler Motor</option>
+                  </optgroup>
+                  <optgroup label="Boot & Flug">
+                    <option value="bootsmotor">Bootsmotor</option>
+                    <option value="aussenbordmotor">Außenbordmotor</option>
+                    <option value="innenbordmotor">Innenbordmotor</option>
+                    <option value="schiffsdieselmotor">Schiffsdieselmotor</option>
+                    <option value="jetski-motor">Jetski Motor</option>
+                    <option value="flugzeugmotor">Flugzeugmotor</option>
+                    <option value="turbinenmotor">Turbinenmotor</option>
+                    <option value="hubschraubermotor">Hubschraubermotor</option>
+                  </optgroup>
+                  <optgroup label="Industriemotoren">
+                    <option value="elektromotor-industrie">Elektromotor Industrie</option>
+                    <option value="drehstrommotor">Drehstrommotor</option>
+                    <option value="servomotor">Servomotor</option>
+                    <option value="schrittmotor">Schrittmotor</option>
+                    <option value="getriebemotor">Getriebemotor</option>
+                    <option value="synchronmotor">Synchronmotor</option>
+                    <option value="asynchronmotor">Asynchronmotor</option>
+                    <option value="generator-motor">Generator Motor</option>
+                  </optgroup>
+                  <optgroup label="Maschinenmotoren">
+                    <option value="pumpenmotor">Pumpenmotor</option>
+                    <option value="kompressormotor">Kompressormotor</option>
+                    <option value="kranmotor">Kranmotor</option>
+                    <option value="aufzugmotor">Aufzugmotor</option>
+                    <option value="foerderbandmotor">Förderbandmotor</option>
+                  </optgroup>
+                  <optgroup label="Freizeit & Event">
+                    <option value="karussellmotor">Karussellmotor</option>
+                    <option value="achterbahnmotor">Achterbahnmotor</option>
+                    <option value="drohnenmotor">Drohnenmotor</option>
+                    <option value="rc-motor">RC Motor</option>
+                    <option value="kartmotor">Kartmotor</option>
+                  </optgroup>
+                  <optgroup label="Garten & Klein">
+                    <option value="rasenmaehermotor">Rasenmähermotor</option>
+                    <option value="kettensaegenmotor">Kettensägenmotor</option>
+                    <option value="stromaggregat-motor">Stromaggregat Motor</option>
+                    <option value="wasserpumpenmotor">Wasserpumpenmotor</option>
+                  </optgroup>
+                  <optgroup label="Spezialmotoren">
+                    <option value="hydraulikmotor">Hydraulikmotor</option>
+                    <option value="pneumatikmotor">Pneumatikmotor</option>
+                    <option value="cnc-motor">CNC Motor</option>
+                    <option value="robotermotor">Robotermotor</option>
+                    <option value="hochleistungsmotor">Hochleistungsmotor</option>
+                  </optgroup>
+                  <optgroup label="Elektromotoren Spezial">
+                    <option value="e-bike-motor">E-Bike Motor</option>
+                    <option value="elektro-bootsmotor">Elektro Bootsmotor</option>
+                    <option value="energiesparmotor">Energiesparmotor</option>
+                  </optgroup>
+                  <optgroup label="Weitere">
+                    <option value="gasturbinenmotor">Gasturbinenmotor</option>
+                    <option value="austauschmotor">Austauschmotor</option>
+                    <option value="sonstiges">Sonstiges</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="grid-3">
+                <div class="form-group">
+                  <label for="hersteller">Hersteller</label>
+                  <input id="hersteller" type="text" placeholder="z. B. Mercedes, CAT, Siemens" />
+                </div>
+                <div class="form-group">
+                  <label for="modell">Modell / Typ</label>
+                  <input id="modell" type="text" placeholder="z. B. OM651, B47" />
+                </div>
+                <div class="form-group">
+                  <label for="zustand">Zustand <span class="req">*</span></label>
+                  <select id="zustand">
+                    <option value="Neu">Neu</option>
+                    <option value="Gebraucht" selected>Gebraucht</option>
+                    <option value="Generalüberholt">Generalüberholt</option>
+                    <option value="Austauschmotor">Austauschmotor</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Preis & Standort -->
+          <div class="form-card" style="margin-bottom:16px;">
+            <div class="section-head">
+              <div class="section-icon">💶</div>
+              <div><h2>2. Preis & Standort</h2><p>Preis, Versand und Standort</p></div>
+            </div>
+            <div class="section-body">
+              <div class="grid-4" style="margin-bottom:14px;">
+                <div class="form-group">
+                  <label for="preis">Preis (€) <span class="req">*</span></label>
+                  <input id="preis" type="number" placeholder="z. B. 24900" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="garantie">Garantie (Monate)</label>
+                  <input id="garantie" type="number" placeholder="z. B. 12" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="versand">Versandart</label>
+                  <select id="versand">
+                    <option value="">Bitte auswählen</option>
+                    <option value="Abholung">Abholung</option>
+                    <option value="Speditionsversand">Speditionsversand</option>
+                    <option value="Paketversand">Paketversand</option>
+                    <option value="Abholung oder Versand">Abholung oder Versand</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="standort">Standort <span class="req">*</span></label>
+                  <input id="standort" type="text" placeholder="z. B. Stuttgart" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Technische Daten -->
+          <div class="form-card" style="margin-bottom:16px;">
+            <div class="section-head">
+              <div class="section-icon">🔧</div>
+              <div><h2>3. Technische Daten</h2><p>Baujahr, Leistung, Kraftstoff</p></div>
+            </div>
+            <div class="section-body">
+              <div class="grid-4" style="margin-bottom:14px;">
+                <div class="form-group">
+                  <label for="baujahr">Baujahr</label>
+                  <input id="baujahr" type="number" placeholder="z. B. 2021" />
+                </div>
+                <div class="form-group">
+                  <label for="km">Kilometerstand</label>
+                  <input id="km" type="number" placeholder="z. B. 145000" />
+                </div>
+                <div class="form-group">
+                  <label for="stunden">Betriebsstunden</label>
+                  <input id="stunden" type="number" placeholder="z. B. 3200" />
+                </div>
+                <div class="form-group">
+                  <label for="leistung">Leistung (PS)</label>
+                  <input id="leistung" type="number" placeholder="z. B. 190" />
+                </div>
+              </div>
+              <div class="grid-3">
+                <div class="form-group">
+                  <label for="kraftstoff">Kraftstoff</label>
+                  <select id="kraftstoff">
+                    <option value="">Bitte auswählen</option>
+                    <option>Diesel</option><option>Benzin</option><option>Elektro</option>
+                    <option>Hybrid</option><option>Gas</option><option>Turbine</option><option>Sonstiges</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="getriebe">Getriebeart</label>
+                  <select id="getriebe">
+                    <option value="">Bitte auswählen</option>
+                    <option>Schaltgetriebe</option><option>Automatik</option>
+                    <option>Halbautomatik</option><option>Direktantrieb</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="motorcode">Motorkennbuchstabe / Teilenr.</label>
+                  <input id="motorcode" type="text" placeholder="z. B. OM651 / B47" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Beschreibung -->
+          <div class="form-card" style="margin-bottom:16px;">
+            <div class="section-head">
+              <div class="section-icon">📝</div>
+              <div><h2>4. Beschreibung</h2><p>Zustand, Historie, Lieferumfang</p></div>
+            </div>
+            <div class="section-body">
+              <div class="form-group">
+                <label for="beschreibung">Ausführliche Beschreibung</label>
+                <textarea id="beschreibung" placeholder="Beschreibe Zustand, Herkunft, Besonderheiten, bekannte Mängel und was im Lieferumfang enthalten ist..."></textarea>
+                <span class="helper">Je konkreter deine Beschreibung, desto höher die Anfragequalität.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Bilder -->
+          <div class="form-card" style="margin-bottom:16px;">
+            <div class="section-head">
+              <div class="section-icon">📷</div>
+              <div><h2>5. Bilder</h2><p>Bis zu 12 Bilder – das erste wird Hauptbild</p></div>
+            </div>
+            <div class="section-body">
+              <div class="upload-zone" id="upload-zone">
+                <div class="upload-icon">🖼️</div>
+                <p>Bilder hierher ziehen oder <strong>auswählen</strong></p>
+                <p style="font-size:12px;margin-bottom:12px;">JPG, PNG – max. 12 Bilder – Typenschild erhöht Vertrauen</p>
+                <label class="upload-label" for="bilder">📁 Bilder auswählen</label>
+                <input id="bilder" type="file" multiple accept="image/*" style="display:none;" />
+              </div>
+              <div class="preview-grid" id="preview-grid"></div>
+            </div>
+          </div>
+
+          <!-- 6. Optionen -->
+          <div class="form-card" style="margin-bottom:16px;">
+            <div class="section-head">
+              <div class="section-icon">✅</div>
+              <div><h2>6. Optionen</h2><p>Zusätzliche Angaben für mehr Vertrauen</p></div>
+            </div>
+            <div class="section-body">
+              <div class="checkbox-grid">
+                <label class="check-item"><input type="checkbox" name="opt" value="Geprüfter Händler" /> Geprüfter Händler</label>
+                <label class="check-item"><input type="checkbox" name="opt" value="Rechnung vorhanden" /> Rechnung vorhanden</label>
+                <label class="check-item"><input type="checkbox" name="opt" value="MwSt. ausweisbar" /> MwSt. ausweisbar</label>
+                <label class="check-item"><input type="checkbox" name="opt" value="Sofort verfügbar" /> Sofort verfügbar</label>
+                <label class="check-item"><input type="checkbox" name="opt" value="Abholung möglich" /> Abholung möglich</label>
+                <label class="check-item"><input type="checkbox" name="opt" value="Europaweiter Versand" /> Europaweiter Versand</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Bar -->
+          <div class="action-bar">
+            <a href="meine-anzeigen.html" class="btn-back">← Abbrechen</a>
+            <div class="action-bar-right">
+              <button type="button" class="btn-draft" id="btn-draft">Als Entwurf speichern</button>
+              <button type="submit" class="btn-publish" id="btn-publish">
+                <span class="btn-spinner"></span>
+                <span class="btn-icon">🚀</span>
+                <span id="btn-publish-text">Anzeige veröffentlichen</span>
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+
+        <!-- Fortschritt -->
+        <div class="progress-card">
+          <h3>📊 Anzeigen-Qualität</h3>
+          <div class="progress-item" id="prog-titel">
+            <div class="check">✓</div> Titel vorhanden
+          </div>
+          <div class="progress-item" id="prog-kategorie">
+            <div class="check">✓</div> Kategorie gewählt
+          </div>
+          <div class="progress-item" id="prog-preis">
+            <div class="check">✓</div> Preis eingegeben
+          </div>
+          <div class="progress-item" id="prog-standort">
+            <div class="check">✓</div> Standort angegeben
+          </div>
+          <div class="progress-item" id="prog-beschreibung">
+            <div class="check">✓</div> Beschreibung vorhanden
+          </div>
+          <div class="progress-item" id="prog-bilder">
+            <div class="check">✓</div> Mindestens 1 Bild
+          </div>
+          <div class="progress-bar-wrap" style="margin-top:12px;">
+            <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px;text-align:right;" id="progress-text">0 / 6 ausgefüllt</div>
+        </div>
+
+        <!-- Tipps -->
+        <div class="tip-card">
+          <div class="tip-head"><h3>💡 Tipps für mehr Anfragen</h3></div>
+          <div class="tip-list">
+            <div class="tip-item"><div class="tip-dot"></div>Nutze genaue Motorbezeichnungen statt allgemeiner Begriffe.</div>
+            <div class="tip-item"><div class="tip-dot"></div>Nenne Hersteller, Modell, Baujahr und Zustand immer vollständig.</div>
+            <div class="tip-item"><div class="tip-dot"></div>Fotos vom Typenschild steigern das Käufervertrauen erheblich.</div>
+            <div class="tip-item"><div class="tip-dot"></div>Mindestens 4 Bilder: Vorderansicht, Seite, Typenschild, Details.</div>
+            <div class="tip-item"><div class="tip-dot"></div>Garantie und Versandoptionen erhöhen die Anfragequalität.</div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="auth-header.js"></script>
+<script src="create-listing.js"></script>
+<script>
+// ── Step Indicator ────────────────────────────────────────────────────────────
+function updateSteps() {
+  const filled = [
+    !!document.getElementById("titel")?.value?.trim(),
+    !!document.getElementById("preis")?.value,
+    !!document.getElementById("baujahr")?.value,
+    !!document.getElementById("beschreibung")?.value?.trim(),
+    document.getElementById("preview-grid")?.children.length > 0,
+  ];
+  const steps = [1,2,3,4,5];
+  steps.forEach((s, i) => {
+    const el = document.getElementById(`step-${s}`);
+    if (!el) return;
+    el.classList.remove("active","done");
+    if (filled.slice(0,i).every(Boolean) && !filled[i]) el.classList.add("active");
+    else if (filled[i]) el.classList.add("done");
+  });
+}
+
+// ── Fortschrittsanzeige ───────────────────────────────────────────────────────
+const progressFields = [
+  { id:"prog-titel",        check: () => !!document.getElementById("titel")?.value?.trim() },
+  { id:"prog-kategorie",    check: () => !!document.getElementById("kategorie")?.value },
+  { id:"prog-preis",        check: () => !!document.getElementById("preis")?.value },
+  { id:"prog-standort",     check: () => !!document.getElementById("standort")?.value?.trim() },
+  { id:"prog-beschreibung", check: () => (document.getElementById("beschreibung")?.value||"").trim().length > 20 },
+  { id:"prog-bilder",       check: () => document.getElementById("preview-grid")?.children.length > 0 },
+];
+
+function updateProgress() {
+  let filled = 0;
+  progressFields.forEach(({ id, check }) => {
+    const ok = check();
+    const el = document.getElementById(id);
+    if (el) { el.classList.toggle("filled", ok); el.querySelector(".check").textContent = ok ? "✓" : ""; }
+    if (ok) filled++;
+  });
+  const pct = Math.round((filled / progressFields.length) * 100);
+  const bar = document.getElementById("progress-bar");
+  const txt = document.getElementById("progress-text");
+  if (bar) bar.style.width = pct + "%";
+  if (txt) txt.textContent = `${filled} / ${progressFields.length} ausgefüllt`;
+  updateSteps();
+}
+
+// Events
+["titel","kategorie","preis","standort","beschreibung","baujahr"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input", updateProgress);
+});
+updateProgress();
+
+// ── Drag & Drop Upload Zone ───────────────────────────────────────────────────
+const zone = document.getElementById("upload-zone");
+zone?.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
+zone?.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+zone?.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zone.classList.remove("drag-over");
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+
+// ── Bildvorschau ──────────────────────────────────────────────────────────────
+const previewGrid = document.getElementById("preview-grid");
+let selectedFiles = [];
+
+document.getElementById("bilder")?.addEventListener("change", (e) => {
+  handleFiles(Array.from(e.target.files));
+});
+
+function handleFiles(files) {
+  const images = files.filter(f => f.type.startsWith("image/"));
+  const remaining = 12 - selectedFiles.length;
+  const toAdd = images.slice(0, remaining);
+  selectedFiles = [...selectedFiles, ...toAdd];
+  renderPreviews();
+  updateProgress();
+}
+
+function renderPreviews() {
+  if (!previewGrid) return;
+  previewGrid.innerHTML = "";
+  selectedFiles.forEach((file, i) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const div = document.createElement("div");
+      div.className = "preview-item" + (i === 0 ? " main-img" : "");
+      div.innerHTML = `<img src="${ev.target.result}" alt="Bild ${i+1}"><button class="remove-img" data-idx="${i}" title="Entfernen">✕</button>`;
+      previewGrid.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+previewGrid?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".remove-img");
+  if (!btn) return;
+  const idx = parseInt(btn.getAttribute("data-idx"));
+  selectedFiles.splice(idx, 1);
+  renderPreviews();
+  updateProgress();
+});
+
+// ── Edit Mode Banner ──────────────────────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+if (params.get("edit")) {
+  const banner = document.getElementById("edit-banner");
+  if (banner) banner.classList.add("show");
+  const publishBtn = document.getElementById("btn-publish");
+  if (publishBtn) { publishBtn.innerHTML = '<span>💾</span> Änderungen speichern'; }
+}
+
+// ── Entwurf Button ────────────────────────────────────────────────────────────
+document.getElementById("btn-draft")?.addEventListener("click", () => {
+  const form = document.getElementById("listing-form");
+  if (!form) return;
+  const hiddenStatus = document.createElement("input");
+  hiddenStatus.type = "hidden";
+  hiddenStatus.id = "_draft_mode";
+  hiddenStatus.value = "Entwurf";
+  form.appendChild(hiddenStatus);
+  form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  setTimeout(() => { hiddenStatus.remove(); }, 2000);
+});
+</script>
+
+<!-- Upload Status Overlay -->
+<div class="upload-overlay" id="upload-overlay">
+  <div class="upload-box">
+
+    <!-- Ladeansicht -->
+    <div id="overlay-loading">
+      <div class="upload-spinner"></div>
+      <h3>Wird veröffentlicht…</h3>
+      <div class="upload-step" id="overlay-step">Daten werden geprüft…</div>
+      <div class="upload-track">
+        <div class="upload-fill" id="overlay-fill"></div>
+      </div>
+      <div class="upload-pct" id="overlay-pct">0%</div>
+    </div>
+
+    <!-- Erfolgsansicht -->
+    <div class="upload-success" id="overlay-success">
+      <div class="success-icon">✅</div>
+      <h3>Anzeige veröffentlicht!</h3>
+      <p>Deine Anzeige ist jetzt live.<br>Du wirst gleich weitergeleitet…</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Upload Overlay Steuerung ──────────────────────────────────────────────────
+function showUploadOverlay() {
+  document.getElementById("upload-overlay").classList.add("active");
+  document.getElementById("btn-publish").classList.add("uploading");
+  document.getElementById("btn-publish-text").textContent = "Wird veröffentlicht…";
+  setOverlayProgress(5, "Verbindung wird aufgebaut…");
+}
+
+function setOverlayProgress(pct, stepText) {
+  document.getElementById("overlay-fill").style.width = pct + "%";
+  document.getElementById("overlay-pct").textContent = pct + "%";
+  if (stepText) document.getElementById("overlay-step").textContent = stepText;
+}
+
+function showUploadSuccess() {
+  document.getElementById("overlay-loading").style.display = "none";
+  document.getElementById("overlay-success").style.display = "block";
+}
+
+function hideUploadOverlay() {
+  document.getElementById("upload-overlay").classList.remove("active");
+  document.getElementById("btn-publish").classList.remove("uploading");
+  document.getElementById("btn-publish-text").textContent = "Anzeige veröffentlichen";
+  // Reset
+  document.getElementById("overlay-loading").style.display = "block";
+  document.getElementById("overlay-success").style.display = "none";
+  setOverlayProgress(0, "");
+}
+
+// Patch: create-listing.js submit abfangen für visuelles Feedback
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("listing-form") || document.querySelector("form");
+  if (!form) return;
+
+  // Original submit überwachen
+  const origSubmit = form.onsubmit;
+
+  form.addEventListener("submit", () => {
+    showUploadOverlay();
+    // Fortschritt simulieren während echter Upload läuft
+    const steps = [
+      [10,  "Anmeldung wird geprüft…"],
+      [20,  "Kategorie wird geladen…"],
+      [35,  "Verkäuferprofil wird geladen…"],
+      [50,  "Bilder werden komprimiert…"],
+      [65,  "Bilder werden hochgeladen…"],
+      [80,  "Anzeige wird gespeichert…"],
+      [92,  "Fast fertig…"],
+    ];
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < steps.length) {
+        setOverlayProgress(steps[i][0], steps[i][1]);
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 800);
+
+    // Wenn Seite wechselt → Erfolg zeigen
+    window.addEventListener("beforeunload", () => {
+      clearInterval(interval);
+    });
+
+    // Fehler-Fallback: nach 30s Overlay ausblenden
+    setTimeout(() => {
+      clearInterval(interval);
+      hideUploadOverlay();
+    }, 30000);
+  });
+});
+
+// Hook für create-listing.js: Erfolg signalisieren
+window.onListingSuccess = function() {
+  setOverlayProgress(100, "Fertig!");
+  showUploadSuccess();
+};
+
+window.onListingError = function() {
+  hideUploadOverlay();
+};
+</script>
+
+</body>
+</html>
