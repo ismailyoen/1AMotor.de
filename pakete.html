@@ -2,1030 +2,680 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="favicon-192x192.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pakete & Preise – 1A Motor</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
 <style>
-/* ── Variablen ── */
-:root {
-  --dark:    #0d1b2a;
-  --navy:    #1b2d42;
-  --blue:    #1a5fa8;
-  --blue2:   #2176c7;
-  --sky:     #4da6ff;
-  --white:   #ffffff;
-  --muted:   #7a93ae;
-  --border:  #e0e9f2;
-  --bg:      #f4f7fb;
-  --success: #10b981;
-  --gold:    #f59e0b;
-  --shadow:  0 2px 16px rgba(13,27,42,0.08);
-  --shadow2: 0 12px 40px rgba(13,27,42,0.14);
-  --r:       14px;
+:root{
+  --bg:#f5f7fa;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --border:#dbe3ea;
+  --dark-blue:#123a63;
+  --blue:#2b6cb0;
+  --light-blue:#72b6ff;
+  --success:#0f9d58;
+  --warning:#f59e0b;
+  --shadow:0 10px 30px rgba(18,58,99,0.08);
+  --radius:16px;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 100%; }
-body {
-  font-family: 'Outfit', Arial, sans-serif;
-  background: var(--bg);
-  color: var(--dark);
-  line-height: 1.5;
-  overflow-x: hidden;
-  min-width: 320px;
-}
-a { text-decoration: none; color: inherit; }
-.container { max-width: 1280px; margin: 0 auto; padding: 0 clamp(14px, 2vw, 28px); }
-
-/* ── Header ── */
-.header {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 1px 0 var(--border), 0 4px 16px rgba(13,27,42,0.06);
-}
-.header-inner {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  gap: 16px; padding: 13px 0;
-}
-.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.logo-mark {
-  width: 40px; height: 40px; border-radius: 10px;
-  background: linear-gradient(145deg, #1b2d42, #2a4a6b);
-  display: grid; place-items: center;
-  font-weight: 900; font-size: 15px; color: #fff;
-  box-shadow: 0 4px 12px rgba(13,27,42,0.3);
-  flex-shrink: 0; letter-spacing: -0.5px;
-}
-.logo-name { font-size: 20px; font-weight: 800; color: var(--dark); letter-spacing: -.3px; }
-.header-actions { display: flex; align-items: center; gap: 10px; }
-.hdr-btn {
-  font-size: 13px; font-weight: 700; padding: 9px 16px;
-  border-radius: 8px; cursor: pointer; border: none;
-  font-family: inherit; transition: all .15s;
-}
-.hdr-ghost { background: none; color: var(--dark); }
-.hdr-ghost:hover { background: var(--bg); }
-.hdr-primary { background: var(--dark); color: #fff; }
-.hdr-primary:hover { background: var(--navy); }
-
-/* ══════════════════════════════════════
-   SEPTEMBER BANNER
-══════════════════════════════════════ */
-.sept-banner {
-  background: linear-gradient(135deg, #1b2d42 0%, #1a4a7a 50%, #1b3a5c 100%);
-  position: relative; overflow: hidden;
-}
-.sept-banner::before {
-  content: "";
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(77,166,255,.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(77,166,255,.06) 1px, transparent 1px);
-  background-size: 32px 32px;
-  pointer-events: none;
-}
-.sept-inner {
-  position: relative; z-index: 1;
-  display: flex; align-items: center; gap: 16px;
-  padding: 14px 0; flex-wrap: wrap; justify-content: space-between;
-}
-.sept-left { display: flex; align-items: center; gap: 14px; }
-.sept-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.4);
-  color: #fbbf24; font-size: 11px; font-weight: 800;
-  padding: 5px 12px; border-radius: 999px;
-  text-transform: uppercase; letter-spacing: .08em;
-  white-space: nowrap; flex-shrink: 0;
-}
-.sept-text {
-  font-size: 14px; color: rgba(255,255,255,0.85); font-weight: 500;
-}
-.sept-text strong { color: #fff; font-weight: 700; }
-.sept-countdown {
-  display: flex; gap: 8px; align-items: center;
-}
-.countdown-item {
-  text-align: center;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 8px; padding: 6px 10px; min-width: 48px;
-}
-.countdown-num {
-  display: block; font-size: 18px; font-weight: 900; color: #fff;
-  line-height: 1; font-variant-numeric: tabular-nums;
-}
-.countdown-label { font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: .08em; margin-top: 2px; }
-
-/* ══════════════════════════════════════
-   HERO
-══════════════════════════════════════ */
-.page { padding: 52px 0 72px; }
-
-.page-hero { text-align: center; margin-bottom: 64px; }
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(26,95,168,0.08); border: 1px solid rgba(26,95,168,0.2);
-  color: var(--blue2); font-size: 12px; font-weight: 700;
-  padding: 6px 16px; border-radius: 999px; margin-bottom: 20px;
-  text-transform: uppercase; letter-spacing: .07em;
-}
-.page-hero h1 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(36px, 5vw, 58px);
-  color: var(--dark); line-height: 1.08;
-  margin-bottom: 18px; letter-spacing: -.5px;
-}
-.page-hero h1 em { color: var(--blue2); font-style: italic; }
-.page-hero p {
-  font-size: 17px; color: var(--muted);
-  max-width: 560px; margin: 0 auto 28px; line-height: 1.7;
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
-/* Billing Toggle */
-.billing-toggle {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: var(--white); border: 1.5px solid var(--border);
-  border-radius: 999px; padding: 5px;
-  box-shadow: var(--shadow);
-}
-.toggle-btn {
-  padding: 9px 22px; border-radius: 999px; border: none;
-  font-family: inherit; font-size: 13px; font-weight: 700;
-  cursor: pointer; transition: all .2s; background: none; color: var(--muted);
-}
-.toggle-btn.active {
-  background: var(--dark); color: #fff;
-  box-shadow: 0 2px 8px rgba(13,27,42,0.2);
-}
-.save-badge {
-  background: #dcfce7; color: #15803d;
-  font-size: 11px; font-weight: 700;
-  padding: 3px 8px; border-radius: 999px;
-  margin-left: 4px;
+body{
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.45;
 }
 
-/* ══════════════════════════════════════
-   PLAN GRID
-══════════════════════════════════════ */
-.plan-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-  margin-bottom: 72px;
-  align-items: stretch;
+a{
+  text-decoration:none;
+  color:inherit;
 }
 
-.plan-card {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 32px 28px;
-  position: relative;
-  display: flex; flex-direction: column;
-  transition: transform .2s, box-shadow .2s, border-color .2s;
-}
-.plan-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow2);
+.container{
+  max-width:1320px;
+  margin:0 auto;
+  padding:0 20px;
 }
 
-/* Featured (Pro) */
-.plan-card.featured {
-  border-color: var(--blue2);
-  background: linear-gradient(160deg, #fff 0%, #f0f7ff 100%);
-  box-shadow: 0 8px 40px rgba(26,95,168,0.15);
-}
-.plan-card.featured:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 56px rgba(26,95,168,0.2);
+.header{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:20;
 }
 
-.plan-tag {
-  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--blue), var(--blue2));
-  color: #fff; font-size: 11px; font-weight: 800;
-  padding: 5px 16px; border-radius: 999px;
-  white-space: nowrap; letter-spacing: .05em;
-  text-transform: uppercase;
-  box-shadow: 0 4px 12px rgba(26,95,168,0.3);
+.header-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding:18px 0;
 }
 
-.plan-icon {
-  width: 48px; height: 48px; border-radius: 12px;
-  display: grid; place-items: center;
-  font-size: 22px; margin-bottom: 18px;
-}
-.plan-icon.basic { background: #f1f5f9; }
-.plan-icon.pro { background: linear-gradient(135deg, #dbeeff, #bfd8f7); }
-.plan-icon.premium { background: linear-gradient(135deg, #fef3c7, #fde68a); }
-
-.plan-name {
-  font-size: 13px; font-weight: 700; color: var(--muted);
-  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px;
-}
-.plan-title {
-  font-size: 26px; font-weight: 800; color: var(--dark); margin-bottom: 8px;
-}
-.plan-desc {
-  font-size: 14px; color: var(--muted); line-height: 1.6;
-  margin-bottom: 24px; min-height: 44px;
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:28px;
+  font-weight:800;
+  color:var(--dark-blue);
 }
 
-.price-block { margin-bottom: 28px; }
-.price-main {
-  display: flex; align-items: flex-end; gap: 6px; margin-bottom: 4px;
-}
-.price-eur {
-  font-size: 15px; font-weight: 700; color: var(--muted);
-  margin-bottom: 10px; line-height: 1;
-}
-.price-num {
-  font-size: 52px; font-weight: 900; color: var(--dark);
-  line-height: 1; letter-spacing: -2px;
-}
-.price-num.crossed {
-  font-size: 28px; color: var(--muted); text-decoration: line-through;
-  letter-spacing: -1px;
-}
-.price-period { font-size: 14px; color: var(--muted); margin-bottom: 7px; }
-.price-yearly-note {
-  font-size: 12px; color: var(--success); font-weight: 600;
-  display: none;
-}
-.billing-yearly .price-yearly-note { display: block; }
 
-.plan-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
 
-.plan-features { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; flex: 1; }
-.plan-features li {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 14px; color: #334155;
-}
-.feat-check {
-  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
-  display: grid; place-items: center; font-size: 11px; margin-top: 1px;
-}
-.feat-check.yes { background: #dcfce7; color: #15803d; }
-.feat-check.no { background: #f1f5f9; color: var(--muted); }
-.feat-check.star { background: #fef3c7; color: #92400e; }
-
-.plan-cta {
-  display: block; text-align: center;
-  padding: 14px 20px; border-radius: 999px;
-  font-weight: 700; font-size: 15px; font-family: inherit;
-  cursor: pointer; border: none; transition: all .18s;
-  position: relative; overflow: hidden;
-}
-.plan-cta.ghost {
-  background: var(--white); color: var(--dark);
-  border: 1.5px solid var(--border);
-}
-.plan-cta.ghost:hover { border-color: var(--blue2); color: var(--blue2); }
-.plan-cta.primary {
-  background: linear-gradient(135deg, var(--blue), var(--blue2));
-  color: #fff; box-shadow: 0 4px 16px rgba(26,95,168,0.3);
-}
-.plan-cta.primary:hover { opacity: .92; transform: translateY(-1px); }
-.plan-cta.gold {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #fff; box-shadow: 0 4px 16px rgba(245,158,11,0.3);
-}
-.plan-cta.gold:hover { opacity: .92; transform: translateY(-1px); }
-
-/* Gesperrt-Overlay */
-.plan-cta.locked {
-  opacity: .55; cursor: not-allowed; pointer-events: none;
-}
-.locked-label {
-  display: block; font-size: 11px; font-weight: 600;
-  opacity: .7; margin-top: 3px;
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  font-size:14px;
+  flex-wrap:wrap;
 }
 
-/* ══════════════════════════════════════
-   COMPARE TABLE
-══════════════════════════════════════ */
-.section-title {
-  font-size: 28px; font-weight: 800; color: var(--dark);
-  margin-bottom: 6px; letter-spacing: -.3px;
-}
-.section-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
-
-.compare-wrap {
-  background: var(--white); border: 1.5px solid var(--border);
-  border-radius: 20px; overflow: hidden;
-  box-shadow: var(--shadow); margin-bottom: 64px;
-  overflow-x: auto;
-}
-.compare-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-.compare-table thead { background: var(--dark); }
-.compare-table th {
-  padding: 16px 20px; text-align: left;
-  font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6);
-  letter-spacing: .05em; text-transform: uppercase;
-}
-.compare-table th:first-child { color: rgba(255,255,255,0.4); }
-.compare-table th.highlight { color: var(--sky); }
-.compare-table tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
-.compare-table tbody tr:last-child { border-bottom: none; }
-.compare-table tbody tr:hover { background: #f8fbff; }
-.compare-table td {
-  padding: 14px 20px; font-size: 14px; color: #334155;
-}
-.compare-table td:first-child { font-weight: 600; color: var(--dark); }
-.compare-table td.col-pro { background: rgba(26,95,168,0.03); }
-.val-yes { color: var(--success); font-weight: 700; }
-.val-no { color: #cbd5e1; }
-.val-num { font-weight: 700; color: var(--dark); }
-
-/* ══════════════════════════════════════
-   BOOSTS
-══════════════════════════════════════ */
-.boosts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px; margin-bottom: 64px;
-}
-.boost-card {
-  background: var(--white); border: 1.5px solid var(--border);
-  border-radius: 16px; padding: 24px;
-  box-shadow: var(--shadow);
-  display: flex; flex-direction: column; gap: 10px;
-  transition: transform .2s, box-shadow .2s;
-  position: relative; overflow: hidden;
-}
-.boost-card:hover { transform: translateY(-3px); box-shadow: var(--shadow2); }
-.boost-card::before {
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-}
-.boost-card.b1::before { background: linear-gradient(90deg, var(--blue), var(--sky)); }
-.boost-card.b2::before { background: linear-gradient(90deg, var(--gold), #f97316); }
-.boost-card.b3::before { background: linear-gradient(90deg, var(--success), #34d399); }
-.boost-card.b4::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
-.boost-icon { font-size: 28px; }
-.boost-name { font-size: 16px; font-weight: 800; color: var(--dark); }
-.boost-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
-.boost-price {
-  margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.boost-amount { font-size: 20px; font-weight: 900; color: var(--dark); }
-.boost-btn {
-  font-size: 12px; font-weight: 700; padding: 7px 14px;
-  border-radius: 999px; border: 1.5px solid var(--border);
-  background: #fff; color: var(--dark); cursor: pointer;
-  font-family: inherit; transition: all .15s;
-  opacity: .55; pointer-events: none;
+.cta-btn{
+  background:var(--dark-blue);
+  color:#fff;
+  padding:12px 18px;
+  border-radius:999px;
+  font-weight:700;
 }
 
-/* ══════════════════════════════════════
-   FAQ
-══════════════════════════════════════ */
-.faq-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 14px; margin-bottom: 64px;
-}
-.faq-item {
-  background: var(--white); border: 1.5px solid var(--border);
-  border-radius: 14px; padding: 20px 22px;
-  box-shadow: var(--shadow);
-}
-.faq-item h4 { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 7px; }
-.faq-item p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-
-/* ══════════════════════════════════════
-   TRUST STRIP
-══════════════════════════════════════ */
-.trust-strip {
-  background: linear-gradient(135deg, var(--dark) 0%, var(--navy) 100%);
-  border-radius: 20px; padding: 40px;
-  display: grid; grid-template-columns: 1fr auto;
-  gap: 32px; align-items: center;
-  margin-bottom: 64px; position: relative; overflow: hidden;
-}
-.trust-strip::before {
-  content: ""; position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(77,166,255,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(77,166,255,.05) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-.trust-text { position: relative; z-index: 1; }
-.trust-text h3 {
-  font-family: 'DM Serif Display', serif;
-  font-size: 28px; color: #fff; margin-bottom: 8px;
-}
-.trust-text p { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 440px; }
-.trust-cta { position: relative; z-index: 1; flex-shrink: 0; }
-.trust-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: #fff; color: var(--dark);
-  font-weight: 800; font-size: 14px; font-family: inherit;
-  padding: 14px 26px; border-radius: 999px; border: none;
-  cursor: pointer; transition: all .18s;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-}
-.trust-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-
-/* ══════════════════════════════════════
-   STRIPE MODAL
-══════════════════════════════════════ */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(13,27,42,0.6); backdrop-filter: blur(4px);
-  z-index: 200; align-items: center; justify-content: center;
-  padding: 20px;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: #fff; border-radius: 20px; padding: 36px;
-  max-width: 460px; width: 100%;
-  box-shadow: 0 32px 80px rgba(13,27,42,0.3);
-  animation: modalIn .25s ease;
-}
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.modal-header { margin-bottom: 24px; }
-.modal-header h2 { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
-.modal-header p { font-size: 14px; color: var(--muted); }
-.modal-plan-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: #f0f7ff; border: 1px solid #bfd8f7;
-  color: var(--blue2); font-size: 13px; font-weight: 700;
-  padding: 6px 14px; border-radius: 999px; margin-bottom: 20px;
-}
-.modal-notice {
-  background: #fffbeb; border: 1px solid #fcd34d;
-  border-radius: 12px; padding: 16px 18px; margin-bottom: 20px;
-}
-.modal-notice p { font-size: 13px; color: #92400e; line-height: 1.6; }
-.modal-notice strong { color: #78350f; }
-.modal-form { display: flex; flex-direction: column; gap: 14px; }
-.form-field { display: flex; flex-direction: column; gap: 6px; }
-.form-field label { font-size: 13px; font-weight: 700; color: #334155; }
-.form-field input {
-  padding: 12px 14px; border: 1.5px solid var(--border);
-  border-radius: 10px; font-size: 14px; font-family: inherit;
-  outline: none; transition: border-color .15s;
-}
-.form-field input:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px rgba(26,95,168,0.1); }
-.stripe-secure {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: var(--muted);
-}
-.stripe-logo {
-  background: #635bff; color: #fff; font-size: 10px; font-weight: 800;
-  padding: 2px 7px; border-radius: 4px; letter-spacing: .05em;
-}
-.modal-btns { display: flex; gap: 10px; }
-.modal-cancel {
-  flex: 1; padding: 13px; border-radius: 10px; border: 1.5px solid var(--border);
-  background: #fff; font-family: inherit; font-size: 14px; font-weight: 700;
-  color: var(--dark); cursor: pointer;
-}
-.modal-submit {
-  flex: 2; padding: 13px; border-radius: 10px; border: none;
-  background: linear-gradient(135deg, var(--blue), var(--blue2));
-  color: #fff; font-family: inherit; font-size: 14px; font-weight: 700;
-  cursor: pointer; transition: opacity .15s;
-}
-.modal-submit:hover { opacity: .9; }
-.modal-submit.disabled { opacity: .5; cursor: not-allowed; pointer-events: none; }
-
-/* ══════════════════════════════════════
-   FOOTER
-══════════════════════════════════════ */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 24px 0;
-  text-align: center;
-  font-size: 13px; color: var(--muted);
-}
-footer a { color: var(--muted); margin: 0 10px; }
-footer a:hover { color: var(--dark); }
-
-/* ══════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════ */
-@media (max-width: 900px) {
-  .plan-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
-  .plan-card.featured { transform: none; }
-  .trust-strip { grid-template-columns: 1fr; }
-  .trust-cta { width: 100%; }
-  .trust-btn { width: 100%; justify-content: center; }
-}
-@media (max-width: 640px) {
-  .sept-inner { gap: 12px; }
-  .sept-countdown { display: none; }
-  .page { padding: 32px 0 48px; }
-  .page-hero { margin-bottom: 40px; }
-  .faq-grid { grid-template-columns: 1fr; }
-  .trust-strip { padding: 28px 22px; }
-  .trust-text h3 { font-size: 22px; }
-}
-@media (max-width: 480px) {
-  .header-actions .hdr-ghost { display: none; }
-  .modal { padding: 24px 18px; }
+.page{
+  padding:28px 0 44px;
 }
 
-/* Entry animations */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+.hero{
+  background:linear-gradient(120deg,#eef4f8 0%,#ffffff 42%,#d9ecff 100%);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:34px;
+  box-shadow:var(--shadow);
+  margin-bottom:24px;
 }
-.plan-card { animation: fadeUp .4s ease both; }
-.plan-card:nth-child(1) { animation-delay: .05s; }
-.plan-card:nth-child(2) { animation-delay: .15s; }
-.plan-card:nth-child(3) { animation-delay: .25s; }
+
+.hero h1{
+  font-size:40px;
+  line-height:1.1;
+  color:var(--dark-blue);
+  margin-bottom:12px;
+}
+
+.hero p{
+  color:#425466;
+  font-size:16px;
+  max-width:860px;
+}
+
+.switch-row{
+  margin-top:20px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.switch-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-size:14px;
+  font-weight:700;
+  color:#334155;
+}
+
+.switch-pill.active{
+  background:var(--dark-blue);
+  color:#fff;
+  border-color:var(--dark-blue);
+}
+
+.plan-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:20px;
+  margin-bottom:24px;
+}
+
+.plan-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  padding:24px;
+  position:relative;
+}
+
+.plan-card.featured{
+  border:2px solid #bfdcff;
+  transform:translateY(-4px);
+}
+
+.plan-badge{
+  position:absolute;
+  top:16px;
+  right:16px;
+  background:#eef6ff;
+  color:var(--blue);
+  border:1px solid #d8eaff;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.plan-card h2{
+  color:var(--dark-blue);
+  font-size:26px;
+  margin-bottom:8px;
+}
+
+.plan-sub{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:18px;
+  min-height:38px;
+}
+
+.price-row{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.price{
+  font-size:42px;
+  font-weight:800;
+  color:var(--dark-blue);
+}
+
+.price-note{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:7px;
+}
+
+.plan-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:22px;
+}
+
+.plan-list li{
+  padding:12px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fbfdff;
+  font-size:14px;
+  color:#334155;
+}
+
+.plan-btn{
+  display:block;
+  text-align:center;
+  padding:14px 18px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:15px;
+}
+
+.plan-btn.primary{
+  background:var(--dark-blue);
+  color:#fff;
+}
+
+.plan-btn.secondary{
+  background:#fff;
+  color:var(--dark-blue);
+  border:1px solid var(--border);
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:24px;
+  margin-bottom:24px;
+}
+
+.info-card,
+.table-card,
+.boost-card,
+.faq-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  padding:24px;
+}
+
+.info-card h3,
+.table-card h3,
+.boost-card h3,
+.faq-card h3{
+  color:var(--dark-blue);
+  font-size:24px;
+  margin-bottom:16px;
+}
+
+.info-list,
+.boost-list,
+.faq-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.info-item,
+.boost-item,
+.faq-item{
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fbfdff;
+}
+
+.info-item strong,
+.boost-item strong,
+.faq-item strong{
+  display:block;
+  color:#1e293b;
+  margin-bottom:4px;
+}
+
+.info-item span,
+.boost-item span,
+.faq-item span{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.compare-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:780px;
+}
+
+.compare-wrap{
+  overflow:auto;
+}
+
+.compare-table th,
+.compare-table td{
+  text-align:left;
+  padding:14px 12px;
+  border-bottom:1px solid var(--border);
+  font-size:14px;
+}
+
+.compare-table th{
+  color:var(--muted);
+  font-size:13px;
+  background:#fbfdff;
+}
+
+.ok{
+  color:var(--success);
+  font-weight:700;
+}
+
+.limit{
+  color:#1e293b;
+  font-weight:700;
+}
+
+.bottom-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+
+.tag-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#eef6ff;
+  color:var(--blue);
+  font-size:13px;
+  font-weight:700;
+}
+
+@media (max-width:1080px){
+  .plan-grid,
+  .info-grid,
+  .bottom-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:720px){
+  .hero h1{
+    font-size:30px;
+  }
+
+  .price{
+    font-size:34px;
+  }
+}
+
+  /* ═══════════════════════════════════════
+     MOBILE RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .container { padding: 0 14px; }
+    .header-inner { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
+    .logo { font-size: 18px; }
+    .logo-badge, .logo-mark { width: 34px; height: 34px; font-size: 14px; }
+    .header-actions { display: none; }
+    .layout { grid-template-columns: 1fr !important; }
+    .sidebar { position: static !important; top: auto !important; }
+    .page-head h1 { font-size: 22px !important; }
+    .page-head p { font-size: 13px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .stat-value { font-size: 22px !important; }
+    .panel { padding: 14px !important; }
+    .table-wrap { overflow-x: auto; }
+    .table { min-width: 600px; }
+    .bottom-grid { grid-template-columns: 1fr !important; }
+    .listing-grid { grid-template-columns: 1fr !important; }
+    .listing-card { grid-template-columns: 1fr !important; }
+    .card-image { min-height: 180px !important; }
+    .filter-bar { flex-direction: column; }
+    .filter-bar input, .filter-bar select { width: 100%; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr !important; }
+    .plan-grid { grid-template-columns: 1fr !important; }
+    .info-grid, .bottom-grid { grid-template-columns: 1fr !important; }
+    .plan-card.featured { transform: none; }
+    .nav-item { padding: 9px 10px; font-size: 13px; }
+    .profile-name { font-size: 14px; }
+    .tab-bar { flex-wrap: wrap; }
+    .tab { font-size: 12px; padding: 6px 10px; }
+    .msg { max-width: 90% !important; }
+    .reply-box { flex-direction: column; }
+    .reply-input { width: 100%; }
+    .chat-messages { max-height: 250px; }
+    .page { padding: 16px 0 32px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .logo-name { font-size: 18px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .page-head { flex-direction: column; align-items: flex-start !important; }
+    .page-head .new-btn, .page-head a { width: 100%; text-align: center; }
+    .action-links { flex-wrap: wrap; }
+    .inq-header { flex-direction: column; }
+    .inq-meta { flex-direction: column; gap: 4px; }
+    .sidebar-profile { padding: 16px 14px; }
+  }
+
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
 </style>
 </head>
 <body>
 
-<!-- ══ HEADER ══ -->
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
       <div class="logo-mark">1A</div>
       <div class="logo-name">Motor</div>
     </a>
+
     <div class="header-actions">
-      <a href="dashboard.html"><button class="hdr-btn hdr-ghost">Dashboard</button></a>
-      <a href="anzeige-erstellen.html"><button class="hdr-btn hdr-primary">＋ Anzeige erstellen</button></a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="anzeige-erstellen.html" class="cta-btn">Anzeige erstellen</a>
     </div>
   </div>
 </header>
 
-<!-- ══ SEPTEMBER BANNER ══ -->
-<div class="sept-banner">
-  <div class="container sept-inner">
-    <div class="sept-left">
-      <span class="sept-badge">🔒 Demnächst</span>
-      <div class="sept-text">
-        <strong>Bezahlte Pakete starten im September 2026</strong> — bis dahin alles kostenlos nutzen.
-      </div>
-    </div>
-    <div class="sept-countdown">
-      <div class="countdown-item">
-        <span class="countdown-num" id="cd-days">--</span>
-        <div class="countdown-label">Tage</div>
-      </div>
-      <div class="countdown-item">
-        <span class="countdown-num" id="cd-hours">--</span>
-        <div class="countdown-label">Std</div>
-      </div>
-      <div class="countdown-item">
-        <span class="countdown-num" id="cd-mins">--</span>
-        <div class="countdown-label">Min</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ MAIN ══ -->
 <main class="page">
-<div class="container">
+  <div class="container">
+    <section class="hero">
+      <h1>Pakete & Sichtbarkeit für Händler</h1>
+      <p>Starte kostenlos mit dem Basic-Paket und erweitere deine Reichweite mit Pro oder Premium. Ideal für Händler, Werkstätten, Maschinenverkäufer und Anbieter technischer Anlagen.</p>
+      <div class="switch-row">
+        <span class="switch-pill active">Monatlich</span>
+        <span class="switch-pill">Jährlich</span>
+        <span class="switch-pill">Sichtbarkeit zubuchbar</span>
+      </div>
+    </section>
 
-  <!-- Hero -->
-  <div class="page-hero">
-    <div class="hero-eyebrow">⚙️ Für Händler & Verkäufer</div>
-    <h1>Mehr Sichtbarkeit.<br><em>Mehr Anfragen.</em></h1>
-    <p>Starte kostenlos und schalte ab September das passende Paket für deinen Bestand frei.</p>
-
-    <div class="billing-toggle" id="billing-toggle">
-      <button class="toggle-btn active" data-period="monthly">Monatlich</button>
-      <button class="toggle-btn" data-period="yearly">Jährlich <span class="save-badge">–20%</span></button>
-    </div>
-  </div>
-
-  <!-- ══ PLAN CARDS ══ -->
-  <div class="plan-grid" id="plan-grid">
-
-    <!-- Basic -->
-    <article class="plan-card">
-      <div class="plan-icon basic">🆓</div>
-      <div class="plan-name">Starter</div>
-      <div class="plan-title">Basic</div>
-      <div class="plan-desc">Kostenloser Einstieg — ideal für neue Händler und kleine Bestände.</div>
-      <div class="price-block">
-        <div class="price-main">
-          <span class="price-eur">€</span>
-          <span class="price-num" data-monthly="0" data-yearly="0">0</span>
+    <section class="plan-grid">
+      <article class="plan-card">
+        <h2>Basic</h2>
+        <div class="plan-sub">Kostenloser Einstieg für neue Händler und kleinere Bestände.</div>
+        <div class="price-row">
+          <div class="price">0 €</div>
+          <div class="price-note">pro Monat</div>
         </div>
-        <div class="price-period">kostenlos, für immer</div>
-        <div class="price-yearly-note">✓ Immer kostenlos</div>
-      </div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="feat-check yes">✓</span><span>Bis zu <strong>10 aktive Anzeigen</strong></span></li>
-        <li><span class="feat-check yes">✓</span><span>Bis zu <strong>8 Bilder</strong> pro Anzeige</span></li>
-        <li><span class="feat-check yes">✓</span><span>Standard-Händlerprofil</span></li>
-        <li><span class="feat-check yes">✓</span><span>Direkte Käuferanfragen</span></li>
-        <li><span class="feat-check no">–</span><span style="color:var(--muted)">Bessere Suchplatzierung</span></li>
-        <li><span class="feat-check no">–</span><span style="color:var(--muted)">Featured-Slots</span></li>
-        <li><span class="feat-check no">–</span><span style="color:var(--muted)">Priorisierter Support</span></li>
-      </ul>
-      <button class="plan-cta ghost" onclick="openModal('Basic', 0)">Aktuell aktiv ✓</button>
-    </article>
+        <ul class="plan-list">
+          <li>Bis zu 10 aktive Anzeigen</li>
+          <li>Bis zu 8 Bilder pro Anzeige</li>
+          <li>Standard-Sichtbarkeit</li>
+          <li>Normales Händlerprofil</li>
+          <li>Boosts optional zubuchbar</li>
+        </ul>
+        <a href="#" class="plan-btn secondary">Aktuelles Paket</a>
+      </article>
 
-    <!-- Pro (Featured) -->
-    <article class="plan-card featured">
-      <div class="plan-tag">⭐ Empfohlen</div>
-      <div class="plan-icon pro">🚀</div>
-      <div class="plan-name">Wachstum</div>
-      <div class="plan-title">Pro</div>
-      <div class="plan-desc">Für aktive Händler mit mehr Anzeigen, besserer Präsenz und schnelleren Verkäufen.</div>
-      <div class="price-block">
-        <div class="price-main">
-          <span class="price-eur">€</span>
-          <span class="price-num" data-monthly="19" data-yearly="15">19</span>
+      <article class="plan-card featured">
+        <span class="plan-badge">Empfohlen</span>
+        <h2>Pro</h2>
+        <div class="plan-sub">Für aktive Händler mit mehr Anzeigen, besserer Präsenz und mehr Kontakten.</div>
+        <div class="price-row">
+          <div class="price">49 €</div>
+          <div class="price-note">pro Monat</div>
         </div>
-        <div class="price-period" id="pro-period">pro Monat</div>
-        <div class="price-yearly-note">✓ Du sparst 48 € pro Jahr</div>
-      </div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="feat-check yes">✓</span><span>Bis zu <strong>50 aktive Anzeigen</strong></span></li>
-        <li><span class="feat-check yes">✓</span><span>Bis zu <strong>15 Bilder</strong> pro Anzeige</span></li>
-        <li><span class="feat-check yes">✓</span><span>Verbessertes Händlerprofil</span></li>
-        <li><span class="feat-check yes">✓</span><span>Direkte Käuferanfragen</span></li>
-        <li><span class="feat-check yes">✓</span><span><strong>Bessere Suchplatzierung</strong></span></li>
-        <li><span class="feat-check yes">✓</span><span><strong>3 Featured-Slots</strong> pro Monat</span></li>
-        <li><span class="feat-check yes">✓</span><span>Priorisierter Support</span></li>
-      </ul>
-      <button class="plan-cta primary locked" onclick="openModal('Pro', 19)">
-        Ab September verfügbar
-        <span class="locked-label">🔒 Jetzt vormerken</span>
-      </button>
-    </article>
+        <ul class="plan-list">
+          <li>Bis zu 50 aktive Anzeigen</li>
+          <li>Bis zu 15 Bilder pro Anzeige</li>
+          <li>Bessere Platzierung in Suchergebnissen</li>
+          <li>3 Featured-Slots pro Monat</li>
+          <li>Priorisierter Support</li>
+        </ul>
+        <a href="#" class="plan-btn primary">Auf Pro upgraden</a>
+      </article>
 
-    <!-- Premium -->
-    <article class="plan-card">
-      <div class="plan-icon premium">👑</div>
-      <div class="plan-name">Maximal</div>
-      <div class="plan-title">Premium</div>
-      <div class="plan-desc">Für größere Händler mit starkem Bestand und maximaler Reichweite auf der Plattform.</div>
-      <div class="price-block">
-        <div class="price-main">
-          <span class="price-eur">€</span>
-          <span class="price-num" data-monthly="39" data-yearly="31">39</span>
+      <article class="plan-card">
+        <h2>Premium</h2>
+        <div class="plan-sub">Für größere Händler mit starkem Bestand und maximaler Reichweite.</div>
+        <div class="price-row">
+          <div class="price">99 €</div>
+          <div class="price-note">pro Monat</div>
         </div>
-        <div class="price-period" id="premium-period">pro Monat</div>
-        <div class="price-yearly-note">✓ Du sparst 96 € pro Jahr</div>
+        <ul class="plan-list">
+          <li>Sehr viele aktive Anzeigen</li>
+          <li>Bis zu 25 Bilder pro Anzeige</li>
+          <li>Top-Sichtbarkeit auf der Plattform</li>
+          <li>10 Featured-Slots pro Monat</li>
+          <li>Bevorzugte Händlerdarstellung</li>
+        </ul>
+        <a href="#" class="plan-btn secondary">Premium wählen</a>
+      </article>
+    </section>
+
+    <section class="info-grid">
+      <article class="info-card">
+        <h3>Warum ein Upgrade sinnvoll ist</h3>
+        <div class="info-list">
+          <div class="info-item">
+            <strong>Mehr aktive Anzeigen</strong>
+            <span>Mit größeren Paketen kannst du deutlich mehr Fahrzeuge, Maschinen oder Komponenten gleichzeitig online halten.</span>
+          </div>
+          <div class="info-item">
+            <strong>Mehr Sichtbarkeit</strong>
+            <span>Pro und Premium erhalten bessere Platzierungen in Suchergebnissen und auf relevanten Kategorienseiten.</span>
+          </div>
+          <div class="info-item">
+            <strong>Mehr Vertrauen</strong>
+            <span>Ein stärkeres Händlerprofil und hervorgehobene Präsentation können die Anfragequote verbessern.</span>
+          </div>
+          <div class="info-item">
+            <strong>Mehr Anfragen</strong>
+            <span>Featured-Slots und Zusatzsichtbarkeit helfen dabei, schneller Verkäufe und Kontakte zu generieren.</span>
+          </div>
+        </div>
+      </article>
+
+      <aside class="boost-card">
+        <h3>Zusatzoptionen / Boosts</h3>
+        <div class="boost-list">
+          <div class="boost-item">
+            <strong>Top-Anzeige</strong>
+            <span>Mehr Präsenz in Suchergebnissen und Kategorieübersichten.</span>
+          </div>
+          <div class="boost-item">
+            <strong>Startseiten-Feature</strong>
+            <span>Dein Angebot erscheint sichtbar auf der Startseite.</span>
+          </div>
+          <div class="boost-item">
+            <strong>Hervorgehobene Darstellung</strong>
+            <span>Optische Aufwertung der Anzeige für mehr Aufmerksamkeit.</span>
+          </div>
+        </div>
+        <div class="tag-row">
+          <span class="tag">Top Suche</span>
+          <span class="tag">Mehr Klicks</span>
+          <span class="tag">Mehr Sichtbarkeit</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class="table-card">
+      <h3>Paketvergleich</h3>
+      <div class="compare-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Funktion</th>
+              <th>Basic</th>
+              <th>Pro</th>
+              <th>Premium</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Aktive Anzeigen</td>
+              <td class="limit">10</td>
+              <td class="limit">50</td>
+              <td class="limit">Viele / praktisch unbegrenzt</td>
+            </tr>
+            <tr>
+              <td>Bilder pro Anzeige</td>
+              <td class="limit">8</td>
+              <td class="limit">15</td>
+              <td class="limit">25</td>
+            </tr>
+            <tr>
+              <td>Standard-Händlerprofil</td>
+              <td class="ok">Ja</td>
+              <td class="ok">Ja</td>
+              <td class="ok">Ja</td>
+            </tr>
+            <tr>
+              <td>Bessere Suchplatzierung</td>
+              <td>–</td>
+              <td class="ok">Ja</td>
+              <td class="ok">Ja</td>
+            </tr>
+            <tr>
+              <td>Featured-Slots pro Monat</td>
+              <td>0</td>
+              <td class="limit">3</td>
+              <td class="limit">10</td>
+            </tr>
+            <tr>
+              <td>Priorisierter Support</td>
+              <td>–</td>
+              <td class="ok">Ja</td>
+              <td class="ok">Ja</td>
+            </tr>
+            <tr>
+              <td>Bevorzugte Händlerdarstellung</td>
+              <td>–</td>
+              <td>–</td>
+              <td class="ok">Ja</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="feat-check yes">✓</span><span><strong>Unbegrenzte</strong> aktive Anzeigen</span></li>
-        <li><span class="feat-check yes">✓</span><span>Bis zu <strong>25 Bilder</strong> pro Anzeige</span></li>
-        <li><span class="feat-check yes">✓</span><span>Premium-Händlerprofil mit Logo</span></li>
-        <li><span class="feat-check yes">✓</span><span>Direkte Käuferanfragen</span></li>
-        <li><span class="feat-check yes">✓</span><span><strong>Top-Sichtbarkeit</strong> auf der Plattform</span></li>
-        <li><span class="feat-check star">★</span><span><strong>10 Featured-Slots</strong> pro Monat</span></li>
-        <li><span class="feat-check star">★</span><span><strong>Dedizierter</strong> Support</span></li>
-      </ul>
-      <button class="plan-cta gold locked" onclick="openModal('Premium', 39)">
-        Ab September verfügbar
-        <span class="locked-label">🔒 Jetzt vormerken</span>
-      </button>
-    </article>
+    </section>
 
-  </div>
+    <section class="bottom-grid">
+      <article class="faq-card">
+        <h3>Häufige Fragen</h3>
+        <div class="faq-list">
+          <div class="faq-item">
+            <strong>Kann ich mit Basic kostenlos starten?</strong>
+            <span>Ja, das Basic-Paket ist kostenlos und eignet sich ideal für den Einstieg.</span>
+          </div>
+          <div class="faq-item">
+            <strong>Kann ich später upgraden?</strong>
+            <span>Ja, ein Wechsel auf Pro oder Premium ist jederzeit möglich.</span>
+          </div>
+          <div class="faq-item">
+            <strong>Sind zusätzliche Boosts einzeln buchbar?</strong>
+            <span>Ja, Top-Anzeigen und Startseiten-Features können zusätzlich gebucht werden.</span>
+          </div>
+        </div>
+      </article>
 
-  <!-- ══ VERGLEICHSTABELLE ══ -->
-  <div style="margin-bottom:16px;">
-    <div class="section-title">Paketvergleich</div>
-    <div class="section-sub">Alle Features auf einen Blick.</div>
+      <article class="info-card">
+        <h3>Für wen eignet sich welches Paket?</h3>
+        <div class="info-list">
+          <div class="info-item">
+            <strong>Basic</strong>
+            <span>Für neue Händler, kleine Bestände und erste Tests auf der Plattform.</span>
+          </div>
+          <div class="info-item">
+            <strong>Pro</strong>
+            <span>Für aktive Händler, Werkstätten und Anbieter mit regelmäßig neuen Inseraten.</span>
+          </div>
+          <div class="info-item">
+            <strong>Premium</strong>
+            <span>Für größere Anbieter mit hohem Bestand und dem Wunsch nach maximaler Reichweite.</span>
+          </div>
+        </div>
+      </article>
+    </section>
   </div>
-  <div class="compare-wrap" style="margin-bottom:64px;">
-    <table class="compare-table">
-      <thead>
-        <tr>
-          <th>Funktion</th>
-          <th>Basic</th>
-          <th class="highlight">Pro</th>
-          <th>Premium</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Aktive Anzeigen</td>
-          <td class="val-num">10</td>
-          <td class="val-num col-pro">50</td>
-          <td class="val-num">Unbegrenzt</td>
-        </tr>
-        <tr>
-          <td>Bilder pro Anzeige</td>
-          <td class="val-num">8</td>
-          <td class="val-num col-pro">15</td>
-          <td class="val-num">25</td>
-        </tr>
-        <tr>
-          <td>Händlerprofil</td>
-          <td>Standard</td>
-          <td class="col-pro">Verbessert</td>
-          <td>Premium + Logo</td>
-        </tr>
-        <tr>
-          <td>Direkte Käuferanfragen</td>
-          <td class="val-yes">✓</td>
-          <td class="val-yes col-pro">✓</td>
-          <td class="val-yes">✓</td>
-        </tr>
-        <tr>
-          <td>Bessere Suchplatzierung</td>
-          <td class="val-no">–</td>
-          <td class="val-yes col-pro">✓</td>
-          <td class="val-yes">✓</td>
-        </tr>
-        <tr>
-          <td>Featured-Slots / Monat</td>
-          <td class="val-no">0</td>
-          <td class="val-num col-pro">3</td>
-          <td class="val-num">10</td>
-        </tr>
-        <tr>
-          <td>Priorisierter Support</td>
-          <td class="val-no">–</td>
-          <td class="val-yes col-pro">✓</td>
-          <td class="val-yes">✓</td>
-        </tr>
-        <tr>
-          <td>Preis / Monat</td>
-          <td class="val-yes">Kostenlos</td>
-          <td class="val-num col-pro">19 €</td>
-          <td class="val-num">39 €</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ══ ZUSATZOPTIONEN ══ -->
-  <div style="margin-bottom:16px;">
-    <div class="section-title">Zusatzoptionen</div>
-    <div class="section-sub">Einzeln zubuchbar ab September — für noch mehr Reichweite.</div>
-  </div>
-  <div class="boosts-grid">
-    <div class="boost-card b1">
-      <div class="boost-icon">🔝</div>
-      <div class="boost-name">Top-Anzeige</div>
-      <div class="boost-desc">Deine Anzeige erscheint ganz oben in der Suche und in relevanten Kategorien.</div>
-      <div class="boost-price">
-        <span class="boost-amount">4,99 €</span>
-        <button class="boost-btn">Ab September</button>
-      </div>
-    </div>
-    <div class="boost-card b2">
-      <div class="boost-icon">🏠</div>
-      <div class="boost-name">Startseiten-Feature</div>
-      <div class="boost-desc">Dein Angebot wird prominent auf der Startseite von 1A Motor präsentiert.</div>
-      <div class="boost-price">
-        <span class="boost-amount">9,99 €</span>
-        <button class="boost-btn">Ab September</button>
-      </div>
-    </div>
-    <div class="boost-card b3">
-      <div class="boost-icon">✨</div>
-      <div class="boost-name">Highlight-Anzeige</div>
-      <div class="boost-desc">Optische Aufwertung mit Rahmen und Badge — fällt sofort in der Liste auf.</div>
-      <div class="boost-price">
-        <span class="boost-amount">2,99 €</span>
-        <button class="boost-btn">Ab September</button>
-      </div>
-    </div>
-    <div class="boost-card b4">
-      <div class="boost-icon">📧</div>
-      <div class="boost-name">Newsletter-Feature</div>
-      <div class="boost-desc">Deine Anzeige wird im nächsten 1A Motor Newsletter an alle Abonnenten versendet.</div>
-      <div class="boost-price">
-        <span class="boost-amount">14,99 €</span>
-        <button class="boost-btn">Ab September</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ FAQ ══ -->
-  <div style="margin-bottom:16px;">
-    <div class="section-title">Häufige Fragen</div>
-    <div class="section-sub">Alles was du wissen musst.</div>
-  </div>
-  <div class="faq-grid">
-    <div class="faq-item">
-      <h4>Kann ich kostenlos starten?</h4>
-      <p>Ja, das Basic-Paket ist dauerhaft kostenlos und ohne Kreditkarte. Bis September ist sogar alles kostenlos nutzbar.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Wann genau starten die Pakete?</h4>
-      <p>Pro und Premium werden im September 2026 freigeschaltet. Du kannst dich jetzt schon vormerken lassen.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Kann ich jederzeit upgraden oder kündigen?</h4>
-      <p>Ja, ein Wechsel ist jederzeit möglich. Monatliche Pakete können monatlich gekündigt werden.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Welche Zahlungsmethoden werden unterstützt?</h4>
-      <p>Wir nutzen Stripe — das bedeutet Kreditkarte, SEPA-Lastschrift, Google Pay und Apple Pay.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Was passiert mit meinen Anzeigen bei Kündigung?</h4>
-      <p>Dein Account wechselt zurück auf Basic. Anzeigen über dem Limit (10) werden deaktiviert, aber nicht gelöscht.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Gibt es einen Rabatt für Jahrespakete?</h4>
-      <p>Ja, bei jährlicher Zahlung sparst du 20% — das sind bis zu 96 € pro Jahr beim Premium-Paket.</p>
-    </div>
-  </div>
-
-  <!-- ══ TRUST STRIP ══ -->
-  <div class="trust-strip">
-    <div class="trust-text">
-      <h3>Jetzt kostenlos starten.</h3>
-      <p>Erstelle dein Händlerprofil und veröffentliche deine ersten Anzeigen — komplett kostenlos, ohne Kreditkarte.</p>
-    </div>
-    <div class="trust-cta">
-      <a href="registrieren.html">
-        <button class="trust-btn">Kostenlos registrieren →</button>
-      </a>
-    </div>
-  </div>
-
-</div>
 </main>
 
-<!-- ══ FOOTER ══ -->
-<footer>
-  <div class="container">
-    © 2026 1A Motor &nbsp;|&nbsp;
-    <a href="impressum.html">Impressum</a>
-    <a href="datenschutz.html">Datenschutz</a>
-    <a href="kontakt.html">Kontakt</a>
-  </div>
-</footer>
-
-<!-- ══ VORMERKEN MODAL ══ -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Vormerken lassen</h2>
-      <p>Wir informieren dich sobald das Paket verfügbar ist.</p>
-    </div>
-    <div class="modal-plan-pill" id="modal-plan-pill">⭐ Pro — 19 €/Monat</div>
-    <div class="modal-notice">
-      <p>🔒 <strong>Ab September 2026</strong> verfügbar. Trag dich jetzt ein und wir melden uns wenn es losgeht — inklusive <strong>Einführungsangebot für frühe Nutzer</strong>.</p>
-    </div>
-    <div class="modal-form">
-      <div class="form-field">
-        <label>Dein Name</label>
-        <input type="text" id="modal-name" placeholder="Max Mustermann" />
-      </div>
-      <div class="form-field">
-        <label>E-Mail-Adresse</label>
-        <input type="email" id="modal-email" placeholder="deine@email.de" />
-      </div>
-      <div class="stripe-secure">
-        <span>Zahlung später über</span>
-        <span class="stripe-logo">stripe</span>
-        <span>· Sicher & verschlüsselt</span>
-      </div>
-      <div class="modal-btns">
-        <button class="modal-cancel" onclick="closeModal()">Abbrechen</button>
-        <button class="modal-submit" id="modal-submit" onclick="submitWaitlist()">Jetzt vormerken</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
-<script src="auth-header.js"></script>
-<script>
-
-// ── Countdown bis 1. September 2026 ───────────────────────────────────────────
-function updateCountdown() {
-  const target = new Date("2026-09-01T00:00:00");
-  const now = new Date();
-  const diff = target - now;
-  if (diff <= 0) {
-    document.querySelector(".sept-banner").style.display = "none";
-    return;
-  }
-  const days  = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins  = Math.floor((diff % 3600000) / 60000);
-  document.getElementById("cd-days").textContent  = String(days).padStart(2, "0");
-  document.getElementById("cd-hours").textContent = String(hours).padStart(2, "0");
-  document.getElementById("cd-mins").textContent  = String(mins).padStart(2, "0");
-}
-updateCountdown();
-setInterval(updateCountdown, 30000);
-
-// ── Billing Toggle ────────────────────────────────────────────────────────────
-let currentPeriod = "monthly";
-document.querySelectorAll(".toggle-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".toggle-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentPeriod = btn.dataset.period;
-    const isYearly = currentPeriod === "yearly";
-
-    // Preise umschalten
-    document.querySelectorAll(".price-num").forEach(el => {
-      const val = isYearly ? el.dataset.yearly : el.dataset.monthly;
-      if (val !== undefined) el.textContent = val;
-    });
-
-    // Period-Text
-    const periodText = isYearly ? "pro Monat (jährlich)" : "pro Monat";
-    document.getElementById("pro-period").textContent = periodText;
-    document.getElementById("premium-period").textContent = periodText;
-
-    // Jahres-Note
-    document.getElementById("plan-grid").className = isYearly
-      ? "plan-grid billing-yearly"
-      : "plan-grid";
-  });
-});
-
-// ── Modal ─────────────────────────────────────────────────────────────────────
-let selectedPlan = "";
-let selectedPrice = 0;
-
-function openModal(plan, price) {
-  selectedPlan = plan;
-  selectedPrice = price;
-  if (price === 0) return; // Basic braucht kein Modal
-
-  const icons = { Pro: "🚀", Premium: "👑" };
-  const priceDisplay = currentPeriod === "yearly"
-    ? (plan === "Pro" ? "15" : "31")
-    : String(price);
-  document.getElementById("modal-plan-pill").textContent =
-    `${icons[plan] || ""} ${plan} — ${priceDisplay} €/Monat`;
-
-  // E-Mail aus Supabase vorausfüllen falls eingeloggt
-  supabaseClient.auth.getSession().then(({ data }) => {
-    const email = data?.session?.user?.email || "";
-    if (email) document.getElementById("modal-email").value = email;
-  });
-
-  document.getElementById("modal").classList.add("open");
-}
-
-function closeModal() {
-  document.getElementById("modal").classList.remove("open");
-}
-
-// Klick außerhalb = schließen
-document.getElementById("modal").addEventListener("click", (e) => {
-  if (e.target === document.getElementById("modal")) closeModal();
-});
-
-async function submitWaitlist() {
-  const name  = document.getElementById("modal-name").value.trim();
-  const email = document.getElementById("modal-email").value.trim();
-  const btn   = document.getElementById("modal-submit");
-
-  if (!name || !email) {
-    alert("Bitte Name und E-Mail ausfüllen.");
-    return;
-  }
-
-  btn.textContent = "Wird gespeichert...";
-  btn.classList.add("disabled");
-
-  try {
-    // In Supabase speichern (Tabelle: waitlist)
-    const { error } = await supabaseClient
-      .from("waitlist")
-      .insert([{ name, email, plan: selectedPlan, created_at: new Date().toISOString() }]);
-
-    if (error) throw error;
-
-    // Erfolg
-    document.querySelector(".modal").innerHTML = `
-      <div style="text-align:center;padding:20px 0;">
-        <div style="font-size:48px;margin-bottom:16px;">✅</div>
-        <h2 style="font-size:22px;color:#0d1b2a;margin-bottom:8px;">Du bist vorgemerkt!</h2>
-        <p style="color:#7a93ae;font-size:14px;line-height:1.6;margin-bottom:20px;">
-          Wir melden uns sobald <strong>${selectedPlan}</strong> ab September verfügbar ist —<br>
-          inklusive eines Einführungsangebots für frühe Nutzer.
-        </p>
-        <button onclick="closeModal()" style="padding:12px 24px;background:#0d1b2a;color:#fff;border:none;border-radius:999px;font-weight:700;font-family:inherit;cursor:pointer;font-size:14px;">
-          Schließen
-        </button>
-      </div>
-    `;
-  } catch (err) {
-    console.error("Waitlist error:", err);
-    // Fallback: zeige Erfolgsmeldung trotzdem (E-Mail merken)
-    alert(`✅ Danke, ${name}! Wir melden uns sobald ${selectedPlan} verfügbar ist.`);
-    closeModal();
-  }
-}
-</script>
 </body>
 </html>

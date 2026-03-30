@@ -2,24 +2,23 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <link rel="stylesheet" href="zoom-fix.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="favicon-192x192.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Anfragen – 1A Motor</title>
 <style>
   :root{ --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0; --light-blue:#72b6ff; --success:#059669; --warning:#d97706; --danger:#dc2626; --shadow:0 4px 20px rgba(18,58,99,0.08); --radius:14px; }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ font-size:100%; }
-  .bogus{ font-family:Arial,Helvetica,sans-serif; }
-  body{ overflow-x:hidden; min-width:320px; background:var(--bg); color:var(--text); line-height:1.5; }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
+  body{ background:var(--bg); color:var(--text); line-height:1.5; }
   a{ text-decoration:none; color:inherit; }
-  .container{ max-width:1400px; margin:0 auto; padding:0 clamp(12px,2vw,20px); }
+  .container{ max-width:1400px; margin:0 auto; padding:0 20px; }
   .header{ background:#fff; border-bottom:2px solid var(--border); position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(18,58,99,0.06); }
   .header-inner{ display:flex; justify-content:space-between; align-items:center; gap:18px; padding:14px 0; }
   .logo{ display:flex; align-items:center; gap:10px; font-size:24px; font-weight:800; color:var(--dark-blue); }
   
   .header-actions{ display:flex; align-items:center; gap:12px; font-size:14px; }
   .page{ padding:24px 0 48px; }
-  .layout{ display:grid; grid-template-columns:minmax(200px,240px) minmax(0,1fr); gap:22px; align-items:start; }
+  .layout{ display:grid; grid-template-columns:240px 1fr; gap:22px; align-items:start; }
   .sidebar{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; position:sticky; top:80px; }
   .sidebar-profile{ padding:22px 18px 18px; background:linear-gradient(135deg,#1e3a52,#2a5278); position:relative; overflow:hidden; }
   .sidebar-profile::after{ content:"⚙️"; position:absolute; right:-10px; bottom:-14px; font-size:72px; opacity:.1; pointer-events:none; }

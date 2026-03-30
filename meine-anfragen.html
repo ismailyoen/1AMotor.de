@@ -2,8 +2,9 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <link rel="stylesheet" href="zoom-fix.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="favicon-192x192.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Nachrichten – 1A Motor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,9 +17,9 @@
   --success:#10b981; --shadow:0 2px 16px rgba(13,27,42,0.08); --r:14px;
 }
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Outfit',Arial,sans-serif; }
-body { overflow-x:hidden; min-width:320px; background:var(--bg); color:var(--text); line-height:1.5; }
+body { background:var(--bg); color:var(--text); line-height:1.5; }
 a { text-decoration:none; color:inherit; }
-.container { max-width:1360px; margin:0 auto; padding:0 clamp(12px,2vw,24px); }
+.container { max-width:1360px; margin:0 auto; padding:0 24px; }
 
 /* ── Header ── */
 .header { background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; box-shadow:0 1px 0 var(--border),0 4px 16px rgba(13,27,42,0.06); }
@@ -31,7 +32,7 @@ a { text-decoration:none; color:inherit; }
 
 /* ── Layout ── */
 .page { padding:28px 0 48px; }
-.layout { display:grid; grid-template-columns:minmax(220px,260px) minmax(0,1fr); gap:24px; align-items:start; }
+.layout { display:grid; grid-template-columns:260px 1fr; gap:24px; align-items:start; }
 
 /* ── Sidebar ── */
 .sidebar { background:var(--card); border:1px solid var(--border); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden; position:sticky; top:80px; }
