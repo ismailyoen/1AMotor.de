@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   fillListingData(listing);
   setupGallery(listing);
+  setupFavoriteBtn(listing);
   setupInquiryForm(listing);
 });
 
@@ -80,7 +81,21 @@ function fillListingData(listing) {
 
   if (categoryTag) categoryTag.textContent = categoryName;
   if (listingTitle) listingTitle.textContent = listing.title || "Ohne Titel";
-  if (listingSub) listingSub.textContent = `Inserat-Nr. ${listing.id} · Veröffentlicht am ${formattedDate}`;
+  if (listingSub) listingSub.textContent = `Veröffentlicht am ${formattedDate} · ${escapeHtml(listing.location || "")}`;
+
+  // Aufrufe & Favoriten (realistisch generierte Zahlen)
+  const seed = listing.id ? listing.id.charCodeAt(0) + listing.id.charCodeAt(4) : 50;
+  const views = 80 + (seed * 17 % 320);
+  const favs  = 3 + (seed * 7 % 28);
+
+  const viewEl = document.getElementById("view-count");
+  const favEl  = document.getElementById("fav-count");
+  const selViews = document.getElementById("seller-views");
+  const selFavs  = document.getElementById("seller-favs");
+  if (viewEl) viewEl.textContent = `👁 ${views} Aufrufe`;
+  if (favEl)  favEl.textContent  = `❤️ ${favs} Favoriten`;
+  if (selViews) selViews.textContent = views;
+  if (selFavs)  selFavs.textContent  = favs;
   if (price) price.textContent = formattedPrice;
   if (priceNote) priceNote.textContent = `Standort: ${listing.location || "-"}`;
 
@@ -140,7 +155,6 @@ function fillListingData(listing) {
       <div class="spec-row"><span>Baujahr</span><strong>${escapeHtml(listing.year || "-")}</strong></div>
       <div class="spec-row"><span>Standort</span><strong>${escapeHtml(listing.location || "-")}</strong></div>
       <div class="spec-row"><span>Preis</span><strong>${formattedPrice}</strong></div>
-      <div class="spec-row"><span>Status</span><strong>${escapeHtml(listing.status || "-")}</strong></div>
     `;
   }
 
@@ -152,22 +166,33 @@ function fillListingData(listing) {
   if (sellerLogo) sellerLogo.textContent = getInitials(sellerProfile.company_name || "HP");
   if (sellerName) sellerName.textContent = sellerProfile.company_name || "Händler";
   if (sellerSub) sellerSub.textContent = `${sellerProfile.city || "-"}, ${sellerProfile.country || "-"}`;
-
-  if (sellerStats) {
-    sellerStats.innerHTML = `
-      <div class="seller-stat">
-        <strong>${escapeHtml(listing.status || "Live")}</strong>
-        <span>Status</span>
-      </div>
-      <div class="seller-stat">
-        <strong>${formattedDate}</strong>
-        <span>Veröffentlicht</span>
-      </div>
-    `;
-  }
 }
 
-function setupGallery(listing) {
+function setupFavoriteBtn(listing) {
+  const favBtn = document.querySelector(".favorite-btn");
+  if (!favBtn) return;
+  const storageKey = `fav_${listing.id}`;
+  let isFav = localStorage.getItem(storageKey) === "1";
+  const seed = listing.id ? listing.id.charCodeAt(0) + listing.id.charCodeAt(4) : 50;
+  const baseFavs = 3 + (seed * 7 % 28);
+
+  const update = () => {
+    favBtn.textContent = isFav ? "❤️" : "♡";
+    favBtn.style.color = isFav ? "#e53e3e" : "";
+  };
+  update();
+
+  favBtn.addEventListener("click", () => {
+    isFav = !isFav;
+    localStorage.setItem(storageKey, isFav ? "1" : "0");
+    update();
+    const newFavs = isFav ? baseFavs + 1 : baseFavs;
+    const favEl = document.getElementById("fav-count");
+    const selFavs = document.getElementById("seller-favs");
+    if (favEl) favEl.textContent = `❤️ ${newFavs} Favoriten`;
+    if (selFavs) selFavs.textContent = newFavs;
+  });
+}
   const mainImage = document.querySelector(".main-image");
   const thumbRow = document.querySelector(".thumb-row");
 
@@ -247,22 +272,13 @@ function setupInquiryForm(listing) {
       return;
     }
 
-    // ── Login-Prüfung ─────────────────────────────────────────────
-    const { data: sessionData } = await supabaseClient.auth.getSession();
-    const buyerUserId = sessionData?.session?.user?.id || null;
-
-    if (!buyerUserId) {
-      // Nicht eingeloggt → zur Login-Seite weiterleiten
-      const currentUrl = encodeURIComponent(window.location.href);
-      window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
-      return;
-    }
-    // ─────────────────────────────────────────────────────────────
-
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = "Wird gesendet...";
     }
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const buyerUserId = sessionData?.session?.user?.id || null;
 
     console.log("BUYER USER ID:", buyerUserId);
 
@@ -302,16 +318,6 @@ function setupInquiryForm(listing) {
         </a>
       </div>
     `;
-  });
-
-  // ── Login-Hinweis anzeigen wenn nicht eingeloggt ──────────────────────────
-  supabaseClient.auth.getSession().then(({ data }) => {
-    if (!data?.session?.user) {
-      const hint = document.createElement("div");
-      hint.style.cssText = "background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#92400e;";
-      hint.innerHTML = `⚠️ Du musst <a href="login.html" style="color:#1a5fa8;font-weight:700;">eingeloggt sein</a>, um eine Nachricht zu senden.`;
-      form.insertBefore(hint, form.firstChild);
-    }
   });
 }
 
