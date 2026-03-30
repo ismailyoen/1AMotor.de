@@ -11,17 +11,14 @@
   <meta property="og:title" content="" id="og-title" />
   <meta property="og:description" content="" id="og-description" />
   <meta property="og:url" content="" id="og-url" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <link rel="stylesheet" href="zoom-fix.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Anzeige – 1A Motor</title>
 <style>
   :root{ --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0; --light-blue:#72b6ff; --success:#059669; --shadow:0 4px 20px rgba(18,58,99,0.08); --shadow-lg:0 12px 40px rgba(18,58,99,0.13); --radius:14px; }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ font-size:100%; }
-  .bogus{ font-family:Arial,Helvetica,sans-serif; }
-  body{ overflow-x:hidden; min-width:320px; background:var(--bg); color:var(--text); line-height:1.5; }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
+  body{ background:var(--bg); color:var(--text); line-height:1.5; }
   a{ text-decoration:none; color:inherit; }
-  .container{ max-width:1300px; margin:0 auto; padding:0 clamp(12px,2vw,20px); }
+  .container{ max-width:1300px; margin:0 auto; padding:0 20px; }
 
   /* Header */
   .header{ background:#fff; border-bottom:2px solid var(--border); position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(18,58,99,0.06); }
@@ -291,9 +288,10 @@
           <a href="suche.html" class="btn-secondary">← Zurück</a>
         </div>
 
-        <div class="meta-row">
-          <span id="meta-status">Status: –</span>
-          <span id="meta-date">Datum: –</span>
+        <!-- Aufrufe + Favoriten -->
+        <div class="listing-activity" id="listing-activity" style="display:flex;gap:16px;font-size:13px;color:var(--muted);padding-top:4px;">
+          <span id="view-count">👁 wird geladen...</span>
+          <span id="fav-count">❤️ wird geladen...</span>
         </div>
       </aside>
     </div>
@@ -366,12 +364,12 @@
 
         <div class="seller-stats">
           <div class="seller-stat">
-            <strong id="seller-status">Live</strong>
-            <span>Status</span>
+            <strong id="seller-views">–</strong>
+            <span>Aufrufe</span>
           </div>
           <div class="seller-stat">
-            <strong id="seller-date">–</strong>
-            <span>Veröffentlicht</span>
+            <strong id="seller-favs">–</strong>
+            <span>Favoriten</span>
           </div>
         </div>
 
