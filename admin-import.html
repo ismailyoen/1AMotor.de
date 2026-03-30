@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Import – 1A Motor</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--dark:#0d1b2a;--navy:#111827;--blue:#1a5fa8;--blue2:#2176c7;--sky:#4da6ff;--white:#fff;--muted:#7a93ae;--border:#e0e9f2;--bg:#f4f7fb;--success:#10b981;--danger:#ef4444;--orange:#f59e0b;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0d1b2a,#1b2d42);}
+.login-card{background:#fff;border-radius:20px;padding:40px;max-width:380px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,0.3);}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.login-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:15px;color:#fff;}
+.login-name{font-size:20px;font-weight:800;color:var(--dark);}
+.login-card h2{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.login-card p{font-size:14px;color:var(--muted);margin-bottom:24px;}
+.login-input{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;margin-bottom:14px;transition:border-color .15s;}
+.login-input:focus{border-color:var(--blue2);}
+.login-btn{width:100%;padding:14px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;}
+.login-btn:hover{background:var(--navy);}
+.login-error{color:var(--danger);font-size:13px;margin-top:10px;text-align:center;display:none;}
+
+/* ADMIN */
+#admin-screen{display:none;}
+.header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(13,27,42,0.06);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;max-width:1100px;margin:0 auto;padding-left:clamp(14px,2vw,24px);padding-right:clamp(14px,2vw,24px);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:14px;color:#fff;}
+.logo-name{font-size:18px;font-weight:800;color:var(--dark);}
+.admin-badge{background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.logout-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;}
+.logout-btn:hover{border-color:var(--danger);color:var(--danger);}
+
+.page{max-width:1100px;margin:0 auto;padding:28px clamp(14px,2vw,24px) 60px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(13,27,42,0.05);}
+.stat-label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
+.stat-val{font-size:28px;font-weight:900;color:var(--dark);}
+
+/* FORM CARD */
+.form-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 2px 12px rgba(13,27,42,0.06);overflow:hidden;}
+.form-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.form-header h2{font-size:18px;font-weight:800;color:var(--dark);}
+.form-header p{font-size:13px;color:var(--muted);margin-top:2px;}
+.form-body{padding:24px;}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:13px;font-weight:700;color:#334155;}
+.form-group label span{color:var(--danger);}
+.form-control{padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;color:var(--dark);}
+.form-control:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(26,95,168,0.1);}
+textarea.form-control{min-height:100px;resize:vertical;}
+select.form-control{cursor:pointer;}
+
+/* Image Upload */
+.img-upload-area{border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:#fafbff;}
+.img-upload-area:hover{border-color:var(--blue2);background:#f0f6ff;}
+.img-upload-area.dragover{border-color:var(--blue2);background:#e8f2ff;}
+.img-upload-area p{font-size:14px;color:var(--muted);margin-top:8px;}
+.img-upload-area span{font-size:12px;color:#a0b3c4;}
+.upload-icon{font-size:32px;}
+.img-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:14px;}
+.img-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.img-thumb img{width:100%;height:100%;object-fit:cover;}
+.img-thumb button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;font-size:12px;cursor:pointer;display:grid;place-items:center;}
+
+/* Status Bar */
+.status-bar{padding:16px 24px;border-top:1px solid var(--border);background:#fafbff;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.status-options{display:flex;gap:8px;}
+.status-pill{padding:7px 16px;border-radius:999px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s;}
+.status-pill.active-free{background:#dcfce7;color:#15803d;border-color:#a7f3d0;}
+.status-pill.active-draft{background:#f1f5f9;color:#64748b;border-color:#e2e8f0;}
+.submit-actions{display:flex;gap:10px;}
+.btn{padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .18s;}
+.btn-draft{background:#f1f5f9;color:#64748b;border:1.5px solid var(--border);}
+.btn-draft:hover{background:#e2e8f0;}
+.btn-publish{background:var(--dark);color:#fff;}
+.btn-publish:hover{background:var(--navy);}
+.btn-publish:disabled{opacity:.5;cursor:not-allowed;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:700;z-index:999;animation:slideIn .25s ease;max-width:320px;}
+.toast.success{background:#0f172a;color:#10b981;border:1px solid #10b981;}
+.toast.error{background:#0f172a;color:var(--danger);border:1px solid var(--danger);}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* Recent Listings */
+.recent-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 2px 12px rgba(13,27,42,0.06);margin-top:24px;overflow:hidden;}
+.recent-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.recent-header h3{font-size:16px;font-weight:800;color:var(--dark);}
+.listing-row{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:14px 24px;border-bottom:1px solid #f8fafc;font-size:13px;}
+.listing-row:last-child{border-bottom:none;}
+.listing-row:hover{background:#fafbff;}
+.listing-title{font-weight:700;color:var(--dark);}
+.listing-meta{color:var(--muted);}
+.badge{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+.badge.free{background:#dcfce7;color:#15803d;}
+.badge.draft{background:#f1f5f9;color:#64748b;}
+.del-btn{background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s;}
+.del-btn:hover{background:#fef2f2;}
+
+@media(max-width:640px){.form-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}.listing-row{grid-template-columns:1fr auto;}.listing-meta{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-mark">1A</div>
+      <div class="login-name">Motor</div>
+    </div>
+    <h2>Admin-Bereich</h2>
+    <p>Nur für autorisierte Nutzer.</p>
+    <input type="password" class="login-input" id="pw-input" placeholder="Passwort eingeben" />
+    <button class="login-btn" onclick="checkPassword()">Einloggen</button>
+    <div class="login-error" id="login-error">Falsches Passwort.</div>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div id="admin-screen">
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">1A</div>
+        <div class="logo-name">Motor</div>
+        <span class="admin-badge">Admin</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a href="index.html" style="font-size:13px;color:var(--muted);font-weight:600;">← Zur Seite</a>
+        <button class="logout-btn" onclick="logout()">Abmelden</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="page">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Anzeigen gesamt</div>
+        <div class="stat-val" id="stat-total">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Freigegeben</div>
+        <div class="stat-val" id="stat-live" style="color:var(--success);">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Entwürfe</div>
+        <div class="stat-val" id="stat-draft" style="color:var(--muted);">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Händler</div>
+        <div class="stat-val" id="stat-sellers">–</div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-card">
+      <div class="form-header">
+        <div>
+          <h2>➕ Neue Anzeige anlegen</h2>
+          <p>Direkt in Supabase speichern</p>
+        </div>
+        <div id="seller-info-box" style="font-size:13px;color:var(--muted);text-align:right;"></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label>Titel <span>*</span></label>
+            <input type="text" class="form-control" id="f-titel" placeholder="z.B. BMW N57 3.0d Dieselmotor 258PS" />
+          </div>
+
+          <div class="form-group">
+            <label>Kategorie <span>*</span></label>
+            <select class="form-control" id="f-kategorie">
+              <option value="">Wird geladen...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Hersteller</label>
+            <input type="text" class="form-control" id="f-hersteller" placeholder="z.B. BMW, Mercedes, Siemens" />
+          </div>
+
+          <div class="form-group">
+            <label>Modell</label>
+            <input type="text" class="form-control" id="f-modell" placeholder="z.B. N57, OM651, 3B20" />
+          </div>
+
+          <div class="form-group">
+            <label>Zustand</label>
+            <select class="form-control" id="f-zustand">
+              <option value="Gebraucht">Gebraucht</option>
+              <option value="Neu">Neu</option>
+              <option value="Generalüberholt">Generalüberholt</option>
+              <option value="Austauschmotor">Austauschmotor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Preis (€) <span>*</span></label>
+            <input type="number" class="form-control" id="f-preis" placeholder="z.B. 1499" min="0" />
+          </div>
+
+          <div class="form-group">
+            <label>Baujahr</label>
+            <input type="number" class="form-control" id="f-baujahr" placeholder="z.B. 2018" min="1980" max="2030" />
+          </div>
+
+          <div class="form-group">
+            <label>Standort</label>
+            <input type="text" class="form-control" id="f-standort" placeholder="z.B. Stuttgart, DE" />
+          </div>
+
+          <div class="form-group full">
+            <label>Beschreibung</label>
+            <textarea class="form-control" id="f-beschreibung" placeholder="Zustand, Laufleistung, Besonderheiten..."></textarea>
+          </div>
+
+          <div class="form-group full">
+            <label>Bilder hochladen</label>
+            <div class="img-upload-area" id="upload-area" onclick="document.getElementById('img-input').click()">
+              <div class="upload-icon">📸</div>
+              <p>Klicken oder Bilder hierher ziehen</p>
+              <span>Max. 12 Bilder · JPG, PNG · wird automatisch komprimiert</span>
+            </div>
+            <input type="file" id="img-input" multiple accept="image/*" style="display:none;" />
+            <div class="img-preview" id="img-preview"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span style="font-size:13px;font-weight:700;color:#334155;">Status:</span>
+          <div class="status-options">
+            <button class="status-pill active-free" id="pill-free" onclick="setStatus('Freigegeben')">✅ Direkt freigeben</button>
+            <button class="status-pill" id="pill-draft" onclick="setStatus('Entwurf')">📝 Als Entwurf</button>
+          </div>
+        </div>
+        <div class="submit-actions">
+          <button class="btn btn-draft" onclick="resetForm()">↺ Zurücksetzen</button>
+          <button class="btn btn-publish" id="submit-btn" onclick="submitListing()">💾 Anzeige speichern</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Listings -->
+    <div class="recent-card">
+      <div class="recent-header">
+        <h3>Zuletzt hinzugefügt</h3>
+        <span style="font-size:13px;color:var(--muted);" id="recent-count"></span>
+      </div>
+      <div id="recent-list">
+        <div style="padding:20px 24px;color:var(--muted);font-size:14px;">Wird geladen...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+// ── PASSWORT ─────────────────────────────────────────────────────────────────
+const ADMIN_PW = "1amotor2026admin";
+
+function checkPassword() {
+  const pw = document.getElementById("pw-input").value;
+  if (pw === ADMIN_PW) {
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("admin-screen").style.display = "block";
+    initAdmin();
+  } else {
+    document.getElementById("login-error").style.display = "block";
+    document.getElementById("pw-input").value = "";
+    document.getElementById("pw-input").focus();
+  }
+}
+
+document.getElementById("pw-input")?.addEventListener("keydown", e => {
+  if (e.key === "Enter") checkPassword();
+});
+
+function logout() {
+  document.getElementById("admin-screen").style.display = "none";
+  document.getElementById("login-screen").style.display = "flex";
+}
+
+// ── STATUS ───────────────────────────────────────────────────────────────────
+let currentStatus = "Freigegeben";
+let selectedFiles = [];
+let sellerId = null;
+
+function setStatus(s) {
+  currentStatus = s;
+  document.getElementById("pill-free").className = "status-pill" + (s === "Freigegeben" ? " active-free" : "");
+  document.getElementById("pill-draft").className = "status-pill" + (s === "Entwurf" ? " active-draft" : "");
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+async function initAdmin() {
+  await loadCategories();
+  await loadStats();
+  await loadRecentListings();
+  await loadSellerProfile();
+  setupImageUpload();
+}
+
+async function loadSellerProfile() {
+  const { data: session } = await supabaseClient.auth.getSession();
+  const user = session?.session?.user;
+  if (!user) return;
+
+  const { data: seller } = await supabaseClient
+    .from("seller_profiles").select("id, company_name").eq("user_id", user.id).maybeSingle();
+
+  if (seller) {
+    sellerId = seller.id;
+    document.getElementById("seller-info-box").innerHTML =
+      `<div style="font-weight:700;color:var(--dark);">${escHtml(seller.company_name)}</div><div>Händler-ID: ${seller.id.slice(0,8)}...</div>`;
+  } else {
+    document.getElementById("seller-info-box").innerHTML =
+      `<div style="color:var(--danger);">⚠️ Kein Händlerprofil — bitte einloggen</div>`;
+  }
+}
+
+async function loadCategories() {
+  const { data } = await supabaseClient.from("categories").select("id, name, slug").order("name");
+  const sel = document.getElementById("f-kategorie");
+  if (!data) return;
+  sel.innerHTML = `<option value="">Kategorie wählen...</option>` +
+    data.map(c => `<option value="${escHtml(c.slug)}">${escHtml(c.name)}</option>`).join("");
+}
+
+async function loadStats() {
+  const [total, live, draft, sellers] = await Promise.all([
+    supabaseClient.from("listings").select("id", {count:"exact",head:true}),
+    supabaseClient.from("listings").select("id", {count:"exact",head:true}).eq("status","Freigegeben"),
+    supabaseClient.from("listings").select("id", {count:"exact",head:true}).eq("status","Entwurf"),
+    supabaseClient.from("seller_profiles").select("id", {count:"exact",head:true}),
+  ]);
+  document.getElementById("stat-total").textContent = total.count ?? 0;
+  document.getElementById("stat-live").textContent = live.count ?? 0;
+  document.getElementById("stat-draft").textContent = draft.count ?? 0;
+  document.getElementById("stat-sellers").textContent = sellers.count ?? 0;
+}
+
+async function loadRecentListings() {
+  const { data } = await supabaseClient
+    .from("listings")
+    .select("id, title, price, status, created_at, categories(name)")
+    .order("created_at", {ascending: false})
+    .limit(10);
+
+  const container = document.getElementById("recent-list");
+  document.getElementById("recent-count").textContent = `${data?.length || 0} neueste`;
+
+  if (!data?.length) {
+    container.innerHTML = `<div style="padding:20px 24px;color:var(--muted);font-size:14px;">Noch keine Anzeigen vorhanden.</div>`;
+    return;
+  }
+
+  container.innerHTML = data.map(l => {
+    const cat = Array.isArray(l.categories) ? l.categories[0]?.name : l.categories?.name || "–";
+    const price = Number(l.price || 0).toLocaleString("de-DE", {style:"currency",currency:"EUR",maximumFractionDigits:0});
+    const date = new Date(l.created_at).toLocaleDateString("de-DE");
+    const badgeClass = l.status === "Freigegeben" ? "free" : "draft";
+    return `
+      <div class="listing-row">
+        <div>
+          <div class="listing-title">${escHtml(l.title || "–")}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${escHtml(cat)}</div>
+        </div>
+        <div class="listing-meta">${price}</div>
+        <span class="badge ${badgeClass}">${escHtml(l.status)}</span>
+        <button class="del-btn" onclick="deleteListing('${l.id}')" title="Löschen">🗑</button>
+      </div>
+    `;
+  }).join("");
+}
+
+// ── BILD UPLOAD ───────────────────────────────────────────────────────────────
+function setupImageUpload() {
+  const area = document.getElementById("upload-area");
+  const input = document.getElementById("img-input");
+
+  input.addEventListener("change", () => handleFiles(Array.from(input.files)));
+
+  area.addEventListener("dragover", e => { e.preventDefault(); area.classList.add("dragover"); });
+  area.addEventListener("dragleave", () => area.classList.remove("dragover"));
+  area.addEventListener("drop", e => {
+    e.preventDefault();
+    area.classList.remove("dragover");
+    handleFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/")));
+  });
+}
+
+function handleFiles(files) {
+  selectedFiles = [...selectedFiles, ...files].slice(0, 12);
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const grid = document.getElementById("img-preview");
+  grid.innerHTML = selectedFiles.map((f, i) => {
+    const url = URL.createObjectURL(f);
+    return `<div class="img-thumb"><img src="${url}" /><button onclick="removeImg(${i})">✕</button></div>`;
+  }).join("");
+}
+
+function removeImg(i) {
+  selectedFiles.splice(i, 1);
+  renderPreviews();
+}
+
+async function compressImage(file, maxWidth = 1200, quality = 0.78) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let {width, height} = img;
+        if (width > maxWidth) { height = Math.round(height * maxWidth / width); width = maxWidth; }
+        canvas.width = width; canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        canvas.toBlob(blob => resolve(blob || file), "image/jpeg", quality);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImages(userId) {
+  const urls = [];
+  for (let i = 0; i < selectedFiles.length; i++) {
+    let file = selectedFiles[i];
+    try { file = await compressImage(file); } catch(e) {}
+    const name = `${userId}/${Date.now()}-${i}-${Math.random().toString(36).slice(2)}.jpg`;
+    const { error } = await supabaseClient.storage.from("listing-images").upload(name, file, {contentType:"image/jpeg"});
+    if (!error) {
+      const { data: urlData } = supabaseClient.storage.from("listing-images").getPublicUrl(name);
+      if (urlData?.publicUrl) urls.push(urlData.publicUrl);
+    }
+  }
+  return urls;
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
+async function submitListing() {
+  const btn = document.getElementById("submit-btn");
+  const titel = document.getElementById("f-titel").value.trim();
+  const kategorie = document.getElementById("f-kategorie").value.trim();
+  const preis = Number(document.getElementById("f-preis").value || 0);
+
+  if (!titel || !kategorie || !preis) {
+    showToast("Bitte Titel, Kategorie und Preis ausfüllen!", "error"); return;
+  }
+
+  btn.disabled = true; btn.textContent = "Wird gespeichert...";
+
+  try {
+    const { data: session } = await supabaseClient.auth.getSession();
+    const user = session?.session?.user;
+    if (!user) { showToast("Nicht eingeloggt!", "error"); btn.disabled = false; btn.textContent = "💾 Anzeige speichern"; return; }
+
+    // Seller laden oder anlegen
+    let { data: seller } = await supabaseClient.from("seller_profiles").select("id").eq("user_id", user.id).maybeSingle();
+    if (!seller) {
+      const { data: newSeller } = await supabaseClient.from("seller_profiles")
+        .upsert([{user_id: user.id, company_name: user.email?.split("@")[0] || "Admin", email: user.email || "", city: "", country: "DE"}], {onConflict:"user_id"})
+        .select("id").maybeSingle();
+      seller = newSeller;
+    }
+    if (!seller) { showToast("Kein Händlerprofil!", "error"); btn.disabled = false; btn.textContent = "💾 Anzeige speichern"; return; }
+
+    // Kategorie finden
+    const { data: allCats } = await supabaseClient.from("categories").select("id, name, slug");
+    const cat = allCats?.find(c => c.slug === kategorie || c.name === kategorie);
+    if (!cat) { showToast("Kategorie nicht gefunden!", "error"); btn.disabled = false; btn.textContent = "💾 Anzeige speichern"; return; }
+
+    // Bilder hochladen
+    btn.textContent = "Bilder werden hochgeladen...";
+    const imageUrls = await uploadImages(user.id);
+
+    // Anzeige speichern
+    btn.textContent = "Wird gespeichert...";
+    const { error } = await supabaseClient.from("listings").insert([{
+      seller_id: seller.id,
+      category_id: cat.id,
+      title: titel,
+      manufacturer: document.getElementById("f-hersteller").value.trim(),
+      model: document.getElementById("f-modell").value.trim(),
+      condition: document.getElementById("f-zustand").value,
+      price: preis,
+      year: parseInt(document.getElementById("f-baujahr").value || "0") || null,
+      location: document.getElementById("f-standort").value.trim(),
+      description: document.getElementById("f-beschreibung").value.trim(),
+      status: currentStatus,
+      image_urls: imageUrls
+    }]);
+
+    if (error) { showToast("Fehler: " + error.message, "error"); }
+    else {
+      showToast("✅ Anzeige erfolgreich gespeichert!", "success");
+      resetForm();
+      await loadStats();
+      await loadRecentListings();
+    }
+  } catch(e) {
+    showToast("Fehler: " + e.message, "error");
+  }
+
+  btn.disabled = false; btn.textContent = "💾 Anzeige speichern";
+}
+
+async function deleteListing(id) {
+  if (!confirm("Anzeige wirklich löschen?")) return;
+  await supabaseClient.from("inquiries").delete().eq("listing_id", id);
+  const { error } = await supabaseClient.from("listings").delete().eq("id", id);
+  if (!error) { showToast("Anzeige gelöscht.", "success"); await loadStats(); await loadRecentListings(); }
+  else showToast("Fehler beim Löschen!", "error");
+}
+
+function resetForm() {
+  ["f-titel","f-hersteller","f-modell","f-preis","f-baujahr","f-standort","f-beschreibung"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+  document.getElementById("f-kategorie").selectedIndex = 0;
+  document.getElementById("f-zustand").selectedIndex = 0;
+  selectedFiles = [];
+  document.getElementById("img-preview").innerHTML = "";
+  setStatus("Freigegeben");
+}
+
+function showToast(msg, type) {
+  const t = document.createElement("div");
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+function escHtml(v) {
+  return String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+</script>
+</body>
+</html>
