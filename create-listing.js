@@ -1,21 +1,113 @@
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("create-listing.js wurde geladen");
 
-  const form = document.getElementById("listing-form") || document.querySelector("form");
+  const form = document.querySelector("form");
   const fileInput = document.getElementById("bilder");
-  const previewGrid = document.getElementById("preview-grid") || document.querySelector(".preview-grid");
+  const previewGrid = document.querySelector(".preview-grid");
   const pageTitle = document.querySelector(".page-head h1");
-
-  console.log("FORM GEFUNDEN:", form?.id || "querySelector");
+  const submitBtn = form?.querySelector(".btn-primary");
 
   if (!form) {
     console.log("Kein Formular gefunden");
     return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const editListingId = params.get("edit");
-  let existingImageUrls = [];
+  // ── Loading-UI Hilfsfunktionen ──────────────────────────────────────────
+  function setLoading(isLoading, statusText = "") {
+    if (!submitBtn) return;
+    if (isLoading) {
+      submitBtn.disabled = true;
+      submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
+      submitBtn.textContent = statusText || "Wird gespeichert…";
+      submitBtn.style.opacity = "0.7";
+      submitBtn.style.cursor = "not-allowed";
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.textContent = submitBtn.dataset.originalText || "Anzeige veröffentlichen";
+      submitBtn.style.opacity = "";
+      submitBtn.style.cursor = "";
+    }
+  }
+
+  function showStatusBanner(message, type) {
+    var t = type || "info";
+    var banner = document.getElementById("create-status-banner");
+    if (!banner) {
+      banner = document.createElement("div");
+      banner.id = "create-status-banner";
+      banner.style.cssText = [
+        "position:fixed",
+        "top:80px",
+        "left:50%",
+        "transform:translateX(-50%)",
+        "z-index:9999",
+        "padding:14px 24px",
+        "border-radius:12px",
+        "font-size:15px",
+        "font-weight:700",
+        "box-shadow:0 8px 30px rgba(0,0,0,0.15)",
+        "max-width:480px",
+        "text-align:center",
+        "transition:opacity 0.3s ease"
+      ].join(";");
+      document.body.appendChild(banner);
+    }
+
+    var colors = {
+      info:    { bg: "#eef6ff", color: "#123a63",  border: "#c3daf5" },
+      success: { bg: "#eaf8f0", color: "#0f7a45",  border: "#b2e8ce" },
+      error:   { bg: "#fff0f0", color: "#c0392b",  border: "#f5c6c3" }
+    };
+    var c = colors[t] || colors.info;
+    banner.style.background = c.bg;
+    banner.style.color      = c.color;
+    banner.style.border     = "1px solid " + c.border;
+    banner.style.opacity    = "1";
+    banner.textContent      = message;
+
+    if (t === "success") {
+      setTimeout(function () {
+        banner.style.opacity = "0";
+        setTimeout(function () { banner.remove(); }, 400);
+      }, 3000);
+    }
+  }
+
+  function removeStatusBanner() {
+    var banner = document.getElementById("create-status-banner");
+    if (banner) banner.remove();
+  }
+
+  // ── Session mit Retry ───────────────────────────────────────────────────
+  async function getSessionWithRetry(maxRetries) {
+    maxRetries = maxRetries || 3;
+    for (var attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        var sessionResult = await supabaseClient.auth.getSession();
+        var user = sessionResult && sessionResult.data && sessionResult.data.session
+          ? sessionResult.data.session.user
+          : null;
+        if (user) return user;
+
+        var refreshed = await supabaseClient.auth.refreshSession();
+        if (refreshed.data && refreshed.data.session && refreshed.data.session.user) {
+          return refreshed.data.session.user;
+        }
+        console.warn("Session-Versuch " + attempt + " fehlgeschlagen");
+      } catch (err) {
+        console.warn("Session-Versuch " + attempt + " Exception:", err);
+      }
+      if (attempt < maxRetries) {
+        await new Promise(function (r) { setTimeout(r, 600 * attempt); });
+      }
+    }
+    return null;
+  }
+
+  // ── Edit-Modus ──────────────────────────────────────────────────────────
+  var params = new URLSearchParams(window.location.search);
+  var editListingId = params.get("edit");
+  var existingImageUrls = [];
 
   if (editListingId) {
     console.log("Bearbeitungsmodus aktiv. Listing-ID:", editListingId);
@@ -25,102 +117,70 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setupImagePreview(fileInput, previewGrid);
 
-  // Guard: verhindert doppeltes Absenden
-  let isSubmitting = false;
+  // ── Form Submit ─────────────────────────────────────────────────────────
+  var isSubmitting = false;
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     if (isSubmitting) {
-      console.log("Upload läuft bereits — ignoriert");
+      console.log("Submit bereits in Gang – ignoriert.");
       return;
     }
 
     isSubmitting = true;
-    console.log("Formular wird abgeschickt");
-
-    // Button sofort sperren
-    const publishBtn = document.getElementById("btn-publish");
-    if (publishBtn) {
-      publishBtn.disabled = true;
-      publishBtn.style.opacity = "0.6";
-      publishBtn.style.cursor = "not-allowed";
-      publishBtn.style.pointerEvents = "none";
-    }
-    const draftBtn = document.getElementById("btn-draft");
-    if (draftBtn) draftBtn.disabled = true;
+    removeStatusBanner();
 
     try {
-      // Session laden - mit Fallback auf getUser()
-      let user = null;
-      const sessionResult = await supabaseClient.auth.getSession();
-      console.log("SESSION BEIM SUBMIT:", sessionResult);
-      user = sessionResult?.data?.session?.user;
-
-      // Fallback: direkt User abfragen
-      if (!user) {
-        const { data: userData } = await supabaseClient.auth.getUser();
-        user = userData?.user || null;
-        console.log("GETUSER FALLBACK:", user);
-      }
+      // 1. Session holen
+      setLoading(true, "Anmeldung wird geprüft…");
+      var user = await getSessionWithRetry();
 
       if (!user) {
+        showStatusBanner("Du musst eingeloggt sein, um eine Anzeige zu erstellen.", "error");
+        setLoading(false);
         isSubmitting = false;
-        if (publishBtn) { publishBtn.disabled = false; publishBtn.style.opacity = ""; publishBtn.style.cursor = ""; publishBtn.style.pointerEvents = ""; }
-        if (typeof window.onListingError === 'function') window.onListingError();
-        alert("Du musst eingeloggt sein.");
-        window.location.href = "login.html";
         return;
       }
 
-      const title = document.getElementById("titel")?.value?.trim() || "";
-      const categorySlug = document.getElementById("kategorie")?.value?.trim() || "";
-      const manufacturer = document.getElementById("hersteller")?.value?.trim() || "";
-      const model = document.getElementById("modell")?.value?.trim() || "";
-      const condition = document.getElementById("zustand")?.value?.trim() || "Gebraucht";
-      const price = Number(document.getElementById("preis")?.value || 0);
-      const year = parseInt(document.getElementById("baujahr")?.value || "0", 10) || null;
-      const location = document.getElementById("standort")?.value?.trim() || "";
-      const description = document.getElementById("beschreibung")?.value?.trim() || "";
+      // 2. Felder lesen
+      var title        = (document.getElementById("titel")?.value || "").trim();
+      var categorySlug = (document.getElementById("kategorie")?.value || "").trim();
+      var manufacturer = (document.getElementById("hersteller")?.value || "").trim();
+      var model        = (document.getElementById("modell")?.value || "").trim();
+      var condition    = (document.getElementById("zustand")?.value || "Gebraucht").trim();
+      var price        = Number(document.getElementById("preis")?.value || 0);
+      var year         = parseInt(document.getElementById("baujahr")?.value || "0", 10) || null;
+      var location     = (document.getElementById("standort")?.value || "").trim();
+      var description  = (document.getElementById("beschreibung")?.value || "").trim();
 
       if (!title || !categorySlug || !price) {
+        showStatusBanner("Bitte Titel, Kategorie und Preis ausfüllen.", "error");
+        setLoading(false);
         isSubmitting = false;
-        if (publishBtn) { publishBtn.disabled = false; publishBtn.style.opacity = ""; publishBtn.style.cursor = ""; publishBtn.style.pointerEvents = ""; }
-        if (draftBtn) draftBtn.disabled = false;
-        alert("Bitte Titel, Kategorie und Preis ausfüllen.");
         return;
       }
 
-      const normalizeSlug = (s) => s.toLowerCase().replace(/-/g, " ").trim();
-      const normalizedInput = normalizeSlug(categorySlug);
+      // 3. Kategorie laden
+      setLoading(true, "Kategorie wird geladen…");
+      var catResult = await supabaseClient
+        .from("categories")
+        .select("id, name, slug")
+        .eq("slug", categorySlug);
 
-      const { data: allCategories, error: categoryError } = await supabaseClient
-        .from("categories").select("id, name, slug");
-
-      if (categoryError || !allCategories || allCategories.length === 0) {
-        console.error("CATEGORY ERROR:", categoryError);
-        alert("Kategorien konnten nicht geladen werden.");
-        return;
-      }
-
-      const category = allCategories.find(cat =>
-        cat.slug === categorySlug ||
-        normalizeSlug(cat.slug || "") === normalizedInput ||
-        normalizeSlug(cat.name || "") === normalizedInput
-      );
-
-      if (!category) {
-        console.error("CATEGORY NOT FOUND:", categorySlug);
+      if (catResult.error || !catResult.data || catResult.data.length === 0) {
+        console.error("CATEGORY ERROR:", catResult.error);
+        showStatusBanner("Kategorie nicht gefunden. Bitte erneut versuchen.", "error");
+        setLoading(false);
         isSubmitting = false;
-        if (publishBtn) { publishBtn.disabled = false; publishBtn.style.opacity = ""; publishBtn.style.cursor = ""; publishBtn.style.pointerEvents = ""; }
-        if (draftBtn) draftBtn.disabled = false;
-        if (typeof window.onListingError === 'function') window.onListingError();
-        alert("Kategorie nicht gefunden. Bitte eine andere wählen.");
         return;
       }
 
-      // Seller Profile laden — falls keins existiert automatisch anlegen
-      let sellerResult = await supabaseClient
+      var category = catResult.data[0];
+
+      // 4. Verkäuferprofil laden
+      setLoading(true, "Profil wird geladen…");
+      var sellerResult = await supabaseClient
         .from("seller_profiles")
         .select("id")
         .eq("user_id", user.id)
@@ -130,72 +190,55 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (sellerResult.error) {
         console.error("SELLER RESULT ERROR:", sellerResult.error);
-        alert("Fehler beim Laden des Verkäuferprofils.");
+        showStatusBanner("Fehler beim Laden des Verkäuferprofils.", "error");
+        setLoading(false);
+        isSubmitting = false;
         return;
       }
 
-      // Kein Profil? Automatisch anlegen (für Käufer die auch verkaufen wollen)
       if (!sellerResult.data) {
-        console.log("Kein Seller-Profil gefunden — wird automatisch angelegt...");
-        const fullName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Nutzer";
-        const { data: newProfile, error: profileError } = await supabaseClient
-          .from("seller_profiles")
-          .upsert([{
-            user_id:      user.id,
-            company_name: fullName,
-            email:        user.email || "",
-            city:         "",
-            country:      "DE"
-          }], { onConflict: "user_id" })
-          .select("id")
-          .maybeSingle();
-
-        if (profileError || !newProfile) {
-          console.error("PROFILE CREATE ERROR:", profileError);
-          alert("Profil konnte nicht erstellt werden. Bitte versuche es erneut.");
-          return;
-        }
-
-        sellerResult = { data: newProfile };
-        console.log("Seller-Profil automatisch angelegt:", newProfile);
+        showStatusBanner("Kein Verkäuferprofil gefunden. Bitte mit Händlerkonto einloggen.", "error");
+        setLoading(false);
+        isSubmitting = false;
+        return;
       }
 
-      // Bilder aus Drag&Drop (selectedFiles) ODER klassischem Input
-      // Bilder aus neuem Drag&Drop UI oder klassischem Input
-      let filesToUpload = [];
-      try {
-        if (typeof selectedFiles !== "undefined" && selectedFiles && selectedFiles.length > 0) {
-          filesToUpload = selectedFiles;
-          console.log("Bilder aus selectedFiles:", filesToUpload.length);
-        } else if (fileInput?.files?.length > 0) {
-          filesToUpload = Array.from(fileInput.files);
-          console.log("Bilder aus fileInput:", filesToUpload.length);
-        } else {
-          console.log("Keine Bilder ausgewählt");
-        }
-      } catch(e) {
-        console.log("Bilder-Fehler:", e);
-        filesToUpload = [];
-      }
-      const newUploadedImageUrls = await uploadListingImages(filesToUpload, user.id);
-      const finalImageUrls = [...existingImageUrls, ...newUploadedImageUrls];
+      // 5. Bilder hochladen mit Fortschrittsanzeige
+      var files = Array.from(fileInput ? fileInput.files : []);
+      var newUploadedImageUrls = [];
 
-      const payload = {
-        seller_id: sellerResult.data.id,
+      if (files.length > 0) {
+        setLoading(true, "Bilder werden hochgeladen (0 / " + files.length + ")…");
+        newUploadedImageUrls = await uploadListingImages(
+          fileInput.files,
+          user.id,
+          function (done, total) {
+            setLoading(true, "Bilder werden hochgeladen (" + done + " / " + total + ")…");
+          }
+        );
+      }
+
+      var finalImageUrls = existingImageUrls.concat(newUploadedImageUrls);
+
+      // 6. Anzeige speichern
+      setLoading(true, editListingId ? "Anzeige wird aktualisiert…" : "Anzeige wird gespeichert…");
+
+      var payload = {
+        seller_id:   sellerResult.data.id,
         category_id: category.id,
-        title,
-        manufacturer,
-        model,
-        condition,
-        price,
-        year,
-        location,
-        description,
-        status: document.getElementById("_draft_mode")?.value || "Freigegeben",
-        image_urls: finalImageUrls
+        title:       title,
+        manufacturer: manufacturer,
+        model:       model,
+        condition:   condition,
+        price:       price,
+        year:        year,
+        location:    location,
+        description: description,
+        status:      "Freigegeben",
+        image_urls:  finalImageUrls
       };
 
-      let result;
+      var result;
 
       if (editListingId) {
         result = await supabaseClient
@@ -204,118 +247,99 @@ document.addEventListener("DOMContentLoaded", async () => {
           .eq("id", editListingId)
           .eq("seller_id", sellerResult.data.id)
           .select();
-
         console.log("UPDATE RESULT:", result);
       } else {
         result = await supabaseClient
           .from("listings")
           .insert([payload])
           .select();
-
         console.log("INSERT RESULT:", result);
       }
 
       if (result.error) {
         console.error("SAVE ERROR:", result.error);
-        if (typeof window.onListingError === 'function') window.onListingError();
-        alert("Fehler beim Speichern: " + result.error.message);
+        showStatusBanner("Fehler beim Speichern. Bitte erneut versuchen.", "error");
+        setLoading(false);
+        isSubmitting = false;
         return;
       }
 
-      // Erfolg anzeigen
-      if (typeof window.onListingSuccess === 'function') {
-        window.onListingSuccess();
-      }
+      // 7. Erfolg
+      showStatusBanner(
+        editListingId ? "✅ Anzeige wurde aktualisiert!" : "✅ Anzeige wurde veröffentlicht!",
+        "success"
+      );
       form.reset();
       existingImageUrls = [];
       resetPreview(previewGrid);
-      setTimeout(() => {
+
+      setTimeout(function () {
         window.location.href = "meine-anzeigen.html";
-      }, 1800);
+      }, 1200);
+
     } catch (err) {
       console.error("UNCAUGHT ERROR IN CREATE-LISTING:", err);
+      showStatusBanner("Ein unerwarteter Fehler ist aufgetreten. Bitte die Seite neu laden.", "error");
+      setLoading(false);
       isSubmitting = false;
-      if (publishBtn) {
-        publishBtn.disabled = false;
-        publishBtn.style.opacity = "";
-        publishBtn.style.cursor = "";
-        publishBtn.style.pointerEvents = "";
-      }
-      if (draftBtn) draftBtn.disabled = false;
-      if (typeof window.onListingError === 'function') window.onListingError();
-      alert("Es gab einen Fehler: " + (err.message || err));
     }
   });
 
+  // ── Edit: Felder befüllen ───────────────────────────────────────────────
   async function loadListingForEdit(listingId) {
-    const { data: listing, error } = await supabaseClient
+    var res = await supabaseClient
       .from("listings")
-      .select(`
-        id,
-        title,
-        manufacturer,
-        model,
-        condition,
-        price,
-        year,
-        location,
-        description,
-        image_urls,
-        categories(slug)
-      `)
+      .select("id, title, manufacturer, model, condition, price, year, location, description, image_urls, categories(slug)")
       .eq("id", listingId)
       .single();
 
-    console.log("EDIT LISTING RESULT:", listing);
-    console.log("EDIT LISTING ERROR:", error);
+    console.log("EDIT LISTING RESULT:", res.data);
 
-    if (error || !listing) {
-      alert("Anzeige zum Bearbeiten konnte nicht geladen werden.");
+    if (res.error || !res.data) {
+      showStatusBanner("Anzeige zum Bearbeiten konnte nicht geladen werden.", "error");
       return [];
     }
 
-    document.getElementById("titel").value = listing.title || "";
-    document.getElementById("kategorie").value = Array.isArray(listing.categories)
-      ? listing.categories[0]?.slug || ""
-      : listing.categories?.slug || "";
-    document.getElementById("hersteller").value = listing.manufacturer || "";
-    document.getElementById("modell").value = listing.model || "";
-    document.getElementById("zustand").value = listing.condition || "Gebraucht";
-    document.getElementById("preis").value = listing.price || "";
-    document.getElementById("baujahr").value = listing.year || "";
-    document.getElementById("standort").value = listing.location || "";
+    var listing = res.data;
+    document.getElementById("titel").value        = listing.title || "";
+    document.getElementById("kategorie").value    = Array.isArray(listing.categories)
+      ? (listing.categories[0] ? listing.categories[0].slug : "")
+      : (listing.categories ? listing.categories.slug : "");
+    document.getElementById("hersteller").value   = listing.manufacturer || "";
+    document.getElementById("modell").value       = listing.model || "";
+    document.getElementById("zustand").value      = listing.condition || "Gebraucht";
+    document.getElementById("preis").value        = listing.price || "";
+    document.getElementById("baujahr").value      = listing.year || "";
+    document.getElementById("standort").value     = listing.location || "";
     document.getElementById("beschreibung").value = listing.description || "";
 
-    const imageUrls = Array.isArray(listing.image_urls) ? listing.image_urls : [];
+    var imageUrls = Array.isArray(listing.image_urls) ? listing.image_urls : [];
     renderExistingImages(previewGrid, imageUrls);
     return imageUrls;
   }
 });
 
+// ── Bild-Vorschau ─────────────────────────────────────────────────────────
 function setupImagePreview(fileInput, previewGrid) {
   if (!fileInput || !previewGrid) return;
 
-  fileInput.addEventListener("change", () => {
-    const files = Array.from(fileInput.files || []);
-    console.log("AUSGEWÄHLTE DATEIEN:", files);
-
+  fileInput.addEventListener("change", function () {
+    var files = Array.from(fileInput.files || []);
     if (!files.length) return;
 
     previewGrid.innerHTML = "";
 
-    files.slice(0, 12).forEach((file) => {
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        const div = document.createElement("div");
+    files.slice(0, 12).forEach(function (file) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        var div = document.createElement("div");
         div.className = "preview-item";
-        div.style.backgroundImage = `url('${event.target.result}')`;
-        div.style.backgroundSize = "cover";
+        div.style.backgroundImage    = "url('" + event.target.result + "')";
+        div.style.backgroundSize     = "cover";
         div.style.backgroundPosition = "center";
         div.textContent = "";
         previewGrid.appendChild(div);
       };
-
       reader.readAsDataURL(file);
     });
   });
@@ -323,7 +347,6 @@ function setupImagePreview(fileInput, previewGrid) {
 
 function renderExistingImages(previewGrid, imageUrls) {
   if (!previewGrid) return;
-
   previewGrid.innerHTML = "";
 
   if (!imageUrls.length) {
@@ -331,11 +354,11 @@ function renderExistingImages(previewGrid, imageUrls) {
     return;
   }
 
-  imageUrls.forEach((url) => {
-    const div = document.createElement("div");
+  imageUrls.forEach(function (url) {
+    var div = document.createElement("div");
     div.className = "preview-item";
-    div.style.backgroundImage = `url('${url}')`;
-    div.style.backgroundSize = "cover";
+    div.style.backgroundImage    = "url('" + url + "')";
+    div.style.backgroundSize     = "cover";
     div.style.backgroundPosition = "center";
     div.textContent = "";
     previewGrid.appendChild(div);
@@ -344,86 +367,49 @@ function renderExistingImages(previewGrid, imageUrls) {
 
 function resetPreview(previewGrid) {
   if (!previewGrid) return;
-
-  previewGrid.innerHTML = `
-    <div class="preview-item">📷</div>
-    <div class="preview-item">📷</div>
-    <div class="preview-item">📷</div>
-    <div class="preview-item">📷</div>
-  `;
+  previewGrid.innerHTML = [
+    '<div class="preview-item">📷</div>',
+    '<div class="preview-item">📷</div>',
+    '<div class="preview-item">📷</div>',
+    '<div class="preview-item">📷</div>'
+  ].join("");
 }
 
-// ── Bild komprimieren vor Upload ─────────────────────────────────────────────
-async function compressImage(file, maxWidth = 1200, quality = 0.78) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        let { width, height } = img;
-
-        // Skalieren wenn zu groß
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
-        }
-
-        canvas.width  = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-
-        canvas.toBlob(
-          (blob) => resolve(blob || file),
-          "image/jpeg",
-          quality
-        );
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-async function uploadListingImages(fileList, userId) {
-  const files = Array.isArray(fileList) ? fileList : Array.from(fileList || []);
+// ── Bild-Upload mit Fortschritts-Callback ────────────────────────────────
+async function uploadListingImages(fileList, userId, onProgress) {
+  var files = Array.from(fileList || []);
   if (!files.length) return [];
 
-  const imageFiles = files.filter(file => file.type.startsWith("image/")).slice(0, 12);
-  const uploadedUrls = [];
+  var imageFiles = files.filter(function (f) {
+    return f.type.startsWith("image/");
+  }).slice(0, 12);
 
-  for (let i = 0; i < imageFiles.length; i++) {
-    const file = imageFiles[i];
+  var uploadedUrls = [];
 
-    // Komprimieren — spart 70-90% Dateigröße
-    let uploadFile = file;
-    try {
-      const compressed = await compressImage(file);
-      console.log(`Bild ${i+1}: ${(file.size/1024).toFixed(0)}KB → ${(compressed.size/1024).toFixed(0)}KB`);
-      uploadFile = compressed;
-    } catch(e) {
-      console.warn("Komprimierung fehlgeschlagen, lade Original hoch:", e);
-    }
+  for (var i = 0; i < imageFiles.length; i++) {
+    var file = imageFiles[i];
+    var ext  = (file.name.split(".").pop() || "jpg").toLowerCase();
+    var fileName = userId + "/" + Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2) + "." + ext;
 
-    const fileName = `${userId}/${Date.now()}-${i}-${Math.random().toString(36).slice(2)}.jpg`;
-
-    const { error: uploadError } = await supabaseClient.storage
+    var uploadResult = await supabaseClient.storage
       .from("listing-images")
-      .upload(fileName, uploadFile, { contentType: "image/jpeg" });
+      .upload(fileName, file);
 
-    if (uploadError) {
-      console.error("UPLOAD ERROR:", uploadError, file.name);
+    if (uploadResult.error) {
+      console.error("UPLOAD ERROR:", uploadResult.error, file.name);
+      if (onProgress) onProgress(i + 1, imageFiles.length);
       continue;
     }
 
-    const { data: publicUrlData } = supabaseClient.storage
+    var publicUrlData = supabaseClient.storage
       .from("listing-images")
       .getPublicUrl(fileName);
 
-    if (publicUrlData?.publicUrl) {
-      uploadedUrls.push(publicUrlData.publicUrl);
+    if (publicUrlData && publicUrlData.data && publicUrlData.data.publicUrl) {
+      uploadedUrls.push(publicUrlData.data.publicUrl);
     }
+
+    if (onProgress) onProgress(i + 1, imageFiles.length);
   }
 
   return uploadedUrls;
