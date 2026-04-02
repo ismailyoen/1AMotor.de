@@ -68,49 +68,7 @@ function fillListingData(listing) {
 
   const formattedDate = new Date(listing.created_at).toLocaleDateString("de-DE");
 
-  document.title = `${listing.title || "Anzeige"} – ${listing.manufacturer || ""} Motor kaufen | 1A Motor`;
-
-  // Dynamic meta description
-  const metaDesc = document.querySelector('meta[name="description"]');
-  if (metaDesc) {
-    const price = Number(listing.price || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
-    metaDesc.setAttribute("content",
-      `${listing.title || "Motor"} – ${listing.condition || "Gebraucht"}, ${listing.year || ""}, ${listing.location || "Deutschland"}. Preis: ${price}. Jetzt anfragen auf 1A Motor.`
-    );
-  }
-
-  // Dynamic OG tags
-  const ogTitle = document.querySelector('meta[property="og:title"]');
-  const ogDesc  = document.querySelector('meta[property="og:description"]');
-  const ogImage = document.querySelector('meta[property="og:image"]');
-  if (ogTitle) ogTitle.setAttribute("content", listing.title + " | 1A Motor");
-  if (ogDesc)  ogDesc.setAttribute("content", `${listing.condition || "Gebraucht"} · ${listing.location || ""} · Jetzt auf 1A Motor anfragen`);
-
-  const imgs = Array.isArray(listing.image_urls) ? listing.image_urls : [];
-  if (ogImage && imgs.length) ogImage.setAttribute("content", imgs[0]);
-
-  // Schema.org Product markup
-  const existingSchema = document.getElementById("listing-schema");
-  if (existingSchema) existingSchema.remove();
-  const schema = document.createElement("script");
-  schema.id = "listing-schema";
-  schema.type = "application/ld+json";
-  const formattedPriceRaw = Number(listing.price || 0).toFixed(2);
-  schema.textContent = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": listing.title || "Motor",
-    "description": listing.description || "",
-    "brand": { "@type": "Brand", "name": listing.manufacturer || "Unbekannt" },
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "EUR",
-      "price": formattedPriceRaw,
-      "availability": "https://schema.org/InStock",
-      "seller": { "@type": "Organization", "name": "1A Motor" }
-    }
-  });
-  document.head.appendChild(schema);
+  document.title = `${listing.title || "Anzeige"} – 1A Motor`;
 
   const categoryTag = document.querySelector(".category-tag");
   const listingTitle = document.querySelector(".listing-title");
@@ -236,12 +194,11 @@ function setupGallery(listing) {
   setMainImage(mainImage, images[0], listing.status);
 
   thumbRow.innerHTML = images.map((imageUrl, index) => {
-    const safeImage = imageUrl;
     return `
       <div
         class="thumb ${index === 0 ? "active" : ""}"
-        data-image="${safeImage}"
-        style="background-image:url('${safeImage}');background-size:cover;background-position:center;"
+        data-image="${imageUrl}"
+        style="background-image:url('${imageUrl}');background-size:cover;background-position:center;"
         title="Bild ${index + 1}">
       </div>
     `;
