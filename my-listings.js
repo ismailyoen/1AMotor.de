@@ -194,11 +194,12 @@ function setupGallery(listing) {
   setMainImage(mainImage, images[0], listing.status);
 
   thumbRow.innerHTML = images.map((imageUrl, index) => {
+    const safeImage = imageUrl;
     return `
       <div
         class="thumb ${index === 0 ? "active" : ""}"
-        data-image="${imageUrl}"
-        style="background-image:url('${imageUrl}');background-size:cover;background-position:center;"
+        data-image="${safeImage}"
+        style="background-image:url('${safeImage}');background-size:cover;background-position:center;"
         title="Bild ${index + 1}">
       </div>
     `;
@@ -217,11 +218,13 @@ function setupGallery(listing) {
 }
 
 function setMainImage(mainImage, imageUrl, status) {
+  const safeImage = imageUrl || "";
+
   mainImage.innerHTML = `
     <span class="top-badge">${escapeHtml(status || "Live")}</span>
     <span class="favorite-btn">♡</span>
   `;
-  mainImage.style.backgroundImage = imageUrl ? `url('${imageUrl}')` : "";
+  mainImage.style.backgroundImage = safeImage ? `url('${safeImage}')` : "";
   mainImage.style.backgroundSize = "cover";
   mainImage.style.backgroundPosition = "center";
   mainImage.style.backgroundRepeat = "no-repeat";
