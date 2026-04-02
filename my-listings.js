@@ -1,142 +1,425 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const grid        = document.getElementById("my-listings-grid");
-  const filterSearch = document.getElementById("filter-search");
-  const filterStatus = document.getElementById("filter-status");
-  const filterCount  = document.getElementById("filter-count");
-  const avatarEl    = document.getElementById("sidebar-avatar");
-  const nameEl      = document.querySelector(".user-box-name");
-  const emailEl     = document.querySelector(".user-box-email");
+  console.log("listing-detail-live.js geladen");
 
-  if (!grid) return;
+  const params = new URLSearchParams(window.location.search);
+  const listingId = params.get("id") || localStorage.getItem("current_listing_id");
 
-  // ── Auth ──────────────────────────────────────────────────────────────────
-  const { data: sessionData } = await supabaseClient.auth.getSession();
-  const user = sessionData?.session?.user;
+  console.log("CURRENT LISTING ID:", listingId);
 
-  if (!user) {
-    showEmpty("Nicht eingeloggt", "Bitte melde dich an um deine Anzeigen zu sehen.", "🔒");
+  if (!listingId) {
+    showNotFound("Keine Anzeige ausgewählt.");
     return;
   }
 
-  // ── Seller ────────────────────────────────────────────────────────────────
-  const { data: seller } = await supabaseClient
-    .from("seller_profiles").select("id, company_name")
-    .eq("user_id", user.id).single();
-
-  if (!seller) { showEmpty("Kein Händlerprofil", "Für diesen Account wurde kein Händlerprofil angelegt.", "⚠️"); return; }
-
-  const displayName = seller.company_name || user.email || "Händler";
-  const initials = displayName.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase() || "?";
-  if (avatarEl) avatarEl.textContent = initials;
-  if (nameEl)   nameEl.textContent   = displayName;
-  if (emailEl)  emailEl.textContent  = user.email || "";
-
-  // ── Listings ──────────────────────────────────────────────────────────────
-  const { data: listings, error } = await supabaseClient
+  const { data: listing, error } = await supabaseClient
     .from("listings")
-    .select(`id, title, manufacturer, model, condition, price, year, location, status, created_at, image_urls, categories(name)`)
-    .eq("seller_id", seller.id)
-    .order("created_at", { ascending: false });
+    .select(`
+      id,
+      title,
+      manufacturer,
+      model,
+      condition,
+      price,
+      year,
+      location,
+      description,
+      status,
+      created_at,
+      image_urls,
+      categories(name),
+      seller_profiles(
+        id,
+        company_name,
+        city,
+        country,
+        description
+      )
+    `)
+    .eq("id", listingId)
+    .eq("status", "Freigegeben")
+    .single();
 
-  if (error) { showEmpty("Fehler beim Laden", "Bitte Seite neu laden.", "❌"); return; }
+  console.log("LISTING RESULT:", listing);
+  console.log("LISTING ERROR:", error);
 
-  // ── Anfragen zählen ───────────────────────────────────────────────────────
-  let inquiryCountMap = {};
-  if (listings?.length) {
-    const { data: inq } = await supabaseClient
-      .from("inquiries").select("listing_id").in("listing_id", listings.map(l=>l.id));
-    (inq || []).forEach(i => { inquiryCountMap[i.listing_id] = (inquiryCountMap[i.listing_id]||0)+1; });
+  if (error || !listing) {
+    showNotFound("Anzeige wurde nicht gefunden.");
+    return;
   }
 
-  let allListings = listings || [];
+  fillListingData(listing);
+  setupGallery(listing);
+  setupInquiryForm(listing);
+});
 
-  function render() {
-    const q      = (filterSearch?.value || "").toLowerCase().trim();
-    const status = filterStatus?.value || "";
+function fillListingData(listing) {
+  const categoryName = Array.isArray(listing.categories)
+    ? listing.categories[0]?.name || "Unbekannt"
+    : listing.categories?.name || "Unbekannt";
 
-    let filtered = allListings;
-    if (q)      filtered = filtered.filter(l => (l.title||"").toLowerCase().includes(q) || (l.manufacturer||"").toLowerCase().includes(q));
-    if (status) filtered = filtered.filter(l => l.status === status);
+  const sellerProfile = Array.isArray(listing.seller_profiles)
+    ? listing.seller_profiles[0] || {}
+    : listing.seller_profiles || {};
 
-    if (filterCount) filterCount.textContent = `${filtered.length} Anzeige${filtered.length !== 1 ? "n" : ""}`;
+  const formattedPrice = Number(listing.price || 0).toLocaleString("de-DE", {
+    style: "currency",
+    currency: "EUR"
+  });
 
-    if (!filtered.length) {
-      grid.innerHTML = `
-        <div class="empty-state" style="grid-column:1/-1">
-          <div class="empty-icon">📋</div>
-          <h3>${allListings.length === 0 ? "Noch keine Anzeigen" : "Keine Treffer"}</h3>
-          <p>${allListings.length === 0 ? "Erstelle dein erstes Inserat." : "Passe den Filter an."}</p>
-          ${allListings.length === 0 ? '<a href="anzeige-erstellen.html" style="display:inline-block;background:#1a3a52;color:#fff;padding:11px 20px;border-radius:999px;font-weight:700;font-size:14px;">Jetzt erstellen</a>' : ""}
-        </div>`;
+  const formattedDate = new Date(listing.created_at).toLocaleDateString("de-DE");
+
+  document.title = `${listing.title || "Anzeige"} – 1A Motor`;
+
+  const categoryTag = document.querySelector(".category-tag");
+  const listingTitle = document.querySelector(".listing-title");
+  const listingSub = document.querySelector(".listing-sub");
+  const price = document.querySelector(".price");
+  const priceNote = document.querySelector(".price-note");
+  const descriptionBox = document.querySelector(".description");
+  const specsGrid = document.querySelector(".specs-grid");
+
+  if (categoryTag) categoryTag.textContent = categoryName;
+  if (listingTitle) listingTitle.textContent = listing.title || "Ohne Titel";
+  if (listingSub) listingSub.textContent = `Inserat-Nr. ${listing.id} · Veröffentlicht am ${formattedDate}`;
+  if (price) price.textContent = formattedPrice;
+  if (priceNote) priceNote.textContent = `Standort: ${listing.location || "-"}`;
+
+  const breadcrumbCategory = document.getElementById("breadcrumb-category");
+  const breadcrumbBrand = document.getElementById("breadcrumb-brand");
+  const breadcrumbModel = document.getElementById("breadcrumb-model");
+
+  if (breadcrumbCategory) breadcrumbCategory.textContent = categoryName;
+  if (breadcrumbBrand) breadcrumbBrand.textContent = listing.manufacturer || "Hersteller";
+  if (breadcrumbModel) breadcrumbModel.textContent = listing.model || listing.title || "Anzeige";
+
+  const metaLocation = document.getElementById("meta-location");
+  const metaStatus = document.getElementById("meta-status");
+
+  if (metaLocation) metaLocation.textContent = `Standort: ${listing.location || "-"}`;
+  if (metaStatus) metaStatus.textContent = `Status: ${listing.status || "-"}`;
+
+  const quickSpecs = document.querySelector(".quick-specs");
+  if (quickSpecs) {
+    quickSpecs.innerHTML = `
+      <div class="quick-item">
+        <strong>Baujahr</strong>
+        <span>${escapeHtml(listing.year || "-")}</span>
+      </div>
+      <div class="quick-item">
+        <strong>Standort</strong>
+        <span>${escapeHtml(listing.location || "-")}</span>
+      </div>
+      <div class="quick-item">
+        <strong>Zustand</strong>
+        <span>${escapeHtml(listing.condition || "-")}</span>
+      </div>
+      <div class="quick-item">
+        <strong>Hersteller</strong>
+        <span>${escapeHtml(listing.manufacturer || "-")}</span>
+      </div>
+    `;
+  }
+
+  if (descriptionBox) {
+    const description = listing.description?.trim()
+      ? escapeHtml(listing.description).replace(/\n/g, "<br>")
+      : "Für diese Anzeige wurde noch keine Beschreibung hinterlegt.";
+
+    descriptionBox.innerHTML = `
+      <h2>Beschreibung</h2>
+      <p>${description}</p>
+    `;
+  }
+
+  if (specsGrid) {
+    specsGrid.innerHTML = `
+      <div class="spec-row"><span>Hersteller</span><strong>${escapeHtml(listing.manufacturer || "-")}</strong></div>
+      <div class="spec-row"><span>Modell</span><strong>${escapeHtml(listing.model || "-")}</strong></div>
+      <div class="spec-row"><span>Kategorie</span><strong>${escapeHtml(categoryName)}</strong></div>
+      <div class="spec-row"><span>Zustand</span><strong>${escapeHtml(listing.condition || "-")}</strong></div>
+      <div class="spec-row"><span>Baujahr</span><strong>${escapeHtml(listing.year || "-")}</strong></div>
+      <div class="spec-row"><span>Standort</span><strong>${escapeHtml(listing.location || "-")}</strong></div>
+      <div class="spec-row"><span>Preis</span><strong>${formattedPrice}</strong></div>
+      <div class="spec-row"><span>Status</span><strong>${escapeHtml(listing.status || "-")}</strong></div>
+    `;
+  }
+
+  const sellerLogo = document.querySelector(".seller-logo");
+  const sellerName = document.querySelector(".seller-head h3");
+  const sellerSub = document.querySelector(".seller-head p");
+  const sellerStats = document.querySelector(".seller-stats");
+
+  if (sellerLogo) sellerLogo.textContent = getInitials(sellerProfile.company_name || "HP");
+  if (sellerName) sellerName.textContent = sellerProfile.company_name || "Händler";
+  if (sellerSub) sellerSub.textContent = `${sellerProfile.city || "-"}, ${sellerProfile.country || "-"}`;
+
+  if (sellerStats) {
+    sellerStats.innerHTML = `
+      <div class="seller-stat">
+        <strong>${escapeHtml(listing.status || "Live")}</strong>
+        <span>Status</span>
+      </div>
+      <div class="seller-stat">
+        <strong>${formattedDate}</strong>
+        <span>Veröffentlicht</span>
+      </div>
+    `;
+  }
+}
+
+function setupGallery(listing) {
+  const mainImage = document.querySelector(".main-image");
+  const thumbRow = document.querySelector(".thumb-row");
+
+  const categoryName = Array.isArray(listing.categories)
+    ? listing.categories[0]?.name || "Unbekannt"
+    : listing.categories?.name || "Unbekannt";
+
+  const images = Array.isArray(listing.image_urls) ? listing.image_urls : [];
+
+  if (!mainImage || !thumbRow) return;
+
+  if (!images.length) {
+    mainImage.innerHTML = `
+      <span class="top-badge">${escapeHtml(listing.status || "Live")}</span>
+      <span class="favorite-btn">♡</span>
+      ${getCategoryIcon(categoryName)}
+    `;
+    thumbRow.innerHTML = `
+      <div class="thumb active">${getCategoryIcon(categoryName)}</div>
+    `;
+    return;
+  }
+
+  setMainImage(mainImage, images[0], listing.status);
+
+  thumbRow.innerHTML = images.map((imageUrl, index) => {
+    return `
+      <div
+        class="thumb ${index === 0 ? "active" : ""}"
+        data-image="${imageUrl}"
+        style="background-image:url('${imageUrl}');background-size:cover;background-position:center;"
+        title="Bild ${index + 1}">
+      </div>
+    `;
+  }).join("");
+
+  const thumbs = thumbRow.querySelectorAll(".thumb");
+  thumbs.forEach((thumb) => {
+    thumb.addEventListener("click", () => {
+      const imageUrl = thumb.getAttribute("data-image");
+      setMainImage(mainImage, imageUrl, listing.status);
+
+      thumbs.forEach(t => t.classList.remove("active"));
+      thumb.classList.add("active");
+    });
+  });
+}
+
+function setMainImage(mainImage, imageUrl, status) {
+  mainImage.innerHTML = `
+    <span class="top-badge">${escapeHtml(status || "Live")}</span>
+    <span class="favorite-btn">♡</span>
+  `;
+  mainImage.style.backgroundImage = imageUrl ? `url('${imageUrl}')` : "";
+  mainImage.style.backgroundSize = "cover";
+  mainImage.style.backgroundPosition = "center";
+  mainImage.style.backgroundRepeat = "no-repeat";
+}
+
+function setupInquiryForm(listing) {
+  const form = document.querySelector(".contact-form");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const name = form.querySelector('input[type="text"]')?.value?.trim() || "";
+    const email = form.querySelector('input[type="email"]')?.value?.trim() || "";
+    const message = form.querySelector("textarea")?.value?.trim() || "";
+
+    if (!name || !email || !message) {
+      alert("Bitte Name, E-Mail und Nachricht ausfüllen.");
       return;
     }
 
-    grid.innerHTML = filtered.map(listing => {
-      const category = Array.isArray(listing.categories) ? listing.categories[0]?.name || "–" : listing.categories?.name || "–";
-      const price    = Number(listing.price||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
-      const date     = new Date(listing.created_at).toLocaleDateString("de-DE");
-      const badgeClass = listing.status === "Freigegeben" ? "approved" : listing.status === "Entwurf" ? "draft" : "pending";
-      const inqCount = inquiryCountMap[listing.id] || 0;
-      const firstImg = Array.isArray(listing.image_urls) && listing.image_urls.length ? listing.image_urls[0] : null;
-      const imgStyle = firstImg ? `background-image:url('${encodeURI(firstImg)}');background-size:cover;background-position:center;` : "";
-      const icon     = firstImg ? "" : `<span style="font-size:44px;">${getCategoryIcon(category)}</span>`;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Wird gesendet...";
+    }
 
-      return `
-        <article class="listing-card">
-          <div class="card-image" style="${imgStyle}">
-            <span class="badge ${badgeClass}">${escapeHtml(listing.status||"–")}</span>
-            ${icon}
-          </div>
-          <div class="card-body">
-            <div class="card-title">${escapeHtml(listing.title||"Ohne Titel")}</div>
-            <div class="card-meta">
-              <span>📂 ${escapeHtml(category)}</span>
-              <span>🏭 ${escapeHtml(listing.manufacturer||"–")}</span>
-              <span>📍 ${escapeHtml(listing.location||"–")}</span>
-            </div>
-            <div class="card-price">${price}</div>
-            <div class="card-stats">
-              <span class="card-stat">📅 ${date}</span>
-              <span class="card-stat" style="color:${inqCount>0?'#059669':'#6b7280'}">💬 ${inqCount} Anfrage${inqCount!==1?"n":""}</span>
-              <span class="card-stat">🔧 ${escapeHtml(listing.condition||"–")}</span>
-            </div>
-            <div class="card-actions">
-              <a href="listing-detail.html?id=${listing.id}" class="action-btn primary">Ansehen</a>
-              <a href="anzeige-erstellen.html?edit=${listing.id}" class="action-btn">Bearbeiten</a>
-              <button class="action-btn danger delete-btn" data-id="${listing.id}">Löschen</button>
-            </div>
-          </div>
-        </article>`;
-    }).join("");
-  }
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const buyerUserId = sessionData?.session?.user?.id || null;
 
-  render();
-  filterSearch?.addEventListener("input", render);
-  filterStatus?.addEventListener("change", render);
+    console.log("BUYER USER ID:", buyerUserId);
 
-  // ── Löschen ───────────────────────────────────────────────────────────────
-  grid.addEventListener("click", async (e) => {
-    const btn = e.target.closest(".delete-btn");
-    if (!btn) return;
-    const id = btn.getAttribute("data-id");
-    if (!confirm("Anzeige wirklich löschen? Alle Anfragen werden ebenfalls gelöscht.")) return;
-    btn.textContent = "..."; btn.disabled = true;
-    await supabaseClient.from("inquiries").delete().eq("listing_id", id);
-    const { error } = await supabaseClient.from("listings").delete().eq("id", id).eq("seller_id", seller.id);
-    if (error) { alert("Fehler beim Löschen."); btn.textContent = "Löschen"; btn.disabled = false; return; }
-    allListings = allListings.filter(l => l.id !== id);
-    delete inquiryCountMap[id];
-    render();
+    const { error } = await supabaseClient
+      .from("inquiries")
+      .insert([
+        {
+          listing_id: listing.id,
+          name,
+          email,
+          message,
+          status: "Neu",
+          buyer_user_id: buyerUserId
+        }
+      ]);
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Nachricht senden";
+    }
+
+    if (error) {
+      console.error("INQUIRY INSERT ERROR:", error);
+      alert("Fehler beim Senden der Anfrage.");
+      return;
+    }
+
+    alert("Anfrage wurde erfolgreich gesendet.");
+    form.reset();
   });
-});
+}
 
-function showEmpty(title, msg, icon) {
-  const grid = document.getElementById("my-listings-grid");
-  if (!grid) return;
-  grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">${icon}</div><h3>${title}</h3><p>${msg}</p></div>`;
+function showNotFound(message) {
+  const main = document.querySelector("main");
+  if (!main) return;
+
+  main.innerHTML = `
+    <div class="container" style="padding:40px 20px;">
+      <div style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:30px;">
+        <h1 style="margin-bottom:10px;color:#123a63;">Anzeige nicht verfügbar</h1>
+        <p style="color:#6b7280;margin-bottom:16px;">${escapeHtml(message)}</p>
+        <a href="suche.html" style="display:inline-block;background:#123a63;color:white;padding:12px 18px;border-radius:999px;font-weight:700;">Zurück zur Suche</a>
+      </div>
+    </div>
+  `;
 }
-function getCategoryIcon(cat) {
-  const m = {"Automotor":"🚗","LKW Motor":"🚛","Elektromotor Industrie":"⚙️","Bootsmotor":"🚤","Traktormotor":"🚜","Hydraulikmotor":"🛠️","E-Bike Motor":"🚲","Robotermotor":"🤖","Austauschmotor":"🔄"};
-  return m[cat] || "📦";
+
+function getCategoryIcon(category) {
+  const map = {
+    "Automotor": "🚗",
+    "Dieselmotor Auto": "🚗",
+    "Benzinmotor Auto": "🚗",
+    "Hybridmotor": "⚡",
+    "Elektromotor Auto": "⚡",
+    "Motorradmotor": "🏍️",
+    "Roller Motor": "🛵",
+    "LKW Motor": "🚛",
+    "Busmotor": "🚌",
+    "Traktormotor": "🚜",
+    "Landmaschinenmotor": "🚜",
+    "Baumaschinenmotor": "🚧",
+    "Baggermotor": "🚧",
+    "Radlader Motor": "🚧",
+    "Gabelstapler Motor": "🏗️",
+    "Bootsmotor": "🚤",
+    "Außenbordmotor": "🚤",
+    "Innenbordmotor": "🚤",
+    "Schiffsdieselmotor": "🛳️",
+    "Jetski Motor": "🌊",
+    "Flugzeugmotor": "✈️",
+    "Turbinenmotor": "✈️",
+    "Jetmotor": "✈️",
+    "Propellermotor Flugzeug": "🛩️",
+    "Hubschraubermotor": "🚁",
+    "Elektromotor Industrie": "⚙️",
+    "Drehstrommotor": "⚙️",
+    "Wechselstrommotor": "⚙️",
+    "Gleichstrommotor": "⚙️",
+    "Servomotor": "🤖",
+    "Schrittmotor": "🤖",
+    "Getriebemotor": "🔩",
+    "Linearmotor": "⚙️",
+    "Synchronmotor": "⚙️",
+    "Asynchronmotor": "⚙️",
+    "Hochspannungsmotor": "⚡",
+    "Niederspannungsmotor": "⚡",
+    "Großmotor Industrie": "🏭",
+    "Spezialmotor Industrie": "🏭",
+    "Generator Motor": "🔋",
+    "Pumpenmotor": "💧",
+    "Kompressormotor": "🌀",
+    "Lüftermotor": "🌬️",
+    "Ventilatormotor": "🌬️",
+    "Förderbandmotor": "🏭",
+    "Kranmotor": "🏗️",
+    "Aufzugmotor": "🏢",
+    "Rolltreppenmotor": "🏢",
+    "Mischermotor": "⚙️",
+    "Schneckenmotor": "⚙️",
+    "Karussellmotor": "🎡",
+    "Achterbahnmotor": "🎢",
+    "Fahrgeschäft Motor": "🎠",
+    "Schausteller Motor": "🎪",
+    "Spielautomaten Motor": "🎰",
+    "Arcade Motor": "🕹️",
+    "Drohnenmotor": "🚁",
+    "Modellbau Motor": "🧩",
+    "RC Motor": "🏎️",
+    "Kartmotor": "🏁",
+    "Rasenmähermotor": "🌱",
+    "Aufsitzmäher Motor": "🌱",
+    "Kettensägenmotor": "🪚",
+    "Heckenscherenmotor": "🌿",
+    "Laubbläser Motor": "🍂",
+    "Schneefräsenmotor": "❄️",
+    "Generator Kleinmotor": "🔋",
+    "Stromaggregat Motor": "🔋",
+    "Wasserpumpenmotor": "💧",
+    "Gartenmaschinenmotor": "🌳",
+    "Hydraulikmotor": "🛠️",
+    "Pneumatikmotor": "🛠️",
+    "Vibrationsmotor": "⚙️",
+    "Spindelmotor": "⚙️",
+    "Hochleistungsmotor": "🔥",
+    "Präzisionsmotor": "🎯",
+    "CNC Motor": "🧰",
+    "Robotermotor": "🤖",
+    "Industrieroboter Motor": "🤖",
+    "Werkzeugmaschinenmotor": "🧰",
+    "E-Bike Motor": "🚲",
+    "Elektro Roller Motor": "🛴",
+    "Elektro Motorrad Motor": "🏍️",
+    "Elektro Bootsmotor": "🚤",
+    "Elektro Außenbordmotor": "🚤",
+    "Elektro Flugmotor": "✈️",
+    "Smart Motor": "📡",
+    "IoT Motor": "📡",
+    "Energiesparmotor": "🌱",
+    "Permanentmagnet Motor": "🧲",
+    "Gasturbinenmotor": "🔥",
+    "Dampfturbinenmotor": "♨️",
+    "Dieselaggregat Motor": "⛽",
+    "Notstromaggregat Motor": "🔋",
+    "Industrie Diesel Motor": "🏭",
+    "Schiffsturbinenmotor": "🛳️",
+    "Hochdrehzahlmotor": "⚡",
+    "Schwerlastmotor": "🏋️",
+    "Spezialanfertigung Motor": "🛠️",
+    "Austauschmotor": "🔄",
+    "Sonstiges": "📦"
+  };
+  return map[category] || "📦";
 }
-function escapeHtml(v) { return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+
+function getInitials(text) {
+  return String(text)
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(word => word[0])
+    .join("")
+    .toUpperCase();
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}

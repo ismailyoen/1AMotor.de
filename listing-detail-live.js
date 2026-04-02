@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   fillListingData(listing);
   setupGallery(listing);
-  setupFavoriteBtn(listing);
   setupInquiryForm(listing);
 });
 
@@ -81,21 +80,7 @@ function fillListingData(listing) {
 
   if (categoryTag) categoryTag.textContent = categoryName;
   if (listingTitle) listingTitle.textContent = listing.title || "Ohne Titel";
-  if (listingSub) listingSub.textContent = `Veröffentlicht am ${formattedDate} · ${escapeHtml(listing.location || "")}`;
-
-  // Aufrufe & Favoriten (realistisch generierte Zahlen)
-  const seed = listing.id ? listing.id.charCodeAt(0) + listing.id.charCodeAt(4) : 50;
-  const views = 80 + (seed * 17 % 320);
-  const favs  = 3 + (seed * 7 % 28);
-
-  const viewEl = document.getElementById("view-count");
-  const favEl  = document.getElementById("fav-count");
-  const selViews = document.getElementById("seller-views");
-  const selFavs  = document.getElementById("seller-favs");
-  if (viewEl) viewEl.textContent = `👁 ${views} Aufrufe`;
-  if (favEl)  favEl.textContent  = `❤️ ${favs} Favoriten`;
-  if (selViews) selViews.textContent = views;
-  if (selFavs)  selFavs.textContent  = favs;
+  if (listingSub) listingSub.textContent = `Inserat-Nr. ${listing.id} · Veröffentlicht am ${formattedDate}`;
   if (price) price.textContent = formattedPrice;
   if (priceNote) priceNote.textContent = `Standort: ${listing.location || "-"}`;
 
@@ -155,6 +140,7 @@ function fillListingData(listing) {
       <div class="spec-row"><span>Baujahr</span><strong>${escapeHtml(listing.year || "-")}</strong></div>
       <div class="spec-row"><span>Standort</span><strong>${escapeHtml(listing.location || "-")}</strong></div>
       <div class="spec-row"><span>Preis</span><strong>${formattedPrice}</strong></div>
+      <div class="spec-row"><span>Status</span><strong>${escapeHtml(listing.status || "-")}</strong></div>
     `;
   }
 
@@ -166,33 +152,22 @@ function fillListingData(listing) {
   if (sellerLogo) sellerLogo.textContent = getInitials(sellerProfile.company_name || "HP");
   if (sellerName) sellerName.textContent = sellerProfile.company_name || "Händler";
   if (sellerSub) sellerSub.textContent = `${sellerProfile.city || "-"}, ${sellerProfile.country || "-"}`;
+
+  if (sellerStats) {
+    sellerStats.innerHTML = `
+      <div class="seller-stat">
+        <strong>${escapeHtml(listing.status || "Live")}</strong>
+        <span>Status</span>
+      </div>
+      <div class="seller-stat">
+        <strong>${formattedDate}</strong>
+        <span>Veröffentlicht</span>
+      </div>
+    `;
+  }
 }
 
-function setupFavoriteBtn(listing) {
-  const favBtn = document.querySelector(".favorite-btn");
-  if (!favBtn) return;
-  const storageKey = `fav_${listing.id}`;
-  let isFav = localStorage.getItem(storageKey) === "1";
-  const seed = listing.id ? listing.id.charCodeAt(0) + listing.id.charCodeAt(4) : 50;
-  const baseFavs = 3 + (seed * 7 % 28);
-
-  const update = () => {
-    favBtn.textContent = isFav ? "❤️" : "♡";
-    favBtn.style.color = isFav ? "#e53e3e" : "";
-  };
-  update();
-
-  favBtn.addEventListener("click", () => {
-    isFav = !isFav;
-    localStorage.setItem(storageKey, isFav ? "1" : "0");
-    update();
-    const newFavs = isFav ? baseFavs + 1 : baseFavs;
-    const favEl = document.getElementById("fav-count");
-    const selFavs = document.getElementById("seller-favs");
-    if (favEl) favEl.textContent = `❤️ ${newFavs} Favoriten`;
-    if (selFavs) selFavs.textContent = newFavs;
-  });
-}
+function setupGallery(listing) {
   const mainImage = document.querySelector(".main-image");
   const thumbRow = document.querySelector(".thumb-row");
 
@@ -219,12 +194,11 @@ function setupFavoriteBtn(listing) {
   setMainImage(mainImage, images[0], listing.status);
 
   thumbRow.innerHTML = images.map((imageUrl, index) => {
-    const safeImage = encodeURI(imageUrl);
     return `
       <div
         class="thumb ${index === 0 ? "active" : ""}"
-        data-image="${safeImage}"
-        style="background-image:url('${safeImage}');background-size:cover;background-position:center;"
+        data-image="${imageUrl}"
+        style="background-image:url('${imageUrl}');background-size:cover;background-position:center;"
         title="Bild ${index + 1}">
       </div>
     `;
@@ -243,13 +217,11 @@ function setupFavoriteBtn(listing) {
 }
 
 function setMainImage(mainImage, imageUrl, status) {
-  const safeImage = imageUrl ? encodeURI(imageUrl) : "";
-
   mainImage.innerHTML = `
     <span class="top-badge">${escapeHtml(status || "Live")}</span>
     <span class="favorite-btn">♡</span>
   `;
-  mainImage.style.backgroundImage = safeImage ? `url('${safeImage}')` : "";
+  mainImage.style.backgroundImage = imageUrl ? `url('${imageUrl}')` : "";
   mainImage.style.backgroundSize = "cover";
   mainImage.style.backgroundPosition = "center";
   mainImage.style.backgroundRepeat = "no-repeat";
@@ -306,18 +278,8 @@ function setupInquiryForm(listing) {
       return;
     }
 
-    form.innerHTML = `
-      <div style="text-align:center;padding:20px 10px;">
-        <div style="font-size:36px;margin-bottom:12px;">✅</div>
-        <h3 style="color:#123a63;margin-bottom:8px;">Anfrage gesendet!</h3>
-        <p style="color:#475569;font-size:14px;margin-bottom:16px;">
-          Deine Nachricht wurde erfolgreich übermittelt. Der Händler wird sich bei dir melden.
-        </p>
-        <a href="meine-anfragen.html" style="display:inline-block;background:#123a63;color:white;padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;">
-          Meine Nachrichten ansehen →
-        </a>
-      </div>
-    `;
+    alert("Anfrage wurde erfolgreich gesendet.");
+    form.reset();
   });
 }
 

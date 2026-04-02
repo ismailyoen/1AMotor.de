@@ -80,12 +80,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (sidebarCategoryList) {
       sidebarCategoryList.innerHTML = categories.length
         ? categories.slice(0, 12).map(cat => `
-            <a href="suche.html?category=${encodeURIComponent(cat.name)}" style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:#334155;font-weight:500;padding:4px 0;text-decoration:none;transition:color .15s;" onmouseover="this.style.color='#1a5fa8'" onmouseout="this.style.color='#334155'">
-              <span style="width:7px;height:7px;border-radius:50%;background:#1a5fa8;flex-shrink:0;opacity:0.5;"></span>
-              ${escapeHtml(cat.name)}
-            </a>
+            <label><input type="checkbox" disabled /> ${escapeHtml(cat.name)}</label>
           `).join("")
-        : `<span style="font-size:13px;color:#9ca3af;">Keine Kategorien gefunden</span>`;
+        : `<label><input type="checkbox" checked disabled /> Keine Kategorien gefunden</label>`;
     }
 
     const statCategories = document.getElementById("stat-categories");
@@ -159,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     listings = data || [];
 
     if (resultsInfo) {
-      resultsInfo.style.display = "none";
+      resultsInfo.textContent = `${listings.length} aktuelle Angebote aus Supabase`;
     }
   }
 
@@ -205,7 +202,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? listing.image_urls[0]
         : null;
 
-      const safeImage = firstImage ? encodeURI(firstImage) : "";
+      const safeImage = firstImage || "";
       const imageStyle = safeImage
         ? `style="background-image:url('${safeImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
         : "";
