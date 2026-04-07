@@ -313,6 +313,33 @@
               <div><h2>1. Grunddaten</h2><p>Titel, Kategorie, Hersteller und Zustand</p></div>
             </div>
             <div class="section-body">
+              <div class="form-group" style="margin-bottom:18px;">
+                <label>Anzeigetyp <span class="req">*</span></label>
+                <div style="display:flex;gap:10px;margin-top:6px;">
+                  <label style="flex:1;cursor:pointer;">
+                    <input type="radio" name="anzeigetyp" id="typ-verkauf" value="Verkauf" checked style="display:none;" />
+                    <div class="typ-btn active" id="typ-btn-verkauf" style="
+                      border:2px solid #1a5fa8;background:#eef4ff;color:#1a5fa8;
+                      border-radius:10px;padding:14px 18px;text-align:center;
+                      font-weight:700;font-size:15px;transition:all .15s;
+                    ">
+                      🏷️ Verkauf
+                      <div style="font-size:12px;font-weight:400;color:#5a82a8;margin-top:3px;">Ich biete einen Motor an</div>
+                    </div>
+                  </label>
+                  <label style="flex:1;cursor:pointer;">
+                    <input type="radio" name="anzeigetyp" id="typ-gesuch" value="Gesuch" style="display:none;" />
+                    <div class="typ-btn" id="typ-btn-gesuch" style="
+                      border:2px solid #dbe3ea;background:#f8fafc;color:#334155;
+                      border-radius:10px;padding:14px 18px;text-align:center;
+                      font-weight:700;font-size:15px;transition:all .15s;
+                    ">
+                      🔍 Gesuch
+                      <div style="font-size:12px;font-weight:400;color:#6b7280;margin-top:3px;">Ich suche einen Motor</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
               <div class="form-group" style="margin-bottom:14px;">
                 <label for="titel">Anzeigentitel <span class="req">*</span></label>
                 <input id="titel" type="text" placeholder="z. B. Mercedes OM651 Dieselmotor – geprüft – sofort verfügbar" />
@@ -431,6 +458,15 @@
                 <div class="form-group">
                   <label for="preis">Preis (€) <span class="req">*</span></label>
                   <input id="preis" type="number" placeholder="z. B. 24900" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="preisart">Preisart</label>
+                  <select id="preisart">
+                    <option value="Festpreis">Festpreis</option>
+                    <option value="Verhandlungsbasis">Verhandlungsbasis (VB)</option>
+                    <option value="Zu verschenken">Zu verschenken</option>
+                    <option value="Auf Anfrage">Preis auf Anfrage</option>
+                  </select>
                 </div>
                 <div class="form-group">
                   <label for="garantie">Garantie (Monate)</label>
@@ -858,5 +894,70 @@ window.onListingError = function() {
 </script>
 
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
+
+<script>
+// ── Anzeigetyp Toggle ──────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  const verkaufRadio  = document.getElementById("typ-verkauf");
+  const gesuchRadio   = document.getElementById("typ-gesuch");
+  const btnVerkauf    = document.getElementById("typ-btn-verkauf");
+  const btnGesuch     = document.getElementById("typ-btn-gesuch");
+  const preisGroup    = document.getElementById("preis")?.closest(".form-group");
+  const preisartGroup = document.getElementById("preisart")?.closest(".form-group");
+
+  function setActiveType(type) {
+    if (type === "Verkauf") {
+      btnVerkauf.style.border        = "2px solid #1a5fa8";
+      btnVerkauf.style.background    = "#eef4ff";
+      btnVerkauf.style.color         = "#1a5fa8";
+      btnGesuch.style.border         = "2px solid #dbe3ea";
+      btnGesuch.style.background     = "#f8fafc";
+      btnGesuch.style.color          = "#334155";
+      if (preisGroup)    preisGroup.style.display    = "";
+      if (preisartGroup) preisartGroup.style.display = "";
+    } else {
+      btnGesuch.style.border         = "2px solid #1a5fa8";
+      btnGesuch.style.background     = "#eef4ff";
+      btnGesuch.style.color          = "#1a5fa8";
+      btnVerkauf.style.border        = "2px solid #dbe3ea";
+      btnVerkauf.style.background    = "#f8fafc";
+      btnVerkauf.style.color         = "#334155";
+      if (preisGroup)    preisGroup.style.display    = "none";
+      if (preisartGroup) preisartGroup.style.display = "none";
+    }
+  }
+
+  document.querySelector("label[for='typ-verkauf'], label:has(#typ-verkauf)")?.addEventListener("click", () => {
+    verkaufRadio.checked = true;
+    setActiveType("Verkauf");
+  });
+
+  document.querySelector("label:has(#typ-gesuch)")?.addEventListener("click", () => {
+    gesuchRadio.checked = true;
+    setActiveType("Gesuch");
+  });
+
+  // Klick direkt auf die Div-Buttons
+  btnVerkauf?.addEventListener("click", () => {
+    verkaufRadio.checked = true;
+    setActiveType("Verkauf");
+  });
+  btnGesuch?.addEventListener("click", () => {
+    gesuchRadio.checked = true;
+    setActiveType("Gesuch");
+  });
+
+  // Preis bei "Preis auf Anfrage" ausblenden
+  document.getElementById("preisart")?.addEventListener("change", (e) => {
+    const preis = document.getElementById("preis");
+    if (e.target.value === "Auf Anfrage") {
+      if (preis) { preis.value = "0"; preis.disabled = true; preis.style.opacity = "0.4"; }
+    } else {
+      if (preis) { preis.disabled = false; preis.style.opacity = ""; }
+    }
+  });
+});
+</script>
+
 </body>
 </html>
