@@ -50,8 +50,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const location = document.getElementById("standort")?.value?.trim() || "";
       const description = document.getElementById("beschreibung")?.value?.trim() || "";
 
-      if (!title || !categorySlug || !price) {
-        alert("Bitte Titel, Kategorie und Preis ausfüllen.");
+      if (!title || !categorySlug) {
+        alert("Bitte Titel und Kategorie ausfüllen.");
+        return;
+      }
+      if (listingType === "Verkauf" && !price) {
+        alert("Bitte einen Preis eingeben.");
         return;
       }
 
