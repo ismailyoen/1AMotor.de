@@ -314,6 +314,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     categoryFilter.value = urlCategory;
   }
 
+  // Kategorie-Checkboxen in der Sidebar befüllen
+  const categoryCheckboxList = document.getElementById("sidebar-category-list");
+  if (!categoriesError && categoryCheckboxList && categories) {
+    categoryCheckboxList.innerHTML = categories.map(cat => `
+      <label class="filter-option">
+        <input type="checkbox" name="category" value="${escapeHtml(cat.name)}"
+          ${urlCategory === cat.name ? "checked" : ""} />
+        ${escapeHtml(cat.name)}
+      </label>
+    `).join("");
+
+    // Event Listener auf Checkboxen
+    categoryCheckboxList.querySelectorAll("input[type='checkbox']").forEach(cb => {
+      cb.addEventListener("change", () => {
+        const checked = [...categoryCheckboxList.querySelectorAll("input:checked")].map(c => c.value);
+        const q = (searchInput?.value || "").trim();
+        const nextParams = new URLSearchParams();
+        if (q) nextParams.set("q", q);
+        if (checked.length === 1) nextParams.set("category", checked[0]);
+        const qs = nextParams.toString();
+        window.location.href = qs ? "suche.html?" + qs : "suche.html";
+      });
+    });
+  }
+
+  // Zustand-Checkboxen Event Listener
+  document.querySelectorAll("input[name='zustand']").forEach(cb => {
+    if (urlCategory) {
+      // pre-check matching condition filter from URL if any
+    }
+    cb.addEventListener("change", () => {
+      const checkedConditions = [...document.querySelectorAll("input[name='zustand']:checked")].map(c => c.value);
+      const q = (searchInput?.value || "").trim();
+      const nextParams = new URLSearchParams();
+      if (q) nextParams.set("q", q);
+      if (urlCategory) nextParams.set("category", urlCategory);
+      if (checkedConditions.length) nextParams.set("condition", checkedConditions.join(","));
+      const qs = nextParams.toString();
+      window.location.href = qs ? "suche.html?" + qs : "suche.html";
+    });
+  });
+
   const { data, error } = await supabaseClient
     .from("listings")
     .select(`
@@ -348,6 +390,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   let listings = data || [];
+  const urlConditions = (params.get("condition") || "").split(",").filter(Boolean);
+
+  if (urlConditions.length) {
+    // Pre-check condition checkboxes
+    document.querySelectorAll("input[name='zustand']").forEach(cb => {
+      if (urlConditions.includes(cb.value)) cb.checked = true;
+    });
+  }
 
   if (urlQuery) {
     const q = urlQuery.toLowerCase();
@@ -364,6 +414,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         categoryName.toLowerCase().includes(q)
       );
     });
+  }
+
+  if (urlConditions.length) {
+    listings = listings.filter(listing => urlConditions.includes(listing.condition || ""));
   }
 
   if (urlCategory) {
