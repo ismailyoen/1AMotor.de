@@ -710,26 +710,26 @@
     <div class="sidebar-section">
       <div class="sidebar-title">Zustand</div>
       <div class="sidebar-list">
-        <label><input type="radio" name="cond" checked disabled /> Alle</label>
-        <label><input type="radio" name="cond" disabled /> Neu</label>
-        <label><input type="radio" name="cond" disabled /> Gebraucht</label>
-        <label><input type="radio" name="cond" disabled /> Generalüberholt</label>
+        <label><input type="radio" name="cond" value="" checked /> Alle</label>
+        <label><input type="radio" name="cond" value="Neu" /> Neu</label>
+        <label><input type="radio" name="cond" value="Gebraucht" /> Gebraucht</label>
+        <label><input type="radio" name="cond" value="Generalüberholt" /> Generalüberholt</label>
       </div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-title">Preis</div>
       <div class="price-inputs">
-        <input type="text" placeholder="Min €" disabled />
-        <input type="text" placeholder="Max €" disabled />
+        <input type="text" id="price-min" placeholder="Min €" />
+        <input type="text" id="price-max" placeholder="Max €" />
       </div>
       <button class="sidebar-btn" onclick="location.href='suche.html'">→ Zur Suche</button>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-title">Händler</div>
       <div class="sidebar-list">
-        <label><input type="checkbox" checked disabled /> Geprüfte Händler</label>
-        <label><input type="checkbox" disabled /> Top-Bewertung</label>
-        <label><input type="checkbox" disabled /> Gewerblich</label>
+        <label><input type="checkbox" checked /> Geprüfte Händler</label>
+        <label><input type="checkbox" /> Top-Bewertung</label>
+        <label><input type="checkbox" /> Gewerblich</label>
       </div>
     </div>
   </aside>
@@ -910,5 +910,36 @@
   }
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
+
+<script>
+// ── Sidebar Filter auf Startseite ─────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Zustand Radio-Buttons
+  document.querySelectorAll("input[name='cond']").forEach(radio => {
+    radio.addEventListener("change", () => {
+      const val = radio.value;
+      if (val) {
+        window.location.href = "suche.html?condition=" + encodeURIComponent(val);
+      } else {
+        window.location.href = "suche.html";
+      }
+    });
+  });
+
+  // Preis Filter
+  document.getElementById("apply-price")?.addEventListener("click", () => {
+    const min = document.getElementById("price-min")?.value || "";
+    const max = document.getElementById("price-max")?.value || "";
+    const params = new URLSearchParams();
+    if (min) params.set("price_min", min);
+    if (max) params.set("price_max", max);
+    const qs = params.toString();
+    window.location.href = qs ? "suche.html?" + qs : "suche.html";
+  });
+
+});
+</script>
+
 </body>
 </html>
