@@ -5,15 +5,29 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="favicon-192x192.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1A Motor – Marktplatz für Motoren & Antriebe</title>
-  <meta name="description" content="1A Motor – Deutschlands Marktplatz für Motoren, Antriebe und Maschinentechnik. Fahrzeugmotoren, Industriemotoren, Bootsmotoren kaufen und verkaufen." />
+  <title>Motor kaufen & verkaufen – 1A Motor | Deutschlands Motorenmarktplatz</title>
+  <meta name="description" content="1A Motor – Deutschlands Nr. 1 Marktplatz für Motoren & Antriebstechnik. Fahrzeugmotoren, Industriemotoren, Bootsmotoren kaufen und verkaufen. Geprüfte Händler, direkte Anfragen, keine Provision." />
+  <meta name="keywords" content="Motor kaufen, Motor verkaufen, Motorenmarktplatz, Fahrzeugmotor, Industriemotor, Bootsmotor, Austauschmotor, Gebrauchtmotor, Dieselmotor kaufen, LKW Motor, Elektromotor" />
   <meta name="robots" content="index, follow" />
+  <meta name="author" content="1A Motor" />
   <link rel="canonical" href="https://1amotor.de/" />
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://1amotor.de/" />
-  <meta property="og:title" content="1A Motor – Marktplatz für Motoren & Antriebe" />
-  <meta property="og:description" content="Fahrzeugmotoren, Industriemotoren, Bootsmotoren kaufen und verkaufen. Geprüfte Händler, keine Provision." />
-  <meta property="og:image" content="https://1amotor.de/images/og-image.jpg" />
+  <meta property="og:title" content="1A Motor – Marktplatz für Motoren & Antriebe kaufen und verkaufen" />
+  <meta property="og:description" content="Fahrzeugmotoren, Industriemotoren, Bootsmotoren kaufen & verkaufen. 100+ Kategorien, geprüfte Händler, keine Provision. Jetzt auf 1amotor.de!" />
+  <meta property="og:image" content="https://1amotor.de/hero-bg.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="1A Motor" />
+  <meta property="og:locale" content="de_DE" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="1A Motor – Marktplatz für Motoren & Antriebe" />
+  <meta name="twitter:description" content="Fahrzeugmotoren, Industriemotoren, Bootsmotoren kaufen & verkaufen. Geprüfte Händler, keine Provision." />
+  <meta name="twitter:image" content="https://1amotor.de/hero-bg.png" />
+  <!-- Preload hero image for faster LCP -->
+  <link rel="preload" as="image" href="hero-bg.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -559,11 +573,16 @@
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "1A Motor",
+    "alternateName": "1amotor.de",
     "url": "https://1amotor.de",
-    "description": "Deutschlands Marktplatz fuer Motoren, Antriebe und Maschinentechnik",
+    "description": "Deutschlands Marktplatz für Motoren, Antriebe und Maschinentechnik",
+    "inLanguage": "de",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://1amotor.de/suche.html?q={search_term_string}",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://1amotor.de/suche.html?q={search_term_string}"
+      },
       "query-input": "required name=search_term_string"
     }
   }
@@ -574,20 +593,67 @@
     "@type": "Organization",
     "name": "1A Motor",
     "url": "https://1amotor.de",
-    "logo": "https://1amotor.de/favicon-192x192.png",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://1amotor.de/favicon-192x192.png",
+      "width": 192,
+      "height": 192
+    },
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": "+49-178-5648456",
       "contactType": "customer service",
-      "availableLanguage": "German"
+      "areaServed": ["DE","AT","CH"],
+      "availableLanguage": ["German","English","French"]
     },
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "In der Breite 12",
-      "addressLocality": "Gaertringen",
+      "addressLocality": "Gärtringen",
       "postalCode": "71116",
       "addressCountry": "DE"
-    }
+    },
+    "sameAs": ["https://1amotor.de"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Was ist 1A Motor?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "1A Motor ist Deutschlands spezialisierter Marktplatz für Motoren und Antriebstechnik. Hier können Fahrzeugmotoren, Industriemotoren, Bootsmotoren und Spezialmotoren von geprüften Händlern gekauft und verkauft werden."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Ist 1A Motor kostenlos?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ja, 1A Motor ist komplett kostenlos. Käufer können kostenlos suchen und anfragen. Händler können Anzeigen kostenlos schalten – ohne Provision."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Welche Motoren kann ich auf 1A Motor kaufen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Auf 1A Motor finden Sie über 100 Motorkategorien: Automotoren, Dieselmotoren, LKW Motoren, Industriemotoren, Bootsmotoren, Elektromotoren, Austauschmotoren und viele mehr – neu, gebraucht und generalüberholt."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie kann ich einen Motor verkaufen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Einfach kostenloses Händlerkonto erstellen, Anzeige mit Fotos und Beschreibung einstellen und direkt von Käufern kontaktiert werden – ohne Provision und ohne versteckte Kosten."
+        }
+      }
+    ]
   }
   </script>
 

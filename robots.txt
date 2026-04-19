@@ -1,5 +1,14 @@
 User-agent: *
 Allow: /
+Allow: /suche.html
+Allow: /listing-detail.html
+Allow: /kontakt.html
+Allow: /registrieren.html
+Allow: /agb.html
+Allow: /datenschutz.html
+Allow: /impressum.html
+
+# Private Seiten nicht indexieren
 Disallow: /dashboard.html
 Disallow: /profil.html
 Disallow: /anfragen.html
@@ -8,5 +17,35 @@ Disallow: /meine-anfragen.html
 Disallow: /anzeige-erstellen.html
 Disallow: /admin.html
 Disallow: /admin-import.html
+Disallow: /login.html
 
+# Crawl delay für sanftes Crawling
+Crawl-delay: 1
+
+# Sitemap
 Sitemap: https://1amotor.de/sitemap.xml
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /dashboard.html
+Disallow: /profil.html
+Disallow: /anfragen.html
+Disallow: /meine-anzeigen.html
+Disallow: /meine-anfragen.html
+Disallow: /anzeige-erstellen.html
+Disallow: /admin.html
+Disallow: /admin-import.html
+Disallow: /login.html
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /dashboard.html
+Disallow: /profil.html
+Disallow: /anfragen.html
+Disallow: /meine-anzeigen.html
+Disallow: /meine-anfragen.html
+Disallow: /anzeige-erstellen.html
+Disallow: /admin.html
+Disallow: /admin-import.html

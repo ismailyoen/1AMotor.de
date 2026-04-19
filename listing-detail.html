@@ -4,17 +4,43 @@
 <meta charset="UTF-8" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="favicon-192x192.png" />
-  <meta name="description" content="Motor kaufen auf 1A Motor – geprüfte Händler, direkte Anfragen, faire Preise. Jetzt Angebot ansehen." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motor kaufen – Geprüfte Angebote | 1A Motor</title>
+  <meta name="description" content="Motor kaufen auf 1A Motor – geprüfte Händler, direkte Anfragen, faire Preise. Jetzt Angebot ansehen und direkt beim Händler anfragen." />
   <meta name="robots" content="index, follow" />
+  <meta name="author" content="1A Motor" />
+  <!-- Open Graph – dynamisch via listing-detail-live.js befüllt -->
   <meta property="og:type" content="product" />
   <meta property="og:site_name" content="1A Motor" />
-  <meta property="og:image" content="https://1amotor.de/images/og-image.jpg" />
-  <!-- Dynamisch befüllt via listing-detail-live.js -->
+  <meta property="og:image" content="https://1amotor.de/hero-bg.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="de_DE" />
   <meta property="og:title" content="" id="og-title" />
   <meta property="og:description" content="" id="og-description" />
   <meta property="og:url" content="" id="og-url" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Motor kaufen – Geprüfte Angebote | 1A Motor</title>
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1amotor" />
+  <meta name="twitter:title" content="" id="tw-title" />
+  <meta name="twitter:description" content="" id="tw-description" />
+  <meta name="twitter:image" content="https://1amotor.de/hero-bg.png" />
+  <!-- Schema.org Product – dynamisch via listing-detail-live.js befüllt -->
+  <script type="application/ld+json" id="schema-product">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Motor auf 1A Motor",
+    "description": "Motor kaufen auf 1A Motor – geprüfte Händler, direkte Anfragen.",
+    "brand": {"@type": "Brand", "name": "1A Motor"},
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+      "seller": {"@type": "Organization", "name": "1A Motor"}
+    }
+  }
+  </script>
 <style>
   :root{ --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0; --light-blue:#72b6ff; --success:#059669; --shadow:0 4px 20px rgba(18,58,99,0.08); --shadow-lg:0 12px 40px rgba(18,58,99,0.13); --radius:14px; }
   *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
@@ -394,6 +420,5 @@
 <script src="supabase.js"></script>
 <script src="listing-detail-live.js"></script>
 <script src="auth-header.js"></script>
-<script src="i18n.js"></script>
 </body>
 </html>

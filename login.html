@@ -4,7 +4,9 @@
 <meta charset="UTF-8" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="favicon-192x192.png" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Einloggen bei 1A Motor – Ihr Konto für den Motorenmarktplatz Deutschland." />
+  <meta name="robots" content="noindex, follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Einloggen – 1A Motor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -142,26 +144,26 @@
 <main>
   <div class="auth-card">
     <div class="card-header">
-      <h1 data-i18n="login.title">Willkommen zurück</h1>
-      <p data-i18n="login.subtitle">Melde dich in deinem 1A Motor Konto an.</p>
+      <h1>Willkommen zurück</h1>
+      <p>Melde dich in deinem 1A Motor Konto an.</p>
     </div>
     <div class="card-body">
       <form id="login-form">
         <div class="form-group">
-          <label data-i18n="login.email">E-Mail-Adresse</label>
+          <label>E-Mail-Adresse</label>
           <input type="email" id="login-email" placeholder="deine@email.de" required autocomplete="email" />
         </div>
         <div class="form-group">
-          <label data-i18n="login.password">Passwort</label>
+          <label>Passwort</label>
           <input type="password" id="login-password" placeholder="Passwort eingeben" required autocomplete="current-password" />
-          <a href="#" class="forgot-link" id="forgot-link"><span data-i18n="login.forgot">Passwort vergessen?</span></a>
+          <a href="#" class="forgot-link" id="forgot-link">Passwort vergessen?</a>
         </div>
-        <button type="submit" class="submit-btn" id="login-btn"><span data-i18n="login.btn">Einloggen</span></button>
+        <button type="submit" class="submit-btn" id="login-btn">Einloggen</button>
         <div class="auth-msg" id="login-msg"></div>
       </form>
       <div class="divider">oder</div>
       <div class="extra">
-        <span data-i18n="login.noreg">Noch kein Konto?</span> <a href="registrieren.html" data-i18n="login.register">Jetzt registrieren</a>
+        Noch kein Konto? <a href="registrieren.html">Jetzt registrieren</a>
       </div>
     </div>
   </div>
@@ -186,7 +188,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="auth.js"></script>
-<script src="i18n.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   // Wenn schon eingeloggt → direkt weiterleiten

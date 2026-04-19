@@ -68,7 +68,71 @@ function fillListingData(listing) {
 
   const formattedDate = new Date(listing.created_at).toLocaleDateString("de-DE");
 
-  document.title = `${listing.title || "Anzeige"} – 1A Motor`;
+  // ── Dynamic SEO ──────────────────────────────────────────────────────────
+  const seoTitle = `${listing.title || "Anzeige"} – 1A Motor`;
+  const seoDesc  = `${listing.title || "Motor"} kaufen bei ${sellerProfile.company_name || "geprüftem Händler"} auf 1A Motor. ${listing.condition || "Gebraucht"}, Standort: ${listing.location || "Deutschland"}. Jetzt direkt anfragen.`;
+  const seoUrl   = `https://1amotor.de/listing-detail.html?id=${listing.id}`;
+  const seoImg   = (Array.isArray(listing.image_urls) && listing.image_urls[0]) ? listing.image_urls[0] : "https://1amotor.de/hero-bg.png";
+
+  document.title = seoTitle;
+
+  // Meta description
+  let metaDesc = document.querySelector("meta[name='description']");
+  if (!metaDesc) { metaDesc = document.createElement("meta"); metaDesc.name = "description"; document.head.appendChild(metaDesc); }
+  metaDesc.content = seoDesc;
+
+  // Canonical
+  let canonical = document.querySelector("link[rel='canonical']");
+  if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
+  canonical.href = seoUrl;
+
+  // OG tags
+  const setMeta = (sel, attr, val) => {
+    let el = document.querySelector(sel);
+    if (!el) { el = document.createElement("meta"); document.head.appendChild(el); }
+    el.setAttribute(attr, val);
+  };
+  setMeta("#og-title",  "content", seoTitle);
+  setMeta("#og-description", "content", seoDesc);
+  setMeta("#og-url",    "content", seoUrl);
+  setMeta("meta[property='og:image']", "content", seoImg);
+
+  // Twitter
+  const twTitle = document.getElementById("tw-title");
+  const twDesc  = document.getElementById("tw-description");
+  if (twTitle) twTitle.content = seoTitle;
+  if (twDesc)  twDesc.content  = seoDesc;
+
+  // Schema.org Product – dynamic update
+  const schemaEl = document.getElementById("schema-product");
+  if (schemaEl) {
+    const price = Number(listing.price || 0);
+    schemaEl.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": listing.title || "Motor",
+      "description": seoDesc,
+      "image": seoImg,
+      "brand": { "@type": "Brand", "name": listing.manufacturer || "Unbekannt" },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "EUR",
+        "price": price,
+        "availability": "https://schema.org/InStock",
+        "url": seoUrl,
+        "seller": {
+          "@type": "Organization",
+          "name": sellerProfile.company_name || "Händler auf 1A Motor"
+        }
+      },
+      "additionalProperty": [
+        { "@type": "PropertyValue", "name": "Zustand",    "value": listing.condition || "-" },
+        { "@type": "PropertyValue", "name": "Baujahr",    "value": listing.year || "-" },
+        { "@type": "PropertyValue", "name": "Standort",   "value": listing.location || "-" },
+        { "@type": "PropertyValue", "name": "Kategorie",  "value": categoryName }
+      ]
+    });
+  }
 
   const categoryTag = document.querySelector(".category-tag");
   const listingTitle = document.querySelector(".listing-title");
