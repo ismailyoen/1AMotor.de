@@ -190,17 +190,17 @@
     <section class="content">
       <div class="page-head">
         <div>
-          <h1>Meine Anzeigen</h1>
-          <p>Verwalte und bearbeite deine Inserate.</p>
+          <h1 data-i18n="mylistings.title">Meine Anzeigen</h1>
+          <p data-i18n="mylistings.subtitle">Verwalte und bearbeite deine Inserate.</p>
         </div>
-        <a href="anzeige-erstellen.html" class="new-btn">＋ Neue Anzeige</a>
+        <a href="anzeige-erstellen.html" class="new-btn"><span data-i18n="mylistings.new">＋ Neue Anzeige</span></a>
       </div>
 
       <div class="panel">
         <div class="filter-bar">
           <input type="text" id="filter-search" placeholder="🔍 Titel oder Hersteller suchen..." />
           <select id="filter-status">
-            <option value="">Alle Status</option>
+            <option value="" data-i18n="mylistings.allstatus">Alle Status</option>
             <option value="Freigegeben">Freigegeben</option>
             <option value="Entwurf">Entwurf</option>
           </select>
@@ -233,5 +233,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
+<script src="i18n.js"></script>
 </body>
 </html>

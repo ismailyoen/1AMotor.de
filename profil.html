@@ -472,8 +472,8 @@ textarea{
  <aside class="sidebar">
 
   <div class="user-box">
-    <h2>Hallo Ismail</h2>
-    <p>Händlerkonto · Basic Paket</p>
+    <h2 id="sidebar-greeting">Hallo...</h2>
+    <p id="sidebar-sub">Händlerkonto</p>
   </div>
 
   <nav class="menu">
@@ -487,11 +487,11 @@ textarea{
     <a href="anfragen.html">Anfragen</a>
 
     <a href="profil.html" class="active">Profil</a>
+    <div style="height:1px;background:#dbe3ea;margin:10px 0;"></div>
+    <a href="suche.html">Zur Suche</a>
+    <a href="#" id="sidebar-logout" style="color:#dc2626;">Abmelden</a>
 
-     |
-      <a href="login.html">Login</a>
-    </p>
-  </footer>
+
 
   <!-- ── Konto-Löschen Modal ──────────────────────────────────────────── -->
   <div id="delete-modal" style="
@@ -548,3 +548,55 @@ textarea{
   </div>
 
   <script data-cfasync="false" src="/cdn
+  </nav>
+</aside>
+
+<section class="content">
+  <div id="profil-content-placeholder" style="padding:20px;background:#fff;border-radius:16px;border:1px solid #dbe3ea;">
+    <p style="color:#6b7280;">Profil wird geladen...</p>
+  </div>
+</section>
+
+</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="profil.js"></script>
+<script src="auth-header.js"></script>
+<script src="i18n.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  // Sidebar User-Info dynamisch laden
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData?.session?.user;
+  
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  
+  const { data: seller } = await supabaseClient
+    .from("seller_profiles")
+    .select("company_name")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  
+  const displayName = seller?.company_name || user.email || "Mein Konto";
+  
+  const greetEl = document.getElementById("sidebar-greeting");
+  const subEl   = document.getElementById("sidebar-sub");
+  if (greetEl) greetEl.textContent = "Hallo " + displayName;
+  if (subEl)   subEl.textContent   = "Händlerkonto";
+  
+  // Logout
+  document.getElementById("sidebar-logout")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
+  });
+});
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+</body>
+</html>
