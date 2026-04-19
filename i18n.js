@@ -730,3 +730,8 @@ const I18n = {
 
 I18n.init();
 window.I18n = I18n;
+
+// Re-apply after auth-header.js and other scripts inject dynamic content
+window.addEventListener("load", () => {
+  setTimeout(() => { I18n.apply(); I18n.updateToggle(); }, 100);
+});
