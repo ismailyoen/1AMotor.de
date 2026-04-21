@@ -353,6 +353,75 @@
     }
     .mob-filter-btn:hover { border-color: var(--blue2); color: var(--blue2); }
 
+    /* ── Werbe-Diashow ── */
+    .ad-slideshow {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f4f8;
+      border: 1px solid var(--border);
+    }
+    .ad-slideshow-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 8px;
+    }
+    .ad-track {
+      display: flex;
+      transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+      width: 100%;
+    }
+    .ad-slide {
+      min-width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .ad-slide img {
+      max-width: 100%;
+      max-height: 90px;
+      object-fit: contain;
+      border-radius: 6px;
+      display: block;
+      margin: 0 auto;
+    }
+    .ad-dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      padding: 7px 0 5px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+    }
+    .ad-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background .2s, transform .2s;
+    }
+    .ad-dot.active {
+      background: var(--blue2);
+      transform: scale(1.3);
+    }
+    .ad-label {
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      padding: 4px 0 6px;
+      background: #fff;
+    }
+
+
     /* ── Content Area ── */
     .content-area { display: flex; flex-direction: column; gap: 22px; }
 
@@ -798,6 +867,31 @@
         <label><input type="checkbox" /> Gewerblich</label>
       </div>
     </div>
+
+    <div class="sidebar-section" style="border-bottom:none;padding-bottom:0;">
+      <div class="sidebar-title ad-slideshow-title">Werbung</div>
+      <div class="ad-slideshow" id="ad-slideshow">
+        <div class="ad-track" id="ad-track">
+          <div class="ad-slide"><a href="https://www.aviofox.de" target="_blank" rel="noopener"><img src="ads/1.PNG" alt="AvioFox.de – EuroFOX Deutschland" /></a></div>
+          <div class="ad-slide"><a href="https://www.trig-avionics.com" target="_blank" rel="noopener"><img src="ads/2.PNG" alt="TRIG UL-GmbH Deutschland" /></a></div>
+          <div class="ad-slide"><a href="https://www.fun-flight.de" target="_blank" rel="noopener"><img src="ads/3.PNG" alt="IFC Münster – fun-flight.de" /></a></div>
+          <div class="ad-slide"><a href="https://www.motorenclemens.de" target="_blank" rel="noopener"><img src="ads/4.PNG" alt="Motoren Clemens – Drive & Fly" /></a></div>
+          <div class="ad-slide"><a href="https://www.freccia600.com" target="_blank" rel="noopener"><img src="ads/5.PNG" alt="Freccia 600" /></a></div>
+          <div class="ad-slide"><a href="https://www.breezer-aircraft.com" target="_blank" rel="noopener"><img src="ads/6.PNG" alt="Breezer Aircraft" /></a></div>
+          <div class="ad-slide"><a href="kontakt.html"><img src="ads/7.PNG" alt="Hier werben auf 1A Motor" /></a></div>
+        </div>
+        <div class="ad-dots" id="ad-dots">
+          <button class="ad-dot active" onclick="goToSlide(0)"></button>
+          <button class="ad-dot" onclick="goToSlide(1)"></button>
+          <button class="ad-dot" onclick="goToSlide(2)"></button>
+          <button class="ad-dot" onclick="goToSlide(3)"></button>
+          <button class="ad-dot" onclick="goToSlide(4)"></button>
+          <button class="ad-dot" onclick="goToSlide(5)"></button>
+          <button class="ad-dot" onclick="goToSlide(6)"></button>
+        </div>
+        <div class="ad-label">Werbung · <a href="kontakt.html" style="color:var(--blue2);font-size:10px;">Hier werben</a></div>
+      </div>
+    </div>
   </aside>
 
   <!-- Content -->
@@ -1001,6 +1095,57 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+</script>
+
+
+<script>
+// ── Werbe-Diashow ────────────────────────────────────────────────────────────
+(function() {
+  let currentSlide = 0;
+  const totalSlides = 7;
+  let autoTimer = null;
+
+  function goToSlide(n) {
+    currentSlide = (n + totalSlides) % totalSlides;
+    const track = document.getElementById("ad-track");
+    const dots  = document.querySelectorAll(".ad-dot");
+    if (track) track.style.transform = "translateX(-" + (currentSlide * 100) + "%)";
+    dots.forEach((d, i) => d.classList.toggle("active", i === currentSlide));
+  }
+
+  function nextSlide() { goToSlide(currentSlide + 1); }
+
+  function startAuto() {
+    stopAuto();
+    autoTimer = setInterval(nextSlide, 3500);
+  }
+
+  function stopAuto() {
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  }
+
+  // Global für onclick
+  window.goToSlide = goToSlide;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const slideshow = document.getElementById("ad-slideshow");
+    if (!slideshow) return;
+
+    startAuto();
+
+    // Pause on hover
+    slideshow.addEventListener("mouseenter", stopAuto);
+    slideshow.addEventListener("mouseleave", startAuto);
+
+    // Touch swipe
+    let touchStartX = 0;
+    slideshow.addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    slideshow.addEventListener("touchend", e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) goToSlide(currentSlide + (diff > 0 ? 1 : -1));
+    }, { passive: true });
+  });
+})();
 </script>
 
 </body>
