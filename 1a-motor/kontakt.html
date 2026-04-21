@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+  <meta name="description" content="Kontakt zu 1A Motor – Motorenmarktplatz Deutschland. Fragen, Feedback oder Probleme? Wir sind erreichbar und antworten innerhalb von 24 Stunden." />
+  <meta name="keywords" content="1A Motor Kontakt, Motorenmarktplatz Kontakt, Motor kaufen Hilfe" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="1A Motor" />
+  <link rel="canonical" href="https://1amotor.de/kontakt.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://1amotor.de/kontakt.html" />
+  <meta property="og:title" content="Kontakt – 1A Motor Motorenmarktplatz" />
+  <meta property="og:description" content="Kontaktiere uns bei Fragen zu Anzeigen, Händlerkonto oder technischen Problemen. Antwort innerhalb von 24 Stunden." />
+  <meta property="og:image" content="https://1amotor.de/hero-bg.png" />
+  <meta property="og:site_name" content="1A Motor" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Kontakt – 1A Motor" />
+  <meta name="twitter:description" content="Kontaktiere 1A Motor – Motorenmarktplatz Deutschland. Antwort innerhalb 24h." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kontakt – 1A Motor | Motorenmarktplatz Deutschland</title>
+<style>
+  :root{
+    --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280;
+    --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0;
+    --light-blue:#72b6ff; --shadow:0 4px 20px rgba(18,58,99,0.08); --radius:14px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
+  body{ background:var(--bg); color:var(--text); line-height:1.6; }
+  a{ text-decoration:none; color:var(--blue); }
+  .container{ max-width:900px; margin:0 auto; padding:0 20px; }
+
+  .header{
+    background:#fff; border-bottom:2px solid var(--border);
+    position:sticky; top:0; z-index:50;
+    box-shadow:0 2px 12px rgba(18,58,99,0.06);
+  }
+  .header-inner{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-size:24px; font-weight:800; color:var(--dark-blue);
+  }
+   .logo-img-new{
+    width:40px; height:40px; border-radius:10px;
+    background:linear-gradient(135deg,var(--dark-blue),var(--light-blue));
+    display:grid; place-items:center; color:#fff; font-size:17px; font-weight:900;
+  }
+  .back-link{ font-size:14px; color:var(--blue); font-weight:600; }
+
+  .page{ padding:40px 0 60px; }
+  .breadcrumb{
+    font-size:13px; color:var(--muted); margin-bottom:24px;
+    display:flex; gap:8px;
+  }
+  .breadcrumb a{ color:var(--muted); }
+
+  .page-head{ margin-bottom:28px; }
+  .page-head h1{ font-size:28px; color:var(--dark-blue); font-weight:800; margin-bottom:6px; }
+  .page-head p{ color:var(--muted); font-size:15px; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    align-items:start;
+  }
+
+  .card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow); padding:28px;
+  }
+  .card h2{ font-size:18px; color:var(--dark-blue); font-weight:700; margin-bottom:18px; }
+
+  /* Kontaktformular */
+  .form-group{ margin-bottom:14px; }
+  label{ display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+  input, select, textarea{
+    width:100%; padding:12px 14px;
+    border:1px solid var(--border); border-radius:10px;
+    outline:none; font-size:14px; background:#fff;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus, select:focus, textarea:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(43,108,176,0.1);
+  }
+  textarea{ min-height:130px; resize:vertical; }
+  .submit-btn{
+    width:100%; background:var(--dark-blue); color:#fff;
+    border:none; border-radius:10px; padding:13px;
+    font-size:15px; font-weight:700; cursor:pointer;
+    transition:background .15s;
+  }
+  .submit-btn:hover{ background:var(--blue); }
+
+  /* Info-Karte rechts */
+  .contact-item{
+    display:flex; gap:14px; align-items:flex-start;
+    padding:16px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .contact-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .contact-icon{
+    width:40px; height:40px; border-radius:10px; flex-shrink:0;
+    background:linear-gradient(135deg,#eef4ff,#dbeeff);
+    display:grid; place-items:center; font-size:18px;
+  }
+  .contact-label{ font-size:12px; color:var(--muted); margin-bottom:3px; }
+  .contact-value{ font-size:14px; color:var(--dark-blue); font-weight:600; }
+  .contact-value a{ color:var(--dark-blue); }
+  .contact-value a:hover{ color:var(--blue); text-decoration:underline; }
+
+  .response-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:#f0faf4; border:1px solid #a7f0c0;
+    color:#0a7040; font-size:12px; font-weight:700;
+    padding:6px 12px; border-radius:999px; margin-top:18px;
+  }
+
+  .success-msg{
+    display:none; background:#f0faf4; border:1px solid #a7f0c0;
+    color:#0a7040; border-radius:10px; padding:14px 16px;
+    font-size:14px; font-weight:600; margin-top:12px; text-align:center;
+  }
+
+  footer{
+    margin-top:40px; padding:20px 0;
+    border-top:1px solid var(--border);
+    text-align:center; font-size:12px; color:var(--muted);
+  }
+  footer a{ color:var(--muted); margin:0 8px; }
+  footer a:hover{ color:var(--dark-blue); }
+
+  @media(max-width:720px){
+    .grid{ grid-template-columns:1fr; }
+  }
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
+</style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Kontakt – 1A Motor",
+    "url": "https://1amotor.de/kontakt.html",
+    "description": "Kontakt zu 1A Motor – Motorenmarktplatz Deutschland"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "1A Motor",
+    "description": "Deutschlands Motorenmarktplatz für Fahrzeugmotoren, Industriemotoren und Bootsmotoren",
+    "url": "https://1amotor.de",
+    "telephone": "+49-178-5648456",
+    "email": "info@1amotor.de",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "In der Breite 12",
+      "addressLocality": "Gärtringen",
+      "postalCode": "71116",
+      "addressCountry": "DE"
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+      "opens": "09:00",
+      "closes": "18:00"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "telephone": "+49-178-5648456",
+      "email": "info@1amotor.de",
+      "availableLanguage": ["German","English","French"]
+    }
+  }
+  </script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+    <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="index.html">Startseite</a>
+      <span>›</span>
+      <span>Kontakt</span>
+    </div>
+
+    <div class="page-head">
+      <h1>Kontakt</h1>
+      <p>Fragen, Feedback oder Probleme? Wir antworten schnell.</p>
+    </div>
+
+    <div class="grid">
+
+      <!-- Formular -->
+      <div class="card">
+        <h2>Nachricht schreiben</h2>
+        <form id="contact-form">
+          <div class="form-group">
+            <label>Dein Name</label>
+            <input type="text" id="cf-name" placeholder="Max Mustermann" required />
+          </div>
+          <div class="form-group">
+            <label>E-Mail-Adresse</label>
+            <input type="email" id="cf-email" placeholder="deine@email.de" required />
+          </div>
+          <div class="form-group">
+            <label>Betreff</label>
+            <select id="cf-subject">
+              <option value="">Bitte auswählen</option>
+              <option>Frage zu einer Anzeige</option>
+              <option>Technisches Problem</option>
+              <option>Händler-Registrierung</option>
+              <option>Missbrauch melden</option>
+              <option>Sonstiges</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Deine Nachricht</label>
+            <textarea id="cf-message" placeholder="Beschreibe dein Anliegen so genau wie möglich..." required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Nachricht senden</button>
+          <div class="success-msg" id="cf-success">✓ Deine Nachricht wurde gesendet. Wir melden uns bald!</div>
+        </form>
+      </div>
+
+      <!-- Kontaktinfos -->
+      <div class="card">
+        <h2>Direkt erreichbar</h2>
+
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div>
+            <div class="contact-label">Telefon</div>
+            <div class="contact-value"><a href="tel:01785648456">01785648456</a></div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div>
+            <div class="contact-label">E-Mail</div>
+            <div class="contact-value"><a href="/cdn-cgi/l/email-protection#f49d9a929bb4c595999b809b86da9091"><span class="__cf_email__" data-cfemail="dcb5b2bab39cedbdb1b3a8b3aef2b8b9">[email&#160;protected]</span></a></div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-label">Adresse</div>
+            <div class="contact-value">
+              1A Motor · Ismail Yön<br />
+              In der Breite 12<br />
+              71116 Gärtringen
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">🕐</div>
+          <div>
+            <div class="contact-label">Erreichbarkeit</div>
+            <div class="contact-value">Mo – Fr: 9:00 – 18:00 Uhr</div>
+          </div>
+        </div>
+
+        <div class="response-badge">⚡ Antwortzeit: innerhalb von 24 Stunden</div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    © 2026 1A Motor &nbsp;|&nbsp;
+    <a href="impressum.html">Impressum</a>
+    <a href="datenschutz.html">Datenschutz</a>
+    <a href="agb.html">AGB</a>
+    <a href="kontakt.html">Kontakt</a>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  document.getElementById("contact-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const btn = this.querySelector(".submit-btn");
+   

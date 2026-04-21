@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="apple-touch-icon" href="favicon-192x192.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profil – 1A Motor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg:#f4f7fb; --card:#fff; --text:#1f2937; --muted:#7a93ae;
+  --border:#e0e9f2; --dark:#0d1b2a; --navy:#1b2d42;
+  --blue:#1a5fa8; --blue2:#2176c7; --sky:#4da6ff;
+  --success:#10b981; --danger:#ef4444;
+  --shadow:0 2px 16px rgba(13,27,42,0.08); --r:14px;
+}
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Outfit',Arial,sans-serif; }
+body { background:var(--bg); color:var(--text); line-height:1.5; }
+a { text-decoration:none; color:inherit; }
+.container { max-width:1360px; margin:0 auto; padding:0 24px; }
+.header { background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; box-shadow:0 1px 0 var(--border),0 4px 16px rgba(13,27,42,0.06); }
+.header-inner { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:12px 0; }
+.logo { display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0; }
+.logo-mark { width:40px; height:40px; border-radius:10px; background:linear-gradient(145deg,#1b2d42,#2a4a6b); display:grid; place-items:center; font-weight:900; font-size:15px; color:#fff; box-shadow:0 4px 12px rgba(13,27,42,0.35); flex-shrink:0; letter-spacing:-0.5px; }
+.logo-name { font-size:22px; font-weight:800; color:#0d1b2a; letter-spacing:-.3px; }
+.header-actions { display:flex; align-items:center; gap:12px; }
+.page { padding:28px 0 48px; }
+.layout { display:grid; grid-template-columns:260px 1fr; gap:24px; align-items:start; }
+.sidebar { background:var(--card); border:1px solid var(--border); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden; position:sticky; top:80px; }
+.sidebar-profile { padding:22px 18px 18px; background:linear-gradient(135deg,#1e3a52,#2a5278); position:relative; overflow:hidden; }
+.sidebar-profile::after { content:"⚙️"; position:absolute; right:-10px; bottom:-14px; font-size:72px; opacity:.08; pointer-events:none; }
+.profile-avatar { width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); display:grid; place-items:center; font-size:20px; font-weight:800; color:#fff; margin-bottom:12px; }
+.profile-name { font-size:16px; font-weight:700; color:#fff; margin-bottom:3px; }
+.profile-email { font-size:12px; color:rgba(255,255,255,0.6); }
+.profile-badge { display:inline-block; margin-top:10px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.85); font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; }
+.sidebar-nav { padding:12px 10px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; color:#334155; font-size:14px; font-weight:600; transition:background .12s; margin-bottom:2px; }
+.nav-item:hover { background:#f0f4f8; color:var(--dark); }
+.nav-item.active { background:#e8f0f8; color:var(--dark); font-weight:700; }
+.nav-icon { font-size:16px; width:22px; text-align:center; flex-shrink:0; }
+.nav-divider { height:1px; background:var(--border); margin:10px 12px; }
+.nav-item.logout { color:var(--danger); }
+.content { display:flex; flex-direction:column; gap:20px; }
+.page-head h1 { font-size:26px; color:var(--dark); font-weight:800; margin-bottom:4px; }
+.page-head p { color:var(--muted); font-size:14px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); box-shadow:var(--shadow); padding:24px; margin-bottom:0; }
+.card-title { font-size:16px; font-weight:800; color:var(--dark); margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.form-group:last-child { margin-bottom:0; }
+label { font-size:13px; font-weight:700; color:#334155; }
+input, select, textarea { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:14px; font-family:inherit; outline:none; transition:border-color .15s, box-shadow .15s; background:#fafcff; }
+input:focus, select:focus, textarea:focus { border-color:var(--blue2); box-shadow:0 0 0 3px rgba(26,95,168,0.1); background:#fff; }
+textarea { min-height:110px; resize:vertical; }
+.action-bar { display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:20px; padding-top:18px; border-top:1px solid var(--border); }
+.btn-primary { background:linear-gradient(135deg,var(--blue),var(--blue2)); color:#fff; border:none; border-radius:999px; padding:12px 24px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; transition:opacity .15s; }
+.btn-primary:hover { opacity:.9; }
+.btn-primary:disabled { opacity:.6; cursor:not-allowed; }
+.btn-danger { background:#fff; color:var(--danger); border:1.5px solid #fecaca; border-radius:999px; padding:12px 24px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.btn-danger:hover { background:#fef2f2; }
+.save-msg { display:none; padding:12px 16px; border-radius:10px; font-size:14px; font-weight:600; margin-top:12px; text-align:center; }
+.save-msg.success { display:block; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+.save-msg.error { display:block; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+@media(max-width:980px) { .layout { grid-template-columns:1fr; } .sidebar { position:static; } }
+@media(max-width:640px) { .grid-2 { grid-template-columns:1fr; } }
+@media(max-width:768px) { .header-actions { display:none; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+    <div class="header-actions"></div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="sidebar-avatar">?</div>
+        <div class="profile-name" id="sidebar-name">Wird geladen...</div>
+        <div class="profile-email" id="sidebar-email">–</div>
+        <span class="profile-badge">Händlerkonto</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+        <a href="anzeige-erstellen.html" class="nav-item"><span class="nav-icon">➕</span>Anzeige erstellen</a>
+        <a href="meine-anzeigen.html" class="nav-item"><span class="nav-icon">📋</span>Meine Anzeigen</a>
+        <a href="anfragen.html" class="nav-item"><span class="nav-icon">💬</span>Anfragen</a>
+        <a href="profil.html" class="nav-item active"><span class="nav-icon">⚙️</span>Profil</a>
+        <div class="nav-divider"></div>
+        <a href="suche.html" class="nav-item"><span class="nav-icon">🔍</span>Zur Suche</a>
+        <a href="#" class="nav-item logout" id="sidebar-logout"><span class="nav-icon">🚪</span>Abmelden</a>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <div class="page-head">
+        <h1>⚙️ Profil</h1>
+        <p>Verwalte deine Händlerdaten und Kontoeinstellungen.</p>
+      </div>
+
+      <form id="profil-form">
+
+        <!-- Firmendaten -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-title">🏢 Firmendaten</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="company_name">Firmenname *</label>
+              <input type="text" id="company_name" placeholder="z. B. Motorenhandel GmbH" />
+            </div>
+            <div class="form-group">
+              <label for="contact_name">Ansprechpartner</label>
+              <input type="text" id="contact_name" placeholder="z. B. Max Mustermann" />
+            </div>
+            <div class="form-group">
+              <label for="email">E-Mail-Adresse</label>
+              <input type="email" id="email" placeholder="info@firma.de" />
+            </div>
+            <div class="form-group">
+              <label for="phone">Telefon</label>
+              <input type="text" id="phone" placeholder="+49 711 123456" />
+            </div>
+            <div class="form-group">
+              <label for="website">Website</label>
+              <input type="text" id="website" placeholder="https://www.firma.de" />
+            </div>
+            <div class="form-group">
+              <label for="company_type">Unternehmensform</label>
+              <select id="company_type">
+                <option value="GmbH">GmbH</option>
+                <option value="GmbH & Co. KG">GmbH & Co. KG</option>
+                <option value="AG">AG</option>
+                <option value="Einzelunternehmen">Einzelunternehmen</option>
+                <option value="UG">UG</option>
+                <option value="OHG">OHG</option>
+                <option value="KG">KG</option>
+                <option value="Sonstiges">Sonstiges</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adresse -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-title">📍 Adresse</div>
+          <div class="grid-2">
+            <div class="form-group" style="grid-column:1/-1;">
+              <label for="street">Straße & Hausnummer</label>
+              <input type="text" id="street" placeholder="Musterstraße 12" />
+            </div>
+            <div class="form-group">
+              <label for="zip">PLZ</label>
+              <input type="text" id="zip" placeholder="70173" />
+            </div>
+            <div class="form-group">
+              <label for="city">Stadt</label>
+              <input type="text" id="city" placeholder="Stuttgart" />
+            </div>
+            <div class="form-group">
+              <label for="country">Land</label>
+              <select id="country">
+                <option value="DE">Deutschland</option>
+                <option value="AT">Österreich</option>
+                <option value="CH">Schweiz</option>
+                <option value="FR">Frankreich</option>
+                <option value="NL">Niederlande</option>
+                <option value="PL">Polen</option>
+                <option value="IT">Italien</option>
+                <option value="ES">Spanien</option>
+                <option value="TR">Türkei</option>
+                <option value="Sonstiges">Sonstiges</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="vat">USt-IdNr.</label>
+              <input type="text" id="vat" placeholder="DE123456789" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Über den Händler -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-title">📝 Über den Händler</div>
+          <div class="form-group">
+            <label for="description">Firmenbeschreibung</label>
+            <textarea id="description" placeholder="Beschreibe dein Unternehmen, Erfahrung, Schwerpunkte…"></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="specialization">Spezialisierung</label>
+              <input type="text" id="specialization" placeholder="z. B. LKW-Motoren, Industriemotoren" />
+            </div>
+            <div class="form-group">
+              <label for="response_time">Antwortzeit</label>
+              <select id="response_time">
+                <option value="">Bitte auswählen</option>
+                <option value="Innerhalb 1 Stunde">Innerhalb 1 Stunde</option>
+                <option value="Innerhalb 24 Stunden">Innerhalb 24 Stunden</option>
+                <option value="1–2 Werktage">1–2 Werktage</option>
+                <option value="3–5 Werktage">3–5 Werktage</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="languages">Sprachen</label>
+              <input type="text" id="languages" placeholder="z. B. Deutsch, Englisch, Türkisch" />
+            </div>
+          </div>
+          <div class="action-bar">
+            <button type="submit" class="btn-primary">💾 Profil speichern</button>
+          </div>
+          <div class="save-msg" id="save-msg"></div>
+        </div>
+
+      </form>
+
+      <!-- Konto löschen -->
+      <div class="card">
+        <div class="card-title" style="color:#dc2626;">🗑️ Konto löschen</div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:20px;line-height:1.6;">
+          Damit werden alle deine Daten – Profil, Anzeigen und Nachrichten – permanent und unwiderruflich gelöscht.
+        </p>
+        <button class="btn-danger" id="delete-account-btn" type="button">Konto endgültig löschen</button>
+      </div>
+
+    </section>
+  </div>
+</main>
+
+<!-- Konto-Löschen Modal -->
+<div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;padding:20px;">
+  <div style="background:#fff;border-radius:20px;padding:32px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <h2 style="color:#dc2626;margin-bottom:12px;font-size:22px;">Konto wirklich löschen?</h2>
+    <p style="color:#475569;font-size:14px;margin-bottom:20px;line-height:1.6;">
+      Gib zur Bestätigung dein Passwort ein. Danach werden <strong>alle deine Daten</strong> permanent gelöscht.
+    </p>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:6px;">Passwort zur Bestätigung</label>
+      <input id="delete-confirm-password" type="password" placeholder="Dein Passwort eingeben"
+        style="width:100%;padding:12px 14px;border:1px solid #dbe3ea;border-radius:12px;font-size:14px;outline:none;font-family:inherit;" />
+    </div>
+    <div id="delete-modal-error" style="display:none;color:#dc2626;font-size:13px;margin-bottom:14px;padding:10px 14px;background:#fff0f0;border-radius:10px;"></div>
+    <div style="display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;">
+      <button id="delete-modal-cancel" type="button"
+        style="padding:12px 20px;border-radius:999px;border:1px solid #dbe3ea;background:#fff;color:#334155;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">
+        Abbrechen
+      </button>
+      <button id="delete-modal-confirm" type="button"
+        style="padding:12px 20px;border-radius:999px;border:none;background:#dc2626;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">
+        Konto endgültig löschen
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="profil.js"></script>
+<script src="auth-header.js"></script>
+<script src="i18n.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData?.session?.user;
+
+  if (!user) { window.location.href = "login.html"; return; }
+
+  const { data: seller } = await supabaseClient
+    .from("seller_profiles").select("company_name")
+    .eq("user_id", user.id).maybeSingle();
+
+  const displayName = seller?.company_name || user.email || "Mein Konto";
+  const initials = displayName.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase() || "?";
+
+  const avatarEl = document.getElementById("sidebar-avatar");
+  const nameEl   = document.getElementById("sidebar-name");
+  const emailEl  = document.getElementById("sidebar-email");
+  if (avatarEl) avatarEl.textContent = initials;
+  if (nameEl)   nameEl.textContent   = displayName;
+  if (emailEl)  emailEl.textContent  = user.email || "";
+
+  document.getElementById("sidebar-logout")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
+  });
+});
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+</body>
+</html>

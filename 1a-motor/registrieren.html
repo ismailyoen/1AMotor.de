@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="favicon-192x192.png" />
+  <meta name="description" content="Kostenlos registrieren auf 1A Motor – als Käufer Motoren finden oder als Händler Motoranzeigen schalten. Keine Provision, direkter Käuferkontakt." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://1amotor.de/registrieren.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Registrieren – 1A Motor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue:  #1a5fa8; --blue2: #2176c7; --sky: #4da6ff;
+    --white: #ffffff; --muted: #7a93ae; --border: #e0e9f2; --bg: #f4f7fb; --r: 12px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Outfit', Arial, sans-serif; background: linear-gradient(135deg, #0d1b2a 0%, #1b2d42 50%, #1a3a5c 100%); min-height: 100vh; display: flex; flex-direction: column; }
+  header { padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(145deg, var(--blue), var(--sky)); display: grid; place-items: center; font-weight: 900; font-size: 16px; color: #fff; box-shadow: 0 4px 12px rgba(26,95,168,0.4); }
+  .logo-text { display: flex; flex-direction: column; }
+  .logo-name { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
+  
+  .header-link { color: rgba(255,255,255,0.65); font-size: 14px; font-weight: 600; text-decoration: none; transition: color .15s; }
+  .header-link:hover { color: var(--sky); }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 20px 48px; }
+  .auth-card { background: var(--white); width: 100%; max-width: 480px; border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.25); overflow: hidden; }
+  .card-header { background: linear-gradient(135deg, #1e3a52, #2a5278); padding: 28px 32px 24px; position: relative; overflow: hidden; }
+  .card-header::after { content: "🚗"; position: absolute; right: -8px; bottom: -12px; font-size: 80px; opacity: .07; pointer-events: none; }
+  .card-header h1 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .card-header p { font-size: 14px; color: rgba(255,255,255,0.6); }
+  .card-body { padding: 28px 32px; }
+
+  /* Konto-Typ Toggle */
+  .type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .type-btn {
+    padding: 12px 8px; border: 2px solid var(--border); border-radius: 10px;
+    background: #fafcff; cursor: pointer; text-align: center;
+    font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--muted); transition: all .15s;
+  }
+  .type-btn.active { border-color: var(--blue2); background: #eef4ff; color: var(--blue2); }
+  .type-btn .type-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; }
+  input, select {
+    width: 100%; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: var(--r);
+    font-size: 14px; font-family: inherit; color: #0d1b2a; outline: none;
+    transition: border-color .15s, box-shadow .15s; background: #fafcff;
+  }
+  input:focus, select:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px rgba(26,95,168,0.12); background: #fff; }
+  .submit-btn {
+    width: 100%; padding: 14px; background: linear-gradient(135deg, var(--blue), var(--blue2));
+    color: #fff; border: none; border-radius: var(--r);
+    font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; transition: opacity .15s; margin-top: 6px;
+  }
+  .submit-btn:hover { opacity: .9; }
+  .submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+  .auth-msg { padding: 12px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; margin-top: 14px; text-align: center; display: none; }
+  .auth-msg.error   { display:block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .auth-msg.success { display:block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 12px; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .extra { text-align: center; font-size: 14px; color: var(--muted); }
+  .extra a { color: var(--blue2); font-weight: 700; text-decoration: none; }
+  .extra a:hover { text-decoration: underline; }
+  footer { text-align: center; padding: 16px; font-size: 12px; color: rgba(255,255,255,0.35); }
+
+  /* Händler-Info Box */
+  .seller-info {
+    background: #f0f6ff; border: 1px solid #d0e4f7; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 16px; font-size: 13px; color: #1e3a52;
+    display: none;
+  }
+  .seller-info.show { display: block; }
+
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+
+</style>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://1amotor.de/registrieren.html" />
+  <meta property="og:title" content="Kostenlos registrieren – 1A Motor" />
+  <meta property="og:description" content="Jetzt kostenlos als Händler oder Käufer registrieren. Motoren kaufen & verkaufen ohne Provision." />
+  <meta property="og:site_name" content="1A Motor" />
+  <meta name="twitter:card" content="summary" />
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+  <a href="login.html" class="header-link">Bereits registriert? Einloggen →</a>
+</header>
+
+<main>
+  <div class="auth-card">
+    <div class="card-header">
+      <h1>Konto erstellen</h1>
+      <p>Registriere dich kostenlos auf 1A Motor.</p>
+    </div>
+    <div class="card-body">
+
+      <!-- Konto-Typ Auswahl -->
+      <div class="type-toggle">
+        <button class="type-btn" id="btn-buyer" type="button">
+          <span class="type-icon">🔍</span>
+          Käufer
+        </button>
+        <button class="type-btn active" id="btn-seller" type="button">
+          <span class="type-icon">🏪</span>
+          Händler
+        </button>
+      </div>
+
+      <div class="seller-info show" id="seller-info">
+        💡 Als Händler kannst du Anzeigen erstellen, Anfragen verwalten und dein Profil pflegen.
+      </div>
+
+      <input type="hidden" id="account-type" value="Händler" />
+
+      <form id="register-form">
+        <div class="form-group">
+          <label>Vor- und Nachname</label>
+          <input type="text" id="reg-name" placeholder="Max Mustermann" required autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label>E-Mail-Adresse</label>
+          <input type="email" id="reg-email" placeholder="deine@email.de" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label>Passwort</label>
+          <input type="password" id="reg-password" placeholder="Mindestens 6 Zeichen" required autocomplete="new-password" />
+        </div>
+        <div class="form-group">
+          <label>Passwort bestätigen</label>
+          <input type="password" id="reg-password2" placeholder="Passwort wiederholen" required autocomplete="new-password" />
+        </div>
+        <button type="submit" class="submit-btn" id="reg-btn">Jetzt registrieren</button>
+        <div class="auth-msg" id="reg-msg"></div>
+      </form>
+
+      <div class="divider">oder</div>
+      <div class="extra">
+        Bereits ein Konto? <a href="login.html">Einloggen</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 1A Motor – Motorenmarktplatz Deutschland</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  // Wenn schon eingeloggt → weiterleiten
+  const { data } = await supabaseClient.auth.getSession();
+  if (data?.session?.user) {
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // Konto-Typ Toggle
+  const btnBuyer  = document.getElementById("btn-buyer");
+  const btnSeller = document.getElementById("btn-seller");
+  const accountType = document.getElementById("account-type");
+  const sellerInfo = document.getElementById("seller-info");
+
+  btnBuyer.addEventListener("click", () => {
+    btnBuyer.classList.add("active");
+    btnSeller.classList.remove("active");
+    accountType.value = "Käufer";
+    sellerInfo.classList.remove("show");
+  });
+  btnSeller.addEventListener("click", () => {
+    btnSeller.classList.add("active");
+    btnBuyer.classList.remove("active");
+    accountType.value = "Händler";
+    sellerInfo.classList.add("show");
+  });
+
+  // Formular
+  const form   = document.getElementById("register-form");
+  const regBtn = document.getElementById("reg-btn");
+  const regMsg = document.getElementById("reg-msg");
+
+  function showMsg(text, type) {
+    regMsg.className = "auth-msg " + type;
+    regMsg.textContent = text;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name     = document.getElementById("reg-name").value.trim();
+    const email    = document.getElementById("reg-email").value.trim();
+    const password = document.getElementById("reg-password").value;
+    const password2 = document.getElementById("reg-password2").value;
+    const role     = accountType.value === "Händler" ? "seller" : "buyer";
+
+    if (!name || !email || !password) { showMsg("Bitte alle Felder ausfüllen.", "error"); return; }
+    if (password.length < 6) { showMsg("Passwort muss mindestens 6 Zeichen haben.", "error"); return; }
+    if (password !== password2) { showMsg("Die Passwörter stimmen nicht überein.", "error"); return; }
+
+    regBtn.disabled = true; regBtn.textContent = "Wird registriert...";
+
+    // 1. Registrieren
+    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+      email, password,
+      options: { data: { full_name: name, role } }
+    });
+
+    if (signUpError) {
+      showMsg("Fehler: " + signUpError.message, "error");
+      regBtn.disabled = false; regBtn.textContent = "Jetzt registrieren";
+      return;
+    }
+
+    // 2. Direkt einloggen
+    const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({ email, password });
+    const user = loginData?.user || signUpData?.user;
+
+    // 3. Seller Profile anlegen wenn Händler
+    if (role === "seller" && user) {
+      await supabaseClient.from("seller_profiles").upsert([{
+        user_id: user.id, company_name: name, email, city: "", country: "DE"
+      }], { onConflict: "user_id" });
+    }
+
+    showMsg("✅ Registrierung erfolgreich! Du wirst weitergeleitet...", "success");
+    setTimeout(() => { window.location.href = role === "seller" ? "dashboard.html" : "index.html"; }, 1500);
+  });
+});
+</script>
+</body>
+</html>
