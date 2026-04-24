@@ -1,519 +1,318 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-  <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <link rel="apple-touch-icon" href="favicon-192x192.png" />
+<meta charset="UTF-8" /><meta name="robots" content="noindex" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dashboard – 1A Motor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  :root{
-    --bg:#edf0f4;
-    --card:#ffffff;
-    --text:#1f2937;
-    --muted:#6b7280;
-    --border:#dbe3ea;
-    --dark-blue:#1a3a52;
-    --blue:#2b6cb0;
-    --light-blue:#72b6ff;
-    --success:#0f9d58;
-    --warning:#d97706;
-    --danger:#dc2626;
-    --shadow:0 4px 20px rgba(18,58,99,0.08);
-    --shadow-lg:0 12px 40px rgba(18,58,99,0.13);
-    --radius:14px;
-  }
-
-  *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
-  body{ background:var(--bg); color:var(--text); line-height:1.5; }
-  a{ text-decoration:none; color:inherit; }
-  .container{ max-width:1400px; margin:0 auto; padding:0 20px; }
-
-  /* ── Header ── */
-  .header{
-    background:#fff;
-    border-bottom:2px solid var(--border);
-    position:sticky; top:0; z-index:50;
-    box-shadow:0 2px 12px rgba(18,58,99,0.06);
-  }
-  .header-inner{
-    display:flex; justify-content:space-between; align-items:center;
-    gap:18px; padding:14px 0;
-  }
-  .logo{
-    display:flex; align-items:center; gap:10px;
-    font-size:24px; font-weight:800; color:var(--dark-blue);
-  }
-  
-  .header-actions{ display:flex; align-items:center; gap:12px; font-size:14px; }
-
-  /* ── Layout ── */
-  .page{ padding:24px 0 48px; }
-  .layout{
-    display:grid;
-    grid-template-columns:240px 1fr;
-    gap:22px;
-    align-items:start;
-  }
-
-  /* ── Sidebar ── */
-  .sidebar{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    overflow:hidden;
-    position:sticky;
-    top:80px;
-  }
-
-  .sidebar-profile{
-    padding:22px 18px 18px;
-    background:linear-gradient(135deg, #1e3a52, #2a5278);
-    position:relative;
-    overflow:hidden;
-  }
-  .sidebar-profile::after{
-    content:"⚙️";
-    position:absolute; right:-10px; bottom:-14px;
-    font-size:72px; opacity:.1; pointer-events:none;
-  }
-  .profile-avatar{
-    width:52px; height:52px; border-radius:50%;
-    background:rgba(255,255,255,0.15);
-    border:2px solid rgba(255,255,255,0.3);
-    display:grid; place-items:center;
-    font-size:20px; font-weight:800; color:#fff;
-    margin-bottom:12px;
-  }
-  .profile-name{
-    font-size:16px; font-weight:700; color:#fff;
-    margin-bottom:3px;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .profile-email{
-    font-size:12px; color:rgba(255,255,255,0.65);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .profile-badge{
-    display:inline-block; margin-top:10px;
-    background:rgba(255,255,255,0.15);
-    border:1px solid rgba(255,255,255,0.25);
-    color:rgba(255,255,255,0.85);
-    font-size:11px; font-weight:700;
-    padding:4px 10px; border-radius:999px;
-  }
-
-  .sidebar-nav{ padding:12px 10px; }
-  .nav-item{
-    display:flex; align-items:center; gap:10px;
-    padding:10px 12px; border-radius:10px;
-    color:#334155; font-size:14px; font-weight:600;
-    transition:background .12s, color .12s;
-    margin-bottom:2px;
-  }
-  .nav-item:hover{ background:#f0f4f8; color:var(--dark-blue); }
-  .nav-item.active{ background:#e8f0f8; color:var(--dark-blue); font-weight:700; }
-  .nav-item .nav-icon{ font-size:16px; width:22px; text-align:center; flex-shrink:0; }
-  .nav-divider{ height:1px; background:var(--border); margin:10px 12px; }
-  .nav-item.logout{ color:var(--danger); }
-  .nav-item.logout:hover{ background:#fff5f5; }
-
-  /* ── Content ── */
-  .content{ display:flex; flex-direction:column; gap:20px; }
-
-  /* ── Page Head ── */
-  .page-head{
-    display:flex; justify-content:space-between;
-    align-items:center; gap:16px; flex-wrap:wrap;
-  }
-  .page-head h1{ font-size:26px; color:var(--dark-blue); font-weight:800; }
-  .page-head p{ color:var(--muted); font-size:14px; margin-top:3px; }
-  .new-btn{
-    background:var(--dark-blue); color:#fff;
-    padding:11px 18px; border-radius:999px;
-    font-weight:700; font-size:14px; white-space:nowrap;
-    transition:background .15s;
-  }
-  .new-btn:hover{ background:var(--blue); }
-
-  /* ── Stats Grid ── */
-  .stats-grid{
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:16px;
-  }
-  .stat-card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    padding:20px;
-    display:flex; flex-direction:column; gap:4px;
-    position:relative; overflow:hidden;
-  }
-  .stat-card::before{
-    content:attr(data-icon);
-    position:absolute; right:16px; top:14px;
-    font-size:28px; opacity:.15;
-  }
-  .stat-label{ font-size:12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
-  .stat-value{ font-size:30px; font-weight:800; color:var(--dark-blue); line-height:1.1; }
-  .stat-note{ font-size:12px; color:var(--muted); margin-top:2px; }
-  .stat-card.highlight{ background:linear-gradient(135deg,#1e3a52,#2a5278); border-color:transparent; }
-  .stat-card.highlight .stat-label{ color:rgba(255,255,255,0.65); }
-  .stat-card.highlight .stat-value{ color:#fff; }
-  .stat-card.highlight .stat-note{ color:rgba(255,255,255,0.55); }
-  .stat-card.highlight::before{ opacity:.2; }
-
-  /* ── Panel (Karte) ── */
-  .panel{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-  }
-  .panel-head{
-    display:flex; justify-content:space-between;
-    align-items:center; gap:12px; flex-wrap:wrap;
-    padding:18px 20px;
-    border-bottom:1px solid var(--border);
-  }
-  .panel-head h2{ font-size:17px; color:var(--dark-blue); font-weight:700; }
-  .panel-head a{ font-size:13px; color:var(--blue); font-weight:600; }
-
-  /* ── Tabelle ── */
-  .table-wrap{ overflow:auto; }
-  .table{
-    width:100%; border-collapse:collapse;
-    min-width:740px;
-  }
-  .table th{
-    text-align:left; padding:12px 16px;
-    font-size:12px; font-weight:700; color:var(--muted);
-    text-transform:uppercase; letter-spacing:.04em;
-    background:#f8fafc;
-    border-bottom:1px solid var(--border);
-  }
-  .table td{
-    padding:14px 16px;
-    border-bottom:1px solid #f1f5f9;
-    font-size:14px; vertical-align:middle;
-    color:#334155;
-  }
-  .table tr:last-child td{ border-bottom:none; }
-  .table tr:hover td{ background:#fafbfc; }
-
-  .badge{
-    display:inline-flex; align-items:center;
-    padding:4px 10px; border-radius:999px;
-    font-size:11px; font-weight:700;
-  }
-  .badge.approved{ background:#ecfdf5; color:#059669; }
-  .badge.pending{ background:#fffbeb; color:#d97706; }
-  .badge.draft{ background:#f1f5f9; color:#64748b; }
-
-  .action-links{ display:flex; gap:8px; flex-wrap:wrap; }
-  .action-links a{
-    font-size:12px; font-weight:700; color:var(--blue);
-    padding:5px 10px; border-radius:7px;
-    border:1px solid var(--border);
-    background:#fff;
-    transition:background .12s;
-  }
-  .action-links a:hover{ background:#f0f6ff; }
-  .action-links .delete-dashboard-btn{ color:var(--danger); border-color:#fecaca; }
-  .action-links .delete-dashboard-btn:hover{ background:#fff5f5; }
-
-  /* ── Bottom Grid ── */
-  .bottom-grid{
-    display:grid;
-    grid-template-columns:1fr 320px;
-    gap:20px;
-  }
-
-  /* ── Aktivitätsliste ── */
-  .activity-list{ padding:0 4px; }
-  .activity-item{
-    display:flex; gap:12px; align-items:flex-start;
-    padding:14px 16px;
-    border-bottom:1px solid #f1f5f9;
-  }
-  .activity-item:last-child{ border-bottom:none; }
-  .activity-dot{
-    width:8px; height:8px; border-radius:50%;
-    background:var(--light-blue); flex-shrink:0; margin-top:5px;
-  }
-  .activity-dot.new{ background:var(--success); }
-  .activity-dot.warn{ background:var(--warning); }
-  .activity-text strong{ display:block; font-size:14px; color:#1e293b; margin-bottom:3px; }
-  .activity-text span{ font-size:12px; color:var(--muted); }
-
-  /* ── Paket-Karte ── */
-  .plan-inner{ padding:20px; }
-  .plan-banner{
-    background:linear-gradient(135deg,#1e3a52,#2a5278);
-    border-radius:12px; padding:18px; margin-bottom:16px;
-    position:relative; overflow:hidden;
-  }
-  .plan-banner::after{ content:"⚙️"; position:absolute; right:12px; bottom:-8px; font-size:48px; opacity:.15; }
-  .plan-banner strong{ display:block; font-size:22px; color:#fff; font-weight:800; margin-bottom:2px; }
-  .plan-banner span{ font-size:13px; color:rgba(255,255,255,0.65); }
-  .plan-features{ display:flex; flex-direction:column; gap:9px; margin-bottom:18px; }
-  .plan-feature{
-    display:flex; align-items:center; gap:8px;
-    font-size:13px; color:#475569;
-  }
-  .plan-feature::before{ content:"✓"; color:var(--success); font-weight:700; }
-  .upgrade-btn{
-    display:block; text-align:center;
-    background:var(--dark-blue); color:#fff;
-    padding:12px; border-radius:10px;
-    font-weight:700; font-size:14px;
-    transition:background .15s;
-  }
-  .upgrade-btn:hover{ background:var(--blue); }
-
-  /* ── Empty ── */
-  .empty-row td{
-    padding:32px; text-align:center;
-    color:var(--muted); font-size:14px;
-  }
-  .empty-row .empty-icon{ font-size:32px; display:block; margin-bottom:8px; }
-
-  /* ── Responsive ── */
-  @media(max-width:1200px){
-    .stats-grid{ grid-template-columns:repeat(2,1fr); }
-    .bottom-grid{ grid-template-columns:1fr; }
-  }
-  @media(max-width:980px){
-    .layout{ grid-template-columns:1fr; }
-    .sidebar{ position:static; }
-  }
-  @media(max-width:640px){
-    .stats-grid{ grid-template-columns:1fr 1fr; }
-    .page-head h1{ font-size:22px; }
-  }
-
-  /* ═══════════════════════════════════════
-     MOBILE RESPONSIVE
-  ═══════════════════════════════════════ */
-  @media (max-width: 768px) {
-    .container { padding: 0 14px; }
-    .header-inner { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
-    .logo { font-size: 18px; }
-    .logo-badge, .logo-mark { width: 34px; height: 34px; font-size: 14px; }
-    .header-actions { display: none; }
-    .layout { grid-template-columns: 1fr !important; }
-    .sidebar { position: static !important; top: auto !important; }
-    .page-head h1 { font-size: 22px !important; }
-    .page-head p { font-size: 13px; }
-    .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
-    .stat-value { font-size: 22px !important; }
-    .panel { padding: 14px !important; }
-    .table-wrap { overflow-x: auto; }
-    .table { min-width: 600px; }
-    .bottom-grid { grid-template-columns: 1fr !important; }
-    .listing-grid { grid-template-columns: 1fr !important; }
-    .listing-card { grid-template-columns: 1fr !important; }
-    .card-image { min-height: 180px !important; }
-    .filter-bar { flex-direction: column; }
-    .filter-bar input, .filter-bar select { width: 100%; }
-    .grid-2, .grid-3 { grid-template-columns: 1fr !important; }
-    .plan-grid { grid-template-columns: 1fr !important; }
-    .info-grid, .bottom-grid { grid-template-columns: 1fr !important; }
-    .plan-card.featured { transform: none; }
-    .nav-item { padding: 9px 10px; font-size: 13px; }
-    .profile-name { font-size: 14px; }
-    .tab-bar { flex-wrap: wrap; }
-    .tab { font-size: 12px; padding: 6px 10px; }
-    .msg { max-width: 90% !important; }
-    .reply-box { flex-direction: column; }
-    .reply-input { width: 100%; }
-    .chat-messages { max-height: 250px; }
-    .page { padding: 16px 0 32px !important; }
-  }
-
-  @media (max-width: 480px) {
-    .logo-name { font-size: 18px; }
-    .stats-grid { grid-template-columns: 1fr 1fr !important; }
-    .page-head { flex-direction: column; align-items: flex-start !important; }
-    .page-head .new-btn, .page-head a { width: 100%; text-align: center; }
-    .action-links { flex-wrap: wrap; }
-    .inq-header { flex-direction: column; }
-    .inq-meta { flex-direction: column; gap: 4px; }
-    .sidebar-profile { padding: 16px 14px; }
-  }
-
-
-  /* ── Einheitliches Logo ── */
-  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
-  .logo-mark {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
-    display: grid; place-items: center;
-    font-weight: 900; font-size: 15px; color: #fff;
-    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
-    flex-shrink: 0; letter-spacing: -0.5px;
-    font-family: 'Outfit', Arial, sans-serif;
-  }
-  .logo-name {
-    font-size: 22px; font-weight: 800;
-    color: #0d1b2a; letter-spacing: -.3px;
-    font-family: 'Outfit', Arial, sans-serif;
-  }
-
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f5f6fa;color:#1a1d23;line-height:1.5;display:flex;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+.sidebar{width:220px;min-height:100vh;background:#0f1117;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;border-right:1px solid rgba(255,255,255,0.06);}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:20px 18px 18px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#1b4f72,#2e86c1);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;}
+.logo-name{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,0.5);font-size:13.5px;font-weight:500;transition:all .15s;cursor:pointer;}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.nav-item.active{background:#1c6ea4;color:#fff;font-weight:600;}
+.nav-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:#e74c3c;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;}
+.nav-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 10px;}
+.nav-item.logout{color:rgba(239,68,68,0.6);}
+.nav-item.logout:hover{color:#ef4444;background:rgba(239,68,68,0.1);}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.user-info{min-width:0;}
+.user-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:rgba(255,255,255,0.4);}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #e8eaef;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:15px;font-weight:600;color:#6b7280;}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.topbar-bell{width:34px;height:34px;border-radius:50%;background:#f5f6fa;display:grid;place-items:center;font-size:16px;cursor:pointer;position:relative;border:1px solid #e8eaef;}
+.topbar-bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#e74c3c;border:1.5px solid #fff;}
+.topbar-user{display:flex;align-items:center;gap:8px;background:#f5f6fa;border:1px solid #e8eaef;border-radius:999px;padding:5px 12px 5px 5px;cursor:pointer;}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;}
+.topbar-username{font-size:13px;font-weight:600;color:#374151;}
+.new-listing-btn{background:#1c6ea4;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;}
+.page{padding:28px 28px 56px;flex:1;}
+.page-head{margin-bottom:24px;}
+.page-head h1{font-size:22px;font-weight:700;color:#111827;margin-bottom:3px;}
+.page-head p{font-size:13.5px;color:#6b7280;}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:#fff;border:1px solid #e8eaef;border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s;}
+.stat-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+.stat-icon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:20px;flex-shrink:0;}
+.si-blue{background:#e8f4fd;}.si-green{background:#e8fdf0;}.si-orange{background:#fdf3e8;}.si-purple{background:#f0e8fd;}.si-teal{background:#e8fdf9;}
+.stat-body{min-width:0;}
+.stat-label{font-size:11.5px;color:#9ca3af;font-weight:500;margin-bottom:3px;}
+.stat-value{font-size:24px;font-weight:700;color:#111827;line-height:1;}
+.stat-note{font-size:11px;color:#10b981;font-weight:500;margin-top:3px;}
+.charts-row{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:24px;}
+.panel{background:#fff;border:1px solid #e8eaef;border-radius:12px;overflow:hidden;}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #f1f3f6;}
+.panel-head h2{font-size:14px;font-weight:600;color:#111827;}
+.panel-link{font-size:12.5px;color:#1c6ea4;font-weight:500;}
+.chart-area{padding:16px 20px 20px;height:190px;}
+.donut-wrap{padding:20px;display:flex;align-items:center;gap:20px;}
+.donut-legend{display:flex;flex-direction:column;gap:10px;}
+.legend-item{display:flex;align-items:center;gap:8px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.legend-text{font-size:12px;color:#6b7280;flex:1;}
+.legend-pct{font-size:12px;font-weight:600;color:#374151;white-space:nowrap;}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr 310px;gap:16px;}
+.motor-item{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid #f8fafc;cursor:pointer;transition:background .12s;}
+.motor-item:last-child{border-bottom:none;}
+.motor-item:hover{background:#fafbff;}
+.rank-badge{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.rk1{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;}
+.rk2{background:linear-gradient(135deg,#94a3b8,#cbd5e1);color:#fff;}
+.rk3{background:linear-gradient(135deg,#b45309,#d97706);color:#fff;}
+.rkn{background:#f1f5f9;color:#94a3b8;}
+.motor-thumb{width:42px;height:42px;border-radius:9px;flex-shrink:0;background:#f1f5f9;overflow:hidden;display:grid;place-items:center;font-size:18px;}
+.motor-thumb img{width:100%;height:100%;object-fit:cover;}
+.motor-info{flex:1;min-width:0;}
+.motor-title{font-size:13px;font-weight:600;color:#1a1d23;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.motor-sub{font-size:11.5px;color:#9ca3af;margin-top:2px;}
+.motor-bar{height:3px;background:#f1f5f9;border-radius:2px;margin-top:5px;}
+.motor-bar-fill{height:100%;background:#1c6ea4;border-radius:2px;}
+.motor-price{font-size:13px;font-weight:700;color:#1c6ea4;white-space:nowrap;}
+.inq-item{display:flex;align-items:flex-start;gap:10px;padding:12px 20px;border-bottom:1px solid #f8fafc;}
+.inq-item:last-child{border-bottom:none;}
+.inq-avatar{width:34px;height:34px;border-radius:50%;background:#e8f0fe;display:grid;place-items:center;font-size:12px;font-weight:700;color:#1c6ea4;flex-shrink:0;}
+.inq-body{flex:1;min-width:0;}
+.inq-name{font-size:13px;font-weight:600;color:#1a1d23;}
+.inq-listing{font-size:12px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.inq-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.inq-time{font-size:11px;color:#9ca3af;white-space:nowrap;}
+.inq-badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;}
+.b-new{background:#dcfce7;color:#16a34a;}.b-read{background:#fef9c3;color:#ca8a04;}.b-done{background:#f1f5f9;color:#64748b;}
+.recent-item{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid #f8fafc;cursor:pointer;transition:background .12s;}
+.recent-item:last-child{border-bottom:none;}
+.recent-item:hover{background:#fafbff;}
+.recent-thumb{width:38px;height:38px;border-radius:8px;background:#f1f5f9;display:grid;place-items:center;font-size:16px;flex-shrink:0;overflow:hidden;}
+.recent-thumb img{width:100%;height:100%;object-fit:cover;}
+.recent-info{flex:1;min-width:0;}
+.recent-title{font-size:12.5px;font-weight:600;color:#1a1d23;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recent-time{font-size:11px;color:#9ca3af;margin-top:1px;}
+.recent-arrow{color:#d1d5db;font-size:14px;flex-shrink:0;}
+.empty-state{padding:28px 20px;text-align:center;color:#9ca3af;font-size:13px;}
+@media(max-width:1300px){.stats-grid{grid-template-columns:repeat(3,1fr);}.charts-row{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.stats-grid{grid-template-columns:1fr 1fr;}.bottom-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-mark">1A</div><div class="logo-name">Motor</div></div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="nav-item active"><span class="icon">📊</span> Dashboard</a>
+    <a href="meine-anzeigen.html" class="nav-item"><span class="icon">🚗</span> Fahrzeuge</a>
+    <a href="meine-anzeigen.html" class="nav-item"><span class="icon">📋</span> Inserate</a>
+    <a href="anfragen.html" class="nav-item"><span class="icon">💬</span> Anfragen <span class="nav-badge" id="nav-badge" style="display:none;"></span></a>
+    <a href="#" class="nav-item"><span class="icon">❤️</span> Favoriten</a>
+    <a href="#" class="nav-item"><span class="icon">📈</span> Statistiken</a>
+    <a href="#" class="nav-item"><span class="icon">⭐</span> Bewertungen</a>
+    <div class="nav-divider"></div>
+    <a href="profil.html" class="nav-item"><span class="icon">⚙️</span> Einstellungen</a>
+    <a href="profil.html" class="nav-item"><span class="icon">👤</span> Mein Konto</a>
+    <div class="nav-divider"></div>
+    <a href="suche.html" class="nav-item"><span class="icon">🔍</span> Zur Suche</a>
+    <a href="#" class="nav-item logout" id="sidebar-logout"><span class="icon">🚪</span> Ausloggen</a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="sidebar-avatar">?</div>
+    <div class="user-info"><div class="user-name" id="sidebar-name">Laden...</div><div class="user-role">Händlerkonto</div></div>
+  </div>
+</aside>
 
-<header class="header">
-  <div class="container header-inner">
-    <a href="index.html" class="logo">
-      <div class="logo-mark">1A</div>
-      <div class="logo-name">Motor</div>
-    </a>
-    <div class="header-actions">
-      <!-- auth-header.js befüllt dies -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Dashboard</div>
+    <div class="topbar-right">
+      <div class="topbar-bell">🔔<div class="topbar-bell-dot" id="bell-dot" style="display:none;"></div></div>
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar">?</div>
+        <span class="topbar-username" id="topbar-name">Laden...</span>
+        <span style="font-size:10px;color:#9ca3af;">▾</span>
+      </div>
+      <a href="anzeige-erstellen.html" class="new-listing-btn">+ Anzeige erstellen</a>
     </div>
   </div>
-</header>
 
-<main class="page">
-  <div class="container layout">
+  <div class="page">
+    <div class="page-head"><h1>Dashboard</h1><p>Willkommen zurück! Hier ist deine Übersicht.</p></div>
 
-    <!-- ── Sidebar ── -->
-    <aside class="sidebar">
-      <div class="sidebar-profile">
-        <div class="profile-avatar" id="sidebar-avatar">?</div>
-        <div class="profile-name user-box-name">Wird geladen...</div>
-        <div class="profile-email user-box-email">–</div>
-        <span class="profile-badge">Händlerkonto</span>
-      </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon si-blue">🚗</div><div class="stat-body"><div class="stat-label">Aktive Inserate</div><div class="stat-value" id="s-active">–</div><div class="stat-note" id="s-active-n">–</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-green">👁</div><div class="stat-body"><div class="stat-label">Anzeigen gesamt</div><div class="stat-value" id="s-total">–</div><div class="stat-note" id="s-total-n">–</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-orange">💬</div><div class="stat-body"><div class="stat-label">Anfragen</div><div class="stat-value" id="s-inq">–</div><div class="stat-note" id="s-inq-n">–</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-purple">💶</div><div class="stat-body"><div class="stat-label">Gesamtwert</div><div class="stat-value" id="s-val">–</div><div class="stat-note" id="s-val-n">–</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-teal">📝</div><div class="stat-body"><div class="stat-label">Entwürfe</div><div class="stat-value" id="s-drf">–</div><div class="stat-note" id="s-drf-n">–</div></div></div>
+    </div>
 
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="nav-item active">
-          <span class="nav-icon">📊</span> Dashboard
-        </a>
-        <a href="anzeige-erstellen.html" class="nav-item">
-          <span class="nav-icon">➕</span> Anzeige erstellen
-        </a>
-        <a href="meine-anzeigen.html" class="nav-item">
-          <span class="nav-icon">📋</span> Meine Anzeigen
-        </a>
-        <a href="anfragen.html" class="nav-item">
-          <span class="nav-icon">💬</span> Anfragen
-        </a>
-        <a href="profil.html" class="nav-item">
-          <span class="nav-icon">⚙️</span> Profil
-        </a>
-        
-        <div class="nav-divider"></div>
-        <a href="suche.html" class="nav-item">
-          <span class="nav-icon">🔍</span> Zur Suche
-        </a>
-        <a href="#" class="nav-item logout" id="sidebar-logout">
-          <span class="nav-icon">🚪</span> Abmelden
-        </a>
-      </nav>
-    </aside>
-
-    <!-- ── Content ── -->
-    <section class="content">
-
-      <div class="page-head">
-        <div>
-          <h1>Händler-Dashboard</h1>
-          <p>Deine Anzeigen, Anfragen und Statistiken auf einen Blick.</p>
-        </div>
-        <a href="anzeige-erstellen.html" class="new-btn">＋ Neue Anzeige</a>
-      </div>
-
-      <!-- Stats -->
-      <div class="stats-grid">
-        <div class="stat-card highlight" data-icon="📋">
-          <div class="stat-label">Aktive Anzeigen</div>
-          <div class="stat-value" id="stat-active">–</div>
-          <div class="stat-note" id="stat-active-note">wird geladen...</div>
-        </div>
-        <div class="stat-card" data-icon="💬">
-          <div class="stat-label">Offene Anfragen</div>
-          <div class="stat-value" id="stat-inquiries">–</div>
-          <div class="stat-note" id="stat-inquiries-note">wird geladen...</div>
-        </div>
-        <div class="stat-card" data-icon="💶">
-          <div class="stat-label">Gesamtwert</div>
-          <div class="stat-value" id="stat-value">–</div>
-          <div class="stat-note" id="stat-value-note">wird geladen...</div>
-        </div>
-        <div class="stat-card" data-icon="📝">
-          <div class="stat-label">Entwürfe</div>
-          <div class="stat-value" id="stat-drafts">–</div>
-          <div class="stat-note" id="stat-drafts-note">wird geladen...</div>
-        </div>
-      </div>
-
-      <!-- Anzeigen-Tabelle -->
+    <div class="charts-row">
       <div class="panel">
-        <div class="panel-head">
-          <h2>Meine Anzeigen</h2>
-          <a href="meine-anzeigen.html">Alle ansehen →</a>
-        </div>
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Titel</th>
-                <th>Kategorie</th>
-                <th>Preis</th>
-                <th>Status</th>
-                <th>Anfragen</th>
-                <th>Datum</th>
-                <th>Aktionen</th>
-              </tr>
-            </thead>
-            <tbody id="dashboard-listings-body">
-              <tr class="empty-row">
-                <td colspan="7">
-                  <span class="empty-icon">⏳</span>
-                  Anzeigen werden geladen...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="panel-head"><h2>Inserats-Aufrufe</h2><span style="font-size:12px;color:#9ca3af;">Letzte 7 Tage</span></div>
+        <div class="chart-area"><svg width="100%" height="100%" viewBox="0 0 600 150" preserveAspectRatio="none" id="chart-svg"><text x="300" y="80" text-anchor="middle" fill="#d1d5db" font-size="13" font-family="Inter">Wird geladen...</text></svg></div>
       </div>
-
-      <!-- Bottom Grid -->
-      <div class="bottom-grid">
-
-        <!-- Letzte Anfragen -->
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Letzte Anfragen</h2>
-            <a href="anfragen.html">Alle ansehen →</a>
+      <div class="panel">
+        <div class="panel-head"><h2>Anfragen-Übersicht</h2></div>
+        <div class="donut-wrap">
+          <div style="position:relative;width:130px;height:130px;flex-shrink:0;">
+            <svg width="130" height="130" viewBox="0 0 130 130" id="donut-svg">
+              <circle cx="65" cy="65" r="48" fill="none" stroke="#f1f5f9" stroke-width="15"/>
+              <text x="65" y="61" text-anchor="middle" font-size="20" font-weight="700" fill="#111827" font-family="Inter" id="d-total">0</text>
+              <text x="65" y="76" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Gesamt</text>
+            </svg>
           </div>
-          <div class="activity-list" id="recent-inquiries">
-            <div class="activity-item">
-              <div class="activity-dot"></div>
-              <div class="activity-text">
-                <strong>Wird geladen...</strong>
-              </div>
-            </div>
+          <div class="donut-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div><div class="legend-text">Offen</div><div class="legend-pct" id="d-neu">–</div></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div><div class="legend-text">In Bearbeitung</div><div class="legend-pct" id="d-gel">–</div></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div><div class="legend-text">Beantwortet</div><div class="legend-pct" id="d-erl">–</div></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;"></div><div class="legend-text">Abgeschlossen</div><div class="legend-pct" id="d-rest">–</div></div>
           </div>
         </div>
-
-<!-- Paket-Widget entfernt -->
-
       </div>
-    </section>
+    </div>
+
+    <div class="bottom-grid">
+      <div class="panel">
+        <div class="panel-head"><h2>🏆 Top Motoren</h2><a class="panel-link" href="meine-anzeigen.html">Alle anzeigen</a></div>
+        <div id="top-motors"><div class="empty-state">Wird geladen...</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Letzte Anfragen</h2><a class="panel-link" href="anfragen.html">Alle anzeigen</a></div>
+        <div id="recent-inq"><div class="empty-state">Wird geladen...</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Zuletzt angesehen</h2><a class="panel-link" href="meine-anzeigen.html">Alle anzeigen</a></div>
+        <div id="recent-list"><div class="empty-state">Wird geladen...</div></div>
+      </div>
+    </div>
   </div>
-</main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="dashboard-live.js"></script>
 <script src="auth-header.js"></script>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const {data:sd} = await supabaseClient.auth.getSession();
+  const user = sd?.session?.user;
+  if (!user) { window.location.href="login.html"; return; }
+
+  const {data:seller} = await supabaseClient.from("seller_profiles").select("id,company_name").eq("user_id",user.id).single();
+  if (!seller) return;
+
+  const name = seller.company_name||user.email||"Händler";
+  const ini  = name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()||"?";
+  ["sidebar-avatar","topbar-avatar"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=ini;});
+  ["sidebar-name","topbar-name"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=name;});
+  document.getElementById("sidebar-logout")?.addEventListener("click",async e=>{e.preventDefault();await supabaseClient.auth.signOut();window.location.href="index.html";});
+
+  const {data:listings} = await supabaseClient.from("listings").select("id,title,manufacturer,price,status,created_at,image_urls,categories(name)").eq("seller_id",seller.id).order("created_at",{ascending:false});
+  const all=listings||[], ids=all.map(l=>l.id);
+
+  let inqs=[];
+  if(ids.length){
+    const {data:iqd}=await supabaseClient.from("inquiries").select("id,listing_id,name,status,created_at,listings(title)").in("listing_id",ids).order("created_at",{ascending:false});
+    inqs=iqd||[];
+  }
+
+  const active=all.filter(l=>l.status==="Freigegeben").length;
+  const drafts=all.filter(l=>l.status==="Entwurf").length;
+  const val=all.reduce((s,l)=>s+Number(l.price||0),0);
+  const openI=inqs.filter(i=>i.status==="Neu").length;
+
+  setText("s-active",active); setText("s-active-n",`${all.length} Anzeigen gesamt`);
+  setText("s-total",all.length); setText("s-total-n",`${drafts} Entwürfe`);
+  setText("s-inq",inqs.length); setText("s-inq-n",`${openI} neue Anfragen`);
+  setText("s-val",val.toLocaleString("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0})); setText("s-val-n",`über ${active} Inserate`);
+  setText("s-drf",drafts); setText("s-drf-n","unveröffentlicht");
+
+  if(openI>0){const nb=document.getElementById("nav-badge");if(nb){nb.textContent=openI;nb.style.display="inline-block";}const bd=document.getElementById("bell-dot");if(bd)bd.style.display="block";}
+
+  // Donut
+  const neu=inqs.filter(i=>i.status==="Neu").length,gel=inqs.filter(i=>i.status==="Gelesen").length,erl=inqs.filter(i=>i.status==="Erledigt").length,rst=Math.max(0,inqs.length-neu-gel-erl),tot=inqs.length;
+  setText("d-total",tot);
+  const pct=n=>tot?Math.round(n/tot*100):0;
+  setText("d-neu",`${neu} (${pct(neu)}%)`); setText("d-gel",`${gel} (${pct(gel)}%)`); setText("d-erl",`${erl} (${pct(erl)}%)`); setText("d-rest",`${rst} (${pct(rst)}%)`);
+  if(tot>0){
+    const svg=document.getElementById("donut-svg"),R=48,CX=65,CY=65,circ=2*Math.PI*R;
+    [{v:neu,c:"#10b981"},{v:gel,c:"#f59e0b"},{v:erl,c:"#3b82f6"},{v:rst,c:"#d1d5db"}].reduce((off,s)=>{
+      if(!s.v) return off;
+      const len=(s.v/tot)*circ,c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("cx",CX);c.setAttribute("cy",CY);c.setAttribute("r",R);c.setAttribute("fill","none");
+      c.setAttribute("stroke",s.c);c.setAttribute("stroke-width","15");
+      c.setAttribute("stroke-dasharray",`${len} ${circ-len}`);c.setAttribute("stroke-dashoffset",-off);
+      svg.insertBefore(c,svg.children[1]); return off+len;
+    },-circ/4);
+  }
+
+  // Chart
+  const days7={};for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*86400000);days7[d.toDateString()]=0;}
+  inqs.forEach(iq=>{const k=new Date(iq.created_at).toDateString();if(k in days7)days7[k]++;});
+  const vals=Object.values(days7),maxV=Math.max(...vals,1);
+  const W=600,H=140,pad=12;
+  const pts=vals.map((v,i)=>[pad+i*((W-pad*2)/(vals.length-1)),H-pad-(v/maxV)*(H-pad*2)]);
+  const pathD="M "+pts.map(p=>p.join(",")).join(" L ");
+  const areaD=pathD+` L ${pts[pts.length-1][0]},${H-pad} L ${pts[0][0]},${H-pad} Z`;
+  const lbls=Object.keys(days7).map(k=>new Date(k).toLocaleDateString("de-DE",{weekday:"short"}));
+  document.getElementById("chart-svg").innerHTML=`<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c6ea4" stop-opacity="0.2"/><stop offset="100%" stop-color="#1c6ea4" stop-opacity="0"/></linearGradient></defs>
+    <path d="${areaD}" fill="url(#cg)"/>
+    <path d="${pathD}" fill="none" stroke="#1c6ea4" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="#1c6ea4" stroke-width="2.5"/>`).join("")}
+    ${pts.map((p,i)=>`<text x="${p[0]}" y="${H+2}" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">${lbls[i]}</text>`).join("")}
+    ${vals.map((v,i)=>v>0?`<text x="${pts[i][0]}" y="${pts[i][1]-8}" text-anchor="middle" font-size="10" font-weight="600" fill="#1c6ea4" font-family="Inter">${v}</text>`:"").join("")}`;
+
+  // Top Motoren
+  const inqMap={};inqs.forEach(iq=>{inqMap[iq.listing_id]=(inqMap[iq.listing_id]||0)+1;});
+  const top=[...all].filter(l=>l.status==="Freigegeben").sort((a,b)=>(inqMap[b.id]||0)-(inqMap[a.id]||0)||Number(b.price||0)-Number(a.price||0)).slice(0,5);
+  const topEl=document.getElementById("top-motors");
+  if(!top.length){topEl.innerHTML=`<div class="empty-state">Noch keine aktiven Anzeigen</div>`;}
+  else{
+    const mx=Math.max(...top.map(l=>inqMap[l.id]||0),1);
+    topEl.innerHTML=top.map((l,i)=>{
+      const rk=["rk1","rk2","rk3","rkn","rkn"][i],iq=inqMap[l.id]||0,bar=Math.max(Math.round(iq/mx*100),8);
+      const img=Array.isArray(l.image_urls)&&l.image_urls[0];
+      const th=img?`<img src="${img}" alt=""/>`:getIcon(l.categories?.name||"");
+      const pr=Number(l.price||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+      return `<div class="motor-item" onclick="location.href='listing-detail.html?id=${l.id}'">
+        <div class="rank-badge ${rk}">${i+1}</div>
+        <div class="motor-thumb">${th}</div>
+        <div class="motor-info"><div class="motor-title">${esc(l.title||"Ohne Titel")}</div><div class="motor-sub">${iq} Anfragen · ${esc(l.manufacturer||"–")}</div><div class="motor-bar"><div class="motor-bar-fill" style="width:${bar}%"></div></div></div>
+        <div class="motor-price">${pr}</div>
+      </div>`;
+    }).join("");
+  }
+
+  // Anfragen
+  const iqEl=document.getElementById("recent-inq");
+  if(!inqs.length){iqEl.innerHTML=`<div class="empty-state">Noch keine Anfragen vorhanden</div>`;}
+  else{iqEl.innerHTML=inqs.slice(0,5).map(iq=>{
+    const lt=Array.isArray(iq.listings)?iq.listings[0]?.title:iq.listings?.title||"Anzeige";
+    const ini2=(iq.name||"?").split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+    const bc=iq.status==="Neu"?"b-new":iq.status==="Gelesen"?"b-read":"b-done";
+    return `<div class="inq-item"><div class="inq-avatar">${esc(ini2)}</div><div class="inq-body"><div class="inq-name">${esc(iq.name||"Unbekannt")}</div><div class="inq-listing">${esc(lt)}</div></div><div class="inq-right"><div class="inq-time">${relT(iq.created_at)}</div><div class="inq-badge ${bc}">${esc(iq.status||"Neu")}</div></div></div>`;
+  }).join("");}
+
+  // Recent
+  const recEl=document.getElementById("recent-list");
+  if(!all.length){recEl.innerHTML=`<div class="empty-state">Noch keine Anzeigen</div>`;}
+  else{recEl.innerHTML=all.slice(0,5).map(l=>{
+    const img=Array.isArray(l.image_urls)&&l.image_urls[0];
+    const th=img?`<img src="${img}" alt=""/>`:getIcon(l.categories?.name||"");
+    return `<div class="recent-item" onclick="location.href='listing-detail.html?id=${l.id}'"><div class="recent-thumb">${th}</div><div class="recent-info"><div class="recent-title">${esc(l.title||"Ohne Titel")}</div><div class="recent-time">Erstellt ${relT(l.created_at)}</div></div><div class="recent-arrow">&#8250;</div></div>`;
+  }).join("");}
+});
+function setText(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function esc(v){return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function getIcon(c){return({"Automotor":"🚗","Dieselmotor Auto":"🚗","Benzinmotor Auto":"🚗","LKW Motor":"🚛","Bootsmotor":"🚤","Außenbordmotor":"🚤","Innenbordmotor":"🚤","Flugzeugmotor":"✈️","Elektromotor Industrie":"⚙️","Drehstrommotor":"⚙️","Servomotor":"🤖","Getriebemotor":"🔩","Baumaschinenmotor":"🚧","Traktormotor":"🚜","Motorradmotor":"🏍️","Hydraulikmotor":"🛠️","Aufzugmotor":"🏢"}[c]||"⚙️");}
+function relT(d){if(!d)return"–";const diff=Date.now()-new Date(d).getTime(),m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);if(m<2)return"gerade eben";if(m<60)return`vor ${m} Min.`;if(h<24)return`vor ${h} Std.`;if(dy===1)return"gestern";if(dy<7)return`vor ${dy} Tagen`;return new Date(d).toLocaleDateString("de-DE");}
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
 </body>
 </html>
