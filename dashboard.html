@@ -100,6 +100,12 @@ a{text-decoration:none;color:inherit;}
 .recent-time{font-size:11px;color:#9ca3af;margin-top:1px;}
 .recent-arrow{color:#d1d5db;font-size:14px;flex-shrink:0;}
 .empty-state{padding:28px 20px;text-align:center;color:#9ca3af;font-size:13px;}
+.sidebar-ad{margin:10px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#1e3a52,#2a5278);position:relative;}
+.sidebar-ad-img{width:100%;height:90px;object-fit:cover;opacity:0.7;display:block;}
+.sidebar-ad-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px;text-align:center;}
+.sidebar-ad-text{font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.sidebar-ad-label{font-size:12px;font-weight:700;color:#fff;}
+
 @media(max-width:1300px){.stats-grid{grid-template-columns:repeat(3,1fr);}.charts-row{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.stats-grid{grid-template-columns:1fr 1fr;}.bottom-grid{grid-template-columns:1fr;}}
 </style>
@@ -122,6 +128,13 @@ a{text-decoration:none;color:inherit;}
     <a href="suche.html" class="nav-item"><span class="icon">🔍</span> Zur Suche</a>
     <a href="#" class="nav-item logout" id="sidebar-logout"><span class="icon">🚪</span> Ausloggen</a>
   </nav>
+  <div class="sidebar-ad">
+    <div class="sidebar-ad-overlay">
+      <div class="sidebar-ad-text">Werbung</div>
+      <div class="sidebar-ad-label">Hier könnte Ihre<br/>Werbung stehen.</div>
+      <a href="kontakt.html" style="margin-top:8px;font-size:10px;color:#4da6ff;font-weight:600;">Jetzt anfragen →</a>
+    </div>
+  </div>
   <div class="sidebar-user">
     <div class="user-avatar" id="sidebar-avatar">?</div>
     <div class="user-info"><div class="user-name" id="sidebar-name">Laden...</div><div class="user-role">Händlerkonto</div></div>
