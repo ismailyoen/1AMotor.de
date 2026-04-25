@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="apple-touch-icon" href="favicon-192x192.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Karriere – 1A Motor | Jobs & Stellenangebote</title>
+<meta name="description" content="Werde Teil von 1A Motor – Deutschlands Motorenmarktplatz. Aktuelle Stellenangebote für Vertrieb, Technik und mehr." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --dark:#0d1b2a; --navy:#1b2d42; --blue:#1a5fa8; --blue2:#2176c7;
+  --sky:#4da6ff; --light:#e8f2fc; --white:#ffffff; --muted:#7a93ae;
+  --border:#e0e9f2; --bg:#f4f7fb; --success:#10b981;
+  --shadow:0 2px 16px rgba(13,27,42,0.08); --shadow2:0 8px 40px rgba(13,27,42,0.14);
+  --r:12px; --max:1360px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',Arial,sans-serif;background:var(--bg);color:var(--dark);line-height:1.5;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
+.container{max-width:var(--max);margin:0 auto;padding:0 24px;}
+
+/* ── Topbar ── */
+.topbar{background:var(--navy);font-size:12.5px;color:rgba(255,255,255,.55);}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;padding:8px 0;gap:12px;flex-wrap:wrap;}
+.topbar a{color:rgba(255,255,255,.55);transition:color .15s;}
+.topbar a:hover{color:var(--sky);}
+.top-left,.top-right{display:flex;gap:20px;align-items:center;}
+
+/* ── Header ── */
+.header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border),0 4px 16px rgba(13,27,42,0.06);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0;}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.logo-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(145deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:15px;color:#fff;box-shadow:0 4px 12px rgba(13,27,42,0.35);letter-spacing:-.5px;}
+.logo-name{font-size:22px;font-weight:800;color:#0d1b2a;letter-spacing:-.3px;}
+.header-nav{display:flex;gap:6px;align-items:center;}
+.header-nav a{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600;color:#334155;transition:background .15s,color .15s;}
+.header-nav a:hover{background:var(--light);color:var(--blue);}
+.header-cta{display:flex;gap:10px;align-items:center;}
+.btn-outline{border:1.5px solid var(--blue);color:var(--blue);padding:9px 18px;border-radius:999px;font-size:14px;font-weight:700;}
+.btn-solid{background:var(--blue);color:#fff;padding:9px 20px;border-radius:999px;font-size:14px;font-weight:700;}
+.btn-solid:hover{background:var(--blue2);}
+
+/* ── Hero ── */
+.karriere-hero{
+  background:linear-gradient(135deg,#0d1b2a 0%,#1b2d42 60%,#1a5fa8 100%);
+  padding:72px 0 0;
+  position:relative;
+  overflow:hidden;
+}
+.karriere-hero::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 50%,rgba(77,166,255,0.10) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-inner{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:48px;
+  align-items:end;
+  position:relative;z-index:1;
+}
+.hero-text{padding-bottom:60px;}
+.hero-image-wrap{
+  position:relative;
+  border-radius:18px 18px 0 0;
+  overflow:hidden;
+  height:440px;
+  box-shadow:0 -8px 48px rgba(0,0,0,0.4);
+  align-self:flex-end;
+}
+.hero-image-wrap img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  display:block;
+}
+.hero-image-wrap::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(to right,rgba(13,27,42,0.3) 0%,transparent 50%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(77,166,255,0.15);border:1px solid rgba(77,166,255,0.3);
+  color:var(--sky);font-size:12.5px;font-weight:700;padding:6px 14px;
+  border-radius:999px;margin-bottom:20px;text-transform:uppercase;letter-spacing:.06em;
+}
+.karriere-hero h1{
+  font-size:clamp(28px,3.5vw,48px);font-weight:900;color:#fff;
+  line-height:1.15;margin-bottom:18px;
+}
+.karriere-hero h1 span{color:var(--sky);}
+.karriere-hero p{
+  font-size:16.5px;color:rgba(255,255,255,.65);line-height:1.7;
+  margin-bottom:28px;
+}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;}
+.hero-tag{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,.7);font-size:12.5px;font-weight:600;
+  padding:5px 13px;border-radius:999px;
+}
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-image-wrap{height:260px;border-radius:14px;margin-bottom:0;}
+  .hero-text{padding-bottom:28px;}
+}
+
+/* ── Main Content ── */
+.page-body{padding:52px 0 72px;}
+.page-layout{display:grid;grid-template-columns:1fr 340px;gap:32px;align-items:start;}
+
+/* ── Job Card ── */
+.job-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);}
+.job-card-header{padding:28px 32px 24px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#f8fafc,#fff);}
+.job-card-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(26,95,168,0.08);color:var(--blue);font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:999px;margin-bottom:14px;border:1px solid rgba(26,95,168,0.15);}
+.job-card h2{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;line-height:1.3;}
+.job-card-sub{font-size:14px;color:var(--muted);margin-bottom:18px;}
+.job-meta{display:flex;flex-wrap:wrap;gap:10px;}
+.job-meta-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#475569;background:#f4f7fb;padding:6px 12px;border-radius:8px;font-weight:500;}
+
+/* ── Sections ── */
+.job-section{padding:28px 32px;border-bottom:1px solid #f1f5f9;}
+.job-section:last-child{border-bottom:none;padding-bottom:32px;}
+.job-section h3{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.job-section p{font-size:14.5px;color:#475569;line-height:1.75;margin-bottom:12px;}
+.job-section p:last-child{margin-bottom:0;}
+.job-list{display:flex;flex-direction:column;gap:10px;}
+.job-list li{display:flex;align-items:flex-start;gap:10px;font-size:14.5px;color:#334155;line-height:1.6;}
+.job-list li::before{content:"→";color:var(--blue);font-weight:800;flex-shrink:0;margin-top:1px;}
+
+/* ── Highlight Box ── */
+.highlight-box{background:linear-gradient(135deg,#0d1b2a,#1b2d42);border-radius:12px;padding:22px 26px;margin:0 32px 28px;}
+.highlight-box p{font-size:15px;font-weight:700;color:#fff;line-height:1.6;}
+.highlight-box p span{color:var(--sky);}
+
+/* ── Sidebar ── */
+.job-sidebar{display:flex;flex-direction:column;gap:18px;position:sticky;top:90px;}
+.sidebar-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+.sidebar-card-head{padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#f8fafc,#fff);}
+.sidebar-card-head h3{font-size:14px;font-weight:700;color:var(--dark);}
+.sidebar-card-body{padding:18px 20px;}
+.apply-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  color:#fff;padding:14px 20px;border-radius:10px;
+  font-size:15px;font-weight:800;width:100%;
+  transition:opacity .15s;cursor:pointer;border:none;
+  font-family:'Outfit',sans-serif;margin-bottom:12px;
+}
+.apply-btn:hover{opacity:.9;}
+.apply-note{font-size:12px;color:var(--muted);text-align:center;}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f4f7fb;font-size:13px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-label{color:var(--muted);font-weight:500;}
+.detail-value{color:#334155;font-weight:700;text-align:right;}
+.share-links{display:flex;gap:8px;}
+.share-link{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;font-weight:600;color:#475569;transition:background .12s;}
+.share-link:hover{background:#f4f7fb;}
+
+/* ── More Jobs (teaser) ── */
+.more-section{margin-top:56px;padding-top:48px;border-top:1px solid var(--border);}
+.more-section h2{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.more-section p{font-size:14.5px;color:var(--muted);margin-bottom:28px;}
+.open-roles-box{background:#fff;border:1px solid var(--border);border-radius:14px;padding:40px;text-align:center;}
+.open-roles-box .icon{font-size:48px;margin-bottom:14px;}
+.open-roles-box h3{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.open-roles-box p{font-size:14px;color:var(--muted);max-width:360px;margin:0 auto 20px;}
+.open-roles-box a{display:inline-block;background:var(--blue);color:#fff;padding:11px 24px;border-radius:999px;font-weight:700;font-size:14px;}
+
+/* ── Footer ── */
+.footer{background:var(--dark);padding:52px 0 28px;border-top:3px solid var(--blue);}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px;}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.footer-logo-mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(145deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:13px;color:#fff;}
+.footer-logo-name{font-size:20px;font-weight:800;color:#fff;}
+.footer-desc{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;max-width:240px;}
+.footer h4{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.09em;margin-bottom:16px;}
+.footer ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer ul li a{font-size:13.5px;color:rgba(255,255,255,.5);transition:color .12s;}
+.footer ul li a:hover{color:var(--sky);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.07);font-size:12.5px;color:rgba(255,255,255,.3);}
+.footer-bottom-links{display:flex;gap:20px;}
+.footer-bottom-links a{color:rgba(255,255,255,.35);font-size:12px;transition:color .12s;}
+.footer-bottom-links a:hover{color:rgba(255,255,255,.6);}
+
+/* ── Responsive ── */
+@media(max-width:1100px){.page-layout{grid-template-columns:1fr;}.job-sidebar{position:static;}}
+@media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr;}.header-nav{display:none;}}
+@media(max-width:640px){.footer-grid{grid-template-columns:1fr;}.job-card-header{padding:20px 20px 18px;}.job-section{padding:20px 20px;}.highlight-box{margin:0 20px 20px;}.job-card h2{font-size:19px;}.footer-bottom{flex-direction:column;gap:8px;}}
+</style>
+</head>
+<body>
+
+<!-- ── Topbar ── -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="top-left">
+      <span>🚀 Wir wachsen – werde Teil des Teams!</span>
+    </div>
+    <div class="top-right">
+      <a href="suche.html">Motoren suchen</a>
+      <a href="login.html">Anmelden</a>
+      <a href="registrieren.html">Registrieren</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Header ── -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+    <nav class="header-nav">
+      <a href="suche.html">Motoren kaufen</a>
+      <a href="anzeige-erstellen.html">Verkaufen</a>
+      <a href="karriere.html" style="color:var(--blue);background:var(--light);">Karriere</a>
+    </nav>
+    <div class="header-cta">
+      <a href="login.html" class="btn-outline">Anmelden</a>
+      <a href="anzeige-erstellen.html" class="btn-solid">+ Anzeige erstellen</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── Hero ── -->
+<section class="karriere-hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge">⚡ Wir suchen dich</div>
+        <h1>Wachse mit <span>1A Motor</span> –<br/>Deutschlands Motorenmarktplatz</h1>
+        <p>Wir bauen den führenden B2B-Marktplatz für Motoren & Antriebstechnik in Europa. Gestalte mit uns die Zukunft des Motorenhandels.</p>
+        <div class="hero-tags">
+          <span class="hero-tag">📍 Remote / Hybrid</span>
+          <span class="hero-tag">🚀 Startup-Mentalität</span>
+          <span class="hero-tag">💶 Fixum + Provision</span>
+          <span class="hero-tag">📈 Wachstumsmarkt</span>
+        </div>
+      </div>
+      <div class="hero-image-wrap">
+        <img src="karriere-hero.png" alt="Vorstellungsgespräch bei 1A Motor" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Page Body ── -->
+<div class="page-body">
+  <div class="container">
+    <div class="page-layout">
+
+      <!-- ── Job Card ── -->
+      <div>
+        <div class="job-card">
+
+          <!-- Header -->
+          <div class="job-card-header">
+            <div class="job-card-badge">🎯 Offene Stelle</div>
+            <h2>Sales Hunter / Vertriebsprofi (m/w/d) –<br/>Partnergewinnung Automotive</h2>
+            <p class="job-card-sub">für 1AMotor.de · Vollzeit · ab sofort</p>
+            <div class="job-meta">
+              <span class="job-meta-item">📍 Remote / Hybrid</span>
+              <span class="job-meta-item">⏰ Vollzeit</span>
+              <span class="job-meta-item">💶 Fixum + Provision (ungedeckelt)</span>
+              <span class="job-meta-item">🚗 Automotive / B2B</span>
+            </div>
+          </div>
+
+          <!-- Intro -->
+          <div class="job-section">
+            <h3>Über die Stelle</h3>
+            <p>Du lebst Vertrieb, denkst in Abschlüssen und liebst es, neue Partner zu gewinnen? Dann suchen wir genau dich.</p>
+            <p>Für den Ausbau von 1AMotor.de suchen wir einen erfahrenen Sales Hunter, der Werkstätten, Händler und Geschäftspartner aktiv akquiriert und unser Netzwerk konsequent erweitert.</p>
+          </div>
+
+          <!-- Mission -->
+          <div class="job-section">
+            <h3>🎯 Deine Mission</h3>
+            <ul class="job-list">
+              <li>Neue Partner an Land ziehen und langfristig binden</li>
+              <li>Werkstätten für den Ankauf und die Vermittlung alter Motoren gewinnen</li>
+              <li>Kunden und Partner überzeugen, sich auf unserer Plattform anzumelden</li>
+              <li>Potenziale erkennen und Abschlüsse konsequent zum Erfolg führen</li>
+              <li>Neue Märkte und Vertriebskanäle erschließen</li>
+              <li>Telefonisch, digital und vor Ort Leads in aktive Partner verwandeln</li>
+              <li>Netzwerke aufbauen, Beziehungen pflegen und Umsatz treiben</li>
+              <li>Kunden bei der Erstellung und Veröffentlichung ihrer Inserate unterstützen</li>
+              <li>Motoren-Inserate in Abstimmung mit Kunden aufnehmen, Daten abstimmen und eigenständig auf der Plattform hochladen</li>
+              <li>Kunden hinsichtlich optimaler Inseratsdarstellung beraten, damit Angebote schneller vermittelt werden</li>
+            </ul>
+          </div>
+
+          <!-- Profil -->
+          <div class="job-section">
+            <h3>🧠 Was du mitbringst</h3>
+            <ul class="job-list">
+              <li>Mindestens 5 Jahre Erfahrung im aktiven Vertrieb / Außendienst / Business Development</li>
+              <li>Hunter-Mentalität und Abschlussstärke</li>
+              <li>Erfahrung in Kaltakquise und Partnergewinnung</li>
+              <li>Schnelle Auffassungsgabe und Verständnis für Motoren, Teile oder Automotive</li>
+              <li>Du erkennst sofort, was bei einem Motor relevant ist</li>
+              <li>Verhandlungsgeschick, Durchsetzungsvermögen und Eigenantrieb</li>
+              <li>Du kannst Menschen nicht nur informieren – du kannst sie gewinnen</li>
+              <li>Sicherer Umgang mit digitalen Plattformen und strukturiertes Arbeiten bei Inseratserstellung</li>
+            </ul>
+          </div>
+
+          <!-- Benefits -->
+          <div class="job-section">
+            <h3>🚀 Was dich erwartet</h3>
+            <ul class="job-list">
+              <li>Fixgehalt + attraktive Provision ohne Deckelung</li>
+              <li>Jeder Abschluss wirkt sich direkt auf dein Einkommen aus</li>
+              <li>Hoher Gestaltungsspielraum und unternehmerische Freiheit</li>
+              <li>Startup-Mentalität mit echtem Wachstumspotenzial</li>
+              <li>Möglichkeit, ein Partnernetzwerk von Grund auf mit aufzubauen</li>
+              <li>Kein Standard-Vertrieb – hier machst du echten Business-Aufbau</li>
+            </ul>
+          </div>
+
+          <!-- Closing -->
+          <div class="highlight-box">
+            <p>Wir suchen keine Verwalter – wir suchen <span>Macher</span>.<br/>Wenn du Abschlüsse jagst statt auf Leads zu warten, dann sollten wir sprechen.</p>
+          </div>
+
+        </div>
+
+        <!-- More jobs teaser -->
+        <div class="more-section">
+          <h2>Weitere offene Stellen</h2>
+          <p>Wir wachsen stetig – schau regelmäßig vorbei oder schick uns deine Initiativbewerbung.</p>
+          <div class="open-roles-box">
+            <div class="icon">📬</div>
+            <h3>Keine passende Stelle dabei?</h3>
+            <p>Wir freuen uns über Initiativbewerbungen. Schreib uns einfach, was du kannst und was du dir vorstellst.</p>
+            <a href="mailto:jobs@1amotor.de">Initiativbewerbung senden →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Sidebar ── -->
+      <aside class="job-sidebar">
+
+        <!-- Bewerben -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head"><h3>Jetzt bewerben</h3></div>
+          <div class="sidebar-card-body">
+            <a href="mailto:jobs@1amotor.de?subject=Bewerbung: Sales Hunter (m/w/d)" class="apply-btn">
+              ✉️ Jetzt bewerben
+            </a>
+            <p class="apply-note">Sende deine Bewerbung an<br/><strong>jobs@1amotor.de</strong></p>
+          </div>
+        </div>
+
+        <!-- Job Details -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head"><h3>Stellendetails</h3></div>
+          <div class="sidebar-card-body">
+            <div class="detail-row">
+              <span class="detail-label">Stelle</span>
+              <span class="detail-value">Sales Hunter (m/w/d)</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Bereich</span>
+              <span class="detail-value">Vertrieb / B2B</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Anstellung</span>
+              <span class="detail-value">Vollzeit</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Ort</span>
+              <span class="detail-value">Remote / Hybrid</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Start</span>
+              <span class="detail-value">Ab sofort</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Erfahrung</span>
+              <span class="detail-value">≥ 5 Jahre</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Vergütung</span>
+              <span class="detail-value">Fixum + Provision</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teilen -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head"><h3>Stelle teilen</h3></div>
+          <div class="sidebar-card-body">
+            <div class="share-links">
+              <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://1amotor.de/karriere.html" target="_blank" class="share-link">💼 LinkedIn</a>
+              <a href="https://wa.me/?text=Interessante Stelle bei 1A Motor: https://1amotor.de/karriere.html" target="_blank" class="share-link">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Über 1A Motor -->
+        <div class="sidebar-card" style="background:linear-gradient(135deg,#0d1b2a,#1b2d42);border:none;">
+          <div class="sidebar-card-body" style="padding:22px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+              <div style="width:34px;height:34px;border-radius:8px;background:linear-gradient(145deg,#1b4f72,#2e86c1);display:grid;place-items:center;font-weight:900;font-size:13px;color:#fff;">1A</div>
+              <span style="font-size:17px;font-weight:800;color:#fff;">Motor</span>
+            </div>
+            <p style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:14px;">Deutschlands Motorenmarktplatz für nachhaltige Kreislaufwirtschaft. Wir verbinden Händler, Werkstätten und Käufer direkt – ohne Provision.</p>
+            <a href="index.html" style="font-size:13px;color:var(--sky);font-weight:700;">Mehr über uns →</a>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:16px;">
+          <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:14px;color:#fff;flex-shrink:0;">1A</div>
+          <span style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px;">Motor</span>
+        </a>
+        <p class="footer-desc">Deutschlands Motorenmarktplatz für nachhaltige Kreislaufwirtschaft. Motoren kaufen &amp; verkaufen – ohne Provision.</p>
+        <a href="ueber-uns.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;font-weight:700;color:#4da6ff;">Mehr über uns →</a>
+        <div style="margin-top:18px;display:flex;gap:10px;">
+          <a href="kontakt.html" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.08);display:grid;place-items:center;font-size:14px;">✉️</a>
+          <a href="ueber-uns.html" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.08);display:grid;place-items:center;font-size:14px;">ℹ️</a>
+        </div>
+      </div>
+      <div>
+        <h4>Kaufen</h4>
+        <ul>
+          <li><a href="suche.html">Motor suchen</a></li>
+          <li><a href="suche.html?category=Automotor">Automotoren</a></li>
+          <li><a href="suche.html?category=LKW Motor">LKW Motoren</a></li>
+          <li><a href="suche.html?category=Bootsmotor">Bootsmotoren</a></li>
+          <li><a href="suche.html?category=Austauschmotor">Austauschmotoren</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Verkaufen</h4>
+        <ul>
+          <li><a href="anzeige-erstellen.html">Anzeige erstellen</a></li>
+          <li><a href="registrieren.html">Händlerkonto</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="meine-anzeigen.html">Meine Anzeigen</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Unternehmen</h4>
+        <ul>
+          <li><a href="impressum.html">Impressum</a></li>
+          <li><a href="datenschutz.html">Datenschutz</a></li>
+          <li><a href="agb.html">AGB</a></li>
+          <li><a href="kontakt.html">Kontakt</a></li>
+          <li><a href="karriere.html" style="color:var(--sky);">Karriere</a></li>
+          <li><a href="meine-anfragen.html">Nachrichten</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 1A Motor – Marktplatz für Motoren &amp; Antriebstechnik</span>
+      <div class="footer-bottom-links">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="agb.html">AGB</a>
+        <a href="kontakt.html">Kontakt</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
