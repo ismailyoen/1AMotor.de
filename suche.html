@@ -219,7 +219,7 @@ img { max-width: 100%; display: block; }
   background-size: cover;
   background-position: center 30%;
   background-repeat: no-repeat;
-  padding: 32px 0 28px;
+  padding: 56px 0 0;
   position: relative;
 }
 .search-hero::before {
@@ -228,10 +228,10 @@ img { max-width: 100%; display: block; }
   inset: 0;
   background: linear-gradient(
     to right,
-    rgba(13,27,42,0.80) 0%,
-    rgba(13,27,42,0.60) 40%,
-    rgba(13,27,42,0.30) 70%,
-    rgba(13,27,42,0.15) 100%
+    rgba(13,27,42,0.75) 0%,
+    rgba(13,27,42,0.55) 35%,
+    rgba(13,27,42,0.25) 65%,
+    rgba(13,27,42,0.10) 100%
   );
   pointer-events: none;
 }
@@ -244,17 +244,18 @@ img { max-width: 100%; display: block; }
   align-items: center;
   justify-content: space-between;
   gap: 32px;
+  padding-bottom: 48px;
 }
 .hero-text h1 {
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 900;
   color: #fff;
-  line-height: 1.1;
-  letter-spacing: -.5px;
-  margin-bottom: 6px;
+  line-height: 1.05;
+  letter-spacing: -.8px;
+  margin-bottom: 8px;
 }
 .hero-text h1 span { color: var(--sky); }
-.hero-text p { font-size: 15px; color: rgba(255,255,255,.65); }
+.hero-text p { font-size: 16px; color: rgba(255,255,255,.7); max-width: 520px; line-height: 1.6; }
 .hero-badges {
   display: flex;
   gap: 8px;
@@ -281,8 +282,8 @@ img { max-width: 100%; display: block; }
   background-size: cover;
   background-position: center 60%;
   background-repeat: no-repeat;
-  border-bottom: 1px solid rgba(255,255,255,0.10);
-  padding: 10px 0;
+  border-bottom: 2px solid rgba(255,255,255,0.08);
+  padding: 14px 0 16px;
   overflow-x: auto;
   scrollbar-width: none;
   position: relative;
@@ -291,7 +292,7 @@ img { max-width: 100%; display: block; }
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(13,27,42,0.62);
+  background: rgba(13,27,42,0.58);
   pointer-events: none;
 }
 .quick-filter-bar .container {
