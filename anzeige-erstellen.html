@@ -2,350 +2,273 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-  <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <link rel="apple-touch-icon" href="favicon-192x192.png" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="apple-touch-icon" href="favicon-192x192.png" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Anzeige erstellen – 1A Motor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  :root{ --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0; --light-blue:#72b6ff; --success:#059669; --warning:#d97706; --danger:#dc2626; --shadow:0 4px 20px rgba(18,58,99,0.08); --shadow-lg:0 12px 40px rgba(18,58,99,0.13); --radius:14px; }
-  *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
-  body{ background:var(--bg); color:var(--text); line-height:1.5; }
-  a{ text-decoration:none; color:inherit; }
-  .container{ max-width:1200px; margin:0 auto; padding:0 20px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f5f6fa;color:#1a1d23;line-height:1.5;display:flex;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
 
-  /* Header */
-  .header{ background:#fff; border-bottom:2px solid var(--border); position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(18,58,99,0.06); }
-  .header-inner{ display:flex; justify-content:space-between; align-items:center; gap:18px; padding:14px 0; }
-  .logo{ display:flex; align-items:center; gap:10px; font-size:24px; font-weight:800; color:var(--dark-blue); }
-  
-  .header-actions{ display:flex; align-items:center; gap:12px; font-size:14px; }
-  .header-actions a{ color:#334155; font-weight:600; }
+/* ── Sidebar ── */
+.sidebar-nav-wrap{width:220px;min-height:100vh;background:#0f1117;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;border-right:1px solid rgba(255,255,255,0.06);}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:20px 18px 18px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+.logo-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#1b4f72,#2e86c1);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;}
+.logo-name{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,0.5);font-size:13.5px;font-weight:500;transition:all .15s;cursor:pointer;}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.nav-item.active{background:#1c6ea4;color:#fff;font-weight:600;}
+.nav-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.nav-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 10px;}
+.nav-item.logout{color:rgba(239,68,68,0.6);}
+.nav-item.logout:hover{color:#ef4444;background:rgba(239,68,68,0.1);}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.user-info{min-width:0;}
+.user-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:rgba(255,255,255,0.4);}
 
-  .page{ padding:28px 0 60px; }
+/* ── Main ── */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #e8eaef;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:15px;font-weight:600;color:#6b7280;}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.topbar-bell{width:34px;height:34px;border-radius:50%;background:#f5f6fa;display:grid;place-items:center;font-size:16px;cursor:pointer;border:1px solid #e8eaef;}
+.topbar-user{display:flex;align-items:center;gap:8px;background:#f5f6fa;border:1px solid #e8eaef;border-radius:999px;padding:5px 12px 5px 5px;cursor:pointer;}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;}
+.topbar-username{font-size:13px;font-weight:600;color:#374151;}
+.new-listing-btn{background:#1c6ea4;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;}
 
-  /* Step Indicator */
-  .steps{ display:flex; align-items:center; gap:0; margin-bottom:28px; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; box-shadow:var(--shadow); overflow-x:auto; }
-  .step{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
-  .step-num{ width:28px; height:28px; border-radius:50%; background:#e2e8f0; color:#64748b; font-size:12px; font-weight:800; display:grid; place-items:center; flex-shrink:0; }
-  .step.done .step-num{ background:var(--success); color:#fff; }
-  .step.active .step-num{ background:var(--dark-blue); color:#fff; }
-  .step-label{ font-size:13px; font-weight:600; color:var(--muted); white-space:nowrap; }
-  .step.active .step-label{ color:var(--dark-blue); }
-  .step.done .step-label{ color:var(--success); }
-  .step-sep{ flex:1; height:2px; background:#e2e8f0; margin:0 10px; min-width:20px; }
-  .step.done + .step-sep{ background:var(--success); }
+/* ── Page ── */
+.page{padding:28px 28px 60px;flex:1;}
+.page-head{margin-bottom:22px;}
+.page-head h1{font-size:22px;font-weight:700;color:#111827;margin-bottom:3px;}
+.page-head p{font-size:13.5px;color:#6b7280;}
 
-  /* Layout */
-  .layout{ display:grid; grid-template-columns:1fr 300px; gap:22px; align-items:start; }
+/* ── Step Indicator ── */
+.steps{display:flex;align-items:center;background:#fff;border:1px solid #e8eaef;border-radius:12px;padding:14px 20px;margin-bottom:22px;overflow-x:auto;gap:0;}
+.step{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.step-num{width:26px;height:26px;border-radius:50%;background:#e8eaef;color:#9ca3af;font-size:11.5px;font-weight:800;display:grid;place-items:center;flex-shrink:0;}
+.step.done .step-num{background:#10b981;color:#fff;}
+.step.active .step-num{background:#1c6ea4;color:#fff;}
+.step-label{font-size:12.5px;font-weight:600;color:#9ca3af;white-space:nowrap;}
+.step.active .step-label{color:#111827;}
+.step.done .step-label{color:#10b981;}
+.step-sep{flex:1;height:2px;background:#e8eaef;margin:0 10px;min-width:20px;}
+.step.done + .step-sep{background:#10b981;}
 
-  /* Form Card */
-  .form-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
-  .section-head{ padding:18px 22px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#f8fafc,#fff); display:flex; align-items:center; gap:10px; }
-  .section-icon{ width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--dark-blue),#2a5278); display:grid; place-items:center; color:#fff; font-size:15px; flex-shrink:0; }
-  .section-head h2{ font-size:16px; color:var(--dark-blue); font-weight:700; }
-  .section-head p{ font-size:12px; color:var(--muted); margin-top:1px; }
-  .section-body{ padding:20px 22px; }
-  .section-divider{ height:1px; background:var(--border); }
+/* ── Layout ── */
+.content-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;}
 
-  /* Form Fields */
-  .grid-2{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
-  .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-  .grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-  .form-group{ display:flex; flex-direction:column; gap:5px; }
-  .form-group + .form-group{ margin-top:0; }
-  label{ font-size:13px; font-weight:700; color:#334155; }
-  label .req{ color:var(--danger); margin-left:2px; }
-  input,select,textarea{ width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:10px; outline:none; font-size:14px; background:#fff; transition:border-color .15s,box-shadow .15s; }
-  input:focus,select:focus,textarea:focus{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(43,108,176,0.1); }
-  textarea{ min-height:130px; resize:vertical; }
-  .helper{ font-size:12px; color:var(--muted); margin-top:3px; }
+/* ── Form Cards ── */
+.form-card{background:#fff;border:1px solid #e8eaef;border-radius:12px;overflow:hidden;margin-bottom:16px;}
+.section-head{padding:16px 20px;border-bottom:1px solid #f1f3f6;display:flex;align-items:center;gap:10px;}
+.section-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;color:#fff;font-size:14px;flex-shrink:0;}
+.section-head h2{font-size:14px;font-weight:700;color:#111827;}
+.section-head p{font-size:12px;color:#6b7280;margin-top:1px;}
+.section-body{padding:18px 20px;}
 
-  /* Bild Upload */
-  .upload-zone{
-    border:2px dashed #c5d9ea; background:#f8fbff; border-radius:12px;
-    padding:28px 20px; text-align:center; cursor:pointer;
-    transition:border-color .2s, background .2s; margin-bottom:14px;
-  }
-  .upload-zone:hover, .upload-zone.drag-over{ border-color:var(--blue); background:#eff6ff; }
-  .upload-zone .upload-icon{ font-size:32px; margin-bottom:8px; }
-  .upload-zone p{ color:var(--muted); font-size:14px; margin-bottom:8px; }
-  .upload-zone strong{ color:var(--dark-blue); }
-  .upload-label{ display:inline-flex; align-items:center; gap:6px; background:var(--dark-blue); color:#fff; padding:9px 16px; border-radius:999px; font-weight:700; font-size:13px; cursor:pointer; transition:background .15s; }
-  .upload-label:hover{ background:var(--blue); }
+/* ── Form Fields ── */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.form-group:last-child{margin-bottom:0;}
+label{font-size:12.5px;font-weight:600;color:#374151;}
+label .req{color:#dc2626;margin-left:2px;}
+input,select,textarea{width:100%;padding:10px 13px;border:1px solid #e8eaef;border-radius:8px;outline:none;font-size:13.5px;font-family:'Inter',sans-serif;background:#f9fafb;color:#1a1d23;transition:border-color .15s,box-shadow .15s,background .15s;}
+input:focus,select:focus,textarea:focus{border-color:#1c6ea4;box-shadow:0 0 0 3px rgba(28,110,164,0.1);background:#fff;}
+textarea{min-height:130px;resize:vertical;}
+.helper{font-size:11.5px;color:#9ca3af;margin-top:3px;}
 
-  .preview-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-  .preview-item{
-    aspect-ratio:1; border-radius:10px; border:1px solid var(--border);
-    background:linear-gradient(135deg,#dfe7ef,#f2f7fb);
-    display:grid; place-items:center; color:var(--muted); font-size:22px;
-    position:relative; overflow:hidden;
-  }
-  .preview-item img{ width:100%; height:100%; object-fit:cover; }
-  .preview-item .remove-img{
-    position:absolute; top:4px; right:4px;
-    width:20px; height:20px; border-radius:50%;
-    background:rgba(0,0,0,0.5); color:#fff; font-size:12px;
-    display:grid; place-items:center; cursor:pointer;
-    border:none; line-height:1;
-  }
-  .preview-item.main-img::after{ content:"Hauptbild"; position:absolute; bottom:4px; left:4px; background:var(--dark-blue); color:#fff; font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; }
+/* ── Edit Banner ── */
+.edit-banner{background:#1c6ea4;color:#fff;padding:11px 20px;display:none;align-items:center;gap:10px;font-size:13.5px;}
+.edit-banner.show{display:flex;}
 
-  /* Checkboxes */
-  .checkbox-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-  .check-item{ display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--border); border-radius:9px; background:#f8fbff; cursor:pointer; font-size:13px; color:#334155; transition:border-color .15s, background .15s; }
-  .check-item:hover{ border-color:var(--blue); background:#eff6ff; }
-  .check-item input{ width:auto; margin:0; }
+/* ── Upload Zone ── */
+.upload-zone{border:2px dashed #d1d9e0;background:#f9fafb;border-radius:10px;padding:24px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:14px;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:#1c6ea4;background:#eff6ff;}
+.upload-zone .upload-icon{font-size:28px;margin-bottom:8px;}
+.upload-zone p{color:#6b7280;font-size:13.5px;margin-bottom:6px;}
+.upload-zone strong{color:#374151;}
+.upload-label{display:inline-flex;align-items:center;gap:6px;background:#1c6ea4;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:background .15s;}
+.upload-label:hover{background:#1a5f8e;}
+.preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.preview-item{aspect-ratio:1;border-radius:9px;border:1px solid #e8eaef;background:#f5f6fa;display:grid;place-items:center;color:#9ca3af;font-size:20px;position:relative;overflow:hidden;}
+.preview-item img{width:100%;height:100%;object-fit:cover;}
+.preview-item .remove-img{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;font-size:11px;display:grid;place-items:center;cursor:pointer;border:none;line-height:1;}
+.preview-item.main-img::after{content:"Hauptbild";position:absolute;bottom:4px;left:4px;background:#1c6ea4;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;}
 
-  /* Sidebar */
-  .sidebar{ display:flex; flex-direction:column; gap:16px; position:sticky; top:86px; }
-  .tip-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
-  .tip-head{ padding:14px 16px; background:linear-gradient(135deg,#1e3a52,#2a5278); }
-  .tip-head h3{ font-size:14px; font-weight:700; color:#fff; }
-  .tip-list{ padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
-  .tip-item{ display:flex; gap:9px; align-items:flex-start; font-size:13px; color:#475569; }
-  .tip-dot{ width:6px; height:6px; border-radius:50%; background:var(--light-blue); flex-shrink:0; margin-top:5px; }
+/* ── Checkboxes ── */
+.checkbox-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.check-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #e8eaef;border-radius:8px;background:#f9fafb;cursor:pointer;font-size:13px;color:#374151;transition:all .15s;}
+.check-item:hover{border-color:#1c6ea4;background:#eff6ff;}
+.check-item input{width:auto;margin:0;}
 
-  .progress-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; }
-  .progress-card h3{ font-size:14px; font-weight:700; color:var(--dark-blue); margin-bottom:12px; }
-  .progress-item{ display:flex; align-items:center; gap:8px; font-size:13px; padding:5px 0; color:var(--muted); }
-  .progress-item .check{ width:18px; height:18px; border-radius:50%; border:1.5px solid #d1d5db; display:grid; place-items:center; font-size:10px; flex-shrink:0; }
-  .progress-item.filled .check{ background:var(--success); border-color:var(--success); color:#fff; }
-  .progress-item.filled{ color:#334155; }
-  .progress-bar-wrap{ background:#e2e8f0; border-radius:999px; height:6px; margin-top:12px; }
-  .progress-bar{ background:linear-gradient(90deg,var(--dark-blue),var(--light-blue)); height:6px; border-radius:999px; transition:width .3s; }
+/* ── Right Sidebar ── */
+.right-sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:80px;}
+.tip-card{background:#fff;border:1px solid #e8eaef;border-radius:12px;overflow:hidden;}
+.tip-head{padding:13px 16px;background:#1c6ea4;}
+.tip-head h3{font-size:13px;font-weight:700;color:#fff;}
+.tip-list{padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.tip-item{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:#6b7280;}
+.tip-dot{width:5px;height:5px;border-radius:50%;background:#1c6ea4;flex-shrink:0;margin-top:5px;}
+.progress-card{background:#fff;border:1px solid #e8eaef;border-radius:12px;padding:16px;}
+.progress-card h3{font-size:13px;font-weight:700;color:#111827;margin-bottom:12px;}
+.progress-item{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 0;color:#9ca3af;}
+.progress-item .check{width:17px;height:17px;border-radius:50%;border:1.5px solid #d1d9e0;display:grid;place-items:center;font-size:9px;flex-shrink:0;}
+.progress-item.filled .check{background:#10b981;border-color:#10b981;color:#fff;}
+.progress-item.filled{color:#374151;}
+.progress-bar-wrap{background:#e8eaef;border-radius:999px;height:5px;margin-top:12px;}
+.progress-bar{background:linear-gradient(90deg,#1c6ea4,#48b4e0);height:5px;border-radius:999px;transition:width .3s;}
 
-  /* Action Bar */
-  .action-bar{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:18px 22px; border-top:1px solid var(--border); background:#fafbfc; }
-  .action-bar-right{ display:flex; gap:10px; }
-  .btn-back{ background:#fff; color:var(--dark-blue); border:1px solid var(--border); border-radius:10px; padding:11px 18px; font-size:14px; font-weight:700; cursor:pointer; }
-  .btn-draft{ background:#f1f5f9; color:#334155; border:1px solid var(--border); border-radius:10px; padding:11px 18px; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s; }
-  .btn-draft:hover{ background:#e2e8f0; }
-  .btn-publish{ background:var(--dark-blue); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s; display:flex; align-items:center; gap:8px; }
-  .btn-publish:hover{ background:var(--blue); }
-  .btn-publish:disabled{ opacity:.6; cursor:not-allowed; }
-  /* ── Upload Status Overlay ── */
-  .upload-overlay{
-    position:fixed; inset:0; background:rgba(13,27,42,0.75);
-    display:none; align-items:center; justify-content:center;
-    z-index:9999; backdrop-filter:blur(4px);
-  }
-  .upload-overlay.active{ display:flex; }
-  .upload-box{
-    background:#fff; border-radius:20px; padding:36px 40px;
-    max-width:420px; width:90%; text-align:center;
-    box-shadow:0 24px 64px rgba(0,0,0,0.25);
-  }
-  .upload-spinner{
-    width:56px; height:56px; border-radius:50%;
-    border:5px solid #e2e8f0; border-top-color:var(--dark-blue);
-    animation:spin .8s linear infinite; margin:0 auto 18px;
-  }
-  @keyframes spin{ to{transform:rotate(360deg)} }
-  .upload-box h3{ font-size:18px; font-weight:800; color:var(--dark-blue); margin-bottom:8px; }
-  .upload-box .upload-step{ font-size:14px; color:var(--muted); margin-bottom:18px; min-height:22px; }
-  .upload-track{ background:#e2e8f0; border-radius:999px; height:8px; overflow:hidden; margin-bottom:10px; }
-  .upload-fill{
-    height:100%; border-radius:999px;
-    background:linear-gradient(90deg,var(--dark-blue),var(--light-blue));
-    transition:width .4s ease; width:0%;
-  }
-  .upload-pct{ font-size:13px; font-weight:700; color:var(--dark-blue); }
+/* ── Action Bar ── */
+.action-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;border-top:1px solid #f1f3f6;background:#fafbfc;}
+.action-bar-right{display:flex;gap:10px;}
+.btn-back{background:#fff;color:#374151;border:1px solid #e8eaef;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-draft{background:#f1f5f9;color:#374151;border:1px solid #e8eaef;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
+.btn-draft:hover{background:#e2e8f0;}
+.btn-publish{background:#1c6ea4;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;display:flex;align-items:center;gap:8px;}
+.btn-publish:hover{background:#1a5f8e;}
+.btn-publish:disabled{opacity:.6;cursor:not-allowed;}
+.btn-publish.uploading{background:#93a8be !important;cursor:not-allowed !important;pointer-events:none;}
+.btn-publish .btn-spinner{display:none;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;animation:spin .7s linear infinite;}
+.btn-publish.uploading .btn-spinner{display:block;}
+.btn-publish.uploading .btn-icon{display:none;}
 
-  /* Erfolg */
-  .upload-success{ display:none; }
-  .upload-success .success-icon{ font-size:52px; margin-bottom:12px; }
-  .upload-success h3{ font-size:20px; font-weight:800; color:var(--success); margin-bottom:6px; }
-  .upload-success p{ font-size:14px; color:var(--muted); }
+/* ── Upload Overlay ── */
+.upload-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.75);display:none;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px);}
+.upload-overlay.active{display:flex;}
+.upload-box{background:#fff;border-radius:14px;padding:32px 36px;max-width:400px;width:90%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.25);}
+.upload-spinner{width:52px;height:52px;border-radius:50%;border:4px solid #e8eaef;border-top-color:#1c6ea4;animation:spin .8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.upload-box h3{font-size:17px;font-weight:700;color:#111827;margin-bottom:6px;}
+.upload-box .upload-step{font-size:13.5px;color:#6b7280;margin-bottom:16px;min-height:20px;}
+.upload-track{background:#e8eaef;border-radius:999px;height:7px;overflow:hidden;margin-bottom:8px;}
+.upload-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#1c6ea4,#48b4e0);transition:width .4s ease;width:0%;}
+.upload-pct{font-size:12.5px;font-weight:700;color:#1c6ea4;}
+.upload-success{display:none;}
+.upload-success .success-icon{font-size:48px;margin-bottom:10px;}
+.upload-success h3{font-size:18px;font-weight:700;color:#10b981;margin-bottom:6px;}
+.upload-success p{font-size:13.5px;color:#6b7280;}
 
-  /* Button während Upload */
-  .btn-publish.uploading{
-    background:#93a8be !important; cursor:not-allowed !important;
-    pointer-events:none;
-  }
-  .btn-publish .btn-spinner{
-    display:none; width:16px; height:16px; border-radius:50%;
-    border:2px solid rgba(255,255,255,0.4); border-top-color:#fff;
-    animation:spin .7s linear infinite;
-  }
-  .btn-publish.uploading .btn-spinner{ display:block; }
-  .btn-publish.uploading .btn-icon{ display:none; }
-
-
-  /* Edit Mode Banner */
-  .edit-banner{ background:linear-gradient(135deg,#1e3a52,#2a5278); color:#fff; padding:12px 22px; display:none; align-items:center; gap:10px; font-size:14px; }
-  .edit-banner.show{ display:flex; }
-  .edit-banner strong{ font-weight:700; }
-
-  @media(max-width:1100px){ .layout{ grid-template-columns:1fr; } .sidebar{ position:static; } }
-  @media(max-width:760px){ .grid-2,.grid-3,.grid-4,.checkbox-grid{ grid-template-columns:1fr; } .preview-grid{ grid-template-columns:repeat(3,1fr); } .steps{ gap:0; } .step-label{ display:none; } }
-
-  /* ═══════════════════════════════════════
-     MOBILE RESPONSIVE
-  ═══════════════════════════════════════ */
-  @media (max-width: 768px) {
-    .container { padding: 0 14px; }
-    .header-inner { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
-    .logo { font-size: 18px; }
-    .logo-badge, .logo-mark { width: 34px; height: 34px; font-size: 14px; }
-    .header-actions { display: none; }
-    .layout { grid-template-columns: 1fr !important; }
-    .sidebar { position: static !important; top: auto !important; }
-    .page-head h1 { font-size: 22px !important; }
-    .page-head p { font-size: 13px; }
-    .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
-    .stat-value { font-size: 22px !important; }
-    .panel { padding: 14px !important; }
-    .table-wrap { overflow-x: auto; }
-    .table { min-width: 600px; }
-    .bottom-grid { grid-template-columns: 1fr !important; }
-    .listing-grid { grid-template-columns: 1fr !important; }
-    .listing-card { grid-template-columns: 1fr !important; }
-    .card-image { min-height: 180px !important; }
-    .filter-bar { flex-direction: column; }
-    .filter-bar input, .filter-bar select { width: 100%; }
-    .grid-2, .grid-3 { grid-template-columns: 1fr !important; }
-    .plan-grid { grid-template-columns: 1fr !important; }
-    .info-grid, .bottom-grid { grid-template-columns: 1fr !important; }
-    .plan-card.featured { transform: none; }
-    .nav-item { padding: 9px 10px; font-size: 13px; }
-    .profile-name { font-size: 14px; }
-    .tab-bar { flex-wrap: wrap; }
-    .tab { font-size: 12px; padding: 6px 10px; }
-    .msg { max-width: 90% !important; }
-    .reply-box { flex-direction: column; }
-    .reply-input { width: 100%; }
-    .chat-messages { max-height: 250px; }
-    .page { padding: 16px 0 32px !important; }
-  }
-
-  @media (max-width: 480px) {
-    .logo-name { font-size: 18px; }
-    .stats-grid { grid-template-columns: 1fr 1fr !important; }
-    .page-head { flex-direction: column; align-items: flex-start !important; }
-    .page-head .new-btn, .page-head a { width: 100%; text-align: center; }
-    .action-links { flex-wrap: wrap; }
-    .inq-header { flex-direction: column; }
-    .inq-meta { flex-direction: column; gap: 4px; }
-    .sidebar-profile { padding: 16px 14px; }
-  }
-
-
-  /* ── Einheitliches Logo ── */
-  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
-  .logo-mark {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
-    display: grid; place-items: center;
-    font-weight: 900; font-size: 15px; color: #fff;
-    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
-    flex-shrink: 0; letter-spacing: -0.5px;
-    font-family: 'Outfit', Arial, sans-serif;
-  }
-  .logo-name {
-    font-size: 22px; font-weight: 800;
-    color: #0d1b2a; letter-spacing: -.3px;
-    font-family: 'Outfit', Arial, sans-serif;
-  }
-
+/* ── Responsive ── */
+@media(max-width:1100px){.content-layout{grid-template-columns:1fr;}.right-sidebar{position:static;}}
+@media(max-width:900px){.sidebar-nav-wrap{display:none;}.main{margin-left:0;}}
+@media(max-width:760px){.grid-2,.grid-3,.grid-4,.checkbox-grid{grid-template-columns:1fr;}.preview-grid{grid-template-columns:repeat(3,1fr);}.step-label{display:none;}.page{padding:16px 14px 48px;}}
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="container header-inner">
-    <a href="index.html" class="logo">
-      <div class="logo-mark">1A</div>
-      <div class="logo-name">Motor</div>
-    </a>
-    <div class="header-actions">
-      <a href="dashboard.html">← Dashboard</a>
-      <a href="meine-anzeigen.html">Meine Anzeigen</a>
+<!-- ── Sidebar ── -->
+<aside class="sidebar-nav-wrap">
+  <a href="index.html" class="sidebar-logo" style="text-decoration:none;"><div class="logo-mark">1A</div><div class="logo-name">Motor</div></a>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+    <a href="meine-anzeigen.html" class="nav-item"><span class="icon">📋</span> Meine Anzeigen</a>
+    <a href="anfragen.html" class="nav-item"><span class="icon">💬</span> Anfragen</a>
+    <a href="#" class="nav-item"><span class="icon">❤️</span> Favoriten</a>
+    <a href="#" class="nav-item"><span class="icon">📈</span> Statistiken</a>
+    <a href="#" class="nav-item"><span class="icon">⭐</span> Bewertungen</a>
+    <div class="nav-divider"></div>
+    <a href="profil.html" class="nav-item"><span class="icon">⚙️</span> Einstellungen</a>
+    <a href="profil.html" class="nav-item"><span class="icon">👤</span> Mein Konto</a>
+    <div class="nav-divider"></div>
+    <a href="suche.html" class="nav-item"><span class="icon">🔍</span> Zur Suche</a>
+    <a href="#" class="nav-item logout" id="sidebar-logout"><span class="icon">🚪</span> Ausloggen</a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="sidebar-avatar">?</div>
+    <div class="user-info">
+      <div class="user-name" id="sidebar-name">Laden...</div>
+      <div class="user-role">Händlerkonto</div>
     </div>
   </div>
-</header>
+</aside>
 
-<main class="page">
-  <div class="container">
+<!-- ── Main ── -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title">Anzeige erstellen</div>
+    <div class="topbar-right">
+      <div class="topbar-bell">🔔</div>
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar">?</div>
+        <span class="topbar-username" id="topbar-name">Laden...</span>
+        <span style="font-size:10px;color:#9ca3af;">▾</span>
+      </div>
+      <a href="anzeige-erstellen.html" class="new-listing-btn">+ Anzeige erstellen</a>
+    </div>
+  </div>
+
+  <!-- Page -->
+  <div class="page">
+    <div class="page-head">
+      <h1>Anzeige erstellen</h1>
+      <p>Fülle alle Pflichtfelder aus und veröffentliche dein Inserat.</p>
+    </div>
 
     <!-- Step Indicator -->
     <div class="steps">
-      <div class="step active" id="step-1">
-        <div class="step-num">1</div>
-        <div class="step-label">Grunddaten</div>
-      </div>
+      <div class="step active" id="step-1"><div class="step-num">1</div><div class="step-label">Grunddaten</div></div>
       <div class="step-sep"></div>
-      <div class="step" id="step-2">
-        <div class="step-num">2</div>
-        <div class="step-label">Preis & Ort</div>
-      </div>
+      <div class="step" id="step-2"><div class="step-num">2</div><div class="step-label">Preis & Ort</div></div>
       <div class="step-sep"></div>
-      <div class="step" id="step-3">
-        <div class="step-num">3</div>
-        <div class="step-label">Technik</div>
-      </div>
+      <div class="step" id="step-3"><div class="step-num">3</div><div class="step-label">Technik</div></div>
       <div class="step-sep"></div>
-      <div class="step" id="step-4">
-        <div class="step-num">4</div>
-        <div class="step-label">Beschreibung</div>
-      </div>
+      <div class="step" id="step-4"><div class="step-num">4</div><div class="step-label">Beschreibung</div></div>
       <div class="step-sep"></div>
-      <div class="step" id="step-5">
-        <div class="step-num">5</div>
-        <div class="step-label">Bilder</div>
-      </div>
+      <div class="step" id="step-5"><div class="step-num">5</div><div class="step-label">Bilder</div></div>
     </div>
 
-    <div class="layout">
+    <div class="content-layout">
 
-      <!-- Formular -->
+      <!-- ── Formular ── -->
       <div>
         <form id="listing-form">
 
-          <!-- Edit Mode Banner -->
+          <!-- Edit Banner -->
           <div class="edit-banner" id="edit-banner">
             ✏️ <strong>Bearbeitungsmodus</strong> — Du bearbeitest eine bestehende Anzeige.
           </div>
 
           <!-- 1. Grunddaten -->
-          <div class="form-card" style="margin-bottom:16px;">
+          <div class="form-card">
             <div class="section-head">
               <div class="section-icon">📋</div>
               <div><h2>1. Grunddaten</h2><p>Titel, Kategorie, Hersteller und Zustand</p></div>
             </div>
             <div class="section-body">
-              <div class="form-group" style="margin-bottom:18px;">
+              <div class="form-group">
                 <label>Anzeigetyp <span class="req">*</span></label>
-                <div style="display:flex;gap:10px;margin-top:6px;">
+                <div style="display:flex;gap:10px;margin-top:4px;">
                   <label style="flex:1;cursor:pointer;">
                     <input type="radio" name="anzeigetyp" id="typ-verkauf" value="Verkauf" checked style="display:none;" />
-                    <div class="typ-btn active" id="typ-btn-verkauf" style="
-                      border:2px solid #1a5fa8;background:#eef4ff;color:#1a5fa8;
-                      border-radius:10px;padding:14px 18px;text-align:center;
-                      font-weight:700;font-size:15px;transition:all .15s;
-                    ">
+                    <div class="typ-btn" id="typ-btn-verkauf" style="border:2px solid #1c6ea4;background:#eff6ff;color:#1c6ea4;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:14px;transition:all .15s;">
                       🏷️ Verkauf
-                      <div style="font-size:12px;font-weight:400;color:#5a82a8;margin-top:3px;">Ich biete einen Motor an</div>
+                      <div style="font-size:12px;font-weight:400;color:#5a82a8;margin-top:2px;">Ich biete einen Motor an</div>
                     </div>
                   </label>
                   <label style="flex:1;cursor:pointer;">
                     <input type="radio" name="anzeigetyp" id="typ-gesuch" value="Gesuch" style="display:none;" />
-                    <div class="typ-btn" id="typ-btn-gesuch" style="
-                      border:2px solid #dbe3ea;background:#f8fafc;color:#334155;
-                      border-radius:10px;padding:14px 18px;text-align:center;
-                      font-weight:700;font-size:15px;transition:all .15s;
-                    ">
+                    <div class="typ-btn" id="typ-btn-gesuch" style="border:2px solid #e8eaef;background:#f9fafb;color:#374151;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:14px;transition:all .15s;">
                       🔍 Gesuch
-                      <div style="font-size:12px;font-weight:400;color:#6b7280;margin-top:3px;">Ich suche einen Motor</div>
+                      <div style="font-size:12px;font-weight:400;color:#6b7280;margin-top:2px;">Ich suche einen Motor</div>
                     </div>
                   </label>
                 </div>
               </div>
-              <div class="form-group" style="margin-bottom:14px;">
+              <div class="form-group">
                 <label for="titel">Anzeigentitel <span class="req">*</span></label>
                 <input id="titel" type="text" placeholder="z. B. Mercedes OM651 Dieselmotor – geprüft – sofort verfügbar" />
                 <span class="helper">Nutze: Hersteller + Modell + Zustand + Besonderheit</span>
               </div>
-              <div class="form-group" style="margin-bottom:14px;">
+              <div class="form-group">
                 <label for="kategorie">Kategorie <span class="req">*</span></label>
                 <select id="kategorie">
                   <option value="">Bitte auswählen...</option>
@@ -448,13 +371,13 @@
           </div>
 
           <!-- 2. Preis & Standort -->
-          <div class="form-card" style="margin-bottom:16px;">
+          <div class="form-card">
             <div class="section-head">
               <div class="section-icon">💶</div>
               <div><h2>2. Preis & Standort</h2><p>Preis, Versand und Standort</p></div>
             </div>
             <div class="section-body">
-              <div class="grid-4" style="margin-bottom:14px;">
+              <div class="grid-4">
                 <div class="form-group">
                   <label for="preis">Preis (€) <span class="req">*</span></label>
                   <input id="preis" type="number" placeholder="z. B. 24900" min="0" />
@@ -491,13 +414,13 @@
           </div>
 
           <!-- 3. Technische Daten -->
-          <div class="form-card" style="margin-bottom:16px;">
+          <div class="form-card">
             <div class="section-head">
               <div class="section-icon">🔧</div>
               <div><h2>3. Technische Daten</h2><p>Baujahr, Leistung, Kraftstoff</p></div>
             </div>
             <div class="section-body">
-              <div class="grid-4" style="margin-bottom:14px;">
+              <div class="grid-4">
                 <div class="form-group">
                   <label for="baujahr">Baujahr</label>
                   <input id="baujahr" type="number" placeholder="z. B. 2021" />
@@ -541,7 +464,7 @@
           </div>
 
           <!-- 4. Beschreibung -->
-          <div class="form-card" style="margin-bottom:16px;">
+          <div class="form-card">
             <div class="section-head">
               <div class="section-icon">📝</div>
               <div><h2>4. Beschreibung</h2><p>Zustand, Historie, Lieferumfang</p></div>
@@ -556,7 +479,7 @@
           </div>
 
           <!-- 5. Bilder -->
-          <div class="form-card" style="margin-bottom:16px;">
+          <div class="form-card">
             <div class="section-head">
               <div class="section-icon">📷</div>
               <div><h2>5. Bilder</h2><p>Bis zu 12 Bilder – das erste wird Hauptbild</p></div>
@@ -574,7 +497,7 @@
           </div>
 
           <!-- 6. Optionen -->
-          <div class="form-card" style="margin-bottom:16px;">
+          <div class="form-card">
             <div class="section-head">
               <div class="section-icon">✅</div>
               <div><h2>6. Optionen</h2><p>Zusätzliche Angaben für mehr Vertrauen</p></div>
@@ -595,11 +518,11 @@
           <div class="action-bar">
             <a href="meine-anzeigen.html" class="btn-back">← Abbrechen</a>
             <div class="action-bar-right">
-              <button type="button" class="btn-draft" id="btn-draft"><span data-i18n="create.draft">Als Entwurf speichern</span></button>
+              <button type="button" class="btn-draft" id="btn-draft">Als Entwurf speichern</button>
               <button type="submit" class="btn-publish" id="btn-publish">
                 <span class="btn-spinner"></span>
                 <span class="btn-icon">🚀</span>
-                <span id="btn-publish-text"><span data-i18n="create.publish">Anzeige veröffentlichen</span></span>
+                <span id="btn-publish-text">Anzeige veröffentlichen</span>
               </button>
             </div>
           </div>
@@ -607,34 +530,22 @@
         </form>
       </div>
 
-      <!-- Sidebar -->
-      <aside class="sidebar">
+      <!-- ── Right Sidebar ── -->
+      <aside class="right-sidebar">
 
         <!-- Fortschritt -->
         <div class="progress-card">
           <h3>📊 Anzeigen-Qualität</h3>
-          <div class="progress-item" id="prog-titel">
-            <div class="check">✓</div> Titel vorhanden
-          </div>
-          <div class="progress-item" id="prog-kategorie">
-            <div class="check">✓</div> Kategorie gewählt
-          </div>
-          <div class="progress-item" id="prog-preis">
-            <div class="check">✓</div> Preis eingegeben
-          </div>
-          <div class="progress-item" id="prog-standort">
-            <div class="check">✓</div> Standort angegeben
-          </div>
-          <div class="progress-item" id="prog-beschreibung">
-            <div class="check">✓</div> Beschreibung vorhanden
-          </div>
-          <div class="progress-item" id="prog-bilder">
-            <div class="check">✓</div> Mindestens 1 Bild
-          </div>
-          <div class="progress-bar-wrap" style="margin-top:12px;">
+          <div class="progress-item" id="prog-titel"><div class="check"></div> Titel vorhanden</div>
+          <div class="progress-item" id="prog-kategorie"><div class="check"></div> Kategorie gewählt</div>
+          <div class="progress-item" id="prog-preis"><div class="check"></div> Preis eingegeben</div>
+          <div class="progress-item" id="prog-standort"><div class="check"></div> Standort angegeben</div>
+          <div class="progress-item" id="prog-beschreibung"><div class="check"></div> Beschreibung vorhanden</div>
+          <div class="progress-item" id="prog-bilder"><div class="check"></div> Mindestens 1 Bild</div>
+          <div class="progress-bar-wrap">
             <div class="progress-bar" id="progress-bar" style="width:0%"></div>
           </div>
-          <div style="font-size:12px;color:var(--muted);margin-top:6px;text-align:right;" id="progress-text">0 / 6 ausgefüllt</div>
+          <div style="font-size:12px;color:#9ca3af;margin-top:6px;text-align:right;" id="progress-text">0 / 6 ausgefüllt</div>
         </div>
 
         <!-- Tipps -->
@@ -652,313 +563,103 @@
       </aside>
     </div>
   </div>
-</main>
+</div>
+
+<!-- Upload Overlay -->
+<div class="upload-overlay" id="upload-overlay">
+  <div class="upload-box">
+    <div id="overlay-loading">
+      <div class="upload-spinner"></div>
+      <h3>Wird veröffentlicht…</h3>
+      <div class="upload-step" id="overlay-step">Daten werden geprüft…</div>
+      <div class="upload-track"><div class="upload-fill" id="overlay-fill"></div></div>
+      <div class="upload-pct" id="overlay-pct">0%</div>
+    </div>
+    <div class="upload-success" id="overlay-success">
+      <div class="success-icon">✅</div>
+      <h3>Anzeige veröffentlicht!</h3>
+      <p>Deine Anzeige ist jetzt live.<br>Du wirst gleich weitergeleitet…</p>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="auth-header.js"></script>
 <script src="create-listing.js"></script>
 <script>
-// ── Step Indicator ────────────────────────────────────────────────────────────
-function updateSteps() {
-  const filled = [
-    !!document.getElementById("titel")?.value?.trim(),
-    !!document.getElementById("preis")?.value,
-    !!document.getElementById("baujahr")?.value,
-    !!document.getElementById("beschreibung")?.value?.trim(),
-    document.getElementById("preview-grid")?.children.length > 0,
-  ];
-  const steps = [1,2,3,4,5];
-  steps.forEach((s, i) => {
-    const el = document.getElementById(`step-${s}`);
-    if (!el) return;
-    el.classList.remove("active","done");
-    if (filled.slice(0,i).every(Boolean) && !filled[i]) el.classList.add("active");
-    else if (filled[i]) el.classList.add("done");
-  });
-}
-
-// ── Fortschrittsanzeige ───────────────────────────────────────────────────────
-const progressFields = [
-  { id:"prog-titel",        check: () => !!document.getElementById("titel")?.value?.trim() },
-  { id:"prog-kategorie",    check: () => !!document.getElementById("kategorie")?.value },
-  { id:"prog-preis",        check: () => !!document.getElementById("preis")?.value },
-  { id:"prog-standort",     check: () => !!document.getElementById("standort")?.value?.trim() },
-  { id:"prog-beschreibung", check: () => (document.getElementById("beschreibung")?.value||"").trim().length > 20 },
-  { id:"prog-bilder",       check: () => document.getElementById("preview-grid")?.children.length > 0 },
-];
-
-function updateProgress() {
-  let filled = 0;
-  progressFields.forEach(({ id, check }) => {
-    const ok = check();
-    const el = document.getElementById(id);
-    if (el) { el.classList.toggle("filled", ok); el.querySelector(".check").textContent = ok ? "✓" : ""; }
-    if (ok) filled++;
-  });
-  const pct = Math.round((filled / progressFields.length) * 100);
-  const bar = document.getElementById("progress-bar");
-  const txt = document.getElementById("progress-text");
-  if (bar) bar.style.width = pct + "%";
-  if (txt) txt.textContent = `${filled} / ${progressFields.length} ausgefüllt`;
-  updateSteps();
-}
-
-// Events
-["titel","kategorie","preis","standort","beschreibung","baujahr"].forEach(id => {
-  document.getElementById(id)?.addEventListener("input", updateProgress);
+// ── Sidebar User ──
+document.addEventListener("DOMContentLoaded", async () => {
+  const {data:sd} = await supabaseClient.auth.getSession();
+  const user = sd?.session?.user;
+  if (!user){window.location.href="login.html";return;}
+  const {data:seller} = await supabaseClient.from("seller_profiles").select("company_name").eq("user_id",user.id).maybeSingle();
+  const name = seller?.company_name || user.email || "Händler";
+  const ini  = name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()||"?";
+  ["sidebar-avatar","topbar-avatar"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=ini;});
+  ["sidebar-name","topbar-name"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=name;});
+  document.getElementById("sidebar-logout")?.addEventListener("click",async e=>{e.preventDefault();await supabaseClient.auth.signOut();window.location.href="index.html";});
 });
+
+// ── Upload Overlay ──
+function showUploadOverlay(){document.getElementById("upload-overlay").classList.add("active");document.getElementById("btn-publish").classList.add("uploading");document.getElementById("btn-publish-text").textContent="Wird veröffentlicht…";setOverlayProgress(5,"Verbindung wird aufgebaut…");}
+function setOverlayProgress(pct,stepText){document.getElementById("overlay-fill").style.width=pct+"%";document.getElementById("overlay-pct").textContent=pct+"%";if(stepText)document.getElementById("overlay-step").textContent=stepText;}
+function showUploadSuccess(){document.getElementById("overlay-loading").style.display="none";document.getElementById("overlay-success").style.display="block";}
+function hideUploadOverlay(){document.getElementById("upload-overlay").classList.remove("active");document.getElementById("btn-publish").classList.remove("uploading");document.getElementById("btn-publish-text").textContent="Anzeige veröffentlichen";document.getElementById("overlay-loading").style.display="block";document.getElementById("overlay-success").style.display="none";setOverlayProgress(0,"");}
+window.onListingSuccess=function(){setOverlayProgress(100,"Fertig!");showUploadSuccess();};
+window.onListingError=function(){hideUploadOverlay();};
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const form=document.getElementById("listing-form");
+  if(!form)return;
+  form.addEventListener("submit",()=>{
+    showUploadOverlay();
+    const steps=[[10,"Anmeldung wird geprüft…"],[20,"Kategorie wird geladen…"],[35,"Verkäuferprofil wird geladen…"],[50,"Bilder werden komprimiert…"],[65,"Bilder werden hochgeladen…"],[80,"Anzeige wird gespeichert…"],[92,"Fast fertig…"]];
+    let i=0;
+    const interval=setInterval(()=>{if(i<steps.length){setOverlayProgress(steps[i][0],steps[i][1]);i++;}else{clearInterval(interval);}},800);
+    window.addEventListener("beforeunload",()=>clearInterval(interval));
+    setTimeout(()=>{clearInterval(interval);hideUploadOverlay();},30000);
+  });
+});
+
+// ── Step Indicator ──
+function updateSteps(){const filled=[!!document.getElementById("titel")?.value?.trim(),!!document.getElementById("preis")?.value,!!document.getElementById("baujahr")?.value,!!document.getElementById("beschreibung")?.value?.trim(),document.getElementById("preview-grid")?.children.length>0];[1,2,3,4,5].forEach((s,i)=>{const el=document.getElementById(`step-${s}`);if(!el)return;el.classList.remove("active","done");if(filled.slice(0,i).every(Boolean)&&!filled[i])el.classList.add("active");else if(filled[i])el.classList.add("done");});}
+
+// ── Progress ──
+const progressFields=[{id:"prog-titel",check:()=>!!document.getElementById("titel")?.value?.trim()},{id:"prog-kategorie",check:()=>!!document.getElementById("kategorie")?.value},{id:"prog-preis",check:()=>!!document.getElementById("preis")?.value},{id:"prog-standort",check:()=>!!document.getElementById("standort")?.value?.trim()},{id:"prog-beschreibung",check:()=>(document.getElementById("beschreibung")?.value||"").trim().length>20},{id:"prog-bilder",check:()=>document.getElementById("preview-grid")?.children.length>0}];
+function updateProgress(){let filled=0;progressFields.forEach(({id,check})=>{const ok=check();const el=document.getElementById(id);if(el){el.classList.toggle("filled",ok);el.querySelector(".check").textContent=ok?"✓":"";}if(ok)filled++;});const pct=Math.round((filled/progressFields.length)*100);const bar=document.getElementById("progress-bar");const txt=document.getElementById("progress-text");if(bar)bar.style.width=pct+"%";if(txt)txt.textContent=`${filled} / ${progressFields.length} ausgefüllt`;updateSteps();}
+["titel","kategorie","preis","standort","beschreibung","baujahr"].forEach(id=>{document.getElementById(id)?.addEventListener("input",updateProgress);});
 updateProgress();
 
-// ── Drag & Drop Upload Zone ───────────────────────────────────────────────────
-const zone = document.getElementById("upload-zone");
-zone?.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
-zone?.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
-zone?.addEventListener("drop", (e) => {
-  e.preventDefault();
-  zone.classList.remove("drag-over");
-  handleFiles(Array.from(e.dataTransfer.files));
-});
+// ── Drag & Drop ──
+const zone=document.getElementById("upload-zone");
+zone?.addEventListener("dragover",(e)=>{e.preventDefault();zone.classList.add("drag-over");});
+zone?.addEventListener("dragleave",()=>zone.classList.remove("drag-over"));
+zone?.addEventListener("drop",(e)=>{e.preventDefault();zone.classList.remove("drag-over");handleFiles(Array.from(e.dataTransfer.files));});
+const previewGrid=document.getElementById("preview-grid");
+let selectedFiles=[];
+document.getElementById("bilder")?.addEventListener("change",(e)=>{handleFiles(Array.from(e.target.files));});
+function handleFiles(files){const images=files.filter(f=>f.type.startsWith("image/"));const remaining=12-selectedFiles.length;selectedFiles=[...selectedFiles,...images.slice(0,remaining)];renderPreviews();updateProgress();}
+function renderPreviews(){if(!previewGrid)return;previewGrid.innerHTML="";selectedFiles.forEach((file,i)=>{const reader=new FileReader();reader.onload=(ev)=>{const div=document.createElement("div");div.className="preview-item"+(i===0?" main-img":"");div.innerHTML=`<img src="${ev.target.result}" alt="Bild ${i+1}"><button class="remove-img" data-idx="${i}" title="Entfernen">✕</button>`;previewGrid.appendChild(div);};reader.readAsDataURL(file);});}
+previewGrid?.addEventListener("click",(e)=>{const btn=e.target.closest(".remove-img");if(!btn)return;selectedFiles.splice(parseInt(btn.getAttribute("data-idx")),1);renderPreviews();updateProgress();});
 
-// ── Bildvorschau ──────────────────────────────────────────────────────────────
-const previewGrid = document.getElementById("preview-grid");
-let selectedFiles = [];
+// ── Edit Mode ──
+const params=new URLSearchParams(window.location.search);
+if(params.get("edit")){const banner=document.getElementById("edit-banner");if(banner)banner.classList.add("show");const pb=document.getElementById("btn-publish");if(pb)pb.innerHTML='<span>💾</span> Änderungen speichern';}
 
-document.getElementById("bilder")?.addEventListener("change", (e) => {
-  handleFiles(Array.from(e.target.files));
-});
+// ── Entwurf ──
+document.getElementById("btn-draft")?.addEventListener("click",()=>{const form=document.getElementById("listing-form");if(!form)return;const h=document.createElement("input");h.type="hidden";h.id="_draft_mode";h.value="Entwurf";form.appendChild(h);form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));setTimeout(()=>h.remove(),2000);});
 
-function handleFiles(files) {
-  const images = files.filter(f => f.type.startsWith("image/"));
-  const remaining = 12 - selectedFiles.length;
-  const toAdd = images.slice(0, remaining);
-  selectedFiles = [...selectedFiles, ...toAdd];
-  renderPreviews();
-  updateProgress();
-}
-
-function renderPreviews() {
-  if (!previewGrid) return;
-  previewGrid.innerHTML = "";
-  selectedFiles.forEach((file, i) => {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const div = document.createElement("div");
-      div.className = "preview-item" + (i === 0 ? " main-img" : "");
-      div.innerHTML = `<img src="${ev.target.result}" alt="Bild ${i+1}"><button class="remove-img" data-idx="${i}" title="Entfernen">✕</button>`;
-      previewGrid.appendChild(div);
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-previewGrid?.addEventListener("click", (e) => {
-  const btn = e.target.closest(".remove-img");
-  if (!btn) return;
-  const idx = parseInt(btn.getAttribute("data-idx"));
-  selectedFiles.splice(idx, 1);
-  renderPreviews();
-  updateProgress();
-});
-
-// ── Edit Mode Banner ──────────────────────────────────────────────────────────
-const params = new URLSearchParams(window.location.search);
-if (params.get("edit")) {
-  const banner = document.getElementById("edit-banner");
-  if (banner) banner.classList.add("show");
-  const publishBtn = document.getElementById("btn-publish");
-  if (publishBtn) { publishBtn.innerHTML = '<span>💾</span> Änderungen speichern'; }
-}
-
-// ── Entwurf Button ────────────────────────────────────────────────────────────
-document.getElementById("btn-draft")?.addEventListener("click", () => {
-  const form = document.getElementById("listing-form");
-  if (!form) return;
-  const hiddenStatus = document.createElement("input");
-  hiddenStatus.type = "hidden";
-  hiddenStatus.id = "_draft_mode";
-  hiddenStatus.value = "Entwurf";
-  form.appendChild(hiddenStatus);
-  form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-  setTimeout(() => { hiddenStatus.remove(); }, 2000);
+// ── Anzeigetyp Toggle ──
+document.addEventListener("DOMContentLoaded",()=>{
+  const preisGroup=document.getElementById("preis")?.closest(".form-group");
+  const preisartGroup=document.getElementById("preisart")?.closest(".form-group");
+  function setActiveType(type){if(type==="Verkauf"){document.getElementById("typ-btn-verkauf").style.cssText="border:2px solid #1c6ea4;background:#eff6ff;color:#1c6ea4;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:14px;transition:all .15s;";document.getElementById("typ-btn-gesuch").style.cssText="border:2px solid #e8eaef;background:#f9fafb;color:#374151;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:14px;transition:all .15s;";if(preisGroup)preisGroup.style.display="";if(preisartGroup)preisartGroup.style.display="";}else{document.getElementById("typ-btn-gesuch").style.cssText="border:2px solid #1c6ea4;background:#eff6ff;color:#1c6ea4;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:14px;transition:all .15s;";document.getElementById("typ-btn-verkauf").style.cssText="border:2px solid #e8eaef;background:#f9fafb;color:#374151;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:14px;transition:all .15s;";if(preisGroup)preisGroup.style.display="none";if(preisartGroup)preisartGroup.style.display="none";}}
+  document.getElementById("typ-btn-verkauf")?.addEventListener("click",()=>{document.getElementById("typ-verkauf").checked=true;setActiveType("Verkauf");});
+  document.getElementById("typ-btn-gesuch")?.addEventListener("click",()=>{document.getElementById("typ-gesuch").checked=true;setActiveType("Gesuch");});
+  document.getElementById("preisart")?.addEventListener("change",(e)=>{const preis=document.getElementById("preis");if(e.target.value==="Auf Anfrage"){if(preis){preis.value="0";preis.disabled=true;preis.style.opacity="0.4";}}else{if(preis){preis.disabled=false;preis.style.opacity="";}}});
 });
 </script>
-
-<!-- Upload Status Overlay -->
-<div class="upload-overlay" id="upload-overlay">
-  <div class="upload-box">
-
-    <!-- Ladeansicht -->
-    <div id="overlay-loading">
-      <div class="upload-spinner"></div>
-      <h3>Wird veröffentlicht…</h3>
-      <div class="upload-step" id="overlay-step">Daten werden geprüft…</div>
-      <div class="upload-track">
-        <div class="upload-fill" id="overlay-fill"></div>
-      </div>
-      <div class="upload-pct" id="overlay-pct">0%</div>
-    </div>
-
-    <!-- Erfolgsansicht -->
-    <div class="upload-success" id="overlay-success">
-      <div class="success-icon">✅</div>
-      <h3>Anzeige veröffentlicht!</h3>
-      <p>Deine Anzeige ist jetzt live.<br>Du wirst gleich weitergeleitet…</p>
-    </div>
-
-  </div>
-</div>
-
-<script>
-// ── Upload Overlay Steuerung ──────────────────────────────────────────────────
-function showUploadOverlay() {
-  document.getElementById("upload-overlay").classList.add("active");
-  document.getElementById("btn-publish").classList.add("uploading");
-  document.getElementById("btn-publish-text").textContent = "Wird veröffentlicht…";
-  setOverlayProgress(5, "Verbindung wird aufgebaut…");
-}
-
-function setOverlayProgress(pct, stepText) {
-  document.getElementById("overlay-fill").style.width = pct + "%";
-  document.getElementById("overlay-pct").textContent = pct + "%";
-  if (stepText) document.getElementById("overlay-step").textContent = stepText;
-}
-
-function showUploadSuccess() {
-  document.getElementById("overlay-loading").style.display = "none";
-  document.getElementById("overlay-success").style.display = "block";
-}
-
-function hideUploadOverlay() {
-  document.getElementById("upload-overlay").classList.remove("active");
-  document.getElementById("btn-publish").classList.remove("uploading");
-  document.getElementById("btn-publish-text").textContent = "Anzeige veröffentlichen";
-  // Reset
-  document.getElementById("overlay-loading").style.display = "block";
-  document.getElementById("overlay-success").style.display = "none";
-  setOverlayProgress(0, "");
-}
-
-// Patch: create-listing.js submit abfangen für visuelles Feedback
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("listing-form") || document.querySelector("form");
-  if (!form) return;
-
-  // Original submit überwachen
-  const origSubmit = form.onsubmit;
-
-  form.addEventListener("submit", () => {
-    showUploadOverlay();
-    // Fortschritt simulieren während echter Upload läuft
-    const steps = [
-      [10,  "Anmeldung wird geprüft…"],
-      [20,  "Kategorie wird geladen…"],
-      [35,  "Verkäuferprofil wird geladen…"],
-      [50,  "Bilder werden komprimiert…"],
-      [65,  "Bilder werden hochgeladen…"],
-      [80,  "Anzeige wird gespeichert…"],
-      [92,  "Fast fertig…"],
-    ];
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < steps.length) {
-        setOverlayProgress(steps[i][0], steps[i][1]);
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 800);
-
-    // Wenn Seite wechselt → Erfolg zeigen
-    window.addEventListener("beforeunload", () => {
-      clearInterval(interval);
-    });
-
-    // Fehler-Fallback: nach 30s Overlay ausblenden
-    setTimeout(() => {
-      clearInterval(interval);
-      hideUploadOverlay();
-    }, 30000);
-  });
-});
-
-// Hook für create-listing.js: Erfolg signalisieren
-window.onListingSuccess = function() {
-  setOverlayProgress(100, "Fertig!");
-  showUploadSuccess();
-};
-
-window.onListingError = function() {
-  hideUploadOverlay();
-};
-</script>
-
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
-
-<script>
-// ── Anzeigetyp Toggle ──────────────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
-  const verkaufRadio  = document.getElementById("typ-verkauf");
-  const gesuchRadio   = document.getElementById("typ-gesuch");
-  const btnVerkauf    = document.getElementById("typ-btn-verkauf");
-  const btnGesuch     = document.getElementById("typ-btn-gesuch");
-  const preisGroup    = document.getElementById("preis")?.closest(".form-group");
-  const preisartGroup = document.getElementById("preisart")?.closest(".form-group");
-
-  function setActiveType(type) {
-    if (type === "Verkauf") {
-      btnVerkauf.style.border        = "2px solid #1a5fa8";
-      btnVerkauf.style.background    = "#eef4ff";
-      btnVerkauf.style.color         = "#1a5fa8";
-      btnGesuch.style.border         = "2px solid #dbe3ea";
-      btnGesuch.style.background     = "#f8fafc";
-      btnGesuch.style.color          = "#334155";
-      if (preisGroup)    preisGroup.style.display    = "";
-      if (preisartGroup) preisartGroup.style.display = "";
-    } else {
-      btnGesuch.style.border         = "2px solid #1a5fa8";
-      btnGesuch.style.background     = "#eef4ff";
-      btnGesuch.style.color          = "#1a5fa8";
-      btnVerkauf.style.border        = "2px solid #dbe3ea";
-      btnVerkauf.style.background    = "#f8fafc";
-      btnVerkauf.style.color         = "#334155";
-      if (preisGroup)    preisGroup.style.display    = "none";
-      if (preisartGroup) preisartGroup.style.display = "none";
-    }
-  }
-
-  document.querySelector("label[for='typ-verkauf'], label:has(#typ-verkauf)")?.addEventListener("click", () => {
-    verkaufRadio.checked = true;
-    setActiveType("Verkauf");
-  });
-
-  document.querySelector("label:has(#typ-gesuch)")?.addEventListener("click", () => {
-    gesuchRadio.checked = true;
-    setActiveType("Gesuch");
-  });
-
-  // Klick direkt auf die Div-Buttons
-  btnVerkauf?.addEventListener("click", () => {
-    verkaufRadio.checked = true;
-    setActiveType("Verkauf");
-  });
-  btnGesuch?.addEventListener("click", () => {
-    gesuchRadio.checked = true;
-    setActiveType("Gesuch");
-  });
-
-  // Preis bei "Preis auf Anfrage" ausblenden
-  document.getElementById("preisart")?.addEventListener("change", (e) => {
-    const preis = document.getElementById("preis");
-    if (e.target.value === "Auf Anfrage") {
-      if (preis) { preis.value = "0"; preis.disabled = true; preis.style.opacity = "0.4"; }
-    } else {
-      if (preis) { preis.disabled = false; preis.style.opacity = ""; }
-    }
-  });
-});
-</script>
-
-<script src="i18n.js"></script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
 </body>
 </html>
