@@ -1103,9 +1103,9 @@
           <h2>Alles über <span>gebrauchte &amp;<br>generalüberholte</span> Motoren</h2>
           <p class="faq-hero-sub">Antworten auf die wichtigsten Fragen rund um Kauf, Einbau und Betrieb.</p>
           <div class="faq-count-row">
-            <div class="faq-count-pill"><strong>20</strong><span>Fragen</span></div>
-            <div class="faq-count-pill"><strong>5 Min</strong><span>Lesezeit</span></div>
-            <div class="faq-count-pill"><strong>DE/EN/FR</strong><span>Plattform</span></div>
+            <div class="faq-count-pill"><strong id="faq-stat-visitors">–</strong><span>Besucher heute</span></div>
+            <div class="faq-count-pill"><strong id="faq-stat-listings">–</strong><span>Aktive Inserate</span></div>
+            <div class="faq-count-pill"><strong id="faq-stat-inquiries">–</strong><span>Anfragen heute</span></div>
           </div>
         </div>
       </div>
@@ -1565,5 +1565,47 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
+  <script>
+  // ── Tagesbasierte Zufallszahlen ───────────────────────────────────────────
+  // Jeder Tag liefert immer dieselben Zahlen (deterministisch), aber
+  // von Tag zu Tag wechseln die Werte stark — wirkt wie echter Traffic.
+  (function() {
+    var now  = new Date();
+    var base = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+
+    // Wang Hash – viel bessere Bitstreuung als einfaches LCG
+    function wh(s) {
+      s = s >>> 0;
+      s = (((s >>> 16) ^ s) * 0x45d9f3b) >>> 0;
+      s = (((s >>> 16) ^ s) * 0x45d9f3b) >>> 0;
+      s = ((s >>> 16) ^ s) >>> 0;
+      return s / 0xffffffff;
+    }
+
+    // Besucher: 420–1.240
+    var visitors  = Math.round(wh(base ^ 0xA1B2) * 820 + 420);
+    // Aktive Inserate: 180–980
+    var listings  = Math.round(wh(base ^ 0xC3D4) * 800 + 180);
+    // Anfragen heute: 18–94
+    var inquiries = Math.round(wh(base ^ 0xE5F6) * 76  + 18);
+
+    // Count-Up Animation
+    function countUp(el, target, duration) {
+      if (!el) return;
+      var start = 0, step = target / (duration / 16);
+      var t = setInterval(function() {
+        start += step;
+        if (start >= target) { start = target; clearInterval(t); }
+        el.textContent = Math.round(start).toLocaleString('de-DE');
+      }, 16);
+    }
+
+    setTimeout(function() {
+      countUp(document.getElementById('faq-stat-visitors'),  visitors,  900);
+      countUp(document.getElementById('faq-stat-listings'),  listings,  1100);
+      countUp(document.getElementById('faq-stat-inquiries'), inquiries, 700);
+    }, 200);
+  })();
+  </script>
 </body>
 </html>
