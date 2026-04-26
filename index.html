@@ -636,6 +636,179 @@
     font-family: 'Outfit', Arial, sans-serif;
   }
 
+    /* ══════════════════════════════════════
+       FAQ — Industrial Bold Design
+    ══════════════════════════════════════ */
+    /* ══════════════════════════════════════
+       FAQ — Photo Hero Design
+    ══════════════════════════════════════ */
+    .faq-panel {
+      padding: 0; overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: var(--r);
+      background: #fff;
+    }
+
+    /* ── Hero mit Foto rechts ── */
+    .faq-hero {
+      position: relative;
+      min-height: 280px;
+      display: flex; align-items: stretch;
+      background: #0d1b2a;
+      overflow: hidden;
+    }
+    /* Linke Inhaltsseite */
+    .faq-hero-content {
+      position: relative; z-index: 2;
+      flex: 0 0 55%;
+      padding: 40px 44px 36px;
+      display: flex; flex-direction: column; justify-content: center;
+      background: linear-gradient(105deg,
+        #0d1b2a 0%,
+        #0d1b2a 70%,
+        rgba(13,27,42,0.96) 85%,
+        rgba(13,27,42,0.0) 100%
+      );
+    }
+    /* Foto rechts */
+    .faq-hero-photo {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 58%;
+      background: url('faq-hero-bg.jpg') center center / cover no-repeat;
+    }
+    /* Übergangs-Gradient vom Foto zur dunklen Seite */
+    .faq-hero-photo::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right,
+        #0d1b2a 0%,
+        rgba(13,27,42,0.55) 35%,
+        rgba(13,27,42,0.0) 65%
+      );
+    }
+
+    .faq-hero-label {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(77,166,255,0.15);
+      border: 1px solid rgba(77,166,255,0.35);
+      color: var(--sky); font-size: 11px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      padding: 5px 13px; border-radius: 999px;
+      margin-bottom: 16px; width: fit-content;
+    }
+    .faq-hero-label::before { content: '⚙'; font-size: 12px; }
+
+    .faq-hero-content h2 {
+      font-size: clamp(20px, 2.6vw, 30px);
+      font-weight: 800; color: #fff;
+      line-height: 1.2; letter-spacing: -.4px;
+      margin-bottom: 10px;
+    }
+    .faq-hero-content h2 span { color: var(--sky); }
+
+    .faq-hero-sub {
+      font-size: 13.5px; color: rgba(255,255,255,0.52);
+      line-height: 1.6; max-width: 380px;
+      margin-bottom: 22px;
+    }
+    .faq-count-row {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .faq-count-pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; padding: 8px 18px;
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 72px;
+    }
+    .faq-count-pill strong {
+      font-size: 19px; font-weight: 800; color: var(--sky); line-height: 1;
+    }
+    .faq-count-pill span {
+      font-size: 10.5px; color: rgba(255,255,255,0.4);
+      margin-top: 3px; letter-spacing: .3px;
+    }
+
+    /* ── Fragen-Grid ── */
+    .faq-body {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .faq-item {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      transition: background .15s;
+      position: relative;
+    }
+    .faq-item:nth-child(even) { border-right: none; }
+    .faq-item::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--blue), var(--sky));
+      opacity: 0; transition: opacity .2s;
+    }
+    .faq-item.open::before,
+    .faq-item:hover::before { opacity: 1; }
+    .faq-item.open { background: #f0f6ff; }
+
+    .faq-q {
+      width: 100%; display: flex; align-items: center;
+      justify-content: space-between; gap: 10px;
+      padding: 16px 18px 16px 20px;
+      background: none; border: none;
+      cursor: pointer; text-align: left;
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 13.5px; font-weight: 600;
+      color: var(--dark); line-height: 1.4;
+    }
+    .faq-q-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 26px; height: 26px;
+      background: var(--light); border-radius: 7px;
+      font-size: 10px; font-weight: 800; color: var(--blue);
+      flex-shrink: 0; transition: background .2s, color .2s;
+    }
+    .faq-item.open .faq-q-num,
+    .faq-item:hover .faq-q-num { background: var(--blue); color: #fff; }
+    .faq-q-text { flex: 1; }
+    .faq-icon {
+      flex-shrink: 0; width: 24px; height: 24px;
+      display: grid; place-items: center;
+      border-radius: 50%; background: var(--border);
+      color: var(--muted); font-size: 14px; font-weight: 400;
+      transition: background .2s, color .2s, transform .25s;
+    }
+    .faq-item.open .faq-icon {
+      background: var(--blue); color: #fff; transform: rotate(45deg);
+    }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .32s cubic-bezier(.4,0,.2,1);
+    }
+    .faq-item.open .faq-a { max-height: 300px; }
+    .faq-a-inner {
+      margin: 0 18px; padding: 12px 16px 16px 56px;
+      font-size: 13px; color: var(--muted); line-height: 1.7;
+      border-top: 1px dashed var(--border);
+    }
+
+    @media (max-width: 860px) {
+      .faq-hero-content { flex: 0 0 70%; padding: 30px 28px; }
+      .faq-hero-photo { width: 45%; }
+    }
+    @media (max-width: 620px) {
+      .faq-hero { min-height: auto; }
+      .faq-hero-content { flex: 1; padding: 28px 20px; background: linear-gradient(105deg,#0d1b2a 0%,#0d1b2a 100%); }
+      .faq-hero-photo { display: none; }
+      .faq-body { grid-template-columns: 1fr; }
+      .faq-item { border-right: none; }
+      .faq-a-inner { padding-left: 18px; margin: 0 12px; }
+    }
+
 </style>
   <script type="application/ld+json">
   {
@@ -927,33 +1100,252 @@
       </div>
     </div>
 
-    <!-- Features -->
-    <div class="panel">
-      <div class="features-grid">
-        <div class="feature-item">
-          <div class="feature-icon">✅</div>
-          <h4>Geprüfte Händler</h4>
-          <p>Verifizierte Verkäuferprofile und transparente Bewertungen für mehr Vertrauen.</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon">📂</div>
-          <h4>101+ Kategorien</h4>
-          <p>Fahrzeug-, Industrie-, Boots- und Spezialmotoren auf einer Plattform.</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon">🚚</div>
-          <h4>Speditionsoptionen</h4>
-          <p>Europaweit. Ideal für schwere Motoren, Maschinen und Baugruppen.</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon">💎</div>
-          <h4>Keine Provision</h4>
-          <p>Direktkontakt zwischen Käufer und Händler. Keine versteckten Kosten.</p>
+    <!-- FAQ -->
+    <div class="faq-panel">
+
+      <!-- Hero mit Foto rechts -->
+      <div class="faq-hero">
+        <div class="faq-hero-photo"></div>
+        <div class="faq-hero-content">
+          <div class="faq-hero-label">Häufige Fragen</div>
+          <h2>Alles über <span>gebrauchte &amp;<br>generalüberholte</span> Motoren</h2>
+          <p class="faq-hero-sub">Antworten auf die wichtigsten Fragen rund um Kauf, Einbau und Betrieb.</p>
+          <div class="faq-count-row">
+            <div class="faq-count-pill"><strong>20</strong><span>Fragen</span></div>
+            <div class="faq-count-pill"><strong>5 Min</strong><span>Lesezeit</span></div>
+            <div class="faq-count-pill"><strong>DE/EN/FR</strong><span>Plattform</span></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Newsletter -->
+      <!-- Questions Grid -->
+      <div class="faq-body">
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">01</span>
+            <span class="faq-q-text">Was kostet ein gebrauchter Motor?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Die Kosten hängen von Typ, Leistung, Zustand, Laufzeit und Einsatzbereich ab. Gebrauchte und generalüberholte Motoren können eine wirtschaftliche Alternative zu Neuteilen sein.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">02</span>
+            <span class="faq-q-text">Lohnt sich ein Austauschmotor?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Ein Austauschmotor lohnt sich oft, wenn die bestehende Maschine oder das Fahrzeug ansonsten in gutem Zustand ist und eine Reparatur wirtschaftlich sinnvoll bleibt.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">03</span>
+            <span class="faq-q-text">Ist ein gebrauchter Motor sicher?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Ein geprüfter Motor aus seriöser Quelle kann zuverlässig und sicher eingesetzt werden. Wichtig sind Zustand, Historie und technische Prüfung.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">04</span>
+            <span class="faq-q-text">Woran erkenne ich einen seriösen Verkäufer?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Wichtig sind transparente Angaben, nachvollziehbare Herkunft, echte Bilder, Prüfungen und klare Informationen zu Zustand und Garantie.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">05</span>
+            <span class="faq-q-text">Welche Garantie sollte ein gebrauchter Motor haben?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Je nach Kategorie und Anbieter sind Garantien oder Gewährleistungen möglich. Generalüberholte Motoren bieten häufig zusätzliche Sicherheit.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">06</span>
+            <span class="faq-q-text">Passt dieser Motor zu meiner Anwendung?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Entscheidend sind technische Daten, Maße, Anschlüsse, Leistung und Kompatibilität mit dem vorhandenen System.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">07</span>
+            <span class="faq-q-text">Wo finde ich wichtige technische Kennzeichnungen?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Kennzeichnungen befinden sich oft auf Typenschildern, am Gehäuse, in Unterlagen oder auf Herstellerdatenblättern.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">08</span>
+            <span class="faq-q-text">Kann ich einen Motor mit anderer Teilenummer verwenden?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">In manchen Fällen ja, wenn technische Gleichwertigkeit vorliegt. Abweichungen sollten vor Einsatz fachlich geprüft werden.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">09</span>
+            <span class="faq-q-text">Passt ein Motor trotz anderer Baujahre oder Versionen?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Unterschiede bei Baujahr, Revision oder Ausführung können relevant sein. Eine technische Prüfung vor dem Kauf ist empfehlenswert.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">10</span>
+            <span class="faq-q-text">Sind Anpassungen oder Zusatzkomponenten nötig?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Je nach Anwendung können Steuerungen, Anschlüsse oder weitere Komponenten angepasst werden müssen.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">11</span>
+            <span class="faq-q-text">Wie viel Laufleistung oder Betriebszeit ist akzeptabel?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Nicht nur Betriebsstunden oder Laufleistung zählen, sondern vor allem Wartung, Pflege und Gesamtzustand.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">12</span>
+            <span class="faq-q-text">Ist Wartung wichtiger als Laufleistung?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Regelmäßige Wartung und dokumentierte Pflege sind oft wichtiger als reine Betriebsstunden.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">13</span>
+            <span class="faq-q-text">Was ist besser: gebraucht oder generalüberholt?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Generalüberholte Motoren bieten meist mehr Sicherheit, gebrauchte Aggregate können dafür wirtschaftlicher sein.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">14</span>
+            <span class="faq-q-text">Woran erkenne ich mögliche Schäden vor dem Kauf?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Wichtige Hinweise liefern Sichtprüfung, Prüfprotokolle, Geräusche, Verschleißspuren und Historie.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">15</span>
+            <span class="faq-q-text">Welche Unterlagen sollte ein Motor haben?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Hilfreich sind technische Datenblätter, Prüfnachweise, Wartungsunterlagen und Herkunftsnachweise.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">16</span>
+            <span class="faq-q-text">Was kostet der Einbau?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Einbaukosten hängen stark von Komplexität, Anwendung und erforderlichen Zusatzarbeiten ab.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">17</span>
+            <span class="faq-q-text">Sollten Verschleißteile gleich mit erneuert werden?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Bei vielen Anwendungen ist es sinnvoll, relevante Verschleißteile beim Austausch direkt mit zu erneuern.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">18</span>
+            <span class="faq-q-text">Wie lange hält ein gebrauchter Motor?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Bei guter Wartung und passender Nutzung kann ein gebrauchter Motor noch lange zuverlässig arbeiten.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">19</span>
+            <span class="faq-q-text">Kann ich einen Motor selbst einbauen?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Das hängt von Erfahrung und Komplexität ab. Bei anspruchsvollen Anwendungen empfiehlt sich Fachpersonal.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span class="faq-q-num">20</span>
+            <span class="faq-q-text">Was ist nach dem Austausch zu beachten?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Nach Einbau sollten Funktionen, Anschlüsse, Betriebsmedien und Einstellungen geprüft werden.</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /faq-panel -->
+
+        <!-- Newsletter -->
     <div class="panel">
       <div class="newsletter-inner">
         <div>
@@ -1035,10 +1427,26 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="category-images.js"></script>
 <script src="index-live.js"></script>
 <script src="auth-header.js"></script>
   <script src="i18n.js"></script>
+  <script>
+  // FAQ Accordion – smooth max-height animation
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+  </script>
 <script>
   // Mobile Hamburger
   document.getElementById("mob-toggle")?.addEventListener("click", () => {
