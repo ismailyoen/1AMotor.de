@@ -202,14 +202,19 @@
       padding: 80px 0 72px;
       position: relative; overflow: hidden;
     }
-    /* Hero Hintergrundbild */
+    /* Hero Hintergrundbild – Motorenhalle mit Recycling-Zeichen */
     .hero-bg {
       position: absolute; inset: 0;
       background-image: 
-        linear-gradient(to right, rgba(13,27,42,0.92) 0%, rgba(13,27,42,0.60) 40%, rgba(13,27,42,0.20) 100%),
+        linear-gradient(to right,
+          rgba(13,27,42,0.93) 0%,
+          rgba(13,27,42,0.75) 35%,
+          rgba(13,27,42,0.35) 62%,
+          rgba(13,27,42,0.10) 100%
+        ),
         url("hero-bg.png");
       background-size: cover;
-      background-position: center center;
+      background-position: 60% center;
       background-repeat: no-repeat;
       z-index: 0;
     }
