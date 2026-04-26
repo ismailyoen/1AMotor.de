@@ -655,39 +655,31 @@
       position: relative;
       min-height: 280px;
       display: flex; align-items: stretch;
-      background: #0d1b2a;
       overflow: hidden;
+      /* Foto als vollflächiger Hintergrund */
+      background: url('faq-hero-bg.jpg') center center / cover no-repeat;
     }
-    /* Linke Inhaltsseite */
-    .faq-hero-content {
-      position: relative; z-index: 2;
-      flex: 0 0 55%;
-      padding: 40px 44px 36px;
-      display: flex; flex-direction: column; justify-content: center;
-      background: linear-gradient(105deg,
-        #0d1b2a 0%,
-        #0d1b2a 70%,
-        rgba(13,27,42,0.96) 85%,
+    /* Sanfter Verlauf von links dunkel nach rechts transparent */
+    .faq-hero::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(to right,
+        rgba(13,27,42,0.97) 0%,
+        rgba(13,27,42,0.88) 30%,
+        rgba(13,27,42,0.55) 52%,
+        rgba(13,27,42,0.18) 70%,
         rgba(13,27,42,0.0) 100%
       );
     }
-    /* Foto rechts */
-    .faq-hero-photo {
-      position: absolute;
-      right: 0; top: 0; bottom: 0;
-      width: 58%;
-      background: url('faq-hero-bg.jpg') center center / cover no-repeat;
+    /* Linke Inhaltsseite – kein eigener Hintergrund mehr */
+    .faq-hero-content {
+      position: relative; z-index: 2;
+      flex: 0 0 58%;
+      padding: 40px 44px 36px;
+      display: flex; flex-direction: column; justify-content: center;
     }
-    /* Übergangs-Gradient vom Foto zur dunklen Seite */
-    .faq-hero-photo::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(to right,
-        #0d1b2a 0%,
-        rgba(13,27,42,0.55) 35%,
-        rgba(13,27,42,0.0) 65%
-      );
-    }
+    /* Foto-Div nicht mehr nötig, bleibt aber als leeres Element */
+    .faq-hero-photo { display: none; }
 
     .faq-hero-label {
       display: inline-flex; align-items: center; gap: 7px;
@@ -801,9 +793,9 @@
       .faq-hero-photo { width: 45%; }
     }
     @media (max-width: 620px) {
-      .faq-hero { min-height: auto; }
-      .faq-hero-content { flex: 1; padding: 28px 20px; background: linear-gradient(105deg,#0d1b2a 0%,#0d1b2a 100%); }
-      .faq-hero-photo { display: none; }
+      .faq-hero { min-height: auto; background-position: right center; }
+      .faq-hero-content { flex: 1; padding: 28px 20px; }
+      .faq-hero::after { background: linear-gradient(to right, rgba(13,27,42,0.98) 0%, rgba(13,27,42,0.92) 50%, rgba(13,27,42,0.75) 100%); }
       .faq-body { grid-template-columns: 1fr; }
       .faq-item { border-right: none; }
       .faq-a-inner { padding-left: 18px; margin: 0 12px; }
