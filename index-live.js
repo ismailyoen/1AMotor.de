@@ -202,12 +202,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? listing.image_urls[0]
         : null;
 
-      const safeImage = firstImage || "";
-      const imageStyle = safeImage
-        ? `style="background-image:url('${safeImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
+      // Kategoriebild als Fallback wenn kein eigenes Bild vorhanden
+      const fallbackImg = window.getCategoryImage ? window.getCategoryImage(category) : null;
+      const displayImage = firstImage || fallbackImg;
+
+      const imageStyle = displayImage
+        ? `style="background-image:url('${displayImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
         : "";
 
-      const imageContent = firstImage ? "" : getCategoryIcon(category);
+      const imageContent = displayImage ? "" : getCategoryIcon(category);
 
       return `
         <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(listing.id)}">

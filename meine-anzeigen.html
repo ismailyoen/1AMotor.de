@@ -199,6 +199,7 @@ a{text-decoration:none;color:inherit;}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
+<script src="category-images.js"></script>
 <script src="auth-header.js"></script>
 <script>
 // ═══════════════════════════════════════
@@ -273,11 +274,15 @@ function renderGrid(listings){
   grid.innerHTML = listings.map(l=>{
     const cat = Array.isArray(l.categories)?l.categories[0]?.name:l.categories?.name||"";
     const img = Array.isArray(l.image_urls)&&l.image_urls[0];
+    // Kategoriebild als Fallback wenn kein eigenes Bild vorhanden
+    const catImg = !img && window.getCategoryImage ? window.getCategoryImage(cat) : null;
     const price = Number(l.price||0).toLocaleString("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0});
     const sbClass = l.status==="Freigegeben"?"sb-approved":l.status==="Entwurf"?"sb-draft":"sb-pending";
     const imgEl = img
       ? `<img src="${esc(img)}" alt="" loading="lazy" />`
-      : `<span style="font-size:36px;">${getIcon(cat)}</span>`;
+      : catImg
+        ? `<img src="${esc(catImg)}" alt="" loading="lazy" />`
+        : `<span style="font-size:36px;">${getIcon(cat)}</span>`;
     return `<div class="listing-card" data-id="${l.id}">
       <div class="card-image">
         ${imgEl}

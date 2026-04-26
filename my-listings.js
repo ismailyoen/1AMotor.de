@@ -99,12 +99,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       var price = Number(listing.price || 0).toLocaleString("de-DE", { style:"currency", currency:"EUR" });
       var date  = new Date(listing.created_at).toLocaleDateString("de-DE");
       var firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length ? listing.image_urls[0] : null;
-      var imageStyle = firstImage ? "background-image:url('" + firstImage + "');background-size:cover;background-position:center;" : "";
+      // Kategoriebild als Fallback wenn kein eigenes Bild vorhanden
+      var fallbackImg = window.getCategoryImage ? window.getCategoryImage(category) : null;
+      var displayImage = firstImage || fallbackImg;
+      var imageStyle = displayImage ? "background-image:url('" + displayImage + "');background-size:cover;background-position:center;" : "";
       var badgeClass = listing.status === "Freigegeben" ? "approved" : listing.status === "Entwurf" ? "draft" : "pending";
 
       return '<div class="listing-card">' +
         '<div class="card-image" style="' + imageStyle + '">' +
-          (firstImage ? "" : "<span style='font-size:44px;'>⚙️</span>") +
+          (displayImage ? "" : "<span style='font-size:44px;'>⚙️</span>") +
           '<span class="badge ' + badgeClass + '">' + escapeHtml(listing.status || "-") + '</span>' +
         '</div>' +
         '<div class="card-body">' +
