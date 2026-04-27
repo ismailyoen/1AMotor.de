@@ -5,80 +5,93 @@
   <!-- ══ Startseite ══ -->
   <url>
     <loc>https://1amotor.de/</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="de" href="https://1amotor.de/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://1amotor.de/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://1amotor.de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://1amotor.de/"/>
   </url>
 
   <!-- ══ Suche ══ -->
   <url>
     <loc>https://1amotor.de/suche.html</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
 
-  <!-- ══ Kategorie-Seiten (parametrisierte URLs) ══ -->
+  <!-- ══ Kategorie-Seiten ══ -->
   <url>
     <loc>https://1amotor.de/suche.html?category=Automotor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Industriemotor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=LKW+Motor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Bootsmotor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Austauschmotor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Elektromotor+Auto</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Dieselmotor+Auto</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://1amotor.de/suche.html?category=Motorradmotor</loc>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Asynchronmotor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Aufzugmotor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?category=Flugzeugmotor</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://1amotor.de/suche.html?category=Bootsmotor</loc>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.80</priority>
   </url>
@@ -86,51 +99,59 @@
   <!-- ══ Zustand-Filter ══ -->
   <url>
     <loc>https://1amotor.de/suche.html?condition=Neu</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://1amotor.de/suche.html?condition=Gebraucht</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://1amotor.de/suche.html?condition=Generalüberholt</loc>
-    <lastmod>2026-04-19</lastmod>
+    <loc>https://1amotor.de/suche.html?condition=Generalueberholt</loc>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
+  </url>
+
+  <!-- ══ Dashboard / Händlerbereich ══ -->
+  <url>
+    <loc>https://1amotor.de/dashboard.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
   </url>
 
   <!-- ══ Statische Seiten ══ -->
   <url>
     <loc>https://1amotor.de/registrieren.html</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://1amotor.de/kontakt.html</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
   </url>
   <url>
     <loc>https://1amotor.de/agb.html</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.35</priority>
   </url>
   <url>
     <loc>https://1amotor.de/datenschutz.html</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.35</priority>
   </url>
   <url>
     <loc>https://1amotor.de/impressum.html</loc>
-    <lastmod>2026-04-19</lastmod>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
   </url>

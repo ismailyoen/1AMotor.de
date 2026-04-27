@@ -1,1 +1,39 @@
-{"name":"","short_name":"","icons":[{"src":"/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}],"theme_color":"#ffffff","background_color":"#ffffff","display":"standalone"}
+{
+  "name": "1A Motor – Motorenmarktplatz",
+  "short_name": "1A Motor",
+  "description": "Gebrauchte & generalüberholte Motoren kaufen und verkaufen. Fahrzeug-, Industrie- und Bootsmotoren.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#1a6fc4",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "automotive"],
+  "shortcuts": [
+    {
+      "name": "Motor suchen",
+      "short_name": "Suchen",
+      "url": "/suche.html",
+      "description": "Motoren durchsuchen"
+    },
+    {
+      "name": "Anzeige erstellen",
+      "short_name": "Inserieren",
+      "url": "/dashboard.html",
+      "description": "Motor inserieren"
+    }
+  ]
+}
