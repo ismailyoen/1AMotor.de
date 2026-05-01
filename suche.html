@@ -932,15 +932,9 @@ img { max-width: 100%; display: block; }
             <span class="filter-group-arrow">▼</span>
           </div>
           <div class="filter-group-body">
-            <div class="filter-options">
-              <label class="filter-option"><input type="checkbox" name="typ" value="Automotor" /> Automotor <span class="filter-count">412</span></label>
-              <label class="filter-option"><input type="checkbox" name="typ" value="LKW Motor" /> LKW Motor <span class="filter-count">187</span></label>
-              <label class="filter-option"><input type="checkbox" name="typ" value="Industriemotor" /> Industriemotor <span class="filter-count">143</span></label>
-              <label class="filter-option"><input type="checkbox" name="typ" value="Bootsmotor" /> Bootsmotor <span class="filter-count">89</span></label>
-              <label class="filter-option"><input type="checkbox" name="typ" value="Elektromotor" /> Elektromotor <span class="filter-count">64</span></label>
-              <label class="filter-option"><input type="checkbox" name="typ" value="Traktormotor" /> Traktormotor <span class="filter-count">52</span></label>
-              <label class="filter-option"><input type="checkbox" name="typ" value="Baumaschinenmotor" /> Baumaschinenmotor <span class="filter-count">38</span></label>
-              <label class="filter-option"><input type="checkbox" name="typ" value="Generatormotor" /> Generatormotor <span class="filter-count">27</span></label>
+            <div class="filter-options" id="sidebar-category-list">
+              <!-- Wird von suche-live.js dynamisch befüllt -->
+              <div style="font-size:13px;color:var(--muted);padding:4px 0;">Wird geladen…</div>
             </div>
           </div>
         </div>
@@ -1141,7 +1135,7 @@ img { max-width: 100%; display: block; }
 
         <!-- Mobile Filter Toggle -->
         <button class="mob-filter-btn" id="mob-filter-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px;"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
           Filter anzeigen
         </button>
 
@@ -1185,79 +1179,216 @@ img { max-width: 100%; display: block; }
 <script src="suche-live.js"></script>
 <script src="auth-header.js"></script>
 <script>
-// ── Burger Menu ──────────────────────────────
-const burgerBtn  = document.getElementById('burger-btn');
-const mobileNav  = document.getElementById('mobile-nav');
-const mobSearch  = document.getElementById('mobile-search');
+// ════════════════════════════════════════════════
+// HELPER: URL-Parameter lesen / setzen
+// ════════════════════════════════════════════════
+function getParams() { return new URLSearchParams(window.location.search); }
 
-burgerBtn?.addEventListener('click', () => {
-  const open = mobileNav.classList.toggle('open');
-  burgerBtn.classList.toggle('open', open);
-  mobSearch.style.display = open ? 'block' : 'none';
-});
-
-// ── View Toggle ──────────────────────────────
-const gridBtn = document.getElementById('grid-view-btn');
-const listBtn = document.getElementById('list-view-btn');
-const grid    = document.getElementById('search-results');
-
-gridBtn?.addEventListener('click', () => {
-  grid?.classList.remove('list-view');
-  gridBtn.classList.add('active');
-  listBtn.classList.remove('active');
-  localStorage.setItem('search_view', 'grid');
-});
-listBtn?.addEventListener('click', () => {
-  grid?.classList.add('list-view');
-  listBtn.classList.add('active');
-  gridBtn.classList.remove('active');
-  localStorage.setItem('search_view', 'list');
-});
-if (localStorage.getItem('search_view') === 'list') {
-  grid?.classList.add('list-view');
-  listBtn?.classList.add('active');
-  gridBtn?.classList.remove('active');
+function navigate(params) {
+  const qs = params.toString();
+  window.location.href = qs ? 'suche.html?' + qs : 'suche.html';
 }
 
-// ── Mobile Filter Toggle ─────────────────────
-const mobFilterBtn = document.getElementById('mob-filter-btn');
-const sidebar      = document.getElementById('sidebar');
-mobFilterBtn?.addEventListener('click', () => {
-  const open = sidebar.classList.toggle('mobile-open');
-  mobFilterBtn.textContent = open ? 'Filter schließen' : 'Filter anzeigen';
-});
+// ── Pre-fill filters from URL on load ──────────
+(function initFromURL() {
+  const p = getParams();
 
-// ── Accordion ────────────────────────────────
+  // Zustand checkboxen
+  const cond = (p.get('condition') || '').split(',').filter(Boolean);
+  cond.forEach(v => {
+    const cb = document.querySelector(`input[name="zustand"][value="${v}"]`);
+    if (cb) cb.checked = true;
+  });
+
+  // Preis
+  if (p.get('price_min')) document.getElementById('price-min').value = p.get('price_min');
+  if (p.get('price_max')) document.getElementById('price-max').value = p.get('price_max');
+
+  // Sort
+  if (p.get('sort')) {
+    const sel = document.getElementById('sort-select');
+    if (sel) sel.value = p.get('sort');
+  }
+
+  // Quick-chips: mark active based on URL category
+  const urlCat = p.get('category') || '';
+  if (urlCat) {
+    document.querySelectorAll('.quick-chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.quick-chip').forEach(c => {
+      if (urlCat.toLowerCase().includes(c.dataset.type?.toLowerCase() || '__')) {
+        c.classList.add('active');
+      }
+    });
+  }
+
+  // Active filter tags anzeigen
+  renderActiveTags();
+})();
+
+// ── Active filter tags ──────────────────────────
+function renderActiveTags() {
+  const p = getParams();
+  const container = document.getElementById('active-filters');
+  if (!container) return;
+  const tags = [];
+
+  const cat = p.get('category');
+  if (cat) tags.push({ label: cat, remove: () => { p.delete('category'); navigate(p); } });
+
+  const q = p.get('q');
+  if (q) tags.push({ label: '🔍 ' + q, remove: () => { p.delete('q'); navigate(p); } });
+
+  const cond = (p.get('condition') || '').split(',').filter(Boolean);
+  cond.forEach(c => tags.push({ label: c, remove: () => {
+    const rest = cond.filter(x => x !== c);
+    rest.length ? p.set('condition', rest.join(',')) : p.delete('condition');
+    navigate(p);
+  }}));
+
+  const pmin = p.get('price_min'), pmax = p.get('price_max');
+  if (pmin || pmax) {
+    const label = (pmin ? pmin + ' €' : '0 €') + ' – ' + (pmax ? pmax + ' €' : '∞');
+    tags.push({ label: '💶 ' + label, remove: () => { p.delete('price_min'); p.delete('price_max'); navigate(p); } });
+  }
+
+  if (!tags.length) {
+    container.classList.remove('show');
+    return;
+  }
+  container.classList.add('show');
+  container.innerHTML = tags.map((t, i) => `
+    <span class="filter-tag">${t.label}
+      <button onclick="removeTag(${i})" title="Entfernen">×</button>
+    </span>`).join('');
+  // store removers
+  window._tagRemovers = tags.map(t => t.remove);
+}
+
+window.removeTag = function(i) {
+  window._tagRemovers?.[i]?.();
+};
+
+// ── Accordion ──────────────────────────────────
 function toggleGroup(id) {
   document.getElementById(id)?.classList.toggle('open');
 }
 
-// ── Quick Filter Chips ───────────────────────
+// ── Burger Menu ────────────────────────────────
+(function initBurger() {
+  const burgerBtn = document.getElementById('burger-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  const mobSearch = document.getElementById('mobile-search');
+  burgerBtn?.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    burgerBtn.classList.toggle('open', open);
+    if (mobSearch) mobSearch.style.display = open ? 'block' : 'none';
+  });
+})();
+
+// ── View Toggle ────────────────────────────────
+(function initViewToggle() {
+  const gridBtn = document.getElementById('grid-view-btn');
+  const listBtn = document.getElementById('list-view-btn');
+  const grid    = document.getElementById('search-results');
+  gridBtn?.addEventListener('click', () => {
+    grid?.classList.remove('list-view');
+    gridBtn.classList.add('active'); listBtn.classList.remove('active');
+    localStorage.setItem('search_view', 'grid');
+  });
+  listBtn?.addEventListener('click', () => {
+    grid?.classList.add('list-view');
+    listBtn.classList.add('active'); gridBtn.classList.remove('active');
+    localStorage.setItem('search_view', 'list');
+  });
+  if (localStorage.getItem('search_view') === 'list') {
+    grid?.classList.add('list-view');
+    listBtn?.classList.add('active');
+    gridBtn?.classList.remove('active');
+  }
+})();
+
+// ── Mobile Filter Toggle ───────────────────────
+(function initMobFilter() {
+  const btn     = document.getElementById('mob-filter-btn');
+  const sidebar = document.getElementById('sidebar');
+  btn?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('mobile-open');
+    btn.innerHTML = open
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg> Filter schließen'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M7 12h10M11 18h2"/></svg> Filter anzeigen';
+  });
+})();
+
+// ── Quick Filter Chips → URL navigation ────────
 document.querySelectorAll('.quick-chip').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.quick-chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
-    // trigger filter logic via suche-live.js if available
     const type = chip.dataset.type;
-    if (typeof window.filterByType === 'function') window.filterByType(type);
+    const p = getParams();
+    if (!type || type === 'all') {
+      p.delete('category');
+    } else {
+      // Map chip type to category name
+      const catMap = {
+        'Automotor':  'Automotor',
+        'LKW':        'LKW Motor',
+        'Industrie':  'Industriemotor',
+        'Boot':       'Bootsmotor',
+        'Elektro':    'Elektromotor',
+        'Traktor':    'Traktormotor',
+        'Diesel':     'Diesel',
+        'Benzin':     'Benzin',
+        'WANTED':     'Gesuch'
+      };
+      const cat = catMap[type] || type;
+      p.set('category', cat);
+    }
+    navigate(p);
   });
 });
 
-// ── Hero Search Bar ──────────────────────────
+// ── Zustand checkboxen → URL navigation ────────
+document.querySelectorAll("input[name='zustand']").forEach(cb => {
+  cb.addEventListener('change', () => {
+    const checked = [...document.querySelectorAll("input[name='zustand']:checked")].map(c => c.value);
+    const p = getParams();
+    checked.length ? p.set('condition', checked.join(',')) : p.delete('condition');
+    navigate(p);
+  });
+});
+
+// ── Preisfilter → URL navigation ───────────────
+document.getElementById('apply-price')?.addEventListener('click', () => {
+  const min = document.getElementById('price-min')?.value.trim();
+  const max = document.getElementById('price-max')?.value.trim();
+  const p = getParams();
+  min ? p.set('price_min', min) : p.delete('price_min');
+  max ? p.set('price_max', max) : p.delete('price_max');
+  navigate(p);
+});
+// Also trigger on Enter in price fields
+['price-min', 'price-max'].forEach(id => {
+  document.getElementById(id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('apply-price')?.click();
+  });
+});
+
+// ── Sortierung → URL navigation ────────────────
+document.getElementById('sort-select')?.addEventListener('change', function() {
+  const p = getParams();
+  this.value ? p.set('sort', this.value) : p.delete('sort');
+  navigate(p);
+});
+
+// ── Hero Suche ─────────────────────────────────
 function doHeroSearch() {
-  const q = document.getElementById('hero-search-input')?.value.trim();
+  const q   = document.getElementById('hero-search-input')?.value.trim();
   const cat = document.getElementById('hero-category-select')?.value;
-  // Sync with header search inputs and trigger existing search logic
-  const headerInput = document.getElementById('search-input');
-  const headerCat   = document.getElementById('category-filter');
-  if (headerInput && q) headerInput.value = q;
-  if (headerCat  && cat) headerCat.value  = cat;
-  if (typeof window.runSearch === 'function') {
-    window.runSearch();
-  } else {
-    // Scroll to results if no live-search function available
-    document.querySelector('.search-layout')?.scrollIntoView({ behavior: 'smooth' });
-  }
+  const p   = getParams();
+  q   ? p.set('q', q)        : p.delete('q');
+  cat ? p.set('category', cat): p.delete('category');
+  navigate(p);
 }
 document.getElementById('hero-search-btn')?.addEventListener('click', doHeroSearch);
 document.getElementById('hero-search-input')?.addEventListener('keydown', e => {
@@ -1270,10 +1401,8 @@ document.querySelectorAll('.hero-hint').forEach(hint => {
   });
 });
 
-// ── Filter Reset ─────────────────────────────
+// ── Filter Zurücksetzen ────────────────────────
 document.getElementById('filter-reset')?.addEventListener('click', () => {
-  document.querySelectorAll('.sidebar input[type="checkbox"], .sidebar input[type="radio"]').forEach(i => i.checked = false);
-  document.querySelectorAll('#price-min, #price-max, #hubraum-min, #hubraum-max').forEach(i => i.value = '');
   window.location.href = 'suche.html';
 });
 </script>
