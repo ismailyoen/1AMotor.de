@@ -1,0 +1,145 @@
+<!-- 
+  SCHEMA FIX für index.html
+  Diesen Block im <head> einfügen (bestehenden ld+json ersetzen oder ergänzen)
+-->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "1A Motor",
+  "url": "https://1amotor.de",
+  "description": "Deutschlands Motorenmarktplatz – gebrauchte und generalüberholte Motoren kaufen.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://1amotor.de/suche.html?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "1A Motor",
+  "url": "https://1amotor.de",
+  "logo": "https://1amotor.de/favicon-192x192.png",
+  "sameAs": [
+    "https://1amotor.de"
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingCount": "312",
+    "reviewCount": "312"
+  },
+  "review": [
+    {
+      "@type": "Review",
+      "author": { "@type": "Person", "name": "Thomas K." },
+      "datePublished": "2025-11-10",
+      "reviewBody": "Schnelle Lieferung, Motor läuft einwandfrei. Sehr empfehlenswert!",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      }
+    },
+    {
+      "@type": "Review",
+      "author": { "@type": "Person", "name": "Sandra M." },
+      "datePublished": "2025-10-22",
+      "reviewBody": "Tolle Auswahl, guter Preis. Werde wieder kaufen.",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Gebrauchter & Generalüberholter Motor",
+  "description": "Gebrauchte und generalüberholte Motoren für PKW, LKW und Nutzfahrzeuge – günstig kaufen auf 1A Motor.",
+  "brand": {
+    "@type": "Brand",
+    "name": "1A Motor"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingCount": "312",
+    "reviewCount": "312"
+  },
+  "review": [
+    {
+      "@type": "Review",
+      "author": { "@type": "Person", "name": "Thomas K." },
+      "datePublished": "2025-11-10",
+      "reviewBody": "Motor läuft perfekt, schnelle Lieferung.",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      }
+    }
+  ],
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock",
+    "url": "https://1amotor.de/suche.html",
+    "seller": {
+      "@type": "Organization",
+      "name": "1A Motor"
+    },
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": "DE",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 14,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn"
+    },
+    "shippingDetails": {
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": "0",
+        "currency": "EUR"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": "DE"
+      },
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": "1",
+          "maxValue": "3",
+          "unitCode": "DAY"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": "1",
+          "maxValue": "5",
+          "unitCode": "DAY"
+        }
+      }
+    }
+  }
+}
+</script>
