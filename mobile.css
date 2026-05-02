@@ -1,0 +1,505 @@
+/*
+ * 1A Motor — mobile.css
+ * Eingebunden in alle Seiten per <link rel="stylesheet" href="mobile.css">
+ * Greift nur bei ≤ 768px — überschreibt keine Desktop-Styles
+ */
+
+/* ══════════════════════════════════════════════════════
+   1. CSS RESET & BASICS
+══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Scroll-Verhalten */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { overflow-x: hidden; }
+
+  /* Touch-freundliche Tap-Targets */
+  a, button { min-height: 44px; }
+
+  /* Container padding anpassen */
+  .container { padding: 0 16px !important; }
+
+/* ══════════════════════════════════════════════════════
+   2. TOPBAR — auf Mobile ausblenden (zu klein)
+══════════════════════════════════════════════════════ */
+  .topbar { display: none !important; }
+
+/* ══════════════════════════════════════════════════════
+   3. HEADER — vereinfacht, Hamburger sichtbar
+══════════════════════════════════════════════════════ */
+  .header-inner { padding: 10px 0 !important; gap: 12px !important; }
+
+  /* Suche auf Mobile ausblenden (eigene Mobile-Suche vorhanden) */
+  .search-bar { display: none !important; }
+
+  /* Desktop-Buttons im Header ausblenden */
+  .header-right .hdr-btn-ghost,
+  .header-right .hdr-btn-outline,
+  .header-right .hdr-btn,
+  .header-right a { display: none !important; }
+
+  /* Nur Hamburger + Avatar sichtbar lassen */
+  .mob-toggle { display: flex !important; }
+  .header-right .auth-avatar-wrapper { display: block !important; }
+  .header-right a:last-of-type { display: inline-flex !important; }
+
+  /* Logo kleiner */
+  .logo-name { font-size: 18px !important; }
+  .logo-mark { width: 36px !important; height: 36px !important; font-size: 14px !important; }
+
+/* ══════════════════════════════════════════════════════
+   4. MOBILE NAV OVERLAY
+══════════════════════════════════════════════════════ */
+  .mob-nav,
+  .mobile-nav {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(7,21,36,0.97) !important;
+    z-index: 9000 !important;
+    display: none;
+    flex-direction: column !important;
+    padding: 70px 24px 100px !important;
+    overflow-y: auto;
+  }
+  .mob-nav.open,
+  .mobile-nav.open { display: flex !important; }
+
+  .mob-nav a,
+  .mobile-nav a {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    font-size: 17px !important;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88) !important;
+  }
+  .mob-nav a:hover,
+  .mobile-nav a:hover { color: #4da6ff !important; background: transparent !important; }
+
+  /* Close-Button im Nav */
+  .mob-nav-close {
+    position: absolute !important;
+    top: 16px; right: 20px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 9001;
+  }
+
+/* ══════════════════════════════════════════════════════
+   5. BOTTOM NAVIGATION BAR (global)
+══════════════════════════════════════════════════════ */
+  /* Verhindert, dass Inhalt hinter der Bottom-Nav verschwindet */
+  body { padding-bottom: 70px !important; }
+
+  /* Bottom Nav */
+  .bottom-nav-bar {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 62px;
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 20px rgba(13,27,42,0.10);
+    z-index: 8000;
+    align-items: center;
+    justify-content: space-around;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .bnb-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    padding: 8px 4px;
+    border-radius: 10px;
+    transition: color .15s;
+    min-height: 44px;
+    justify-content: center;
+  }
+  .bnb-item.active { color: #1a5fa8; }
+  .bnb-item svg { width: 22px; height: 22px; }
+  .bnb-item-icon { font-size: 22px; line-height: 1; }
+  .bnb-center {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #1a5fa8, #2176c7);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(26,95,168,0.4);
+    margin-top: -14px;
+    color: #fff;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+/* ══════════════════════════════════════════════════════
+   6. HERO SECTION (index.html)
+══════════════════════════════════════════════════════ */
+  .hero { padding: 28px 0 24px !important; min-height: 0 !important; }
+  .hero h1, .hero-title { font-size: 26px !important; line-height: 1.2 !important; }
+  .hero-desc, .hero-sub { font-size: 14px !important; }
+
+  .hero-cta {
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100%;
+  }
+  .hero-cta a,
+  .cta-primary, .cta-secondary, .cta-privat {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 14px 20px !important;
+    font-size: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .hero-stat { padding: 12px !important; }
+  .hero-stat-val { font-size: 22px !important; }
+
+/* ══════════════════════════════════════════════════════
+   7. LISTING CARDS (index + suche)
+══════════════════════════════════════════════════════ */
+  .listing-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .listing-card { border-radius: 12px !important; }
+  .listing-image, .sim-img { height: 150px !important; }
+  .listing-title { font-size: 13px !important; }
+  .price { font-size: 15px !important; }
+
+/* ══════════════════════════════════════════════════════
+   8. SUCHE — Filter & Layout
+══════════════════════════════════════════════════════ */
+  .search-layout,
+  .results-layout {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  /* Filter-Sidebar als Drawer */
+  .filter-sidebar,
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 85vw !important;
+    max-width: 320px !important;
+    background: #fff !important;
+    z-index: 7000 !important;
+    overflow-y: auto !important;
+    transform: translateX(-100%) !important;
+    transition: transform .3s ease !important;
+    box-shadow: 4px 0 30px rgba(0,0,0,0.2) !important;
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+    padding-bottom: 80px !important;
+  }
+  .filter-sidebar.open,
+  .sidebar.open {
+    transform: translateX(0) !important;
+    display: block !important;
+  }
+
+  /* Filter-Button sichtbar */
+  .mob-filter-btn { display: flex !important; }
+
+  /* Mobile Suche anzeigen */
+  .mobile-search { display: flex !important; }
+
+  /* Header-Suche ausblenden auf Suchseite */
+  .header-search { display: none !important; }
+
+  /* Ergebnis-Header */
+  .results-head {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 12px 0 !important;
+  }
+  .results-head-right { width: 100% !important; }
+  .results-head-right select { width: 100% !important; }
+
+/* ══════════════════════════════════════════════════════
+   9. LISTING DETAIL
+══════════════════════════════════════════════════════ */
+  .hero-layout,
+  .lower-layout {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .main-img-area { height: 280px !important; }
+  .listing-title-overlay { font-size: 16px !important; }
+  .listing-price-overlay { font-size: 22px !important; }
+
+  .side-card,
+  .info-card { padding: 16px !important; }
+
+  .price-box { padding: 16px !important; }
+  .pb-price { font-size: 28px !important; }
+
+  .quick-grid,
+  .quick-specs { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+
+  .cta-area { gap: 8px !important; }
+  .btn-contact, .btn-back, .btn-phone { padding: 13px !important; font-size: 14px !important; }
+
+  .contact-card, .seller-card { position: static !important; }
+
+  .specs-grid { grid-template-columns: 1fr !important; }
+  .similar-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+
+  .thumb-strip { padding: 8px 10px !important; }
+  .thumb { width: 60px !important; height: 52px !important; }
+
+/* ══════════════════════════════════════════════════════
+   10. LOGIN & REGISTRIEREN
+══════════════════════════════════════════════════════ */
+  .auth-page,
+  .login-wrap,
+  .register-wrap {
+    min-height: 100vh !important;
+    padding: 20px 0 80px !important;
+    align-items: flex-start !important;
+  }
+
+  .auth-card,
+  .login-card,
+  .register-card {
+    margin: 0 !important;
+    border-radius: 16px !important;
+    padding: 24px 20px !important;
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .auth-card h1,
+  .login-card h1,
+  .register-card h1 { font-size: 22px !important; }
+
+/* ══════════════════════════════════════════════════════
+   11. DASHBOARD & INNEN-SEITEN (Sidebar-Layout)
+══════════════════════════════════════════════════════ */
+  .layout,
+  .page-layout,
+  .dash-layout {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  /* Sidebar ausblenden auf Mobile — Bottom Nav übernimmt */
+  .sidebar-desktop,
+  .page-sidebar {
+    display: none !important;
+  }
+
+  /* Dashboard Stats */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .stat-card { padding: 14px !important; }
+  .stat-value { font-size: 22px !important; }
+
+  /* Dashboard Tabelle scrollbar machen */
+  .table-wrap,
+  .listings-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+  }
+  table { min-width: 600px !important; font-size: 13px !important; }
+
+  /* Activity */
+  .activity-list { gap: 10px !important; }
+  .activity-item { padding: 12px !important; }
+
+/* ══════════════════════════════════════════════════════
+   12. ANZEIGE ERSTELLEN
+══════════════════════════════════════════════════════ */
+  .create-layout,
+  .form-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-sidebar,
+  .sidebar-nav-wrap { display: none !important; }
+
+  .form-grid-2,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .image-upload-grid,
+  .preview-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .form-section-title { font-size: 16px !important; }
+
+/* ══════════════════════════════════════════════════════
+   13. MEINE ANZEIGEN & ANFRAGEN
+══════════════════════════════════════════════════════ */
+  .my-listings-grid,
+  .listing-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .card-image { height: 180px !important; }
+  .card-body { padding: 14px !important; }
+  .card-title { font-size: 14px !important; }
+
+  .inquiry-card { padding: 16px !important; }
+  .chat-messages { max-height: 300px !important; }
+
+/* ══════════════════════════════════════════════════════
+   14. PROFIL SEITE
+══════════════════════════════════════════════════════ */
+  .profil-layout { grid-template-columns: 1fr !important; }
+  .profile-header { padding: 20px !important; }
+  .form-cols-2 { grid-template-columns: 1fr !important; }
+
+/* ══════════════════════════════════════════════════════
+   15. FOOTER
+══════════════════════════════════════════════════════ */
+  .footer { padding-top: 36px !important; }
+  .footer-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .footer-bottom {
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center !important;
+  }
+  .footer-links,
+  .footer-bottom-links {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 12px !important;
+  }
+  /* Footer komplett ausblenden wenn Bottom-Nav vorhanden */
+  .footer-has-bottom-nav { margin-bottom: 0 !important; }
+
+/* ══════════════════════════════════════════════════════
+   16. KONTAKT, KARRIERE, ÜBER UNS
+══════════════════════════════════════════════════════ */
+  .kontakt-grid,
+  .contact-grid { grid-template-columns: 1fr !important; }
+
+  .karriere-grid,
+  .jobs-grid { grid-template-columns: 1fr !important; }
+
+  .team-grid { grid-template-columns: 1fr 1fr !important; }
+
+  .card, .panel { padding: 18px !important; border-radius: 12px !important; }
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 18px !important; }
+
+/* ══════════════════════════════════════════════════════
+   17. ALLGEMEINE TEXT-SEITEN (AGB, Impressum, Datenschutz)
+══════════════════════════════════════════════════════ */
+  .card { padding: 20px 16px !important; }
+  .card h1 { font-size: 22px !important; }
+  h2 { font-size: 16px !important; }
+  p, li { font-size: 14px !important; }
+
+/* ══════════════════════════════════════════════════════
+   18. MODALS & OVERLAYS (Händler-Registrierung etc.)
+══════════════════════════════════════════════════════ */
+  .hm-overlay,
+  .pm-overlay,
+  .overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+
+  .hm-modal,
+  .pm-modal,
+  .modal {
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    animation: slideUpMob .32s cubic-bezier(.34,1.56,.64,1) !important;
+  }
+
+  @keyframes slideUpMob {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .hm-body,
+  .pm-body { padding: 20px 18px !important; }
+
+  .hm-grid-2,
+  .pm-grid2 { grid-template-columns: 1fr !important; }
+
+  .hm-steps,
+  .pm-steps { padding: 14px 16px 0 !important; }
+
+  .hm-step > div:last-child,
+  .pm-step > div:last-child { font-size: 10px !important; }
+
+  .hm-footer,
+  .pm-footer { padding: 14px 18px 20px !important; flex-direction: column !important; gap: 10px !important; }
+
+  .hm-actions,
+  .pm-actions { justify-content: flex-end !important; }
+
+/* ══════════════════════════════════════════════════════
+   19. TRUST BADGES & PILLS — kompakter
+══════════════════════════════════════════════════════ */
+  .trust-strip,
+  .trust-row { gap: 6px !important; }
+  .t-pill,
+  .trust-badge { font-size: 11px !important; padding: 3px 8px !important; }
+
+/* ══════════════════════════════════════════════════════
+   20. SCROLLABLE OVERLAY (Sidebar-Schutz)
+══════════════════════════════════════════════════════ */
+  .sidebar-overlay,
+  .mob-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(7,21,36,0.5) !important;
+    z-index: 6999 !important;
+    display: none !important;
+  }
+  .sidebar-overlay.open,
+  .mob-overlay.open { display: block !important; }
+
+} /* end @media 768px */
+
+/* ══════════════════════════════════════════════════════
+   Extra small: 380px (iPhone SE etc.)
+══════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .listing-grid { grid-template-columns: 1fr !important; }
+  .quick-grid,
+  .quick-specs { grid-template-columns: 1fr 1fr !important; }
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .hero h1, .hero-title { font-size: 22px !important; }
+  .pb-price { font-size: 24px !important; }
+  .bottom-nav-bar .bnb-item span { display: none; }
+  .bottom-nav-bar .bnb-item { gap: 0; }
+}
