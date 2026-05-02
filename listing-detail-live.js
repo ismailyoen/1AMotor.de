@@ -4,8 +4,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const listingId = params.get("id") || localStorage.getItem("current_listing_id");
 
-  console.log("CURRENT LISTING ID:", listingId);
-
   if (!listingId) {
     showNotFound("Keine Anzeige ausgewählt.");
     return;
@@ -39,9 +37,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     .eq("status", "Freigegeben")
     .single();
 
-  console.log("LISTING RESULT:", listing);
-  console.log("LISTING ERROR:", error);
-
   if (error || !listing) {
     showNotFound("Anzeige wurde nicht gefunden.");
     return;
@@ -49,64 +44,49 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   fillListingData(listing);
   setupGallery(listing);
-  setupInquiryForm(listing);
+  setupContactForm(listing);
 });
 
+/* ─────────────────────────────────────────────────────────
+   LISTING DATA FÜLLEN
+───────────────────────────────────────────────────────── */
 function fillListingData(listing) {
   const categoryName = Array.isArray(listing.categories)
-    ? listing.categories[0]?.name || "Unbekannt"
-    : listing.categories?.name || "Unbekannt";
+    ? listing.categories[0]?.name || "Sonstige"
+    : listing.categories?.name || "Sonstige";
 
-  const sellerProfile = Array.isArray(listing.seller_profiles)
+  const seller = Array.isArray(listing.seller_profiles)
     ? listing.seller_profiles[0] || {}
     : listing.seller_profiles || {};
 
-  const formattedPrice = Number(listing.price || 0).toLocaleString("de-DE", {
-    style: "currency",
-    currency: "EUR"
+  const priceFormatted = Number(listing.price || 0).toLocaleString("de-DE", {
+    style: "currency", currency: "EUR"
   });
 
-  const formattedDate = new Date(listing.created_at).toLocaleDateString("de-DE");
+  const dateFormatted = new Date(listing.created_at).toLocaleDateString("de-DE", {
+    day: "2-digit", month: "2-digit", year: "numeric"
+  });
 
-  // ── Dynamic SEO ──────────────────────────────────────────────────────────
+  /* ── SEO ── */
   const seoTitle = `${listing.title || "Anzeige"} – 1A Motor`;
-  const seoDesc  = `${listing.title || "Motor"} kaufen bei ${sellerProfile.company_name || "geprüftem Händler"} auf 1A Motor. ${listing.condition || "Gebraucht"}, Standort: ${listing.location || "Deutschland"}. Jetzt direkt anfragen.`;
+  const seoDesc  = `${listing.title || "Motor"} kaufen bei ${seller.company_name || "geprüftem Händler"} auf 1A Motor. ${listing.condition || "Gebraucht"}, Standort: ${listing.location || "Deutschland"}. Jetzt direkt anfragen.`;
   const seoUrl   = `https://1amotor.de/listing-detail.html?id=${listing.id}`;
   const seoImg   = (Array.isArray(listing.image_urls) && listing.image_urls[0]) ? listing.image_urls[0] : "https://1amotor.de/hero-bg.png";
 
   document.title = seoTitle;
-
-  // Meta description
-  let metaDesc = document.querySelector("meta[name='description']");
-  if (!metaDesc) { metaDesc = document.createElement("meta"); metaDesc.name = "description"; document.head.appendChild(metaDesc); }
-  metaDesc.content = seoDesc;
-
-  // Canonical
-  let canonical = document.querySelector("link[rel='canonical']");
-  if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
-  canonical.href = seoUrl;
-
-  // OG tags
-  const setMeta = (sel, attr, val) => {
-    let el = document.querySelector(sel);
-    if (!el) { el = document.createElement("meta"); document.head.appendChild(el); }
-    el.setAttribute(attr, val);
-  };
-  setMeta("#og-title",  "content", seoTitle);
+  setMeta("meta[name='description']", "content", seoDesc);
+  setOrCreateLink("canonical", seoUrl);
+  setMeta("#og-title",       "content", seoTitle);
   setMeta("#og-description", "content", seoDesc);
-  setMeta("#og-url",    "content", seoUrl);
+  setMeta("#og-url",         "content", seoUrl);
   setMeta("meta[property='og:image']", "content", seoImg);
-
-  // Twitter
   const twTitle = document.getElementById("tw-title");
   const twDesc  = document.getElementById("tw-description");
   if (twTitle) twTitle.content = seoTitle;
   if (twDesc)  twDesc.content  = seoDesc;
 
-  // Schema.org Product – dynamic update
   const schemaEl = document.getElementById("schema-product");
   if (schemaEl) {
-    const price = Number(listing.price || 0);
     schemaEl.textContent = JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Product",
@@ -117,375 +97,336 @@ function fillListingData(listing) {
       "offers": {
         "@type": "Offer",
         "priceCurrency": "EUR",
-        "price": price,
+        "price": Number(listing.price || 0),
         "availability": "https://schema.org/InStock",
         "url": seoUrl,
-        "seller": {
-          "@type": "Organization",
-          "name": sellerProfile.company_name || "Händler auf 1A Motor"
-        }
-      },
-      "additionalProperty": [
-        { "@type": "PropertyValue", "name": "Zustand",    "value": listing.condition || "-" },
-        { "@type": "PropertyValue", "name": "Baujahr",    "value": listing.year || "-" },
-        { "@type": "PropertyValue", "name": "Standort",   "value": listing.location || "-" },
-        { "@type": "PropertyValue", "name": "Kategorie",  "value": categoryName }
-      ]
+        "seller": { "@type": "Organization", "name": seller.company_name || "Händler auf 1A Motor" }
+      }
     });
   }
 
-  const categoryTag = document.querySelector(".category-tag");
-  const listingTitle = document.querySelector(".listing-title");
-  const listingSub = document.querySelector(".listing-sub");
-  const price = document.querySelector(".price");
-  const priceNote = document.querySelector(".price-note");
-  const descriptionBox = document.querySelector(".description");
-  const specsGrid = document.querySelector(".specs-grid");
+  /* ── Breadcrumbs ── */
+  set("breadcrumb-category", categoryName);
+  set("breadcrumb-brand",    listing.manufacturer || "Hersteller");
+  set("breadcrumb-model",    listing.model || listing.title || "Anzeige");
 
-  if (categoryTag) categoryTag.textContent = categoryName;
-  if (listingTitle) listingTitle.textContent = listing.title || "Ohne Titel";
-  if (listingSub) listingSub.textContent = `Inserat-Nr. ${listing.id} · Veröffentlicht am ${formattedDate}`;
-  if (price) price.textContent = formattedPrice;
-  if (priceNote) priceNote.textContent = `Standort: ${listing.location || "-"}`;
+  /* ── Kategorie ── */
+  const icon = getCategoryIcon(categoryName);
+  set("category-tag",  icon + " " + categoryName);
+  set("cat-badge",     categoryName);
 
-  const breadcrumbCategory = document.getElementById("breadcrumb-category");
-  const breadcrumbBrand = document.getElementById("breadcrumb-brand");
-  const breadcrumbModel = document.getElementById("breadcrumb-model");
+  /* ── Titel / Status / Datum ── */
+  set("listing-title",  listing.title || "Ohne Titel");
+  set("title-overlay",  listing.title || "Ohne Titel");
+  set("meta-status",    listing.status || "–");
+  set("meta-date",      "📅 " + dateFormatted);
+  set("meta-date2",     dateFormatted);
+  set("meta-id",        (listing.id || "").slice(0, 8) + "…");
 
-  if (breadcrumbCategory) breadcrumbCategory.textContent = categoryName;
-  if (breadcrumbBrand) breadcrumbBrand.textContent = listing.manufacturer || "Hersteller";
-  if (breadcrumbModel) breadcrumbModel.textContent = listing.model || listing.title || "Anzeige";
+  /* ── Preis ── */
+  set("listing-price",   priceFormatted);
+  set("price-overlay",   priceFormatted);
+  set("listing-location","📍 " + (listing.location || "–"));
 
-  const metaLocation = document.getElementById("meta-location");
-  const metaStatus = document.getElementById("meta-status");
-
-  if (metaLocation) metaLocation.textContent = `Standort: ${listing.location || "-"}`;
-  if (metaStatus) metaStatus.textContent = `Status: ${listing.status || "-"}`;
-
-  const quickSpecs = document.querySelector(".quick-specs");
-  if (quickSpecs) {
-    quickSpecs.innerHTML = `
-      <div class="quick-item">
-        <strong>Baujahr</strong>
-        <span>${escapeHtml(listing.year || "-")}</span>
-      </div>
-      <div class="quick-item">
-        <strong>Standort</strong>
-        <span>${escapeHtml(listing.location || "-")}</span>
-      </div>
-      <div class="quick-item">
-        <strong>Zustand</strong>
-        <span>${escapeHtml(listing.condition || "-")}</span>
-      </div>
-      <div class="quick-item">
-        <strong>Hersteller</strong>
-        <span>${escapeHtml(listing.manufacturer || "-")}</span>
-      </div>
+  /* ── Quick Specs ── */
+  const qs = document.getElementById("quick-specs");
+  if (qs) {
+    qs.innerHTML = `
+      <div class="q-item"><div class="q-label">Baujahr</div><div class="q-val">${esc(listing.year || "–")}</div></div>
+      <div class="q-item"><div class="q-label">Zustand</div><div class="q-val">${esc(listing.condition || "–")}</div></div>
+      <div class="q-item"><div class="q-label">Hersteller</div><div class="q-val">${esc(listing.manufacturer || "–")}</div></div>
+      <div class="q-item"><div class="q-label">Standort</div><div class="q-val">${esc(listing.location || "–")}</div></div>
     `;
   }
 
-  if (descriptionBox) {
-    const description = listing.description?.trim()
-      ? escapeHtml(listing.description).replace(/\n/g, "<br>")
-      : "Für diese Anzeige wurde noch keine Beschreibung hinterlegt.";
-
-    descriptionBox.innerHTML = `
-      <h2>Beschreibung</h2>
-      <p>${description}</p>
-    `;
+  /* ── Status Badge Farbe ── */
+  const statusBadge = document.getElementById("status-badge");
+  if (statusBadge) {
+    statusBadge.textContent = listing.status || "Live";
+    if (listing.status === "Freigegeben") statusBadge.classList.add("g-badge-ok");
   }
 
+  /* ── Beschreibung ── */
+  const descBox = document.getElementById("description-box");
+  if (descBox) {
+    const txt = listing.description?.trim()
+      ? esc(listing.description).replace(/\n/g, "<br>")
+      : "<span style='color:#94a3b8;'>Keine Beschreibung vorhanden.</span>";
+    descBox.innerHTML = `<p>${txt}</p>`;
+  }
+
+  /* ── Technische Daten ── */
+  const specsGrid = document.getElementById("specs-grid");
   if (specsGrid) {
-    specsGrid.innerHTML = `
-      <div class="spec-row"><span>Hersteller</span><strong>${escapeHtml(listing.manufacturer || "-")}</strong></div>
-      <div class="spec-row"><span>Modell</span><strong>${escapeHtml(listing.model || "-")}</strong></div>
-      <div class="spec-row"><span>Kategorie</span><strong>${escapeHtml(categoryName)}</strong></div>
-      <div class="spec-row"><span>Zustand</span><strong>${escapeHtml(listing.condition || "-")}</strong></div>
-      <div class="spec-row"><span>Baujahr</span><strong>${escapeHtml(listing.year || "-")}</strong></div>
-      <div class="spec-row"><span>Standort</span><strong>${escapeHtml(listing.location || "-")}</strong></div>
-      <div class="spec-row"><span>Preis</span><strong>${formattedPrice}</strong></div>
-      <div class="spec-row"><span>Status</span><strong>${escapeHtml(listing.status || "-")}</strong></div>
-    `;
+    specsGrid.innerHTML = [
+      ["Hersteller",  listing.manufacturer],
+      ["Modell",      listing.model],
+      ["Kategorie",   categoryName],
+      ["Zustand",     listing.condition],
+      ["Baujahr",     listing.year],
+      ["Standort",    listing.location],
+      ["Preis",       priceFormatted],
+      ["Status",      listing.status],
+    ].map(([k, v]) => `
+      <div class="spec-item">
+        <span class="spec-key">${esc(k)}</span>
+        <strong class="spec-val">${esc(String(v || "–"))}</strong>
+      </div>
+    `).join("");
   }
 
-  const sellerLogo = document.querySelector(".seller-logo");
-  const sellerName = document.querySelector(".seller-head h3");
-  const sellerSub = document.querySelector(".seller-head p");
-  const sellerStats = document.querySelector(".seller-stats");
+  /* ── Händler / Kontaktkarte ── */
+  const logoEl = document.getElementById("seller-logo");
+  const nameEl = document.getElementById("seller-name");
+  const locEl  = document.getElementById("seller-location");
+  const statEl = document.getElementById("seller-status");
+  const dateEl = document.getElementById("seller-date");
 
-  if (sellerLogo) sellerLogo.textContent = getInitials(sellerProfile.company_name || "HP");
-  if (sellerName) sellerName.textContent = sellerProfile.company_name || "Händler";
-  if (sellerSub) sellerSub.textContent = `${sellerProfile.city || "-"}, ${sellerProfile.country || "-"}`;
+  if (logoEl) logoEl.textContent = initials(seller.company_name || "HP");
+  if (nameEl) nameEl.textContent = seller.company_name || "Händler auf 1A Motor";
+  if (locEl)  locEl.textContent  = [seller.city, seller.country].filter(Boolean).join(", ") || "–";
+  if (statEl) statEl.textContent = listing.status || "Live";
+  if (dateEl) dateEl.textContent = dateFormatted;
 
-  if (sellerStats) {
-    sellerStats.innerHTML = `
-      <div class="seller-stat">
-        <strong>${escapeHtml(listing.status || "Live")}</strong>
-        <span>Status</span>
-      </div>
-      <div class="seller-stat">
-        <strong>${formattedDate}</strong>
-        <span>Veröffentlicht</span>
-      </div>
-    `;
-  }
+  /* ── Ähnliche laden ── */
+  loadSimilar(listing, categoryName);
 }
 
+/* ─────────────────────────────────────────────────────────
+   GALERIE
+───────────────────────────────────────────────────────── */
 function setupGallery(listing) {
-  const mainImage = document.querySelector(".main-image");
-  const thumbRow = document.querySelector(".thumb-row");
+  const mainImg = document.getElementById("main-image");
+  const thumbRow = document.getElementById("thumb-row");
+  const counter = document.getElementById("img-counter");
 
   const categoryName = Array.isArray(listing.categories)
-    ? listing.categories[0]?.name || "Unbekannt"
-    : listing.categories?.name || "Unbekannt";
+    ? listing.categories[0]?.name || "Sonstige"
+    : listing.categories?.name || "Sonstige";
 
-  const images = Array.isArray(listing.image_urls) ? listing.image_urls : [];
+  const images = Array.isArray(listing.image_urls)
+    ? listing.image_urls.filter(Boolean)
+    : [];
 
-  if (!mainImage || !thumbRow) return;
+  const iconEl = document.getElementById("main-icon");
 
   if (!images.length) {
-    mainImage.innerHTML = `
-      <span class="top-badge">${escapeHtml(listing.status || "Live")}</span>
-      <span class="favorite-btn">♡</span>
-      ${getCategoryIcon(categoryName)}
-    `;
-    thumbRow.innerHTML = `
-      <div class="thumb active">${getCategoryIcon(categoryName)}</div>
-    `;
+    if (iconEl) { iconEl.textContent = getCategoryIcon(categoryName); iconEl.style.display = "block"; }
+    if (thumbRow) thumbRow.innerHTML = `<div class="thumb active" style="font-size:20px;">${getCategoryIcon(categoryName)}</div>`;
     return;
   }
 
-  setMainImage(mainImage, images[0], listing.status);
+  // Bild laden
+  function setImg(url) {
+    if (!mainImg) return;
+    mainImg.style.backgroundImage = `url('${url}')`;
+    mainImg.style.backgroundSize = "cover";
+    mainImg.style.backgroundPosition = "center";
+    if (iconEl) iconEl.style.display = "none";
+  }
 
-  thumbRow.innerHTML = images.map((imageUrl, index) => {
-    return `
-      <div
-        class="thumb ${index === 0 ? "active" : ""}"
-        data-image="${imageUrl}"
-        style="background-image:url('${imageUrl}');background-size:cover;background-position:center;"
-        title="Bild ${index + 1}">
+  setImg(images[0]);
+  if (counter && images.length > 1) {
+    counter.style.display = "block";
+    counter.textContent = `1 / ${images.length}`;
+  }
+
+  // Thumbs
+  if (thumbRow) {
+    thumbRow.innerHTML = images.map((url, i) => `
+      <div class="thumb ${i === 0 ? "active" : ""}"
+        data-url="${url}" data-idx="${i}"
+        style="background-image:url('${url}');background-size:cover;background-position:center;"
+        title="Bild ${i + 1}">
       </div>
+    `).join("");
+
+    thumbRow.querySelectorAll(".thumb").forEach(t => {
+      t.addEventListener("click", () => {
+        const url = t.getAttribute("data-url");
+        const idx = parseInt(t.getAttribute("data-idx")) + 1;
+        setImg(url);
+        thumbRow.querySelectorAll(".thumb").forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+        if (counter) counter.textContent = `${idx} / ${images.length}`;
+      });
+    });
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   ÄHNLICHE ANZEIGEN
+───────────────────────────────────────────────────────── */
+async function loadSimilar(listing, categoryName) {
+  const categoryId = Array.isArray(listing.categories)
+    ? listing.categories[0]?.id
+    : listing.categories?.id;
+
+  if (!categoryId) return;
+
+  const { data: similar } = await supabaseClient
+    .from("listings")
+    .select("id, title, price, condition, year, image_urls, categories(name)")
+    .eq("status", "Freigegeben")
+    .eq("category_id", categoryId)
+    .neq("id", listing.id)
+    .limit(3);
+
+  if (!similar || !similar.length) return;
+
+  const panel = document.getElementById("similar-panel");
+  const grid  = document.getElementById("similar-grid");
+  if (!panel || !grid) return;
+
+  grid.innerHTML = similar.map(s => {
+    const img   = Array.isArray(s.image_urls) && s.image_urls[0];
+    const price = Number(s.price || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+    const icon  = getCategoryIcon(s.categories?.name || "Sonstige");
+    const imgStyle = img ? `background-image:url('${img}');background-size:cover;background-position:center;` : "";
+    return `
+      <a class="sim-card" href="listing-detail.html?id=${s.id}">
+        <div class="sim-img" style="${imgStyle}">${img ? "" : icon}</div>
+        <div class="sim-bd">
+          <div class="sim-title">${esc(s.title || "Motor")}</div>
+          <div class="sim-price">${price}</div>
+          <div class="sim-meta">${esc(s.condition || "")} ${s.year ? "· " + s.year : ""}</div>
+        </div>
+      </a>
     `;
   }).join("");
 
-  const thumbs = thumbRow.querySelectorAll(".thumb");
-  thumbs.forEach((thumb) => {
-    thumb.addEventListener("click", () => {
-      const imageUrl = thumb.getAttribute("data-image");
-      setMainImage(mainImage, imageUrl, listing.status);
-
-      thumbs.forEach(t => t.classList.remove("active"));
-      thumb.classList.add("active");
-    });
-  });
+  panel.style.display = "block";
 }
 
-function setMainImage(mainImage, imageUrl, status) {
-  const safeImage = imageUrl || "";
-
-  mainImage.innerHTML = `
-    <span class="top-badge">${escapeHtml(status || "Live")}</span>
-    <span class="favorite-btn">♡</span>
-  `;
-  mainImage.style.backgroundImage = safeImage ? `url('${safeImage}')` : "";
-  mainImage.style.backgroundSize = "cover";
-  mainImage.style.backgroundPosition = "center";
-  mainImage.style.backgroundRepeat = "no-repeat";
-}
-
-function setupInquiryForm(listing) {
-  const form = document.querySelector(".contact-form");
+/* ─────────────────────────────────────────────────────────
+   KONTAKTFORMULAR
+───────────────────────────────────────────────────────── */
+function setupContactForm(listing) {
+  const form = document.getElementById("contact-form");
   if (!form) return;
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const name = form.querySelector('input[type="text"]')?.value?.trim() || "";
-    const email = form.querySelector('input[type="email"]')?.value?.trim() || "";
-    const message = form.querySelector("textarea")?.value?.trim() || "";
+    const btn     = document.getElementById("cf-submit");
+    const name    = document.getElementById("cf-name")?.value?.trim() || "";
+    const email   = document.getElementById("cf-email")?.value?.trim() || "";
+    const message = document.getElementById("cf-message")?.value?.trim() || "";
 
     if (!name || !email || !message) {
-      alert("Bitte Name, E-Mail und Nachricht ausfüllen.");
+      showFormError("Bitte Name, E-Mail und Nachricht ausfüllen.");
       return;
     }
 
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Wird gesendet...";
-    }
+    if (btn) { btn.disabled = true; btn.textContent = "Wird gesendet…"; }
 
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const buyerUserId = sessionData?.session?.user?.id || null;
 
-    console.log("BUYER USER ID:", buyerUserId);
+    const { error } = await supabaseClient.from("inquiries").insert([{
+      listing_id: listing.id,
+      name, email, message,
+      status: "Neu",
+      buyer_user_id: buyerUserId
+    }]);
 
-    const { error } = await supabaseClient
-      .from("inquiries")
-      .insert([
-        {
-          listing_id: listing.id,
-          name,
-          email,
-          message,
-          status: "Neu",
-          buyer_user_id: buyerUserId
-        }
-      ]);
-
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Nachricht senden";
-    }
+    if (btn) { btn.disabled = false; btn.textContent = "Nachricht senden"; }
 
     if (error) {
-      console.error("INQUIRY INSERT ERROR:", error);
-      alert("Fehler beim Senden der Anfrage.");
+      showFormError("Fehler beim Senden – bitte erneut versuchen.");
       return;
     }
 
-    alert("Anfrage wurde erfolgreich gesendet.");
+    const successEl = document.getElementById("send-success");
+    if (successEl) successEl.style.display = "block";
     form.reset();
+    if (btn) {
+      btn.textContent = "✓ Gesendet";
+      btn.style.background = "linear-gradient(135deg,#059669,#0ea371)";
+    }
   });
 }
 
+function showFormError(msg) {
+  const existing = document.getElementById("cf-error-msg");
+  if (existing) existing.remove();
+  const el = document.createElement("div");
+  el.id = "cf-error-msg";
+  el.style.cssText = "background:#fff5f5;border:1px solid #fca5a5;color:#b91c1c;padding:10px 14px;border-radius:10px;font-size:13px;";
+  el.textContent = msg;
+  const form = document.getElementById("contact-form");
+  form?.appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+
+/* ─────────────────────────────────────────────────────────
+   NOT FOUND
+───────────────────────────────────────────────────────── */
 function showNotFound(message) {
   const main = document.querySelector("main");
   if (!main) return;
-
   main.innerHTML = `
-    <div class="container" style="padding:40px 20px;">
-      <div style="background:white;border:1px solid #dbe3ea;border-radius:16px;padding:30px;">
-        <h1 style="margin-bottom:10px;color:#123a63;">Anzeige nicht verfügbar</h1>
-        <p style="color:#6b7280;margin-bottom:16px;">${escapeHtml(message)}</p>
-        <a href="suche.html" style="display:inline-block;background:#123a63;color:white;padding:12px 18px;border-radius:999px;font-weight:700;">Zurück zur Suche</a>
+    <div class="container" style="padding:60px 20px;">
+      <div style="max-width:480px;margin:0 auto;background:#fff;border:1px solid #e4edf7;border-radius:16px;padding:40px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">🔍</div>
+        <h1 style="font-size:22px;font-weight:800;color:#071524;margin-bottom:10px;">Anzeige nicht verfügbar</h1>
+        <p style="color:#64788e;margin-bottom:24px;">${esc(message)}</p>
+        <a href="suche.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1252a3,#1868c0);color:#fff;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(18,82,163,.3);">
+          ← Zurück zur Suche
+        </a>
       </div>
     </div>
   `;
 }
 
+/* ─────────────────────────────────────────────────────────
+   HILFSFUNKTIONEN
+───────────────────────────────────────────────────────── */
+function set(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function esc(value) {
+  return String(value)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function initials(text) {
+  return String(text).split(" ").filter(Boolean).slice(0,2)
+    .map(w => w[0]).join("").toUpperCase();
+}
+
+function setMeta(sel, attr, val) {
+  let el = document.querySelector(sel);
+  if (!el) { el = document.createElement("meta"); document.head.appendChild(el); }
+  el.setAttribute(attr, val);
+}
+
+function setOrCreateLink(rel, href) {
+  let el = document.querySelector(`link[rel='${rel}']`);
+  if (!el) { el = document.createElement("link"); el.rel = rel; document.head.appendChild(el); }
+  el.href = href;
+}
+
 function getCategoryIcon(category) {
   const map = {
-    "Automotor": "🚗",
-    "Dieselmotor Auto": "🚗",
-    "Benzinmotor Auto": "🚗",
-    "Hybridmotor": "⚡",
-    "Elektromotor Auto": "⚡",
-    "Motorradmotor": "🏍️",
-    "Roller Motor": "🛵",
-    "LKW Motor": "🚛",
-    "Busmotor": "🚌",
-    "Traktormotor": "🚜",
-    "Landmaschinenmotor": "🚜",
-    "Baumaschinenmotor": "🚧",
-    "Baggermotor": "🚧",
-    "Radlader Motor": "🚧",
-    "Gabelstapler Motor": "🏗️",
-    "Bootsmotor": "🚤",
-    "Außenbordmotor": "🚤",
-    "Innenbordmotor": "🚤",
-    "Schiffsdieselmotor": "🛳️",
-    "Jetski Motor": "🌊",
-    "Flugzeugmotor": "✈️",
-    "Turbinenmotor": "✈️",
-    "Jetmotor": "✈️",
-    "Propellermotor Flugzeug": "🛩️",
-    "Hubschraubermotor": "🚁",
-    "Elektromotor Industrie": "⚙️",
-    "Drehstrommotor": "⚙️",
-    "Wechselstrommotor": "⚙️",
-    "Gleichstrommotor": "⚙️",
-    "Servomotor": "🤖",
-    "Schrittmotor": "🤖",
-    "Getriebemotor": "🔩",
-    "Linearmotor": "⚙️",
-    "Synchronmotor": "⚙️",
-    "Asynchronmotor": "⚙️",
-    "Hochspannungsmotor": "⚡",
-    "Niederspannungsmotor": "⚡",
-    "Großmotor Industrie": "🏭",
-    "Spezialmotor Industrie": "🏭",
-    "Generator Motor": "🔋",
-    "Pumpenmotor": "💧",
-    "Kompressormotor": "🌀",
-    "Lüftermotor": "🌬️",
-    "Ventilatormotor": "🌬️",
-    "Förderbandmotor": "🏭",
-    "Kranmotor": "🏗️",
-    "Aufzugmotor": "🏢",
-    "Rolltreppenmotor": "🏢",
-    "Mischermotor": "⚙️",
-    "Schneckenmotor": "⚙️",
-    "Karussellmotor": "🎡",
-    "Achterbahnmotor": "🎢",
-    "Fahrgeschäft Motor": "🎠",
-    "Schausteller Motor": "🎪",
-    "Spielautomaten Motor": "🎰",
-    "Arcade Motor": "🕹️",
-    "Drohnenmotor": "🚁",
-    "Modellbau Motor": "🧩",
-    "RC Motor": "🏎️",
-    "Kartmotor": "🏁",
-    "Rasenmähermotor": "🌱",
-    "Aufsitzmäher Motor": "🌱",
-    "Kettensägenmotor": "🪚",
-    "Heckenscherenmotor": "🌿",
-    "Laubbläser Motor": "🍂",
-    "Schneefräsenmotor": "❄️",
-    "Generator Kleinmotor": "🔋",
-    "Stromaggregat Motor": "🔋",
-    "Wasserpumpenmotor": "💧",
-    "Gartenmaschinenmotor": "🌳",
-    "Hydraulikmotor": "🛠️",
-    "Pneumatikmotor": "🛠️",
-    "Vibrationsmotor": "⚙️",
-    "Spindelmotor": "⚙️",
-    "Hochleistungsmotor": "🔥",
-    "Präzisionsmotor": "🎯",
-    "CNC Motor": "🧰",
-    "Robotermotor": "🤖",
-    "Industrieroboter Motor": "🤖",
-    "Werkzeugmaschinenmotor": "🧰",
-    "E-Bike Motor": "🚲",
-    "Elektro Roller Motor": "🛴",
-    "Elektro Motorrad Motor": "🏍️",
-    "Elektro Bootsmotor": "🚤",
-    "Elektro Außenbordmotor": "🚤",
-    "Elektro Flugmotor": "✈️",
-    "Smart Motor": "📡",
-    "IoT Motor": "📡",
-    "Energiesparmotor": "🌱",
-    "Permanentmagnet Motor": "🧲",
-    "Gasturbinenmotor": "🔥",
-    "Dampfturbinenmotor": "♨️",
-    "Dieselaggregat Motor": "⛽",
-    "Notstromaggregat Motor": "🔋",
-    "Industrie Diesel Motor": "🏭",
-    "Schiffsturbinenmotor": "🛳️",
-    "Hochdrehzahlmotor": "⚡",
-    "Schwerlastmotor": "🏋️",
-    "Spezialanfertigung Motor": "🛠️",
-    "Austauschmotor": "🔄",
-    "Sonstiges": "📦"
+    "Automotor":"🚗","Dieselmotor Auto":"🚗","Benzinmotor Auto":"🚗",
+    "Hybridmotor":"⚡","Elektromotor Auto":"⚡","Motorradmotor":"🏍️",
+    "Roller Motor":"🛵","LKW Motor":"🚛","Busmotor":"🚌",
+    "Traktormotor":"🚜","Landmaschinenmotor":"🚜","Baumaschinenmotor":"🚧",
+    "Baggermotor":"🚧","Gabelstapler Motor":"🏗️","Bootsmotor":"🚤",
+    "Außenbordmotor":"🚤","Innenbordmotor":"🚤","Schiffsdieselmotor":"🛳️",
+    "Jetski Motor":"🌊","Flugzeugmotor":"✈️","Turbinenmotor":"✈️",
+    "Elektromotor Industrie":"⚙️","Drehstrommotor":"⚙️","Servomotor":"🤖",
+    "Getriebemotor":"🔩","Generator Motor":"🔋","Pumpenmotor":"💧",
+    "Kompressormotor":"🌀","Lüftermotor":"🌬️","Kranmotor":"🏗️",
+    "Aufzugmotor":"🏢","Achterbahnmotor":"🎢","Arcade Motor":"🕹️",
+    "Drohnenmotor":"🚁","E-Bike Motor":"🚲","Rasenmähermotor":"🌱",
+    "Aufsitzmäher Motor":"🌱","Hochleistungsmotor":"🔥","CNC Motor":"🧰",
+    "Robotermotor":"🤖","Austauschmotor":"🔄","Sonstiges":"📦"
   };
   return map[category] || "📦";
-}
-
-function getInitials(text) {
-  return String(text)
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(word => word[0])
-    .join("")
-    .toUpperCase();
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
