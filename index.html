@@ -328,35 +328,102 @@
     .sidebar {
       background: var(--white); border: 1px solid var(--border);
       border-radius: 16px; box-shadow: var(--shadow);
-      padding: 20px; position: sticky; top: 86px;
+      padding: 0; position: sticky; top: 86px;
       max-height: calc(100vh - 100px); overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: #e2e8f0 transparent;
     }
-    .sidebar-section { padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+    /* Sidebar Header mit Burger */
+    .sidebar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px 14px; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--white); z-index: 2;
+      border-radius: 16px 16px 0 0;
+    }
+    .sidebar-header-title { font-size: 14px; font-weight: 800; color: var(--dark); display: flex; align-items: center; gap: 7px; }
+    .sidebar-reset {
+      font-size: 11.5px; font-weight: 600; color: var(--muted);
+      cursor: pointer; padding: 4px 10px; border-radius: 20px;
+      border: 1px solid var(--border); background: none;
+      font-family: inherit; transition: all .15s;
+    }
+    .sidebar-reset:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+
+    .sidebar-inner { padding: 14px 18px 18px; }
+    .sidebar-section { padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
     .sidebar-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .sidebar-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; }
-    .sidebar-list { display: flex; flex-direction: column; gap: 7px; }
-    .sidebar-list label { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #334155; font-weight: 500; cursor: pointer; }
-    .sidebar-list input[type="checkbox"], .sidebar-list input[type="radio"] { accent-color: var(--blue2); width: 14px; height: 14px; }
+
+    /* Akkordeon-Titel */
+    .sidebar-title {
+      font-size: 11.5px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em; margin-bottom: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; padding: 5px 0; user-select: none;
+    }
+    .sidebar-title::after { content: '›'; font-size: 16px; transform: rotate(90deg); display: inline-block; transition: transform .2s; }
+    .sidebar-title.collapsed::after { transform: rotate(0deg); }
+    .sidebar-body { margin-top: 10px; }
+    .sidebar-body.hidden { display: none; }
+
+    .sidebar-list { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-list label {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 13px; color: #334155; font-weight: 500;
+      cursor: pointer; padding: 5px 8px; border-radius: 7px;
+      transition: background .12s;
+    }
+    .sidebar-list label:hover { background: #f0f7ff; }
+    .sidebar-list label.active-cat { background: #dbeafe; color: var(--blue2); font-weight: 700; }
+    .sidebar-list input[type="checkbox"],
+    .sidebar-list input[type="radio"] { accent-color: var(--blue2); width: 14px; height: 14px; flex-shrink: 0; }
+    .cat-count { margin-left: auto; font-size: 11px; color: var(--muted); background: var(--bg); padding: 1px 6px; border-radius: 10px; }
+
+    /* Kategorie-Suche */
+    .cat-search {
+      width: 100%; padding: 7px 10px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 12.5px; font-family: inherit;
+      outline: none; margin-bottom: 8px; color: var(--dark);
+    }
+    .cat-search:focus { border-color: var(--blue2); }
+
     .price-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .price-inputs input { border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; font-size: 13px; font-family: inherit; outline: none; width: 100%; }
     .price-inputs input:focus { border-color: var(--blue2); }
     .sidebar-btn {
       width: 100%; background: var(--dark); color: #fff; border: none;
       border-radius: 8px; padding: 11px; font-size: 13px; font-weight: 700;
-      font-family: inherit; cursor: pointer; transition: background .15s;
+      font-family: inherit; cursor: pointer; transition: background .15s; margin-top: 4px;
     }
     .sidebar-btn:hover { background: var(--navy); }
 
-    /* Sidebar Toggle (Mobile) */
+    /* Mobile Burger-Button */
     .mob-filter-btn {
-      display: none; align-items: center; gap: 8px;
+      display: none; align-items: center; gap: 9px;
       background: var(--white); border: 1.5px solid var(--border);
       border-radius: var(--r); padding: 10px 18px;
-      font-size: 13px; font-weight: 700; font-family: inherit;
+      font-size: 13.5px; font-weight: 700; font-family: inherit;
       cursor: pointer; color: var(--dark); margin-bottom: 14px;
-      transition: border-color .15s;
+      transition: all .15s; box-shadow: var(--shadow);
     }
     .mob-filter-btn:hover { border-color: var(--blue2); color: var(--blue2); }
+    .mob-filter-btn .burger-icon { display: flex; flex-direction: column; gap: 4px; width: 18px; }
+    .mob-filter-btn .burger-icon span {
+      display: block; height: 2px; background: currentColor;
+      border-radius: 2px; transition: all .25s;
+    }
+    .mob-filter-btn.open .burger-icon span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .mob-filter-btn.open .burger-icon span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .mob-filter-btn.open .burger-icon span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    /* Mobile Overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(13,27,42,.55); backdrop-filter: blur(3px);
+      z-index: 399;
+    }
+    .sidebar-overlay.open { display: block; }
 
     /* ── Werbe-Diashow ── */
     .ad-slideshow {
@@ -562,8 +629,15 @@
       .hero-card { display: none; }
       .hero-stats { grid-template-columns: repeat(3, 1fr); }
       .main-wrap { grid-template-columns: 1fr; }
-      .sidebar { display: none; position: static; }
-      .sidebar.open { display: block; }
+      .sidebar {
+        display: none; position: fixed; left: 0; top: 0; bottom: 0;
+        width: 300px; max-height: 100vh; z-index: 400;
+        border-radius: 0 16px 16px 0; box-shadow: 4px 0 32px rgba(0,0,0,.18);
+        transform: translateX(-100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+      }
+      .sidebar.open {
+        display: block; transform: translateX(0);
+      }
       .mob-filter-btn { display: flex; }
       .listing-grid { grid-template-columns: repeat(2, 1fr); }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1189,79 +1263,220 @@
 <!-- ══ MAIN ══ -->
 <div class="main-wrap">
 
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-title">Kategorien</div>
-      <div class="sidebar-list" id="sidebar-category-list">
-        <label><input type="checkbox" checked disabled /> Wird geladen…</label>
+
+    <div class="sidebar-header">
+      <div class="sidebar-header-title">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 3h13M3 7h9M5 11h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Filter
       </div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-title">Zustand</div>
-      <div class="sidebar-list">
-        <label><input type="radio" name="cond" value="" checked /> Alle</label>
-        <label><input type="radio" name="cond" value="Neu" /> Neu</label>
-        <label><input type="radio" name="cond" value="Gebraucht" /> Gebraucht</label>
-        <label><input type="radio" name="cond" value="Generalüberholt" /> Generalüberholt</label>
-      </div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-title">Preis</div>
-      <div class="price-inputs">
-        <input type="text" id="price-min" placeholder="Min €" />
-        <input type="text" id="price-max" placeholder="Max €" />
-      </div>
-      <button class="sidebar-btn" onclick="location.href='suche.html'">→ Zur Suche</button>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-title">Händler</div>
-      <div class="sidebar-list">
-        <label><input type="checkbox" checked /> Geprüfte Händler</label>
-        <label><input type="checkbox" /> Top-Bewertung</label>
-        <label><input type="checkbox" /> Gewerblich</label>
-      </div>
+      <button class="sidebar-reset" onclick="sidebarReset()">Zurücksetzen</button>
     </div>
 
-        <div class="sidebar-section" style="border-bottom:none;padding-bottom:0;">
-      <div class="sidebar-title">Werbung</div>
+    <div class="sidebar-inner">
 
-      <!-- ═══ GOOGLE ADSENSE SIDEBAR ════════════════════════════════════════
-           SCHRITT 1: Ersetze ca-pub-4690558719999917 mit deiner Publisher-ID
-           Slot-ID: 4564801273 (Sidebar 1amotor)
-                      (Slot-ID findest du in AdSense → Anzeigen → Anzeigenblock erstellen)
-           SCHRITT 3: Sobald Google deine Seite genehmigt, erscheinen echte Anzeigen
-      ═══════════════════════════════════════════════════════════════════ -->
-      <ins class="adsbygoogle"
-           style="display:block; width:100%; min-height:250px; border-radius:10px; overflow:hidden;"
-           data-ad-client="ca-pub-4690558719999917"
-           data-ad-slot="4564801273"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      <!-- KATEGORIEN -->
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="sidebarToggle(this)">Kategorien</div>
+        <div class="sidebar-body">
+          <input class="cat-search" type="text" placeholder="Kategorie suchen..." oninput="sidebarSearchCat(this.value)">
+          <div class="sidebar-list" id="sidebar-category-list">
 
-      <!-- Platzhalter bis AdSense freigeschaltet ist -->
-      <div id="adsense-placeholder" style="
-        background: linear-gradient(135deg,#f0f4f8 0%,#e8eef5 100%);
-        border: 1.5px dashed #c8d6e5; border-radius: 10px;
-        min-height: 250px; display: flex; flex-direction: column;
-        align-items: center; justify-content: center;
-        gap: 8px; padding: 20px; text-align: center;
-      ">
-        <div style="font-size:28px;">📢</div>
-        <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.07em;">Werbung</div>
-        <div style="font-size:11px;color:#94a3b8;line-height:1.5;">Google AdSense<br>Anzeige erscheint hier<br>nach Freischaltung</div>
-        <a href="kontakt.html" style="margin-top:6px;font-size:11px;font-weight:600;color:#3b82f6;text-decoration:none;background:rgba(59,130,246,0.08);padding:5px 12px;border-radius:999px;border:1px solid rgba(59,130,246,0.2);">Direkt hier werben →</a>
+            <!-- Fahrzeugmotoren -->
+            <label class="cat-group-head" onclick="sidebarToggleGroup('grp-fz')">
+              <span style="font-size:15px;">🚗</span>
+              <span style="font-weight:700;font-size:13px;color:var(--dark);">Fahrzeugmotoren</span>
+              <span class="cat-count">412</span>
+              <svg id="grp-fz-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </label>
+            <div id="grp-fz" class="cat-sublist" style="padding-left:14px;display:none;">
+              <label><input type="checkbox" name="cat" value="PKW Motor"> PKW-Motor <span class="cat-count">218</span></label>
+              <label><input type="checkbox" name="cat" value="LKW Motor"> LKW-Motor <span class="cat-count">94</span></label>
+              <label><input type="checkbox" name="cat" value="Bus Motor"> Bus-Motor <span class="cat-count">28</span></label>
+              <label><input type="checkbox" name="cat" value="Transporter Motor"> Transporter-Motor <span class="cat-count">42</span></label>
+              <label><input type="checkbox" name="cat" value="SUV Motor"> SUV-Motor <span class="cat-count">30</span></label>
+            </div>
+
+            <!-- Bootsmotoren -->
+            <label class="cat-group-head" onclick="sidebarToggleGroup('grp-boot')">
+              <span style="font-size:15px;">⛵</span>
+              <span style="font-weight:700;font-size:13px;color:var(--dark);">Bootsmotoren</span>
+              <span class="cat-count">187</span>
+              <svg id="grp-boot-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </label>
+            <div id="grp-boot" class="cat-sublist" style="padding-left:14px;display:none;">
+              <label><input type="checkbox" name="cat" value="Außenbordmotor"> Außenbordmotor <span class="cat-count">78</span></label>
+              <label><input type="checkbox" name="cat" value="Innenbordmotor"> Innenbordmotor <span class="cat-count">54</span></label>
+              <label><input type="checkbox" name="cat" value="Jetboot Motor"> Jetboot-Motor <span class="cat-count">18</span></label>
+              <label><input type="checkbox" name="cat" value="Segelboot Hilfsmotor"> Hilfsmotor (Segelboot) <span class="cat-count">37</span></label>
+            </div>
+
+            <!-- Industriemotoren -->
+            <label class="cat-group-head" onclick="sidebarToggleGroup('grp-ind')">
+              <span style="font-size:15px;">🏭</span>
+              <span style="font-weight:700;font-size:13px;color:var(--dark);">Industriemotoren</span>
+              <span class="cat-count">263</span>
+              <svg id="grp-ind-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </label>
+            <div id="grp-ind" class="cat-sublist" style="padding-left:14px;display:none;">
+              <label><input type="checkbox" name="cat" value="Elektromotor"> Elektromotor <span class="cat-count">89</span></label>
+              <label><input type="checkbox" name="cat" value="Hydraulikmotor"> Hydraulikmotor <span class="cat-count">43</span></label>
+              <label><input type="checkbox" name="cat" value="Kompressor Motor"> Kompressor-Motor <span class="cat-count">31</span></label>
+              <label><input type="checkbox" name="cat" value="Pumpenmotor"> Pumpenmotor <span class="cat-count">27</span></label>
+              <label><input type="checkbox" name="cat" value="Generatormotor"> Generator-Motor <span class="cat-count">38</span></label>
+              <label><input type="checkbox" name="cat" value="Asynchronmotor"> Asynchronmotor <span class="cat-count">35</span></label>
+            </div>
+
+            <!-- Agrarmotoren -->
+            <label class="cat-group-head" onclick="sidebarToggleGroup('grp-agr')">
+              <span style="font-size:15px;">🚜</span>
+              <span style="font-weight:700;font-size:13px;color:var(--dark);">Agrar- & Landmaschinen</span>
+              <span class="cat-count">145</span>
+              <svg id="grp-agr-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </label>
+            <div id="grp-agr" class="cat-sublist" style="padding-left:14px;display:none;">
+              <label><input type="checkbox" name="cat" value="Traktor Motor"> Traktor-Motor <span class="cat-count">68</span></label>
+              <label><input type="checkbox" name="cat" value="Mähdrescher Motor"> Mähdrescher-Motor <span class="cat-count">29</span></label>
+              <label><input type="checkbox" name="cat" value="Aufsitzmäher Motor"> Aufsitzmäher-Motor <span class="cat-count">22</span></label>
+              <label><input type="checkbox" name="cat" value="Schlepper Motor"> Schlepper-Motor <span class="cat-count">26</span></label>
+            </div>
+
+            <!-- Sondermotoren -->
+            <label class="cat-group-head" onclick="sidebarToggleGroup('grp-sond')">
+              <span style="font-size:15px;">⚙️</span>
+              <span style="font-weight:700;font-size:13px;color:var(--dark);">Spezial- & Sondermotoren</span>
+              <span class="cat-count">198</span>
+              <svg id="grp-sond-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </label>
+            <div id="grp-sond" class="cat-sublist" style="padding-left:14px;display:none;">
+              <label><input type="checkbox" name="cat" value="Aufzugmotor"> Aufzugmotor <span class="cat-count">19</span></label>
+              <label><input type="checkbox" name="cat" value="Achterbahnmotor"> Achterbahnmotor <span class="cat-count">4</span></label>
+              <label><input type="checkbox" name="cat" value="Arcade Motor"> Arcade-Motor <span class="cat-count">11</span></label>
+              <label><input type="checkbox" name="cat" value="Rollstuhlmotor"> Rollstuhlmotor <span class="cat-count">14</span></label>
+              <label><input type="checkbox" name="cat" value="Windturbinenmotor"> Windturbinenmotor <span class="cat-count">8</span></label>
+              <label><input type="checkbox" name="cat" value="Baggermotor"> Baggermotor <span class="cat-count">33</span></label>
+              <label><input type="checkbox" name="cat" value="Kranmotor"> Kranmotor <span class="cat-count">22</span></label>
+              <label><input type="checkbox" name="cat" value="Lok Motor"> Lok-Motor <span class="cat-count">7</span></label>
+            </div>
+
+            <!-- Motorrad -->
+            <label class="cat-group-head" onclick="sidebarToggleGroup('grp-moto')">
+              <span style="font-size:15px;">🏍️</span>
+              <span style="font-weight:700;font-size:13px;color:var(--dark);">Motorrad & Zweirad</span>
+              <span class="cat-count">134</span>
+              <svg id="grp-moto-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </label>
+            <div id="grp-moto" class="cat-sublist" style="padding-left:14px;display:none;">
+              <label><input type="checkbox" name="cat" value="Motorrad Motor"> Motorrad-Motor <span class="cat-count">72</span></label>
+              <label><input type="checkbox" name="cat" value="Roller Motor"> Roller-Motor <span class="cat-count">31</span></label>
+              <label><input type="checkbox" name="cat" value="Quad Motor"> Quad-Motor <span class="cat-count">31</span></label>
+            </div>
+
+            <!-- Austauschmotoren -->
+            <label class="cat-group-head" onclick="sidebarToggleGroup('grp-aus')">
+              <span style="font-size:15px;">🔄</span>
+              <span style="font-weight:700;font-size:13px;color:var(--dark);">Austausch- & Reman</span>
+              <span class="cat-count">221</span>
+              <svg id="grp-aus-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </label>
+            <div id="grp-aus" class="cat-sublist" style="padding-left:14px;display:none;">
+              <label><input type="checkbox" name="cat" value="Austauschmotor"> Austauschmotor <span class="cat-count">98</span></label>
+              <label><input type="checkbox" name="cat" value="Generalüberholt"> Generalüberholt (Reman) <span class="cat-count">76</span></label>
+              <label><input type="checkbox" name="cat" value="Kurzmotor"> Kurzmotor <span class="cat-count">47</span></label>
+            </div>
+
+          </div>
+        </div>
       </div>
-    </div>
+
+      <!-- KRAFTSTOFF -->
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="sidebarToggle(this)">Kraftstoff / Antrieb</div>
+        <div class="sidebar-body">
+          <div class="sidebar-list">
+            <label><input type="checkbox" name="fuel" value="Diesel"> 🛢 Diesel</label>
+            <label><input type="checkbox" name="fuel" value="Benzin"> ⛽ Benzin</label>
+            <label><input type="checkbox" name="fuel" value="Elektrisch"> ⚡ Elektrisch</label>
+            <label><input type="checkbox" name="fuel" value="Gas LPG"> 🔵 Gas (LPG/CNG)</label>
+            <label><input type="checkbox" name="fuel" value="Hybrid"> 🔋 Hybrid</label>
+            <label><input type="checkbox" name="fuel" value="Wasserstoff"> 💧 Wasserstoff</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ZUSTAND -->
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="sidebarToggle(this)">Zustand</div>
+        <div class="sidebar-body">
+          <div class="sidebar-list">
+            <label><input type="radio" name="cond" value=""> Alle Zustände</label>
+            <label><input type="radio" name="cond" value="Neu"> ✨ Neu</label>
+            <label><input type="radio" name="cond" value="Gebraucht"> 🔧 Gebraucht</label>
+            <label><input type="radio" name="cond" value="Generalüberholt"> 🔄 Generalüberholt</label>
+            <label><input type="radio" name="cond" value="Defekt"> ⚠️ Defekt / Teile</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREIS -->
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="sidebarToggle(this)">Preis (€)</div>
+        <div class="sidebar-body">
+          <div class="price-inputs">
+            <input type="number" id="price-min" placeholder="Min €" min="0">
+            <input type="number" id="price-max" placeholder="Max €" min="0">
+          </div>
+          <button class="sidebar-btn" id="apply-price" onclick="sidebarApply()">Filter anwenden →</button>
+        </div>
+      </div>
+
+      <!-- HÄNDLERTYP -->
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="sidebarToggle(this)">Anbieter</div>
+        <div class="sidebar-body">
+          <div class="sidebar-list">
+            <label><input type="checkbox" name="seller" value="verified"> ✅ Geprüfte Händler</label>
+            <label><input type="checkbox" name="seller" value="top"> ⭐ Top-Bewertung</label>
+            <label><input type="checkbox" name="seller" value="commercial"> 🏢 Gewerblich</label>
+            <label><input type="checkbox" name="seller" value="private"> 👤 Privat</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- WERBUNG -->
+      <div class="sidebar-section" style="border-bottom:none;padding-bottom:0;">
+        <div class="ad-slideshow-title">Werbung</div>
+        <ins class="adsbygoogle"
+             style="display:block; width:100%; min-height:250px; border-radius:10px; overflow:hidden;"
+             data-ad-client="ca-pub-4690558719999917"
+             data-ad-slot="4564801273"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <div id="adsense-placeholder" style="background:linear-gradient(135deg,#f0f4f8,#e8eef5);border:1.5px dashed #c8d6e5;border-radius:10px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;">
+          <div style="font-size:28px;">📢</div>
+          <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.07em;">Werbung</div>
+          <div style="font-size:11px;color:#94a3b8;line-height:1.5;">Google AdSense<br>erscheint nach Freischaltung</div>
+          <a href="kontakt.html" style="margin-top:6px;font-size:11px;font-weight:600;color:#3b82f6;text-decoration:none;background:rgba(59,130,246,.08);padding:5px 12px;border-radius:999px;border:1px solid rgba(59,130,246,.2);">Direkt hier werben →</a>
+        </div>
+      </div>
+
+    </div><!-- /sidebar-inner -->
   </aside>
 
   <!-- Content -->
   <div class="content-area">
 
-    <!-- Filter Toggle (Mobil) -->
-    <button class="mob-filter-btn" id="mob-filter-btn">
-      ☰ Filter anzeigen
+    <!-- Burger / Filter-Toggle (Mobile) -->
+    <button class="mob-filter-btn" id="mob-filter-btn" onclick="toggleSidebar()">
+      <div class="burger-icon">
+        <span></span><span></span><span></span>
+      </div>
+      <span id="mob-filter-label">Filter &amp; Kategorien</span>
     </button>
 
     <!-- Anzeigen Panel -->
@@ -1647,12 +1862,9 @@
     window.location.href = "index.html";
   });
 
-  // Mobile Filter
+  // Mobile Filter Burger
   document.getElementById("mob-filter-btn")?.addEventListener("click", () => {
-    const sb = document.getElementById("sidebar");
-    sb?.classList.toggle("open");
-    const btn = document.getElementById("mob-filter-btn");
-    if (btn) btn.textContent = sb?.classList.contains("open") ? "✕ Filter schließen" : "☰ Filter anzeigen";
+    toggleSidebar();
   });
 
   // Stats sync (Hero Card)
@@ -1680,32 +1892,151 @@
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
 
 <script>
-// ── Sidebar Filter auf Startseite ─────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
+// ══════════════════════════════════════════════════
+//  SIDEBAR — vollständige Filter-Logik
+// ══════════════════════════════════════════════════
 
-  // Zustand Radio-Buttons
+// ── Burger / Sidebar öffnen & schließen ───────────
+function toggleSidebar() {
+  const sb  = document.getElementById('sidebar');
+  const ov  = document.getElementById('sidebar-overlay');
+  const btn = document.getElementById('mob-filter-btn');
+  const lbl = document.getElementById('mob-filter-label');
+  const isOpen = sb.classList.toggle('open');
+  ov.classList.toggle('open', isOpen);
+  btn.classList.toggle('open', isOpen);
+  lbl.textContent = isOpen ? 'Filter schließen' : 'Filter & Kategorien';
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeSidebar() {
+  const sb  = document.getElementById('sidebar');
+  const ov  = document.getElementById('sidebar-overlay');
+  const btn = document.getElementById('mob-filter-btn');
+  const lbl = document.getElementById('mob-filter-label');
+  sb.classList.remove('open');
+  ov.classList.remove('open');
+  btn.classList.remove('open');
+  lbl.textContent = 'Filter & Kategorien';
+  document.body.style.overflow = '';
+}
+
+// ── Akkordeon-Abschnitte ──────────────────────────
+function sidebarToggle(titleEl) {
+  titleEl.classList.toggle('collapsed');
+  const body = titleEl.nextElementSibling;
+  if (body) body.classList.toggle('hidden');
+}
+
+// ── Kategorie-Untergruppen ────────────────────────
+function sidebarToggleGroup(id) {
+  const el   = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  if (!el) return;
+  const open = el.style.display === 'none' || el.style.display === '';
+  el.style.display = open ? 'flex' : 'none';
+  el.style.flexDirection = 'column';
+  el.style.gap = '2px';
+  if (icon) icon.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+// ── Kategorie-Suche ───────────────────────────────
+function sidebarSearchCat(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('#sidebar-category-list .cat-sublist label').forEach(lbl => {
+    const txt = lbl.textContent.toLowerCase();
+    lbl.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  });
+  // Gruppen aufklappen wenn Treffer
+  if (q) {
+    document.querySelectorAll('.cat-sublist').forEach(list => {
+      const hasMatch = Array.from(list.querySelectorAll('label'))
+        .some(l => l.style.display !== 'none');
+      if (hasMatch) {
+        list.style.display = 'flex';
+        list.style.flexDirection = 'column';
+        list.style.gap = '2px';
+        const icon = document.getElementById(list.id + '-icon');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+      }
+    });
+  }
+}
+
+// ── Filter anwenden → weiterleiten zu suche.html ──
+function sidebarApply() {
+  const params = new URLSearchParams();
+
+  // Kategorien
+  const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked'))
+    .map(el => el.value);
+  if (cats.length) params.set('cat', cats.join(','));
+
+  // Kraftstoff
+  const fuels = Array.from(document.querySelectorAll('input[name="fuel"]:checked'))
+    .map(el => el.value);
+  if (fuels.length) params.set('fuel', fuels.join(','));
+
+  // Zustand
+  const cond = document.querySelector('input[name="cond"]:checked')?.value;
+  if (cond) params.set('condition', cond);
+
+  // Preis
+  const min = document.getElementById('price-min')?.value;
+  const max = document.getElementById('price-max')?.value;
+  if (min) params.set('price_min', min);
+  if (max) params.set('price_max', max);
+
+  // Anbieter
+  const sellers = Array.from(document.querySelectorAll('input[name="seller"]:checked'))
+    .map(el => el.value);
+  if (sellers.length) params.set('seller', sellers.join(','));
+
+  const qs = params.toString();
+  window.location.href = qs ? 'suche.html?' + qs : 'suche.html';
+}
+
+// ── Zurücksetzen ──────────────────────────────────
+function sidebarReset() {
+  document.querySelectorAll('input[name="cat"]').forEach(el => el.checked = false);
+  document.querySelectorAll('input[name="fuel"]').forEach(el => el.checked = false);
+  document.querySelectorAll('input[name="seller"]').forEach(el => el.checked = false);
+  const allCond = document.querySelector('input[name="cond"][value=""]');
+  if (allCond) allCond.checked = true;
+  const pMin = document.getElementById('price-min');
+  const pMax = document.getElementById('price-max');
+  if (pMin) pMin.value = '';
+  if (pMax) pMax.value = '';
+}
+
+// ── Zustand-Radio: sofort weiterleiten ────────────
+document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll("input[name='cond']").forEach(radio => {
-    radio.addEventListener("change", () => {
-      const val = radio.value;
-      if (val) {
-        window.location.href = "suche.html?condition=" + encodeURIComponent(val);
+    radio.addEventListener('change', () => {
+      if (radio.value) {
+        window.location.href = 'suche.html?condition=' + encodeURIComponent(radio.value);
       } else {
-        window.location.href = "suche.html";
+        window.location.href = 'suche.html';
       }
     });
   });
 
-  // Preis Filter
-  document.getElementById("apply-price")?.addEventListener("click", () => {
-    const min = document.getElementById("price-min")?.value || "";
-    const max = document.getElementById("price-max")?.value || "";
-    const params = new URLSearchParams();
-    if (min) params.set("price_min", min);
-    if (max) params.set("price_max", max);
-    const qs = params.toString();
-    window.location.href = qs ? "suche.html?" + qs : "suche.html";
+  // Kategorie-Checkboxen: sofort weiterleiten
+  document.querySelectorAll("input[name='cat']").forEach(cb => {
+    cb.addEventListener('change', () => {
+      const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked'))
+        .map(el => el.value);
+      if (cats.length) {
+        window.location.href = 'suche.html?cat=' + encodeURIComponent(cats.join(','));
+      }
+    });
   });
 
+  // Preis Enter-Taste
+  ['price-min','price-max'].forEach(id => {
+    document.getElementById(id)?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') sidebarApply();
+    });
+  });
 });
 </script>
 
