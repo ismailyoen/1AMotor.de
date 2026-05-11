@@ -92,7 +92,25 @@ select{cursor:pointer;}
 /* ── Responsive ── */
 @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}}
 @media(max-width:640px){.grid-2{grid-template-columns:1fr;}.page{padding:20px 16px 40px;}}
+
+  @media (max-width: 768px) {
+    .profil-wrap, .profil-layout { grid-template-columns: 1fr !important; }
+    .profil-sidebar { display: none !important; }
+    .profil-form { padding: 16px !important; }
+    .form-row, .form-cols { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .profile-card { border-radius: 12px !important; }
+    .profile-header { padding: 18px !important; }
+    .tab-bar { flex-wrap: wrap !important; }
+    .tab-btn { flex: 1 1 calc(50% - 4px) !important; padding: 10px !important; font-size: 13px !important; }
+    input, select, textarea { font-size: 16px !important; }
+    .delete-zone { padding: 16px !important; }
+    .page-head h1 { font-size: 20px !important; }
+    .delete-modal-inner { width: 95% !important; padding: 20px !important; border-radius: 16px !important; }
+  }
+
 </style>
+  <link rel="stylesheet" href="mobile.css" />
+<!-- 1AM-MOBILE -->
 </head>
 <body>
 
@@ -325,5 +343,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+    <script src="mobile.js" defer></script>
 </body>
 </html>

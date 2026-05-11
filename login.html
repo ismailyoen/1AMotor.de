@@ -135,7 +135,25 @@
     font-family: 'Outfit', Arial, sans-serif;
   }
 
+
+  @media (max-width: 768px) {
+    body { background: #f2f6fb !important; padding-bottom: 70px; }
+    main { padding: 16px 16px 24px !important; align-items: flex-start !important; }
+    .auth-card { width: 100% !important; max-width: 100% !important; border-radius: 16px !important; }
+    .card-header { padding: 22px 20px 18px !important; }
+    .card-header h1 { font-size: 20px !important; }
+    .card-body { padding: 20px !important; }
+    .form-group { margin-bottom: 14px !important; }
+    input[type="email"], input[type="password"], input[type="text"] { 
+      padding: 14px !important; font-size: 16px !important; 
+    }
+    .login-btn, button[type="submit"] { padding: 15px !important; font-size: 15px !important; }
+    .modal { width: 95% !important; padding: 20px !important; border-radius: 16px !important; }
+  }
+
 </style>
+  <link rel="stylesheet" href="mobile.css" />
+<!-- 1AM-MOBILE -->
 </head>
 <body>
 
@@ -242,5 +260,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
+    <script src="mobile.js" defer></script>
 </body>
 </html>

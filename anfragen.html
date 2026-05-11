@@ -131,7 +131,28 @@ a{text-decoration:none;color:inherit;}
 @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.chat-layout{grid-template-columns:1fr;}.chat-panel{display:none;}.chat-panel.visible{display:flex;position:fixed;inset:0;z-index:200;}.back-btn{display:flex;}}
 @media(max-width:900px){.tab-wrap{padding:0 16px 12px;}.page-head{padding:16px 16px 0;}}
 .back-btn{display:none;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#1c6ea4;cursor:pointer;margin-bottom:10px;}
+
+  @media (max-width: 768px) {
+    .page-layout, .anfragen-layout { grid-template-columns: 1fr !important; }
+    .sidebar { display: none !important; }
+    .inquiry-card { padding: 16px !important; border-radius: 12px !important; }
+    .inquiry-card h3 { font-size: 16px !important; }
+    .chat-box { padding-top: 12px !important; }
+    .reply-input { font-size: 15px !important; padding: 12px !important; }
+    .reply-btn, .status-btn { 
+      padding: 11px 16px !important; 
+      font-size: 13px !important; 
+    }
+    .status-buttons { flex-wrap: wrap !important; gap: 8px !important; }
+    .message-box { font-size: 14px !important; }
+    .chat-messages { max-height: 280px !important; }
+    /* Bottom padding for mobile nav */
+    .page { padding-bottom: 20px !important; }
+  }
+
 </style>
+  <link rel="stylesheet" href="mobile.css" />
+<!-- 1AM-MOBILE -->
 </head>
 <body>
 
@@ -533,5 +554,6 @@ async function sendReply(inq) {
 }
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
+    <script src="mobile.js" defer></script>
 </body>
 </html>

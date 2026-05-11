@@ -108,7 +108,31 @@ a{text-decoration:none;color:inherit;}
 
 @media(max-width:1300px){.stats-grid{grid-template-columns:repeat(3,1fr);}.charts-row{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.stats-grid{grid-template-columns:1fr 1fr;}.bottom-grid{grid-template-columns:1fr;}}
+
+  @media (max-width: 768px) {
+    .dash-layout, .layout { grid-template-columns: 1fr !important; }
+    .page-sidebar { display: none !important; }
+    .dash-main { padding: 0 !important; }
+    .stats-row, .stat-cards { 
+      display: grid !important; 
+      grid-template-columns: 1fr 1fr !important; 
+      gap: 10px !important; 
+    }
+    .stat-card { padding: 14px !important; border-radius: 12px !important; }
+    .stat-value { font-size: 20px !important; }
+    .panel { border-radius: 12px !important; }
+    .panel-head { padding: 14px 16px !important; }
+    .panel-body { padding: 0 !important; }
+    .listings-table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+    table { font-size: 12px !important; min-width: 580px; }
+    th, td { padding: 10px 8px !important; }
+    .page-head h1 { font-size: 22px !important; }
+    .activity-list { padding: 14px !important; }
+  }
+
 </style>
+  <link rel="stylesheet" href="mobile.css" />
+<!-- 1AM-MOBILE -->
 </head>
 <body>
 <aside class="sidebar">
@@ -326,5 +350,6 @@ function getIcon(c){return({"Automotor":"🚗","Dieselmotor Auto":"🚗","Benzin
 function relT(d){if(!d)return"–";const diff=Date.now()-new Date(d).getTime(),m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);if(m<2)return"gerade eben";if(m<60)return`vor ${m} Min.`;if(h<24)return`vor ${h} Std.`;if(dy===1)return"gestern";if(dy<7)return`vor ${dy} Tagen`;return new Date(d).toLocaleDateString("de-DE");}
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+    <script src="mobile.js" defer></script>
 </body>
 </html>

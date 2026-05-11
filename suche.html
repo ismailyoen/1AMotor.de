@@ -791,7 +791,59 @@ img { max-width: 100%; display: block; }
   .listing-grid.list-view .listing-card { grid-template-columns: 1fr; }
   .search-hero { padding: 20px 0; }
 }
+
+  @media (max-width: 768px) {
+    .header-search { display: none !important; }
+    .mobile-search { 
+      display: flex !important; 
+      padding: 8px 16px 10px !important; 
+      gap: 8px !important;
+      background: #fff !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+    .mobile-search input {
+      flex: 1 !important;
+      padding: 11px 14px !important;
+      font-size: 15px !important;
+      border-radius: 10px !important;
+      border: 1.5px solid #e2e8f0 !important;
+      outline: none !important;
+    }
+    .mobile-search button {
+      padding: 11px 16px !important;
+      border-radius: 10px !important;
+      background: #1a5fa8 !important;
+      color: #fff !important;
+      border: none !important;
+      font-weight: 700 !important;
+    }
+    .header-actions { 
+      display: flex !important; 
+      gap: 8px !important; 
+      align-items: center !important;
+    }
+    /* Mob Toggle sichtbar auf Suche */
+    #mob-toggle-search { display: flex !important; }
+    .results-grid { grid-template-columns: 1fr !important; }
+    .listing-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    .listing-image { height: 150px !important; }
+    .listing-body { padding: 12px !important; }
+    .listing-title { font-size: 13px !important; }
+    .mob-filter-btn {
+      width: 100% !important;
+      margin-bottom: 12px !important;
+      padding: 12px !important;
+      justify-content: center !important;
+      border-radius: 10px !important;
+      font-size: 14px !important;
+    }
+    .results-count { font-size: 13px !important; }
+    .sort-select { width: 100% !important; }
+  }
+
 </style>
+  <link rel="stylesheet" href="mobile.css" />
+<!-- 1AM-MOBILE -->
 </head>
 <body>
 
@@ -1406,5 +1458,6 @@ document.getElementById('filter-reset')?.addEventListener('click', () => {
   window.location.href = 'suche.html';
 });
 </script>
+    <script src="mobile.js" defer></script>
 </body>
 </html>

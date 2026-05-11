@@ -159,7 +159,27 @@ textarea{min-height:130px;resize:vertical;}
 @media(max-width:1100px){.content-layout{grid-template-columns:1fr;}.right-sidebar{position:static;}}
 @media(max-width:900px){.sidebar-nav-wrap{display:none;}.main{margin-left:0;}}
 @media(max-width:760px){.grid-2,.grid-3,.grid-4,.checkbox-grid{grid-template-columns:1fr;}.preview-grid{grid-template-columns:repeat(3,1fr);}.step-label{display:none;}.page{padding:16px 14px 48px;}}
+
+  @media (max-width: 768px) {
+    .create-layout, .form-main-layout { grid-template-columns: 1fr !important; }
+    .sidebar-nav-wrap, .form-sidebar { display: none !important; }
+    .form-section { border-radius: 12px !important; padding: 18px 16px !important; }
+    .form-section-title { font-size: 16px !important; }
+    .form-row-2 { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .type-selector { flex-direction: row !important; flex-wrap: wrap !important; gap: 8px !important; }
+    .type-btn { flex: 1 1 calc(50% - 4px) !important; padding: 12px 8px !important; font-size: 13px !important; }
+    .preview-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+    .preview-item { height: 100px !important; }
+    .upload-area { padding: 24px 16px !important; }
+    .submit-row { flex-direction: column !important; }
+    .submit-row button { width: 100% !important; }
+    input, select, textarea { font-size: 16px !important; }
+    .page-head h1 { font-size: 20px !important; }
+  }
+
 </style>
+  <link rel="stylesheet" href="mobile.css" />
+<!-- 1AM-MOBILE -->
 </head>
 <body>
 
@@ -661,5 +681,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+    <script src="mobile.js" defer></script>
 </body>
 </html>

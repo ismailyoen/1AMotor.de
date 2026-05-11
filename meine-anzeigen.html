@@ -108,7 +108,28 @@ a{text-decoration:none;color:inherit;}
 @media(max-width:1200px){.listing-grid{grid-template-columns:1fr;}}
 @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}}
 @media(max-width:640px){.listing-card{grid-template-columns:1fr;}.card-image{min-height:160px;}.page{padding:16px 14px 40px;}}
+
+  @media (max-width: 768px) {
+    .page-layout { grid-template-columns: 1fr !important; }
+    .page-sidebar { display: none !important; }
+    .my-listings-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .listing-card { border-radius: 12px !important; }
+    .card-image { height: 175px !important; }
+    .card-body { padding: 14px !important; }
+    .card-title { font-size: 14px !important; }
+    .card-actions { flex-wrap: wrap !important; gap: 8px !important; }
+    .action-btn { flex: 1 1 calc(33% - 6px) !important; text-align: center !important; padding: 10px 6px !important; font-size: 12px !important; }
+    .filter-bar { flex-direction: column !important; gap: 10px !important; }
+    .filter-bar input, .filter-bar select { width: 100% !important; }
+    .page-head { flex-direction: column !important; gap: 12px !important; }
+    .page-head h1 { font-size: 20px !important; }
+    .new-btn { width: 100% !important; text-align: center !important; }
+    .filter-count { font-size: 13px !important; }
+  }
+
 </style>
+  <link rel="stylesheet" href="mobile.css" />
+<!-- 1AM-MOBILE -->
 </head>
 <body>
 
@@ -338,5 +359,6 @@ async function doDelete(){
 }
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+    <script src="mobile.js" defer></script>
 </body>
 </html>
