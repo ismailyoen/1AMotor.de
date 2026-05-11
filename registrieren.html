@@ -83,6 +83,14 @@
   .extra a:hover { text-decoration: underline; }
   footer { text-align: center; padding: 16px; font-size: 12px; color: rgba(255,255,255,0.35); }
 
+
+  /* Käufer-Info Box */
+  .buyer-info {
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 16px; font-size: 13px; color: #15803d;
+    display: none;
+  }
+  .buyer-info.show { display: block; }
   /* Händler-Info Box */
   .seller-info {
     background: #f0f6ff; border: 1px solid #d0e4f7; border-radius: 10px;
@@ -147,21 +155,24 @@
 
       <!-- Konto-Typ Auswahl -->
       <div class="type-toggle">
-        <button class="type-btn" id="btn-buyer" type="button">
+        <button class="type-btn active" id="btn-buyer" type="button">
           <span class="type-icon">🔍</span>
           Käufer
         </button>
-        <button class="type-btn active" id="btn-seller" type="button">
+        <button class="type-btn" id="btn-seller" type="button">
           <span class="type-icon">🏪</span>
           Händler
         </button>
       </div>
 
-      <div class="seller-info show" id="seller-info">
+      <div class="buyer-info show" id="buyer-info">
+        ✅ Als Käufer kannst du sofort Motoren suchen, Händler kontaktieren und Favoriten speichern.
+      </div>
+      <div class="seller-info" id="seller-info">
         💡 Als Händler kannst du Anzeigen erstellen, Anfragen verwalten und dein Profil pflegen.
       </div>
 
-      <input type="hidden" id="account-type" value="Händler" />
+      <input type="hidden" id="account-type" value="Käufer" />
 
       <form id="register-form">
         <div class="form-group">
@@ -211,18 +222,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   const accountType = document.getElementById("account-type");
   const sellerInfo = document.getElementById("seller-info");
 
-  btnBuyer.addEventListener("click", () => {
-    btnBuyer.classList.add("active");
-    btnSeller.classList.remove("active");
-    accountType.value = "Käufer";
-    sellerInfo.classList.remove("show");
-  });
-  btnSeller.addEventListener("click", () => {
-    btnSeller.classList.add("active");
-    btnBuyer.classList.remove("active");
-    accountType.value = "Händler";
-    sellerInfo.classList.add("show");
-  });
+  const buyerInfo = document.getElementById("buyer-info");
+
+  function setType(type) {
+    if (type === "Käufer") {
+      btnBuyer.classList.add("active");
+      btnSeller.classList.remove("active");
+      accountType.value = "Käufer";
+      sellerInfo.classList.remove("show");
+      buyerInfo.classList.add("show");
+    } else {
+      btnSeller.classList.add("active");
+      btnBuyer.classList.remove("active");
+      accountType.value = "Händler";
+      sellerInfo.classList.add("show");
+      buyerInfo.classList.remove("show");
+    }
+  }
+
+  // URL-Parameter auswerten (type=dealer → Händler vorauswählen)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("type") === "dealer") {
+    setType("Händler");
+  } else {
+    setType("Käufer"); // Standard: Käufer
+  }
+
+  btnBuyer.addEventListener("click", () => setType("Käufer"));
+  btnSeller.addEventListener("click", () => setType("Händler"));
 
   // Formular
   const form   = document.getElementById("register-form");
