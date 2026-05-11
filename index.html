@@ -1224,7 +1224,7 @@
     <a href="meine-anfragen.html" data-auth-only style="display:none;">💬 Nachrichten</a>
     <a href="meine-anzeigen.html" data-auth-only style="display:none;">📋 Meine Anzeigen</a>
     <a href="login.html" data-guest-only>Einloggen</a>
-    <a href="#" data-guest-only onclick="openDealerModal(event)">Registrieren</a>
+    <a href="#" data-guest-only onclick="openAccountChooser(event)">Registrieren</a>
     <a href="ueber-uns.html">Über uns</a>
     <a href="kontakt.html">Hilfe &amp; Kontakt</a>
     <a href="impressum.html">Impressum</a>
@@ -2682,230 +2682,342 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
     <script src="mobile.js" defer></script>
-<!-- ══════════════════════════════════════════════
-     KONTO-AUSWAHL MODAL
-     Erscheint vor Händler-Modal & Privat-Modal
-══════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════
+     KONTO-AUSWAHL MODAL — Premium Design
+═══════════════════════════════════════════════════════ -->
 <style>
-.chooser-overlay {
+/* ── Overlay ── */
+.chooser-ov {
   position: fixed; inset: 0;
-  background: rgba(10,18,32,0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 5000;
+  background: rgba(7,21,36,.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 6000;
   display: none;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
-.chooser-overlay.open { display: flex; }
+.chooser-ov.open { display: flex; }
 
-.chooser-box {
-  background: #fff;
-  border-radius: 22px;
+/* ── Dialog ── */
+.chooser-dlg {
+  background: #f4f7fb;
+  border-radius: 24px;
   width: 100%;
-  max-width: 560px;
-  box-shadow: 0 32px 80px rgba(0,0,0,.35);
-  overflow: hidden;
-  animation: chooserIn .3s cubic-bezier(.34,1.4,.64,1);
+  max-width: 980px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 40px 100px rgba(0,0,0,.45);
+  animation: cdlgIn .32s cubic-bezier(.34,1.3,.64,1);
+  scrollbar-width: none;
 }
-@keyframes chooserIn {
-  from { transform: translateY(30px) scale(.97); opacity: 0; }
+.chooser-dlg::-webkit-scrollbar { display: none; }
+@keyframes cdlgIn {
+  from { transform: scale(.96) translateY(20px); opacity: 0; }
   to   { transform: none; opacity: 1; }
 }
 
-.chooser-head {
-  background: linear-gradient(135deg, #0d1b2a, #1b3a60);
-  padding: 26px 28px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* ── Header ── */
+.chooser-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 24px 16px;
+  border-bottom: 1px solid #e0e9f2;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  position: sticky; top: 0; z-index: 2;
 }
-.chooser-head-left { display: flex; align-items: center; gap: 12px; }
-.chooser-logo {
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #1a5fa8, #4da6ff);
+.chooser-hdr-brand { display: flex; align-items: center; gap: 10px; }
+.chooser-hdr-mark {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: linear-gradient(145deg,#1b2d42,#2a4a6b);
   display: grid; place-items: center;
-  font-size: 15px; font-weight: 900; color: #fff;
-  flex-shrink: 0;
+  font-weight: 900; font-size: 13px; color: #fff;
   font-family: 'Outfit', Arial, sans-serif;
+  flex-shrink: 0;
 }
-.chooser-head-title { font-size: 18px; font-weight: 800; color: #fff; }
-.chooser-head-sub   { font-size: 12.5px; color: rgba(255,255,255,.55); margin-top: 2px; }
-.chooser-close {
-  width: 34px; height: 34px;
-  border-radius: 8px;
-  background: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.18);
-  color: #fff; font-size: 17px;
-  cursor: pointer; display: grid; place-items: center;
-  transition: background .15s;
+.chooser-hdr-name { font-size: 18px; font-weight: 800; color: #0d1b2a; letter-spacing: -.2px; }
+.chooser-hdr-sub  { font-size: 12px; color: #7a93ae; }
+.chooser-hdr-close {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: #f0f4f8; border: 1px solid #e0e9f2;
+  color: #7a93ae; font-size: 18px; cursor: pointer;
+  display: grid; place-items: center;
+  transition: background .15s, color .15s;
 }
-.chooser-close:hover { background: rgba(255,255,255,.22); }
+.chooser-hdr-close:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
 
-.chooser-body { padding: 28px; }
-.chooser-question {
-  font-size: 15px; font-weight: 700; color: #1e293b;
-  text-align: center; margin-bottom: 6px;
+/* ── Question row ── */
+.chooser-q {
+  text-align: center; padding: 22px 24px 18px;
 }
-.chooser-hint {
-  font-size: 13px; color: #64748b;
-  text-align: center; margin-bottom: 24px; line-height: 1.5;
-}
+.chooser-q h2 { font-size: 21px; font-weight: 800; color: #0d1b2a; margin-bottom: 6px; }
+.chooser-q p  { font-size: 14px; color: #7a93ae; }
 
-.chooser-cards {
+/* ── Cards grid ── */
+.chooser-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
+  padding: 0 20px 24px;
 }
 
-.chooser-card {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 0; padding: 22px 16px 20px;
-  border: 2px solid #e2eaf4;
-  border-radius: 16px;
-  background: #f8fafc;
-  cursor: pointer;
-  transition: border-color .18s, background .18s, transform .15s, box-shadow .18s;
-  text-decoration: none; color: inherit;
-  position: relative;
+/* ── Each card ── */
+.ch-card {
+  background: #fff;
+  border: 2px solid #e0e9f2;
+  border-radius: 20px;
   overflow: hidden;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, transform .18s;
+  display: flex; flex-direction: column;
+  position: relative;
 }
-.chooser-card:hover {
-  border-color: #1a5fa8;
-  background: #f0f7ff;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(26,95,168,.18);
+.ch-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(13,27,42,.14);
 }
-.chooser-card.popular::before {
-  content: 'Beliebt';
-  position: absolute; top: 10px; right: -1px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #fff; font-size: 10px; font-weight: 700;
-  padding: 3px 10px; border-radius: 0 0 0 8px;
-  letter-spacing: .04em;
+.ch-card.privat:hover { border-color: #1a5fa8; }
+.ch-card.dealer:hover { border-color: #16a34a; }
+
+/* Popular badge */
+.ch-popular {
+  position: absolute; top: 14px; right: 14px;
+  padding: 4px 12px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  z-index: 2;
 }
-.chooser-card-icon {
-  font-size: 38px; line-height: 1;
-  margin-bottom: 12px;
+.ch-card.privat .ch-popular { background: #1a5fa8; color: #fff; }
+.ch-card.dealer .ch-popular { background: #16a34a; color: #fff; }
+
+/* Card top: info + image */
+.ch-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 240px;
 }
-.chooser-card-title {
-  font-size: 16px; font-weight: 800; color: #0d1b2a;
-  margin-bottom: 6px; text-align: center;
+.ch-info {
+  padding: 22px 20px 18px;
+  display: flex; flex-direction: column;
 }
-.chooser-card-desc {
-  font-size: 12.5px; color: #64748b; text-align: center;
-  line-height: 1.5; margin-bottom: 14px;
+.ch-icon-wrap {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: grid; place-items: center; margin-bottom: 14px;
 }
-.chooser-card-features {
-  list-style: none; width: 100%;
-  display: flex; flex-direction: column; gap: 5px;
-  margin-bottom: 16px;
+.ch-card.privat .ch-icon-wrap { background: #e8f2fc; }
+.ch-card.dealer .ch-icon-wrap { background: #dcfce7; }
+.ch-icon-wrap svg { width: 24px; height: 24px; }
+.ch-card.privat .ch-icon-wrap svg { stroke: #1a5fa8; }
+.ch-card.dealer .ch-icon-wrap svg { stroke: #16a34a; }
+
+.ch-title { font-size: 20px; font-weight: 800; color: #0d1b2a; margin-bottom: 8px; line-height: 1.2; }
+.ch-desc  { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 14px; }
+.ch-feats { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.ch-feats li {
+  font-size: 13px; color: #334155;
+  display: flex; align-items: center; gap: 8px;
 }
-.chooser-card-features li {
-  font-size: 12px; color: #475569;
-  display: flex; align-items: center; gap: 6px;
+.ch-feats li::before {
+  content: '';
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  display: grid; place-items: center;
+  background-size: contain;
 }
-.chooser-card-features li::before {
-  content: '✓'; color: #10b981;
-  font-weight: 800; font-size: 11px; flex-shrink: 0;
+.ch-card.privat .ch-feats li::before {
+  background: #e8f2fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8l3 3 6-6' stroke='%231a5fa8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;
 }
-.chooser-card-btn {
-  width: 100%; padding: 11px 16px;
-  border-radius: 10px; border: none;
-  font-size: 13.5px; font-weight: 700;
+.ch-card.dealer .ch-feats li::before {
+  background: #dcfce7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8l3 3 6-6' stroke='%2316a34a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;
+}
+
+/* Image side */
+.ch-img {
+  border-radius: 0 18px 18px 0;
+  overflow: hidden;
+  min-height: 220px;
+}
+.ch-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+}
+/* Placeholder wenn kein Bild geladen werden kann */
+.ch-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+}
+.ch-card.privat .ch-img-placeholder { background: linear-gradient(135deg,#dbeafe,#e0f2fe); }
+.ch-card.dealer .ch-img-placeholder { background: linear-gradient(135deg,#dcfce7,#d1fae5); }
+
+/* CTA Button */
+.ch-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px;
+  border: none; cursor: pointer;
+  font-size: 15px; font-weight: 800;
   font-family: 'Outfit', Arial, sans-serif;
-  cursor: pointer; transition: opacity .15s;
+  width: 100%; gap: 12px;
+  transition: opacity .15s;
+  margin-top: auto;
 }
-.chooser-card:first-child .chooser-card-btn {
-  background: linear-gradient(135deg, #1a5fa8, #2176c7);
+.ch-btn:hover { opacity: .92; }
+.ch-card.privat .ch-btn {
+  background: linear-gradient(135deg,#1a5fa8,#2176c7);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(26,95,168,.3);
 }
-.chooser-card:last-child .chooser-card-btn {
-  background: linear-gradient(135deg, #0f6e56, #10b981);
+.ch-card.dealer .ch-btn {
+  background: linear-gradient(135deg,#16a34a,#15803d);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(16,185,129,.25);
 }
-.chooser-card-btn:hover { opacity: .9; }
+.ch-btn-left  { display: flex; align-items: center; gap: 10px; }
+.ch-btn-icon  {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: rgba(255,255,255,.18);
+  display: grid; place-items: center; flex-shrink: 0;
+  font-size: 16px;
+}
+.ch-btn-arrow { font-size: 20px; font-weight: 300; }
 
-.chooser-footer {
-  padding: 0 28px 22px;
-  text-align: center;
+/* Trust line */
+.ch-trust {
+  padding: 8px 22px 16px;
   font-size: 12px; color: #94a3b8;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
 }
-.chooser-footer a { color: #1a5fa8; }
+.ch-trust svg { width: 14px; height: 14px; stroke: #94a3b8; }
 
-/* Mobile */
-@media (max-width: 480px) {
-  .chooser-cards { grid-template-columns: 1fr; }
-  .chooser-body { padding: 20px 18px; }
-  .chooser-overlay { align-items: flex-end; padding: 0; }
-  .chooser-box {
-    border-radius: 20px 20px 0 0;
-    max-width: 100%;
-    animation: chooserUp .3s cubic-bezier(.34,1.4,.64,1);
-  }
-  @keyframes chooserUp {
+/* Already-member footer */
+.chooser-foot {
+  text-align: center; padding: 4px 24px 22px;
+  font-size: 13px; color: #7a93ae;
+}
+.chooser-foot a { color: #1a5fa8; font-weight: 600; }
+
+/* ── Mobile ── */
+@media (max-width: 700px) {
+  .chooser-dlg { border-radius: 20px 20px 0 0; max-height: 96vh; }
+  .chooser-ov  { align-items: flex-end; padding: 0; }
+  .chooser-grid { grid-template-columns: 1fr; gap: 14px; padding: 0 14px 20px; }
+  .ch-top { grid-template-columns: 1fr; min-height: 0; }
+  .ch-img { display: none; }
+  .ch-info { padding: 18px 16px 14px; }
+  .ch-title { font-size: 17px; }
+  .ch-btn { padding: 14px 18px; font-size: 14px; }
+  .chooser-q h2 { font-size: 17px; }
+  @keyframes cdlgIn {
     from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
+    to   { transform: none; }
   }
 }
 </style>
 
-<div class="chooser-overlay" id="chooserOverlay" onclick="chooserOverlayClick(event)">
-  <div class="chooser-box">
+<!-- Modal HTML -->
+<div class="chooser-ov" id="chooserOverlay" onclick="chooserOvClick(event)">
+  <div class="chooser-dlg" role="dialog" aria-modal="true" aria-label="Konto erstellen">
 
-    <div class="chooser-head">
-      <div class="chooser-head-left">
-        <div class="chooser-logo">1A</div>
+    <!-- Header -->
+    <div class="chooser-hdr">
+      <div class="chooser-hdr-brand">
+        <div class="chooser-hdr-mark">1A</div>
         <div>
-          <div class="chooser-head-title">Konto erstellen</div>
-          <div class="chooser-head-sub">1A Motor — Wählen Sie Ihren Kontotyp</div>
+          <div class="chooser-hdr-name">1A Motor</div>
+          <div class="chooser-hdr-sub">Konto erstellen — Kontotyp wählen</div>
         </div>
       </div>
-      <button class="chooser-close" onclick="closeAccountChooser()">✕</button>
+      <button class="chooser-hdr-close" onclick="closeAccountChooser()" aria-label="Schließen">✕</button>
     </div>
 
-    <div class="chooser-body">
-      <div class="chooser-question">Wie möchten Sie 1A Motor nutzen?</div>
-      <div class="chooser-hint">Wählen Sie den passenden Kontotyp — Sie können ihn später jederzeit erweitern.</div>
+    <!-- Question -->
+    <div class="chooser-q">
+      <h2>Wie möchten Sie 1A Motor nutzen?</h2>
+      <p>Wählen Sie den passenden Kontotyp — kostenlos, unverbindlich, jederzeit änderbar.</p>
+    </div>
 
-      <div class="chooser-cards">
+    <!-- Cards -->
+    <div class="chooser-grid">
 
-        <!-- KÄUFER / PRIVAT -->
-        <div class="chooser-card popular" onclick="chooserGoPrivat()">
-          <div class="chooser-card-icon">👤</div>
-          <div class="chooser-card-title">Privat &amp; Käufer</div>
-          <div class="chooser-card-desc">Kaufen, anfragen und gelegentlich privat verkaufen — ganz ohne Gewerbeschein.</div>
-          <ul class="chooser-card-features">
-            <li>Motor suchen &amp; kaufen</li>
-            <li>Direkt beim Händler anfragen</li>
-            <li>Privat einen Motor inserieren</li>
-            <li>Kostenlos &amp; schnell</li>
-          </ul>
-          <button class="chooser-card-btn">Kostenlos registrieren →</button>
+      <!-- PRIVAT & KÄUFER -->
+      <div class="ch-card privat" onclick="chooserGoPrivat()">
+        <span class="ch-popular">Beliebt</span>
+        <div class="ch-top">
+          <div class="ch-info">
+            <div class="ch-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div class="ch-title">Privat &amp; Käufer</div>
+            <div class="ch-desc">Motoren kaufen, anfragen und gelegentlich privat verkaufen – ganz ohne Gewerbeschein.</div>
+            <ul class="ch-feats">
+              <li>Motor suchen &amp; kaufen</li>
+              <li>Direkt beim Händler anfragen</li>
+              <li>Privat einen Motor inserieren</li>
+              <li>Kostenlos &amp; schnell</li>
+            </ul>
+          </div>
+          <div class="ch-img" id="ch-img-privat">
+            <div class="ch-img-placeholder">📱</div>
+          </div>
         </div>
-
-        <!-- HÄNDLER -->
-        <div class="chooser-card" onclick="chooserGoDealer()">
-          <div class="chooser-card-icon">🏢</div>
-          <div class="chooser-card-title">Gewerblicher Händler</div>
-          <div class="chooser-card-desc">Sie handeln gewerblich mit Motoren und möchten Ihr Sortiment auf 1A Motor listen.</div>
-          <ul class="chooser-card-features">
-            <li>Unbegrenzt Anzeigen schalten</li>
-            <li>Geprüftes Händler-Profil</li>
-            <li>Direktanfragen von Käufern</li>
-            <li>Dashboard &amp; Statistiken</li>
-          </ul>
-          <button class="chooser-card-btn">Als Händler starten →</button>
+        <button class="ch-btn" type="button">
+          <div class="ch-btn-left">
+            <div class="ch-btn-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            Kostenlos registrieren
+          </div>
+          <span class="ch-btn-arrow">→</span>
+        </button>
+        <div class="ch-trust">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          100 % kostenlos – unverbindlich &amp; sicher
         </div>
-
       </div>
-    </div>
 
-    <div class="chooser-footer">
+      <!-- GEWERBLICHER HÄNDLER -->
+      <div class="ch-card dealer" onclick="chooserGoDealer()">
+        <span class="ch-popular">Professionell</span>
+        <div class="ch-top">
+          <div class="ch-info">
+            <div class="ch-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+                <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+              </svg>
+            </div>
+            <div class="ch-title">Gewerblicher Händler</div>
+            <div class="ch-desc">Sie handeln gewerblich mit Motoren und möchten Ihr Sortiment auf 1A Motor listen.</div>
+            <ul class="ch-feats">
+              <li>Unbegrenzt Anzeigen schalten</li>
+              <li>Geprüftes Händler-Profil</li>
+              <li>Direktanfragen von Käufern</li>
+              <li>Dashboard &amp; Statistiken</li>
+            </ul>
+          </div>
+          <div class="ch-img" id="ch-img-dealer">
+            <div class="ch-img-placeholder">💻</div>
+          </div>
+        </div>
+        <button class="ch-btn" type="button">
+          <div class="ch-btn-left">
+            <div class="ch-btn-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            </div>
+            Als Händler starten
+          </div>
+          <span class="ch-btn-arrow">→</span>
+        </button>
+        <div class="ch-trust">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Kostenlos registrieren · Unverbindlich · Jederzeit kündbar
+        </div>
+      </div>
+
+    </div><!-- /chooser-grid -->
+
+    <div class="chooser-foot">
       Bereits registriert? <a href="login.html">Jetzt einloggen →</a>
     </div>
 
@@ -2913,42 +3025,44 @@ document.addEventListener('DOMContentLoaded', function () {
 </div>
 
 <script>
-// ── Account Chooser ──────────────────────────────────────────
+// ── Bilder aus den KI-generierten Assets einsetzen ─────────────
+(function() {
+  // Privat-Bild (Person mit Tablet)
+  var privImg = document.getElementById('ch-img-privat');
+  if (privImg) {
+    privImg.innerHTML = '<img src="ChatGPT_Image_11__Mai_2026__19_35_30.png" alt="Privat & Käufer auf 1A Motor" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=ch-img-placeholder>📱</div>\'">';
+  }
+  // Händler-Bild (Laptop mit Dashboard)
+  var dealImg = document.getElementById('ch-img-dealer');
+  if (dealImg) {
+    dealImg.innerHTML = '<img src="ChatGPT_Image_11__Mai_2026__19_38_42.png" alt="Händler-Dashboard auf 1A Motor" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=ch-img-placeholder>💻</div>\'">';
+  }
+})();
+
+// ── Modal Steuerung ────────────────────────────────────────────
 function openAccountChooser(e) {
   if (e) e.preventDefault();
   document.getElementById('chooserOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function closeAccountChooser() {
   document.getElementById('chooserOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
-
-function chooserOverlayClick(e) {
+function chooserOvClick(e) {
   if (e.target && e.target.id === 'chooserOverlay') closeAccountChooser();
 }
-
-// Privat → registrieren.html (einfache Registrierung)
 function chooserGoPrivat() {
   closeAccountChooser();
   window.location.href = 'registrieren.html';
 }
-
-// Händler → das bestehende Händler-Modal öffnen
 function chooserGoDealer() {
   closeAccountChooser();
-  // Kurze Pause damit Chooser zuerst schließt, dann Dealer-Modal öffnet
   setTimeout(function() {
-    if (typeof openDealerModal === 'function') {
-      openDealerModal(null);
-    } else {
-      window.location.href = 'registrieren.html?type=dealer';
-    }
-  }, 200);
+    if (typeof openDealerModal === 'function') openDealerModal(null);
+    else window.location.href = 'registrieren.html?type=dealer';
+  }, 220);
 }
-
-// ESC schließt Chooser
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeAccountChooser();
 });
