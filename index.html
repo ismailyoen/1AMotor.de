@@ -1201,7 +1201,7 @@
       <a href="login.html" data-guest-only>
         <button class="hdr-btn hdr-btn-ghost"><span data-i18n="nav.login">Einloggen</span></button>
       </a>
-      <a href="#" data-guest-only onclick="openDealerModal(event)">
+      <a href="#" data-guest-only onclick="openAccountChooser(event)">
         <button class="hdr-btn hdr-btn-outline"><span data-i18n="nav.register">Registrieren</span></button>
       </a>
       <!-- Avatar-Dropdown wird hier von auth-header.js eingefügt wenn eingeloggt -->
@@ -1250,7 +1250,7 @@
       <p class="hero-desc" data-i18n="hero.subtitle">Fahrzeugmotoren, Industrieantriebe, Bootsmotoren und Spezialmotoren. Geprüfte Händler, direkte Anfragen, keine Provision.</p>
       <div class="hero-cta">
         <a href="suche.html" class="cta-primary" data-i18n="hero.cta.search">🔍 Jetzt suchen</a>
-        <a href="#" class="cta-secondary" data-i18n="hero.cta.dealer" onclick="openDealerModal(event)">Als Händler starten</a>
+        <a href="#" class="cta-secondary" data-i18n="hero.cta.dealer" onclick="openAccountChooser(event)">Als Händler starten</a>
       </div>
       <!-- Stat-IDs für index-live.js (versteckt) -->
       <span id="stat-listings" style="display:none;"></span>
@@ -2682,5 +2682,276 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
     <script src="mobile.js" defer></script>
+<!-- ══════════════════════════════════════════════
+     KONTO-AUSWAHL MODAL
+     Erscheint vor Händler-Modal & Privat-Modal
+══════════════════════════════════════════════ -->
+<style>
+.chooser-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10,18,32,0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 5000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.chooser-overlay.open { display: flex; }
+
+.chooser-box {
+  background: #fff;
+  border-radius: 22px;
+  width: 100%;
+  max-width: 560px;
+  box-shadow: 0 32px 80px rgba(0,0,0,.35);
+  overflow: hidden;
+  animation: chooserIn .3s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes chooserIn {
+  from { transform: translateY(30px) scale(.97); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.chooser-head {
+  background: linear-gradient(135deg, #0d1b2a, #1b3a60);
+  padding: 26px 28px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chooser-head-left { display: flex; align-items: center; gap: 12px; }
+.chooser-logo {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1a5fa8, #4da6ff);
+  display: grid; place-items: center;
+  font-size: 15px; font-weight: 900; color: #fff;
+  flex-shrink: 0;
+  font-family: 'Outfit', Arial, sans-serif;
+}
+.chooser-head-title { font-size: 18px; font-weight: 800; color: #fff; }
+.chooser-head-sub   { font-size: 12.5px; color: rgba(255,255,255,.55); margin-top: 2px; }
+.chooser-close {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff; font-size: 17px;
+  cursor: pointer; display: grid; place-items: center;
+  transition: background .15s;
+}
+.chooser-close:hover { background: rgba(255,255,255,.22); }
+
+.chooser-body { padding: 28px; }
+.chooser-question {
+  font-size: 15px; font-weight: 700; color: #1e293b;
+  text-align: center; margin-bottom: 6px;
+}
+.chooser-hint {
+  font-size: 13px; color: #64748b;
+  text-align: center; margin-bottom: 24px; line-height: 1.5;
+}
+
+.chooser-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.chooser-card {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0; padding: 22px 16px 20px;
+  border: 2px solid #e2eaf4;
+  border-radius: 16px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: border-color .18s, background .18s, transform .15s, box-shadow .18s;
+  text-decoration: none; color: inherit;
+  position: relative;
+  overflow: hidden;
+}
+.chooser-card:hover {
+  border-color: #1a5fa8;
+  background: #f0f7ff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(26,95,168,.18);
+}
+.chooser-card.popular::before {
+  content: 'Beliebt';
+  position: absolute; top: 10px; right: -1px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff; font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 0 0 0 8px;
+  letter-spacing: .04em;
+}
+.chooser-card-icon {
+  font-size: 38px; line-height: 1;
+  margin-bottom: 12px;
+}
+.chooser-card-title {
+  font-size: 16px; font-weight: 800; color: #0d1b2a;
+  margin-bottom: 6px; text-align: center;
+}
+.chooser-card-desc {
+  font-size: 12.5px; color: #64748b; text-align: center;
+  line-height: 1.5; margin-bottom: 14px;
+}
+.chooser-card-features {
+  list-style: none; width: 100%;
+  display: flex; flex-direction: column; gap: 5px;
+  margin-bottom: 16px;
+}
+.chooser-card-features li {
+  font-size: 12px; color: #475569;
+  display: flex; align-items: center; gap: 6px;
+}
+.chooser-card-features li::before {
+  content: '✓'; color: #10b981;
+  font-weight: 800; font-size: 11px; flex-shrink: 0;
+}
+.chooser-card-btn {
+  width: 100%; padding: 11px 16px;
+  border-radius: 10px; border: none;
+  font-size: 13.5px; font-weight: 700;
+  font-family: 'Outfit', Arial, sans-serif;
+  cursor: pointer; transition: opacity .15s;
+}
+.chooser-card:first-child .chooser-card-btn {
+  background: linear-gradient(135deg, #1a5fa8, #2176c7);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(26,95,168,.3);
+}
+.chooser-card:last-child .chooser-card-btn {
+  background: linear-gradient(135deg, #0f6e56, #10b981);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(16,185,129,.25);
+}
+.chooser-card-btn:hover { opacity: .9; }
+
+.chooser-footer {
+  padding: 0 28px 22px;
+  text-align: center;
+  font-size: 12px; color: #94a3b8;
+}
+.chooser-footer a { color: #1a5fa8; }
+
+/* Mobile */
+@media (max-width: 480px) {
+  .chooser-cards { grid-template-columns: 1fr; }
+  .chooser-body { padding: 20px 18px; }
+  .chooser-overlay { align-items: flex-end; padding: 0; }
+  .chooser-box {
+    border-radius: 20px 20px 0 0;
+    max-width: 100%;
+    animation: chooserUp .3s cubic-bezier(.34,1.4,.64,1);
+  }
+  @keyframes chooserUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+}
+</style>
+
+<div class="chooser-overlay" id="chooserOverlay" onclick="chooserOverlayClick(event)">
+  <div class="chooser-box">
+
+    <div class="chooser-head">
+      <div class="chooser-head-left">
+        <div class="chooser-logo">1A</div>
+        <div>
+          <div class="chooser-head-title">Konto erstellen</div>
+          <div class="chooser-head-sub">1A Motor — Wählen Sie Ihren Kontotyp</div>
+        </div>
+      </div>
+      <button class="chooser-close" onclick="closeAccountChooser()">✕</button>
+    </div>
+
+    <div class="chooser-body">
+      <div class="chooser-question">Wie möchten Sie 1A Motor nutzen?</div>
+      <div class="chooser-hint">Wählen Sie den passenden Kontotyp — Sie können ihn später jederzeit erweitern.</div>
+
+      <div class="chooser-cards">
+
+        <!-- KÄUFER / PRIVAT -->
+        <div class="chooser-card popular" onclick="chooserGoPrivat()">
+          <div class="chooser-card-icon">👤</div>
+          <div class="chooser-card-title">Privat &amp; Käufer</div>
+          <div class="chooser-card-desc">Kaufen, anfragen und gelegentlich privat verkaufen — ganz ohne Gewerbeschein.</div>
+          <ul class="chooser-card-features">
+            <li>Motor suchen &amp; kaufen</li>
+            <li>Direkt beim Händler anfragen</li>
+            <li>Privat einen Motor inserieren</li>
+            <li>Kostenlos &amp; schnell</li>
+          </ul>
+          <button class="chooser-card-btn">Kostenlos registrieren →</button>
+        </div>
+
+        <!-- HÄNDLER -->
+        <div class="chooser-card" onclick="chooserGoDealer()">
+          <div class="chooser-card-icon">🏢</div>
+          <div class="chooser-card-title">Gewerblicher Händler</div>
+          <div class="chooser-card-desc">Sie handeln gewerblich mit Motoren und möchten Ihr Sortiment auf 1A Motor listen.</div>
+          <ul class="chooser-card-features">
+            <li>Unbegrenzt Anzeigen schalten</li>
+            <li>Geprüftes Händler-Profil</li>
+            <li>Direktanfragen von Käufern</li>
+            <li>Dashboard &amp; Statistiken</li>
+          </ul>
+          <button class="chooser-card-btn">Als Händler starten →</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="chooser-footer">
+      Bereits registriert? <a href="login.html">Jetzt einloggen →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Account Chooser ──────────────────────────────────────────
+function openAccountChooser(e) {
+  if (e) e.preventDefault();
+  document.getElementById('chooserOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAccountChooser() {
+  document.getElementById('chooserOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function chooserOverlayClick(e) {
+  if (e.target && e.target.id === 'chooserOverlay') closeAccountChooser();
+}
+
+// Privat → registrieren.html (einfache Registrierung)
+function chooserGoPrivat() {
+  closeAccountChooser();
+  window.location.href = 'registrieren.html';
+}
+
+// Händler → das bestehende Händler-Modal öffnen
+function chooserGoDealer() {
+  closeAccountChooser();
+  // Kurze Pause damit Chooser zuerst schließt, dann Dealer-Modal öffnet
+  setTimeout(function() {
+    if (typeof openDealerModal === 'function') {
+      openDealerModal(null);
+    } else {
+      window.location.href = 'registrieren.html?type=dealer';
+    }
+  }, 200);
+}
+
+// ESC schließt Chooser
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAccountChooser();
+});
+</script>
 </body>
 </html>
