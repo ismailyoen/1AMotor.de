@@ -1170,35 +1170,56 @@
 <!-- 1AM-MOBILE -->
 
 <style>
-/* ── Desktop Sidebar Guard — verhindert Überschreibung durch mobile.css ── */
+/* ── Desktop Sidebar Guard — überschreibt mobile.css komplett ── */
 @media (min-width: 1101px) {
-  .sidebar {
+  /* Sidebar IMMER sichtbar auf Desktop */
+  .sidebar,
+  .sidebar.open {
     display: block !important;
     position: sticky !important;
     top: 86px !important;
-    transform: none !important;
-    pointer-events: auto !important;
-    max-height: calc(100vh - 100px) !important;
-    width: auto !important;
-    border-radius: 16px !important;
     left: auto !important;
     bottom: auto !important;
-    z-index: auto !important;
-    box-shadow: var(--shadow) !important;
+    width: 256px !important;
+    max-height: calc(100vh - 100px) !important;
+    transform: none !important;
     transition: none !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    border-radius: 16px !important;
+    z-index: 10 !important;
+    overflow-y: auto !important;
   }
-  .sidebar-list label,
+
+  /* Alle Sidebar-Elemente klickbar */
+  .sidebar *,
+  .sidebar label,
+  .sidebar input,
+  .sidebar button,
+  .sidebar a,
   .cat-group-head,
-  .sidebar-title,
+  .sidebar-title {
+    pointer-events: auto !important;
+  }
   .sidebar input[type="checkbox"],
   .sidebar input[type="radio"],
   .sidebar button,
-  .sidebar input[type="number"] {
-    pointer-events: auto !important;
-    cursor: pointer !important;
-  }
+  .cat-group-head,
+  .sidebar-title { cursor: pointer !important; }
+  .sidebar input[type="text"],
   .sidebar input[type="number"] { cursor: text !important; }
+
+  /* main-wrap Grid auf Desktop */
+  .main-wrap {
+    display: grid !important;
+    grid-template-columns: 256px 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Filter-Button auf Desktop ausblenden */
   .mob-filter-btn { display: none !important; }
+  .sidebar-overlay { display: none !important; }
 }
 </style>
 </head>
