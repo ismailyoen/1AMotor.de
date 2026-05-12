@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadListings();
     renderListings("latest");
     bindSearch();
+    loadCategoryCounts(); // Echte Zählungen aus DB holen (async, kein await - läuft im Hintergrund)
   } catch (err) {
     console.error("INIT ERROR:", err);
     if (resultsInfo) resultsInfo.textContent = "Fehler beim Laden der Startseite.";
@@ -260,6 +261,73 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = query ? `suche.html?${query}` : "suche.html";
   }
 });
+
+// ── Kategorie-Zählungen aus Supabase laden und in Sidebar einsetzen ──────────
+async function loadCategoryCounts() {
+  try {
+    // Alle freigegebenen Listings mit Kategoriename laden
+    const { data, error } = await supabaseClient
+      .from("listings")
+      .select("categories(name)")
+      .eq("status", "Freigegeben");
+
+    if (error || !data) {
+      console.warn("CATEGORY COUNTS ERROR:", error);
+      return;
+    }
+
+    // Zählungen pro Kategorie berechnen
+    const counts = {};
+    data.forEach(row => {
+      const name = Array.isArray(row.categories)
+        ? row.categories[0]?.name
+        : row.categories?.name;
+      if (name) counts[name] = (counts[name] || 0) + 1;
+    });
+
+    console.log("CATEGORY COUNTS:", counts);
+
+    // Alle cat-count Spans in der Sidebar aktualisieren
+    document.querySelectorAll("#sidebar-category-list .cat-sublist label").forEach(label => {
+      const checkbox = label.querySelector("input[type='checkbox']");
+      if (!checkbox) return;
+      const catValue = checkbox.value;
+      const countSpan = label.querySelector(".cat-count");
+      if (countSpan) {
+        const count = counts[catValue] || 0;
+        countSpan.textContent = count;
+        // Kategorien ohne Einträge leicht ausgegraut
+        label.style.opacity = count === 0 ? "0.45" : "1";
+      }
+    });
+
+    // Gruppen-Gesamtzählungen aktualisieren
+    document.querySelectorAll("#sidebar-category-list .cat-group-head").forEach(head => {
+      const groupId = head.getAttribute("onclick")?.match(/'(grp-[^']+)'/)?.[1];
+      if (!groupId) return;
+      const sublist = document.getElementById(groupId);
+      if (!sublist) return;
+
+      // Summe aller Unterkategorien
+      let total = 0;
+      sublist.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        total += counts[cb.value] || 0;
+      });
+
+      const countSpan = head.querySelector(".cat-count");
+      if (countSpan) countSpan.textContent = total;
+    });
+
+    // Gesamt-Anzeigencount im Header aktualisieren
+    const totalCount = Object.values(counts).reduce((a, b) => a + b, 0);
+    const statListings = document.getElementById("stat-listings");
+    if (statListings) statListings.textContent = totalCount.toLocaleString("de-DE");
+
+  } catch (err) {
+    console.warn("loadCategoryCounts failed:", err);
+  }
+}
+
 
 function getCategoryIcon(category) {
   const map = {
