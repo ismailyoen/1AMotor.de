@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadListings();
     renderListings("latest");
     bindSearch();
-    loadCategoryCounts(); // Echte Zählungen aus DB holen (async, kein await - läuft im Hintergrund)
+    loadCategoryCounts(); // Echte Zählungen aus DB — läuft im Hintergrund
   } catch (err) {
     console.error("INIT ERROR:", err);
     if (resultsInfo) resultsInfo.textContent = "Fehler beim Laden der Startseite.";
@@ -78,13 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
     }
 
-    if (sidebarCategoryList) {
-      sidebarCategoryList.innerHTML = categories.length
-        ? categories.slice(0, 12).map(cat => `
-            <label><input type="checkbox" disabled /> ${escapeHtml(cat.name)}</label>
-          `).join("")
-        : `<label><input type="checkbox" checked disabled /> Keine Kategorien gefunden</label>`;
-    }
+    // Sidebar-HTML bleibt erhalten — Zählungen werden von loadCategoryCounts() gesetzt
 
     const statCategories = document.getElementById("stat-categories");
     if (statCategories) statCategories.textContent = categories.length;
@@ -262,10 +256,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// ── Kategorie-Zählungen aus Supabase laden und in Sidebar einsetzen ──────────
+// ── Echte Kategorie-Zählungen aus Supabase ────────────────────────────────────
 async function loadCategoryCounts() {
   try {
-    // Alle freigegebenen Listings mit Kategoriename laden
     const { data, error } = await supabaseClient
       .from("listings")
       .select("categories(name)")
@@ -276,7 +269,7 @@ async function loadCategoryCounts() {
       return;
     }
 
-    // Zählungen pro Kategorie berechnen
+    // Zählungen berechnen
     const counts = {};
     data.forEach(row => {
       const name = Array.isArray(row.categories)
@@ -285,46 +278,43 @@ async function loadCategoryCounts() {
       if (name) counts[name] = (counts[name] || 0) + 1;
     });
 
-    console.log("CATEGORY COUNTS:", counts);
+    console.log("LIVE CATEGORY COUNTS:", counts);
 
-    // Alle cat-count Spans in der Sidebar aktualisieren
+    // ── Unterkategorien aktualisieren ──────────────────────────────────
     document.querySelectorAll("#sidebar-category-list .cat-sublist label").forEach(label => {
-      const checkbox = label.querySelector("input[type='checkbox']");
-      if (!checkbox) return;
-      const catValue = checkbox.value;
-      const countSpan = label.querySelector(".cat-count");
-      if (countSpan) {
-        const count = counts[catValue] || 0;
-        countSpan.textContent = count;
-        // Kategorien ohne Einträge leicht ausgegraut
-        label.style.opacity = count === 0 ? "0.45" : "1";
-      }
+      const cb = label.querySelector("input[type='checkbox']");
+      if (!cb) return;
+      const span = label.querySelector(".cat-count");
+      if (!span) return;
+      const count = counts[cb.value] || 0;
+      span.textContent = count.toLocaleString("de-DE");
+      label.style.opacity = count === 0 ? "0.4" : "1";
     });
 
-    // Gruppen-Gesamtzählungen aktualisieren
+    // ── Gruppen-Summen aktualisieren ───────────────────────────────────
     document.querySelectorAll("#sidebar-category-list .cat-group-head").forEach(head => {
-      const groupId = head.getAttribute("onclick")?.match(/'(grp-[^']+)'/)?.[1];
-      if (!groupId) return;
-      const sublist = document.getElementById(groupId);
+      const onclickAttr = head.getAttribute("onclick") || "";
+      const grpMatch = onclickAttr.match(/['"]([^'"]+)['"]/);
+      if (!grpMatch) return;
+      const sublist = document.getElementById(grpMatch[1]);
       if (!sublist) return;
 
-      // Summe aller Unterkategorien
       let total = 0;
       sublist.querySelectorAll("input[type='checkbox']").forEach(cb => {
         total += counts[cb.value] || 0;
       });
 
-      const countSpan = head.querySelector(".cat-count");
-      if (countSpan) countSpan.textContent = total;
+      const span = head.querySelector(".cat-count");
+      if (span) span.textContent = total.toLocaleString("de-DE");
     });
 
-    // Gesamt-Anzeigencount im Header aktualisieren
-    const totalCount = Object.values(counts).reduce((a, b) => a + b, 0);
-    const statListings = document.getElementById("stat-listings");
-    if (statListings) statListings.textContent = totalCount.toLocaleString("de-DE");
+    // ── Gesamt-Stat-Zähler ─────────────────────────────────────────────
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    const statEl = document.getElementById("stat-listings");
+    if (statEl && total > 0) statEl.textContent = total.toLocaleString("de-DE");
 
   } catch (err) {
-    console.warn("loadCategoryCounts failed:", err);
+    console.warn("loadCategoryCounts error:", err);
   }
 }
 
