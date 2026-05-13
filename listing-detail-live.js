@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         company_name,
         city,
         country,
-        description
+        description,
+        paypal_email
       )
     `)
     .eq("id", listingId)
@@ -190,6 +191,22 @@ function fillListingData(listing) {
 
   /* ── Ähnliche laden ── */
   loadSimilar(listing, categoryName);
+
+  // ── PayPal Button ─────────────────────────────────────────────────────
+  const _paypalEmail = (Array.isArray(listing.seller_profiles)
+    ? listing.seller_profiles[0]?.paypal_email
+    : listing.seller_profiles?.paypal_email) || '';
+  const _paypalWrap = document.getElementById('paypal-cta-wrap');
+  const _paypalBtn  = document.getElementById('paypal-btn');
+  if (_paypalEmail && _paypalWrap && _paypalBtn) {
+    const _price    = Number(listing.price || 0).toFixed(2);
+    const _name     = encodeURIComponent((listing.title || 'Motor').slice(0, 80));
+    let   _href     = _paypalEmail.includes('paypal.me')
+      ? (_paypalEmail.startsWith('http') ? _paypalEmail : 'https://' + _paypalEmail) + '/' + _price + 'EUR'
+      : 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=' + encodeURIComponent(_paypalEmail) + '&item_name=' + _name + '&amount=' + _price + '&currency_code=EUR&no_shipping=1';
+    _paypalBtn.href         = _href;
+    _paypalWrap.style.display = 'block';
+  }
   renderShipping(listing);
   window._setSellerIdFromListing(listing);
 }

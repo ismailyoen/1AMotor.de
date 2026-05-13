@@ -51,6 +51,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   email.value = seller.email || "";
   phone.value = seller.phone || "";
   website.value = seller.website || "";
+  const paypalEl = document.getElementById("paypal_email");
+  if (paypalEl) paypalEl.value = seller.paypal_email || "";
 
   street.value = seller.street || "";
   zip.value = seller.zip || "";
@@ -80,6 +82,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         email: email.value,
         phone: phone.value,
         website: website.value,
+        paypal_email: (document.getElementById("paypal_email")?.value || "").trim(),
 
         street: street.value,
         zip: zip.value,

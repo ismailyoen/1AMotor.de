@@ -191,6 +191,21 @@ select{cursor:pointer;}
               <label for="website">Website</label>
               <input type="text" id="website" placeholder="https://www.firma.de" />
             </div>
+            <div class="form-group" style="grid-column:1/-1;">
+              <label for="paypal_email" style="display:flex;align-items:center;gap:7px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.5 4h9C19 4 21 6 20.5 9c-.4 2.5-2.5 4-5 4h-2l-1 5H9l1-5H8L7.5 4z" stroke="#003087" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                  <path d="M5 8h9c2.5 0 4.5 1.5 4 4-.4 2-2 3.5-4.5 3.5H11l-1 4.5H7L8 15H6L5 8z" stroke="#009cde" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                </svg>
+                PayPal — E-Mail oder PayPal.me Link
+              </label>
+              <input type="text" id="paypal_email"
+                placeholder="deine@email.de  oder  paypal.me/deinname"
+                style="font-size:14px;" />
+              <p style="font-size:12px;color:#64788e;margin-top:5px;line-height:1.55;">
+                💡 Käufer können dich damit direkt über PayPal bezahlen — ohne dass 1A Motor involviert ist. Du erhältst Zahlungen direkt auf dein PayPal-Konto.
+              </p>
+            </div>
             <div class="form-group">
               <label for="company_type">Unternehmensform</label>
               <select id="company_type">
