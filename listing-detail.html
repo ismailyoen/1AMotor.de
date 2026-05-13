@@ -357,9 +357,149 @@ button{font-family:inherit;cursor:pointer;}
   .search-bar{display:none;}
   .quick-grid{grid-template-columns:1fr 1fr;}
 }
+
+/* ── BEWERTUNGEN ── */
+.reviews-section { margin-top: 22px; }
+.reviews-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; }
+
+/* Summary header */
+.reviews-summary {
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 20px;
+  background: linear-gradient(135deg, rgba(220,238,255,.3), var(--card));
+}
+.rs-score {
+  display: flex; flex-direction: column; align-items: center;
+  flex-shrink: 0; gap: 4px;
+}
+.rs-number {
+  font-size: 42px; font-weight: 900; color: var(--dark);
+  letter-spacing: -1px; line-height: 1;
+}
+.rs-stars { font-size: 18px; color: #f59e0b; letter-spacing: 1px; }
+.rs-count { font-size: 12px; color: var(--muted); font-weight: 600; }
+.rs-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.rs-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.rs-bar-label { color: var(--muted); font-weight: 600; width: 12px; text-align: right; flex-shrink: 0; }
+.rs-bar-track { flex: 1; height: 7px; background: var(--border); border-radius: 999px; overflow: hidden; }
+.rs-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #fbbf24); transition: width .6s ease; }
+.rs-bar-n { color: var(--muted); font-weight: 600; width: 20px; text-align: right; flex-shrink: 0; font-size: 11.5px; }
+
+/* Write review button */
+.write-review-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; padding: 12px;
+  background: none; border: none; border-bottom: 1px solid var(--border);
+  font-size: 13.5px; font-weight: 700; color: var(--blue2);
+  cursor: pointer; font-family: inherit;
+  transition: background .15s;
+}
+.write-review-btn:hover { background: #eff6ff; }
+.write-review-btn svg { width: 15px; height: 15px; stroke: var(--blue2); }
+
+/* Review form */
+.review-form-wrap {
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+  background: #f8fbff;
+  display: none;
+}
+.review-form-wrap.open { display: block; }
+.review-form-title { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 14px; }
+
+/* Star picker */
+.star-picker { display: flex; gap: 4px; margin-bottom: 14px; }
+.star-picker button {
+  background: none; border: none; font-size: 28px; cursor: pointer;
+  color: #d1d5db; transition: color .1s, transform .1s;
+  padding: 2px; line-height: 1;
+}
+.star-picker button.active,
+.star-picker button:hover { color: #f59e0b; transform: scale(1.15); }
+.star-error { font-size: 12px; color: #ef4444; margin-top: -10px; margin-bottom: 10px; display: none; }
+
+.review-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.review-field label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.review-field input,
+.review-field textarea {
+  padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 13.5px; font-family: inherit; color: var(--dark);
+  outline: none; background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+.review-field input:focus,
+.review-field textarea:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px rgba(24,104,192,.1); }
+.review-field textarea { min-height: 90px; resize: vertical; line-height: 1.55; }
+.review-field input::placeholder,
+.review-field textarea::placeholder { color: #b0bfcc; }
+
+.review-submit-row { display: flex; gap: 9px; }
+.rf-submit {
+  flex: 1; padding: 11px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  color: #fff; border: none; font-size: 13.5px; font-weight: 800;
+  font-family: inherit; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(18,82,163,.28);
+  transition: opacity .15s; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.rf-submit:hover { opacity: .92; }
+.rf-submit:disabled { opacity: .55; cursor: not-allowed; }
+.rf-cancel {
+  padding: 11px 16px; border-radius: 10px;
+  background: none; border: 1.5px solid var(--border);
+  font-size: 13.5px; font-weight: 700; color: var(--muted);
+  font-family: inherit; cursor: pointer; transition: border-color .15s;
+}
+.rf-cancel:hover { border-color: #94a3b8; }
+.rf-success {
+  background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;
+  padding: 10px 13px; border-radius: 9px; font-size: 13px; font-weight: 600;
+  margin-top: 10px; display: none; text-align: center;
+}
+
+/* Review list */
+.reviews-list { display: flex; flex-direction: column; gap: 0; }
+.review-item {
+  padding: 16px 22px; border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.review-item:last-child { border-bottom: none; }
+.review-item:hover { background: #fafcff; }
+.review-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.review-author { display: flex; align-items: center; gap: 9px; }
+.review-av {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  display: grid; place-items: center;
+  font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.review-name { font-size: 13.5px; font-weight: 700; color: var(--dark); }
+.review-date { font-size: 11.5px; color: var(--muted); }
+.review-stars { font-size: 14px; color: #f59e0b; letter-spacing: 1px; }
+.review-text { font-size: 13.5px; color: #3d5570; line-height: 1.65; }
+.review-empty {
+  padding: 28px 22px; text-align: center; color: var(--muted);
+  font-size: 13.5px;
+}
+.review-empty svg { width: 32px; height: 32px; stroke: #c8d9ea; margin: 0 auto 10px; display: block; }
+
+.reviews-load-more {
+  padding: 13px; text-align: center; border-top: 1px solid var(--border);
+  font-size: 13px; font-weight: 700; color: var(--blue2);
+  cursor: pointer; background: none; border-left: none; border-right: none; border-bottom: none;
+  width: 100%; font-family: inherit; transition: background .12s;
+}
+.reviews-load-more:hover { background: #eff6ff; }
+
+/* Seller stat update */
+.stat-val.rating-live { color: #f59e0b; }
+
+@media(max-width:600px){
+  .reviews-summary { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .rs-number { font-size: 34px; }
+}
+
 </style>
-  <link rel="stylesheet" href="mobile.css" />
-<!-- 1AM-MOBILE -->
 </head>
 <body>
 
@@ -648,6 +788,80 @@ button{font-family:inherit;cursor:pointer;}
     </div>
 
   </div>
+      <!-- ══ BEWERTUNGEN ══ -->
+      <div class="reviews-section" id="reviews-section">
+        <div class="reviews-panel">
+
+          <!-- Zusammenfassung -->
+          <div class="reviews-summary">
+            <div class="rs-score">
+              <span class="rs-number" id="rv-avg">–</span>
+              <span class="rs-stars" id="rv-stars">☆☆☆☆☆</span>
+              <span class="rs-count" id="rv-count">0 Bewertungen</span>
+            </div>
+            <div class="rs-bars" id="rv-bars">
+              <div class="rs-bar-row"><span class="rs-bar-label">5</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-5" style="width:0%"></div></div><span class="rs-bar-n" id="n-5">0</span></div>
+              <div class="rs-bar-row"><span class="rs-bar-label">4</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-4" style="width:0%"></div></div><span class="rs-bar-n" id="n-4">0</span></div>
+              <div class="rs-bar-row"><span class="rs-bar-label">3</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-3" style="width:0%"></div></div><span class="rs-bar-n" id="n-3">0</span></div>
+              <div class="rs-bar-row"><span class="rs-bar-label">2</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-2" style="width:0%"></div></div><span class="rs-bar-n" id="n-2">0</span></div>
+              <div class="rs-bar-row"><span class="rs-bar-label">1</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-1" style="width:0%"></div></div><span class="rs-bar-n" id="n-1">0</span></div>
+            </div>
+          </div>
+
+          <!-- Bewertung schreiben Button -->
+          <button class="write-review-btn" id="write-review-btn" onclick="toggleReviewForm()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Verkäufer bewerten
+          </button>
+
+          <!-- Bewertungsformular -->
+          <div class="review-form-wrap" id="review-form-wrap">
+            <div class="review-form-title">✍️ Deine Bewertung</div>
+
+            <!-- Sterne-Auswahl -->
+            <div class="star-picker" id="star-picker">
+              <button type="button" data-val="1" onclick="setStars(1)" title="1 Stern">★</button>
+              <button type="button" data-val="2" onclick="setStars(2)" title="2 Sterne">★</button>
+              <button type="button" data-val="3" onclick="setStars(3)" title="3 Sterne">★</button>
+              <button type="button" data-val="4" onclick="setStars(4)" title="4 Sterne">★</button>
+              <button type="button" data-val="5" onclick="setStars(5)" title="5 Sterne">★</button>
+            </div>
+            <div class="star-error" id="star-error">Bitte wähle eine Sterne-Bewertung.</div>
+
+            <div class="review-field">
+              <label>Dein Name (oder anonym)</label>
+              <input type="text" id="rv-name" placeholder="Max M." maxlength="60" />
+            </div>
+            <div class="review-field">
+              <label>Deine Erfahrung</label>
+              <textarea id="rv-text" placeholder="Wie war deine Erfahrung mit diesem Verkäufer? War der Motor wie beschrieben?…" maxlength="500"></textarea>
+            </div>
+
+            <div class="review-submit-row">
+              <button class="rf-submit" id="rf-submit" onclick="submitReview()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Bewertung absenden
+              </button>
+              <button class="rf-cancel" onclick="toggleReviewForm()">Abbrechen</button>
+            </div>
+            <div class="rf-success" id="rf-success">✅ Danke für deine Bewertung!</div>
+          </div>
+
+          <!-- Bewertungsliste -->
+          <div class="reviews-list" id="reviews-list">
+            <div class="review-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Noch keine Bewertungen — sei der Erste!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
 </main>
 
 <!-- FOOTER -->
@@ -708,6 +922,7 @@ button{font-family:inherit;cursor:pointer;}
 <script src="supabase.js"></script>
 <script src="listing-detail-live.js"></script>
 <script src="auth-header.js"></script>
+<script src="reviews.js"></script>
 <script>
   document.getElementById("mob-toggle")?.addEventListener("click",()=>{
     document.getElementById("mob-nav")?.classList.toggle("open");
@@ -743,6 +958,5 @@ button{font-family:inherit;cursor:pointer;}
     btn.style.opacity='.7';
   }
 </script>
-    <script src="mobile.js" defer></script>
 </body>
 </html>

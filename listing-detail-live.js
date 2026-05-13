@@ -190,11 +190,19 @@ function fillListingData(listing) {
 
   /* ── Ähnliche laden ── */
   loadSimilar(listing, categoryName);
+  window._setSellerIdFromListing(listing);
 }
 
 /* ─────────────────────────────────────────────────────────
    GALERIE
 ───────────────────────────────────────────────────────── */
+// Seller ID für reviews.js (wird von fillListingData gesetzt)
+// Fallback: direkt aus listing extrahieren
+window._setSellerIdFromListing = function(listing) {
+  const sp = Array.isArray(listing.seller_profiles) ? listing.seller_profiles[0] : listing.seller_profiles;
+  if (sp?.id) window._currentSellerId = sp.id;
+};
+
 function setupGallery(listing) {
   const mainImg = document.getElementById("main-image");
   const thumbRow = document.getElementById("thumb-row");
