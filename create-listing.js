@@ -72,24 +72,49 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const category = categories[0];
 
- const sellerResult = await supabaseClient
-  .from("seller_profiles")
-  .select("id")
-  .eq("user_id", user.id)
-  .maybeSingle();
+      // ── Seller-Profil laden — oder automatisch anlegen für Käufer ──────────
+      let sellerResult = await supabaseClient
+        .from("seller_profiles")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-console.log("SELLER RESULT:", sellerResult);
+      console.log("SELLER RESULT:", sellerResult);
 
-if (sellerResult.error) {
-  console.error("SELLER RESULT ERROR:", sellerResult.error);
-  alert("Fehler beim Laden des Verkäuferprofils.");
-  return;
-}
+      if (sellerResult.error) {
+        console.error("SELLER RESULT ERROR:", sellerResult.error);
+        alert("Fehler beim Laden des Profils. Bitte Seite neu laden.");
+        return;
+      }
 
-if (!sellerResult.data) {
-  alert("Für dieses Konto wurde kein Verkäuferprofil gefunden. Bitte mit einem Händlerkonto einloggen.");
-  return;
-}
+      // Kein Profil? → Automatisch anlegen (für Käufer/Privat-Nutzer)
+      if (!sellerResult.data) {
+        console.log("Kein seller_profile gefunden – wird automatisch angelegt für Käufer");
+
+        const email = user.email || "";
+        const displayName = user.user_metadata?.full_name || email.split("@")[0] || "Privat";
+
+        const { data: newProfile, error: createError } = await supabaseClient
+          .from("seller_profiles")
+          .insert([{
+            user_id:      user.id,
+            email:        email,
+            company_name: displayName,
+            city:         "",
+            country:      "DE"
+          }])
+          .select("id")
+          .single();
+
+        if (createError || !newProfile) {
+          console.error("PROFILE CREATE ERROR:", createError);
+          alert("Profil konnte nicht erstellt werden. Bitte Support kontaktieren.");
+          return;
+        }
+
+        sellerResult = { data: newProfile, error: null };
+        console.log("Neues seller_profile angelegt:", newProfile.id);
+      }
 
       const newUploadedImageUrls = await uploadListingImages(fileInput?.files || [], user.id);
       const finalImageUrls = [...existingImageUrls, ...newUploadedImageUrls];
