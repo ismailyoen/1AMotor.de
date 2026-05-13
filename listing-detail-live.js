@@ -190,6 +190,7 @@ function fillListingData(listing) {
 
   /* ── Ähnliche laden ── */
   loadSimilar(listing, categoryName);
+  renderShipping(listing);
   window._setSellerIdFromListing(listing);
 }
 
@@ -328,6 +329,21 @@ function setupContactForm(listing) {
 
     if (btn) { btn.disabled = true; btn.textContent = "Wird gesendet…"; }
 
+    // Adresse einlesen wenn Versand gewünscht
+    const wantsShipping = document.getElementById('cf-needs-shipping')?.checked;
+    let addressBlock = '';
+    if (wantsShipping) {
+      const fn  = document.getElementById('addr-firstname')?.value.trim() || '';
+      const ln  = document.getElementById('addr-lastname')?.value.trim()  || '';
+      const str = document.getElementById('addr-street')?.value.trim()   || '';
+      const zip = document.getElementById('addr-zip')?.value.trim()      || '';
+      const cty = document.getElementById('addr-city')?.value.trim()     || '';
+      if (str && zip && cty) {
+        addressBlock = `\n\n📦 LIEFERADRESSE:\n${fn} ${ln}\n${str}\n${zip} ${cty}\nDeutschland`;
+      }
+    }
+    const finalMessage = message + addressBlock;
+
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const buyerUserId = sessionData?.session?.user?.id || null;
 
@@ -418,6 +434,68 @@ function setOrCreateLink(rel, href) {
   if (!el) { el = document.createElement("link"); el.rel = rel; document.head.appendChild(el); }
   el.href = href;
 }
+
+// ── Versandoptionen anzeigen ──────────────────────────────────────────────────
+function renderShipping(listing) {
+  const panel   = document.getElementById('shipping-panel');
+  const optList = document.getElementById('shipping-options-list');
+  const wantShip = document.getElementById('cf-want-shipping');
+
+  const options = listing.shipping_options;
+  if (!panel || !optList) return;
+  if (!Array.isArray(options) || !options.length) return;
+
+  panel.style.display = 'block';
+
+  const carrierInfo = {
+    'DHL':       { emoji: '🟡', note: 'Paket · 1–2 Werktage',  link: 'https://www.dhl.de/de/privatkunden/pakete-versenden/paket-national.html' },
+    'DPD':       { emoji: '🔴', note: 'Paket · 1–2 Werktage',  link: 'https://www.dpd.com/de/de/versenden/privatkunden/' },
+    'Hermes':    { emoji: '🟢', note: 'Paket · 2–4 Werktage',  link: 'https://www.myhermes.de/versenden.html' },
+    'UPS':       { emoji: '🟤', note: 'Paket · 1–3 Werktage',  link: 'https://www.ups.com/de/de/shipping/create.page' },
+    'Spedition': { emoji: '🚛', note: 'Spedition · auf Anfrage', link: null },
+    'Abholung':  { emoji: '🏠', note: 'Selbst abholen',         link: null },
+  };
+
+  optList.innerHTML = options.map(opt => {
+    const info    = carrierInfo[opt.carrier] || { emoji: '📦', note: 'Versand', link: null };
+    const isFree  = opt.price === 0;
+    const price   = opt.price == null
+      ? '<span class="ship-price">auf Anfrage</span>'
+      : isFree
+        ? '<span class="ship-price free">Kostenlos</span>'
+        : `<span class="ship-price">+ ${Number(opt.price).toFixed(2).replace('.', ',')} €</span>`;
+    const linkHtml = info.link
+      ? `<a href="${info.link}" target="_blank" rel="noopener"
+           style="font-size:11px;color:var(--blue2);font-weight:600;">Label →</a>`
+      : '';
+
+    return `
+      <div class="ship-opt">
+        <div class="ship-opt-left">
+          <div class="ship-logo">${info.emoji}</div>
+          <div>
+            <div class="ship-name">${escapeHtml(opt.carrier)}</div>
+            <div class="ship-note">${info.note}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${price}
+          ${linkHtml}
+        </div>
+      </div>`;
+  }).join('');
+
+  // Zeige Versand-Checkbox im Kontaktformular wenn Versand möglich
+  const hasShipping = options.some(o => o.carrier !== 'Abholung');
+  if (wantShip && hasShipping) wantShip.style.display = 'block';
+}
+
+// ── Adressformular togglen ────────────────────────────────────────────────────
+window.toggleAddressForm = function(show) {
+  const wrap = document.getElementById('cf-address-wrap');
+  if (wrap) wrap.classList.toggle('show', show);
+};
+
 
 function getCategoryIcon(category) {
   const map = {

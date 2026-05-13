@@ -50,6 +50,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       const location = document.getElementById("standort")?.value?.trim() || "";
       const description = document.getElementById("beschreibung")?.value?.trim() || "";
 
+      // ── Versandoptionen einlesen ──────────────────────────────────────────
+      const shippingOptions = [];
+      const carriers = [
+        { id: 'dhl',       label: 'DHL' },
+        { id: 'dpd',       label: 'DPD' },
+        { id: 'hermes',    label: 'Hermes' },
+        { id: 'ups',       label: 'UPS' },
+        { id: 'spedition', label: 'Spedition' },
+      ];
+      carriers.forEach(({ id, label }) => {
+        const cb = document.getElementById('ship-' + id);
+        if (cb?.checked) {
+          const priceEl = document.getElementById('ship-' + id + '-price');
+          const price   = priceEl ? parseFloat(priceEl.value) || null : null;
+          shippingOptions.push({ carrier: label, price });
+        }
+      });
+      // Abholung
+      if (document.getElementById('ship-pickup')?.checked) {
+        shippingOptions.push({ carrier: 'Abholung', price: 0 });
+      }
+      // Eigene
+      const customCb   = document.getElementById('ship-custom');
+      const customName = document.getElementById('ship-custom-name')?.value?.trim();
+      if (customCb?.checked && customName) {
+        shippingOptions.push({ carrier: customName, price: null });
+      }
+
       if (!title || !categorySlug) {
         alert("Bitte Titel und Kategorie ausfüllen.");
         return;
@@ -133,7 +161,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         status: "Freigegeben",
         listing_type: listingType,
         price_type: priceType,
-        image_urls: finalImageUrls
+        image_urls: finalImageUrls,
+        shipping_options: shippingOptions.length ? shippingOptions : null
       };
 
       let result;
