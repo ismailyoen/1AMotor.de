@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1A Motor – Helmuts UL-Seiten Import</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+  body { background:#f4f7fb; color:#1f2937; padding:32px 20px; }
+  .wrap { max-width:820px; margin:0 auto; }
+  h1 { font-size:26px; color:#1a3a52; margin-bottom:6px; }
+  p.sub { color:#6b7280; font-size:14px; margin-bottom:28px; }
+  .card { background:#fff; border:1px solid #e0e9f2; border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+  input { width:100%; padding:11px 14px; border:1.5px solid #e0e9f2; border-radius:9px; font-size:14px; outline:none; margin-bottom:14px; }
+  .btn { width:100%; padding:16px; background:linear-gradient(135deg,#1a5fa8,#2176c7); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; }
+  .btn:hover { opacity:.9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-danger { background:linear-gradient(135deg,#dc2626,#b91c1c); margin-top:10px; display:none; }
+  .progress-wrap { background:#e0e9f2; border-radius:999px; height:20px; overflow:hidden; margin:14px 0; position:relative; }
+  .progress-bar { background:linear-gradient(90deg,#1a5fa8,#4da6ff); height:100%; border-radius:999px; transition:width .2s; width:0%; }
+  .progress-pct { position:absolute; top:0; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; }
+  .log { background:#0d1b2a; color:#4da6ff; border-radius:10px; padding:16px; font-family:monospace; font-size:12px; max-height:320px; overflow-y:auto; margin-top:16px; white-space:pre-wrap; line-height:1.6; }
+  .stat { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:14px; }
+  .stat-box { background:#f0f6ff; border:1px solid #d0e4f7; border-radius:10px; padding:12px; text-align:center; }
+  .stat-val { font-size:26px; font-weight:800; color:#1a5fa8; }
+  .stat-lbl { font-size:11px; color:#6b7280; margin-top:2px; }
+  #progress-card { display:none; }
+  .source-note { background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px 16px; font-size:13px; color:#92400e; margin-bottom:20px; }
+  .source-note a { color:#1a5fa8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✈️ 1A Motor – Helmuts UL-Seiten Import</h1>
+  <p class="sub">Importiert 50 Flugzeugmotor-Inserate von <strong>helmuts-ul-seiten.de</strong> direkt in deine Supabase-Datenbank. Muss auf 1amotor.de geöffnet werden.</p>
+
+  <div class="source-note">
+    📌 Quelle: <a href="https://www.helmuts-ul-seiten.de/verkauf2.html" target="_blank">helmuts-ul-seiten.de/verkauf2.html</a> — Nur Flugzeugmotoren & Motorteile, kein Zubehör. Stand: Mai 2026.
+  </div>
+
+  <div class="card">
+    <label>E-Mail</label>
+    <input type="email" id="email-input" placeholder="deine@email.com" autocomplete="email" />
+    <label>Passwort</label>
+    <input type="password" id="pass-input" placeholder="••••••••" autocomplete="current-password" />
+    <button class="btn" id="btn-start" onclick="startImport()">🚀 50 Flugzeugmotor-Inserate importieren</button>
+    <button class="btn btn-danger" id="btn-delete" onclick="deleteAll()">🗑️ Alle importierten Inserate löschen</button>
+  </div>
+
+  <div class="card" id="progress-card">
+    <div class="stat">
+      <div class="stat-box"><div class="stat-val" id="stat-done">0</div><div class="stat-lbl">Eingefügt</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-err">0</div><div class="stat-lbl">Fehler</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-total">50</div><div class="stat-lbl">Gesamt</div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+      <div class="progress-pct" id="progress-pct">0%</div>
+    </div>
+    <div class="log" id="log">Bereit...\n</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://xaqfptumjkmulobdbfid.supabase.co";
+const SUPABASE_KEY = "sb_publishable_FK-FiDrd5gjFEj7LxVPZIg_5WXkNvgG";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const INSERATE = [
+  {
+    "title": "Rotax 912 ULS2-01 · 100 PS · Bj. 2023",
+    "manufacturer": "Rotax",
+    "model": "912 ULS2-01",
+    "condition": "Used",
+    "price": 6500,
+    "year": 2023,
+    "location": "Arad, Rumänien",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 912ULS2-01 mit 100 PS. Seriennummer 10.000.356. Neueste Generation, aus Schulflugzeug ausgebaut nach 2000 Betriebsstunden. Gute Kompression, Kompressionsprüf-Video auf Anfrage. Logbuch und Öltank inklusive. Kontakt: Cristian Iorgov, ciorgov@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "2× Rotax 912 A/F · 80 PS · 2000 h · je in Motorkiste",
+    "manufacturer": "Rotax",
+    "model": "912 A/F",
+    "condition": "Used",
+    "price": 2900,
+    "year": null,
+    "location": "Österreich",
+    "category": "Flugzeugmotor",
+    "description": "2× Rotax 912 A/F, 80 PS, 2000 h Laufzeit. Aus Katana, immer Werft-gewartet. Verpackt in Motorkiste. Preis je Motor. Kontakt: HB-Flugtechnik GmbH, +43(0)7225 20580-18, iris.brditschka@hb-flugtechnik.at",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "3× Rotax 912 ULS 100 PS · Bj. 1998–2012 · TBO 0 Std.",
+    "manufacturer": "Rotax",
+    "model": "912 ULS",
+    "condition": "Refurbished",
+    "price": 8650,
+    "year": 2012,
+    "location": "Karlovy Vary, Tschechien",
+    "category": "Flugzeugmotor",
+    "description": "3× Rotax 912 ULS 100 PS, Bj. 1998–2012. Komplette TBO: Kurbelwellenlager neu, Motorblöcke gemessen ok, Benzinpumpe, Simmerringe, O-Ringe, Zündkerzen, Filter, Vergaser Ultraschall, neue Membranen, Anlasser TBO, Getriebe überarbeitet, Wasserpumpe, hydraulische Verstellung neu, mit Rutschkupplung. Nur 2 Laufstunden am Prüfstand. 35 km zur deutschen Grenze. Kontakt: David Kůrka, +420 604 208 347, fredye@atlas.cz",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "6× Rotax 912 UL 80 PS · TBO 0 Std.",
+    "manufacturer": "Rotax",
+    "model": "912 UL",
+    "condition": "Refurbished",
+    "price": 7531,
+    "year": null,
+    "location": "Karlovy Vary, Tschechien",
+    "category": "Flugzeugmotor",
+    "description": "6× Rotax 912 UL 80 PS, TBO 0 Stunden. Kurbelwellenlager neu, Motorblöcke gemessen ok, Benzinpumpe, Simmerringe, O-Ringe, Zündkerzen, Filter, Vergaser Ultraschall, neue Membranen, Anlasser TBO, Wasserpumpe, hydraulische Verstellung neu, mit oder ohne Rutschkupplung. Nur 2 Laufstunden am Prüfstand. Kontakt: David Kůrka, +420 604 208 347, fredye@atlas.cz",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "3× Rotax 912 ULS 100 PS · Bj. 2013–2018 · TBO 0 Std.",
+    "manufacturer": "Rotax",
+    "model": "912 ULS",
+    "condition": "Refurbished",
+    "price": 9650,
+    "year": 2018,
+    "location": "Karlovy Vary, Tschechien",
+    "category": "Flugzeugmotor",
+    "description": "3× Rotax 912 ULS 100 PS Neuere Modellgeneration Bj. 2013–2018. Vollständige TBO: Kurbelwellenlager neu, hydraulische Verstellung neu, Rutschkupplung, Getriebe TBO. Nur 2 Laufstunden am Prüfstand. Flugplatz Hory 460m vorhanden. Kontakt: David Kůrka, +420 604 208 347, fredye@atlas.cz",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Rotax 915 iS A · 141 PS · Bj. 2022 · 510 h · Zustand 10/10",
+    "manufacturer": "Rotax",
+    "model": "915 iS A",
+    "condition": "Used",
+    "price": 29700,
+    "year": 2022,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 915 iS A, Baujahr 2022, 510 Flugstunden. Motorlogbuch lückenlos geführt. Wird noch geflogen, kann bei Kauf probegeflogen werden. Verkauf wegen Umrüstung auf Rotax 916. Motor ist noch eingebaut. Zustand 10/10. Kontakt: Tel./WhatsApp 0151/12712114 ab 18 Uhr",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Rotax 912 ULS 100 PS · 1200 h · teilüberholt",
+    "manufacturer": "Rotax",
+    "model": "912 ULS",
+    "condition": "Refurbished",
+    "price": 0,
+    "year": null,
+    "location": "Europa",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 912 ULS 100 PS, 1200 h. Komplett mit zwei Vergasern, Zündboxen etc. Gewartet, notwendige Teile ersetzt. Einwandfreier Zustand, sofort einsatzbereit. Kompressionswerte sehr gut. Preis auf Anfrage / VB. Kontakt: Klaus Klaus, fly2drime@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax 912 UL 80 PS · Bj. 2014 · 2200 Std.",
+    "manufacturer": "Rotax",
+    "model": "912 UL",
+    "condition": "Used",
+    "price": 3500,
+    "year": 2014,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 912 UL 80 PS, Baujahr 2014, 2200 Stunden. Wegen TBO 2000 Std. ausgebaut. Alle 100 Std. gewartet. Einwandfreier Zustand mit Vergaser. Kontakt: Robby Bayerl, 0171-5104969, r.bayerl@t-online.de",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax 914 UL 2 · S/N 7683527 · Bj. 2014 · 285 h",
+    "manufacturer": "Rotax",
+    "model": "914 UL 2",
+    "condition": "Used",
+    "price": 26500,
+    "year": 2014,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 914 UL 2, S/N 7683527, Baujahr 2014, 285 TTSN. Option 1: Mit Revision und Lufttüchtigkeitsbestätigung durch Rotax Franz – 29.800 €. Option 2: Ohne Revision, betriebsbereit – 26.500 €. MwSt. nicht ausweisbar. Kontakt: Jan Meewes, +49 176 61 289 519, Meewes.frm@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax 912 S3 100 PS · komplett überholt · neue Vergaser",
+    "manufacturer": "Rotax",
+    "model": "912 S3",
+    "condition": "Refurbished",
+    "price": 0,
+    "year": null,
+    "location": "Europa",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 912 S3 100 PS, komplett mit zwei neuen Vergasern, Zündboxen. Anlasser neu, Getriebe revidiert. Motor gewartet und teilüberholt, einwandfreier Zustand. Preis VB auf Anfrage. Kontakt: Klaus Klaus, fly2drime@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax 912is · 800 h · Bj. 2021 · eine Schraube gebrochen",
+    "manufacturer": "Rotax",
+    "model": "912is",
+    "condition": "Used",
+    "price": 9000,
+    "year": 2021,
+    "location": "Portugal",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 912is mit 800 Stunden, Baujahr 2021. Hat eine gebrochene Schraube die repariert werden muss. Ansonsten betriebsbereit. Kontakt: Filipe Rosa, filiperosa@360blue.org",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Jabiru 3300 · 120 HP · 6-Zylinder · NEU originalverpackt",
+    "manufacturer": "Jabiru",
+    "model": "3300",
+    "condition": "New",
+    "price": 11000,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Jabiru 3300, 120 HP, 6-Zylinder, 3300 ccm. Neu, original verpackt inklusive Zubehör: Vergaser, Starter usw. Mehr Infos per WhatsApp: 01715037015",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Continental C90-14F · Bj. 1957 · TTSN 1432",
+    "manufacturer": "Continental",
+    "model": "C90-14F",
+    "condition": "Used",
+    "price": 19500,
+    "year": 1957,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Continental C90-14F, Baujahr 1957, TTSN 1432. Bendix Magnete mit Kabelbaum, Stromberg Vergaser, Millennium Zylinder STOH 30 Std, Sky-Tech Starter, B&C Generator, Lord Engine Mount Kit. Dokumente vorhanden. Kontakt: Hermann Greb, hermanngreb@t-online.de",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Continental O-200A · 0 SMOH · vollüberholt · Spanien",
+    "manufacturer": "Continental",
+    "model": "O-200A",
+    "condition": "Refurbished",
+    "price": 24800,
+    "year": null,
+    "location": "Spanien",
+    "category": "Flugzeugmotor",
+    "description": "Continental O-200A, komplett überholt: Zylinder, Magnetos, Anlasser, Vergaser, Zündkerzen und Kabel. Null-Stunden nach Überholung (0 SMOH). Alle Unterlagen vorhanden. Versand aus Spanien. Kontakt: lewis-m@engineer.com",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Subaru EA81 · mit Strongbelt PSRU · 700 h · Italien",
+    "manufacturer": "Subaru",
+    "model": "EA81",
+    "condition": "Used",
+    "price": 4500,
+    "year": null,
+    "location": "Varallo, Italien",
+    "category": "Flugzeugmotor",
+    "description": "Subaru EA81 mit Stratus-type Riemengetriebe PSRU (Strongbelt 7608MP). Aus Kitfox ausgebaut nach Umstieg auf Rotax 912. 700 Betriebsstunden, betriebsbereit ausgebaut. Kontakt: lc316b@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Subaru EJ22 · 160 HP · mit AirTrike SPG-4 · 370 h · Schweiz",
+    "manufacturer": "Subaru",
+    "model": "EJ22",
+    "condition": "Used",
+    "price": 15000,
+    "year": null,
+    "location": "Schweiz",
+    "category": "Flugzeugmotor",
+    "description": "Subaru EJ22 160 HP mit Getriebe AirTrike SPG-4. Komplett Firewall Forward inkl. Engine Mount und Constant Speed Propeller Woodcomp KW-31. 370 Stunden. Noch in Betrieb, kann geflogen werden. Verkauf wegen Umrüstung auf Rotax 916. Kontakt: Jonathan Höhn, president@experimental.ch",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "BMW 1100 S Einspritzung · Eagle V Trike · 365 h",
+    "manufacturer": "BMW",
+    "model": "1100 S",
+    "condition": "Used",
+    "price": 0,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "BMW Motor 1100 S Einspritzung mit Getriebe, Kühler, kompletter Auspuffanlage mit Lambdasonde und neuwertiger Bosch Benzinpumpe. War in einem Eagle V Trike verbaut, 365 Betriebsstunden. Preis VB – Angebot machen. Kontakt: Tel. 0152 0465 9698, familie-kleinhans@gmx.net",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Motor Corsair N80 · 57 h · Bj. 2023 · nur 10,5 kg · inkl. Propeller",
+    "manufacturer": "Corsair",
+    "model": "N80",
+    "condition": "Used",
+    "price": 800,
+    "year": 2023,
+    "location": "Estland",
+    "category": "Flugzeugmotor",
+    "description": "Motor Corsair N80, nur 10,5 kg. Baujahr 2023, 57 Betriebsstunden. Helix Propeller 130 cm inklusive. Kontakt: Kell12@mail.ee, +372 812 77916",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Göbler-Hirth F 33 AS · 28 PS · defekt · ca. 30 h",
+    "manufacturer": "Göbler-Hirth",
+    "model": "F 33 AS",
+    "condition": "Used",
+    "price": 1100,
+    "year": null,
+    "location": "Schweiz",
+    "category": "Flugzeugmotor",
+    "description": "Göbler-Hirth F 33 AS, 28 PS, ca. 30 Betriebsstunden, inkl. Getriebe 1:2,5. Motor läuft noch, aber schlecht. Vom Hersteller überprüft: Gewinde am Zylinder ausgerissen – Zylinder inkl. Kolben muss ersetzt werden. Zylinderkopf ebenfalls ersetzen. Listenpreis ca. 4.287 €. Kontakt: Kurt Ehrat, EHROFLUG GmbH, Kurt.ehrat@ehroflug.ch",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Ersatzteile für Rotax 503 und 582 (2-Takt) · Preis nach Absprache",
+    "manufacturer": "Rotax",
+    "model": "503 / 582",
+    "condition": "Used",
+    "price": 0,
+    "year": null,
+    "location": "Schweiz",
+    "category": "Flugzeugmotor",
+    "description": "Diverse Ersatzteile für 2-Takt Rotax 503 und 582 aus Ersatzteillager. Anfrage per Mail welches Teil benötigt wird. Preis nach Absprache. Kontakt: info@mueller-elektroservice.ch, +41 79 293 1230",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax 912 Anlasser grundüberholt · 0 Std · kurze Version",
+    "manufacturer": "Rotax",
+    "model": "912 Anlasser",
+    "condition": "Refurbished",
+    "price": 0,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Grundüberholter Anlasser für Rotax 912, kurze Ausführung, 0 Stunden. Preis auf Anfrage. Kontakt: g.hottinger@t-online.de, Tel. 07765-96851",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax 912 Ringmotorträger · original · nagelneu 2026",
+    "manufacturer": "Rotax",
+    "model": "912 Ringmotorträger",
+    "condition": "New",
+    "price": 700,
+    "year": 2026,
+    "location": "Österreich",
+    "category": "Flugzeugmotor",
+    "description": "Original Rotax 912 Ringmotorträger. Unbenützt, nagelneu aus 2026. VB Euro 700,–. Kontakt: Martin Stixenberger, martin.stixenberger@aon.at",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Öltank Rotax 912 / 914 · PN 956 503 · gebraucht",
+    "manufacturer": "Rotax",
+    "model": "912/914 Öltank",
+    "condition": "Used",
+    "price": 335,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Öltank Rotax 912 / 914 / 9xx, PN 956 503. Gebraucht, guter Zustand. Preis inkl. versicherter Versand innerhalb Deutschland. Kontakt: +49 171 235 50 60 (WhatsApp)",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Kraftstoffpumpe Rotax 912 80 PS · TBO ausgebaut",
+    "manufacturer": "Rotax",
+    "model": "912 Kraftstoffpumpe",
+    "condition": "Used",
+    "price": 250,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Kraftstoffpumpe für Rotax 912 (80 PS). Hat bis zum Ausbau problemlos funktioniert. Tausch wegen TBO (5 Jahre) in zertifiziertem Motorsegler. Guter Zustand. Kontakt: Dr. Looping, tommy.luedtke@googlemail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax Zündbox für 912er Baureihe · tadellos",
+    "manufacturer": "Rotax",
+    "model": "912 Zündbox",
+    "condition": "Used",
+    "price": 250,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Rotax Zündbox für 912er Baureihe. Funktioniert tadellos. Kontakt: Bernhard Oeldig, bernhard.oeldig@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Rotax 912 Ölpumpengehäuse · wie neu · kurz gelaufen",
+    "manufacturer": "Rotax",
+    "model": "912 Ölpumpengehäuse",
+    "condition": "Used",
+    "price": 120,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Rotax 912 Ölpumpengehäuse, wie neu. Nur kurz gelaufen wegen Sensorwechsel. Aktuell UNF-Gewinde am Öldrucksensor, M10x1-Gewinde kann eingeschnitten werden für digitale Sensoren. Kontakt: Tel. 015202969120",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "2× Zündboxen aus CtSW · 330 h · überholt 07/2024",
+    "manufacturer": "Rotax",
+    "model": "912 Zündboxen",
+    "condition": "Refurbished",
+    "price": 490,
+    "year": null,
+    "location": "Pfaffenhofen, Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "2× Zündboxen Rotax 912 aus CtSW. Totalstunden 330 h. Überholung 15.07.2024 (Rechnung 788 € vorhanden). Tadellos. Abholung in 85276 Pfaffenhofen oder Versand. Kontakt: Tel./WhatsApp 0157 777 07 203",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "2× Zündboxen Rotax 912 ULS · eine OK, eine defekt",
+    "manufacturer": "Rotax",
+    "model": "912 ULS Zündboxen",
+    "condition": "Used",
+    "price": 290,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "2× Zündboxen Rotax 912 ULS. Eine funktioniert einwandfrei, die andere hat Aussetzer und muss instandgesetzt werden. Werden als Paar verkauft. Kontakt: 01701676175, cb@fly-for-fun.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "2× Zündboxen Rotax 912 ULS · ca. 450 h · ohne Mängel",
+    "manufacturer": "Rotax",
+    "model": "912 ULS Zündboxen",
+    "condition": "Used",
+    "price": 300,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "2× Zündboxen Rotax 912 ULS, S/N: 926 726 04.0865 und 926 726 04.1034. Ca. 450 h gelaufen. Bis zum Ausbau ohne Mängel. Kontakt: horst9@web.de",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "8× Hydrostößel Rotax 912 · PN 854099 · NEU unbenutzt",
+    "manufacturer": "Rotax",
+    "model": "912 Hydrostößel",
+    "condition": "New",
+    "price": 295,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Satz von 8 neuen, unbenutzten, original verpackten Hydrostößeln für Rotax 912. Rotax-Ersatzteilnummer 854099. Für Überholung gekauft, dann doch nicht verwendet. Preis inkl. Versand. Kontakt: Georg Rauch, g.rauch@ul-flug.de",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Hydrostößel Rotax 912 100PS · gebraucht · 100 € / Stück",
+    "manufacturer": "Rotax",
+    "model": "912 Hydrostößel",
+    "condition": "Used",
+    "price": 100,
+    "year": null,
+    "location": "Tschechien",
+    "category": "Flugzeugmotor",
+    "description": "Hydrostößel gebraucht aus Rotax 912 100 PS. Aus laufendem Motor, Vorsichtsmaßnahme. Einzeln 100 € + Versand oder Lot 350 € + Versand. Auch Kraftstoff- und Abgasventile gebraucht verfügbar. Kontakt: WhatsApp +420 776 027 804, j.pelanek@seznam.cz",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Rotax Öltank PN 656 865 · ca. 2 h · für 912 Modelle",
+    "manufacturer": "Rotax",
+    "model": "Öltank PN 656 865",
+    "condition": "Used",
+    "price": 390,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Original Rotax Öltank PN 656 865. Ca. 2 Stunden geflogen. Für gängige Rotax-Modelle passend. Kontakt: Wolfgang, 01703862729",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Vergaservorwärmung für Rotax Motoren · keine Vereisung im Flug",
+    "manufacturer": "Rotax",
+    "model": "Vergaservorwärmung",
+    "condition": "New",
+    "price": 700,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Vergaservorwärmung für Rotax Motoren. Verhindert Vergaservereisung im Flug. Preis zzgl. 19% MwSt. und Versandkosten. Kontakt: info@fensterbau-werner-haegele.de",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Kühlmittel-Ausgleichsgefäß · leicht beschädigt · reparierbar",
+    "manufacturer": "Rotax",
+    "model": "Ausgleichsgefäß",
+    "condition": "Used",
+    "price": 120,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Kühlmittel-Ausgleichsgefäß gebraucht. An einem Flansch leicht beschädigt, tropft etwas – reparierbar. Deckel vorhanden und dicht, Gummiunterlage funktionsfähig. Kontakt: martin.krenzlin@gmx.de",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Generator Rotax · ca. 800 h · voll funktionsfähig",
+    "manufacturer": "Rotax",
+    "model": "Generator",
+    "condition": "Used",
+    "price": 50,
+    "year": null,
+    "location": "Österreich",
+    "category": "Flugzeugmotor",
+    "description": "Generator für Rotax, hat bis zum Schluss funktioniert. Ca. 800 h gelaufen. Versand nach Aufwand. Kontakt: vorstand@free2fly.at",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "2× Bing Vergaser Rotax 912 100 PS · 350 h · überholt",
+    "manufacturer": "Rotax",
+    "model": "912 Bing Vergaser",
+    "condition": "Used",
+    "price": 1050,
+    "year": null,
+    "location": "Zwickau, Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "2× Bing Vergaser Rotax 912, 100 PS. Prophylaktisch gegen neue gewechselt, tatsächlich in Ordnung. Gereinigt und kontrolliert. Wippe bei ca. 200 h gewechselt. Schwimmergewichte perfekt. 350 h Gesamtlaufzeit. Abholung EDBI Zwickau möglich. Kontakt: stearman@kabelmail.de, 0176 45709193",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Rotax 912 80 PS Teile-Paket · 1000 h · Zündboxen, Vergaser, Anlasser",
+    "manufacturer": "Rotax",
+    "model": "912 Teile",
+    "condition": "Used",
+    "price": 0,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Diverse Rotax 912 80 PS Teile, 1000 h: 2× Zündboxen (4-poliger Stecker), 2× Vergaser komplett mit Schwimmer (bei 800h überholt), 1× Magnetschraube, 1× VDO Öldruckgeber, 1× Benzinpumpe (250h), 2× Vergaserstutzen, 3× VDO Temperatursensor, 1× Anlasser. Alle Teile bis Ausbau einwandfrei. Gebot + Versand. Kontakt: manfred.krug@gmx.net",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Ölpumpengehäuse Rotax 912 · Nr. 810809 · inkl. Ölfilternippel",
+    "manufacturer": "Rotax",
+    "model": "912 Ölpumpengehäuse",
+    "condition": "Used",
+    "price": 95,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Ölpumpengehäuse Rotax 912, Nr. 810809, inkl. Ölfilternippel Nr. 924421 und Dichtringe. VHB zzgl. Versand. Kontakt: kramer.markus@gmx.net",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Zahnradsatz Rotax 912 ULS · 2,43:1 · 88 h · kein Prop-Strike",
+    "manufacturer": "Rotax",
+    "model": "912 ULS Zahnradsatz",
+    "condition": "Used",
+    "price": 600,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Neuwertig, nur 88 Stunden gelaufen. Kein Prop-Strike! Mit Rutschkupplung. Übersetzungsverhältnis 2,43:1. Musste wegen Gerätekennblatt auf 2,273:1 umgebaut werden. Kontakt: t.suhl@web.de",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Vergaser Überholkit Bing 64 · Rotax 912/914 · 80+100 PS",
+    "manufacturer": "Rotax",
+    "model": "Vergaser Überholkit",
+    "condition": "New",
+    "price": 275,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Vergaser Überholkit Bing 64 für Rotax 912/914. Set: 4 Schwimmer neuester Generation (R-Logo), 2 Membranen, 2 Vergaserwannendichtungen (Gummi), 2 Ablaufschläuche. Passend für alle Rotax 912 UL/ULS 80/100 PS. Kontakt: c42-pilot@web.de",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Tachometer / Drehzahlmesser Rotax 912 · 57mm · voll funktionsfähig",
+    "manufacturer": "Rotax",
+    "model": "912 Tachometer",
+    "condition": "Used",
+    "price": 100,
+    "year": null,
+    "location": "Tschechien",
+    "category": "Flugzeugmotor",
+    "description": "Tachometer für Rotax 912. Gebraucht, ausgezeichneter Zustand, voll funktionsfähig. Durchmesser 57mm, Befestigung mit 4x M4-Schrauben. Kontakt: WhatsApp +420 776 027 804, j.pelanek@seznam.cz",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Anlasser Klein · Rotax 912 · 300 Std",
+    "manufacturer": "Rotax",
+    "model": "912 Anlasser Klein",
+    "condition": "Used",
+    "price": 0,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Anlasser Klein mit 300 Stunden für Rotax 912. Gegen Gebot + Versand. Kontakt: perskoujessen@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Sportluftfilter konisch · alle Rotax 912 · Ø 52mm · waschbar",
+    "manufacturer": "Rotax",
+    "model": "912 Sportluftfilter",
+    "condition": "New",
+    "price": 100,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Sportluftfilter konisch für alle Rotax 912. Maximale Luftzufuhr, mehr Leistung. Aus hochwertigem Baumwollgewebe, waschbar. Anschluss Ø 52mm, Länge 116mm, konisch. Mit 2 Edelstahl-Schraubschellen. Preis pro Paar + Versand. Kontakt: c42-pilot@web.de",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Vergaser / 80PS Motor (Bastler) + Bauteile · Bremen",
+    "manufacturer": "Rotax",
+    "model": "80PS Motor / Vergaser",
+    "condition": "Used",
+    "price": 0,
+    "year": null,
+    "location": "Bremen, Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Fluggruppe nahe Bremen räumt Lager: Ein Satz Vergaser, ein Kompass, ein alter 80 PS Motor (nur für Bastler) und Kleinteile. Zu schade zum Wegwerfen. Alle Infos: https://sternflieger.com",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Wärmetauscher Silent Hektik F1204 · 80° Thermostat · Rotax 912iS",
+    "manufacturer": "Rotax",
+    "model": "Wärmetauscher F1204",
+    "condition": "Used",
+    "price": 250,
+    "year": 2017,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Wärmetauscher Silent Hektik F1204 mit 80 Grad Thermostat. Baujahr KW 20/2017. Nur 2 Stunden Probelauf mit 912iS im 07/2025. Kontakt: Claus Kalveram, 0152 09224422",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Halterung Kondensator Rotax 912 · 40mm · NEU",
+    "manufacturer": "Rotax",
+    "model": "912 Kondensator-Halterung",
+    "condition": "New",
+    "price": 18,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Hochwertige Halterung für Kondensator Rotax 912, 40mm Durchmesser. NEU + Versand. Kontakt: bjoernvasiharan@web.de",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Luftleitblech für Ölkühler FK9 MK4 · Rotax 912 · NEU",
+    "manufacturer": "Rotax",
+    "model": "Luftleitblech FK9",
+    "condition": "New",
+    "price": 95,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Luftleitblech für Ölkühler für FK9 MK4, passend für Rotax 912. 2 Stück verfügbar, neu. Kontakt: Doris Lerchenmueller, dl@ml-cnc.de",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "High Performance Batterie · Flugzeug · 50 €",
+    "manufacturer": "Unbekannt",
+    "model": "Flugzeugbatterie",
+    "condition": "New",
+    "price": 50,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "High Performance Batterie für Flugzeug-Bordnetz. Kontakt: Michael Nitzel, nitzel49@gmail.com",
+    "listing_type": "Verkauf",
+    "price_type": "Festpreis"
+  },
+  {
+    "title": "Jabiru 3300 Auspuffanlage mit Heizmantel",
+    "manufacturer": "Jabiru",
+    "model": "3300 Auspuff",
+    "condition": "Used",
+    "price": 0,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Komplette Auspuffanlage mit Heizmantel für Jabiru 3300. Preis auf Anfrage. Kontakt: g.hottinger@t-online.de, Tel. 07765-96851",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  },
+  {
+    "title": "Laderegler B&C LR3C-28 · 28V / 4A · NEU",
+    "manufacturer": "B&C Specialty Products",
+    "model": "LR3C-28",
+    "condition": "New",
+    "price": 0,
+    "year": null,
+    "location": "Deutschland",
+    "category": "Flugzeugmotor",
+    "description": "Laderegler B&C Specialty Products, Model LR 3C-28. 28 Volt / 4 Ampere / linear. Neuteil in sehr gutem Zustand. Preis auf Anfrage. Kontakt: c42-pilot@web.de",
+    "listing_type": "Verkauf",
+    "price_type": "Verhandlungsbasis"
+  }
+];
+
+let importedIds = [];
+let statDone = 0, statErr = 0;
+
+async function startImport() {
+  const email = document.getElementById("email-input").value.trim();
+  const pass  = document.getElementById("pass-input").value;
+  if (!email || !pass) { alert("Bitte E-Mail und Passwort eingeben!"); return; }
+
+  document.getElementById("progress-card").style.display = "block";
+  document.getElementById("btn-start").disabled = true;
+  statDone = 0; statErr = 0; importedIds = [];
+  log("🔐 Einloggen...\n");
+
+  const { data: authData, error: authErr } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (authErr) { log("❌ Login fehlgeschlagen: " + authErr.message + "\n"); document.getElementById("btn-start").disabled = false; return; }
+
+  const user = authData.user;
+  log("✅ Eingeloggt als: " + user.email + "\n");
+
+  const { data: seller } = await sb.from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
+  if (!seller) { log("❌ Kein Händlerprofil gefunden!\n"); document.getElementById("btn-start").disabled = false; return; }
+  log("🏢 Händler: " + seller.company_name + "\n");
+
+  const { data: cats } = await sb.from("categories").select("id,name,slug");
+  const catMap = {};
+  if (cats) cats.forEach(c => {
+    catMap[c.name] = c.id;
+    catMap[c.name.toLowerCase()] = c.id;
+    catMap[c.slug] = c.id;
+  });
+  log("📦 " + cats.length + " Kategorien geladen\n\n");
+
+  document.getElementById("stat-total").textContent = INSERATE.length;
+
+  const BATCH = 10;
+  for (let i = 0; i < INSERATE.length; i += BATCH) {
+    const batch = INSERATE.slice(i, i + BATCH);
+    const payloads = [];
+
+    for (const ins of batch) {
+      let catId = catMap[ins.category] || catMap[ins.category.toLowerCase()];
+      if (!catId) {
+        const firstWord = ins.category.split(" ")[0].toLowerCase();
+        const match = cats.find(c => c.name.toLowerCase().includes(firstWord) || c.slug.includes(firstWord));
+        catId = match ? match.id : cats[0].id;
+      }
+      payloads.push({
+        seller_id:    seller.id,
+        category_id:  catId,
+        title:        ins.title,
+        manufacturer: ins.manufacturer,
+        model:        ins.model,
+        condition:    ins.condition || "Used",
+        price:        ins.price || 0,
+        year:         ins.year || null,
+        location:     ins.location || "Deutschland",
+        description:  ins.description,
+        status:       "Freigegeben",
+        listing_type: ins.listing_type,
+        price_type:   ins.price_type,
+        image_urls:   []
+      });
+    }
+
+    const { data, error } = await sb.from("listings").insert(payloads).select("id");
+
+    if (error) {
+      statErr += batch.length;
+      log("❌ Batch [" + (i+1) + "-" + Math.min(i+BATCH, INSERATE.length) + "] FEHLER: " + error.message + "\n");
+    } else {
+      statDone += data.length;
+      data.forEach(d => importedIds.push(d.id));
+      log("✅ [" + (i+1) + "-" + Math.min(i+BATCH, INSERATE.length) + "/" + INSERATE.length + "] " + batch[0].title.substring(0,60) + "...\n");
+    }
+
+    const pct = Math.round(Math.min(i + BATCH, INSERATE.length) / INSERATE.length * 100);
+    document.getElementById("stat-done").textContent = statDone;
+    document.getElementById("stat-err").textContent  = statErr;
+    document.getElementById("progress-bar").style.width = pct + "%";
+    document.getElementById("progress-pct").textContent = pct + "%";
+    await new Promise(r => setTimeout(r, 50));
+  }
+
+  log("\n🎉 FERTIG! " + statDone + " Inserate eingefügt, " + statErr + " Fehler.\n");
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-delete").style.display = "block";
+}
+
+async function deleteAll() {
+  if (!importedIds.length) { alert("Keine IDs aus dieser Session gespeichert."); return; }
+  if (!confirm("Alle " + importedIds.length + " importierten Inserate löschen?")) return;
+  log("\n🗑️ Lösche " + importedIds.length + " Inserate...\n");
+  for (let i = 0; i < importedIds.length; i += 100) {
+    await sb.from("listings").delete().in("id", importedIds.slice(i, i + 100));
+  }
+  log("✅ Alle gelöscht!\n");
+  importedIds = [];
+}
+
+function log(msg) {
+  const el = document.getElementById("log");
+  el.textContent += msg;
+  el.scrollTop = el.scrollHeight;
+}
+</script>
+</body>
+</html>
