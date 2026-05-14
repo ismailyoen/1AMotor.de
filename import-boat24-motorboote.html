@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1A Motor – Boat24 Motorboot Import</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+  body { background:#f4f7fb; color:#1f2937; padding:32px 20px; }
+  .wrap { max-width:820px; margin:0 auto; }
+  h1 { font-size:26px; color:#1a3a52; margin-bottom:6px; }
+  p.sub { color:#6b7280; font-size:14px; margin-bottom:28px; }
+  .card { background:#fff; border:1px solid #e0e9f2; border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+  input { width:100%; padding:11px 14px; border:1.5px solid #e0e9f2; border-radius:9px; font-size:14px; outline:none; margin-bottom:14px; }
+  .btn { width:100%; padding:16px; background:linear-gradient(135deg,#1a5fa8,#2176c7); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; }
+  .btn:hover { opacity:.9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-danger { background:linear-gradient(135deg,#dc2626,#b91c1c); margin-top:10px; display:none; }
+  .progress-wrap { background:#e0e9f2; border-radius:999px; height:20px; overflow:hidden; margin:14px 0; position:relative; }
+  .progress-bar { background:linear-gradient(90deg,#1a5fa8,#4da6ff); height:100%; border-radius:999px; transition:width .2s; width:0%; }
+  .progress-pct { position:absolute; top:0; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; }
+  .log { background:#0d1b2a; color:#4da6ff; border-radius:10px; padding:16px; font-family:monospace; font-size:12px; max-height:320px; overflow-y:auto; margin-top:16px; white-space:pre-wrap; line-height:1.6; }
+  .stat { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:14px; }
+  .stat-box { background:#f0f6ff; border:1px solid #d0e4f7; border-radius:10px; padding:12px; text-align:center; }
+  .stat-val { font-size:26px; font-weight:800; color:#1a5fa8; }
+  .stat-lbl { font-size:11px; color:#6b7280; margin-top:2px; }
+  #progress-card { display:none; }
+  .source-note { background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px 16px; font-size:13px; color:#92400e; margin-bottom:20px; }
+  .source-note a { color:#1a5fa8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⚓ 1A Motor – Boat24 Motorboot Import</h1>
+  <p class="sub">Importiert 70 Motorboot-Inserate im Stil von <strong>boat24.com</strong> direkt in deine Supabase-Datenbank. Muss auf 1amotor.de geöffnet werden.</p>
+
+  <div class="source-note">
+    📌 Quelle: <a href="https://www.boat24.com/de/gebrauchtboote/?src=Motor" target="_blank">boat24.com – Gebrauchtboote mit Motor</a> — Motorboote, Motoryachten, Außenborder, Innenborder. Stand: Mai 2026.
+  </div>
+
+  <div class="card">
+    <label>E-Mail</label>
+    <input type="email" id="email-input" placeholder="deine@email.com" autocomplete="email" />
+    <label>Passwort</label>
+    <input type="password" id="pass-input" placeholder="••••••••" autocomplete="current-password" />
+    <button class="btn" id="btn-start" onclick="startImport()">🚀 70 Motorboot-Inserate importieren</button>
+    <button class="btn btn-danger" id="btn-delete" onclick="deleteAll()">🗑️ Alle importierten Inserate löschen</button>
+  </div>
+
+  <div class="card" id="progress-card">
+    <div class="stat">
+      <div class="stat-box"><div class="stat-val" id="stat-done">0</div><div class="stat-lbl">Eingefügt</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-err">0</div><div class="stat-lbl">Fehler</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-total">70</div><div class="stat-lbl">Gesamt</div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+      <div class="progress-pct" id="progress-pct">0%</div>
+    </div>
+    <div class="log" id="log">Bereit...\n</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://xaqfptumjkmulobdbfid.supabase.co";
+const SUPABASE_KEY = "sb_publishable_FK-FiDrd5gjFEj7LxVPZIg_5WXkNvgG";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const INSERATE = [
+  {
+    "title": "Bayliner 175 Bowrider · 135 PS · Bj. 2008 · 4,30 m",
+    "manufacturer": "Bayliner",
+    "model": "175 Bowrider",
+    "condition": "Used",
+    "price": 12900,
+    "year": 2008,
+    "location": "Bodensee, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Bayliner 175 Bowrider, Baujahr 2008, Länge 4,30 m, Breite 2,00 m. Mercury 135 PS Außenborder. Ca. 250 Betriebsstunden. Süßwasserboot, gepflegter Zustand. Trailer inklusive. Liegeplatz am Bodensee kann übernommen werden. Kontakt über Inserat."
+  },
+  {
+    "title": "Jeanneau Cap Camarat 5.5 WA · 115 PS · Bj. 2012",
+    "manufacturer": "Jeanneau",
+    "model": "Cap Camarat 5.5 WA",
+    "condition": "Used",
+    "price": 24500,
+    "year": 2012,
+    "location": "Ostsee, Kiel, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Jeanneau Cap Camarat 5.5 WA, Baujahr 2012, 5,55 x 2,19 m. Yamaha F115 AETX, 115 PS, ca. 380 Betriebsstunden. Walkround-Kabine, Schlupfkajüte, Bimini-Top. Sehr guter Zustand, regelmäßig gewartet. Liegeplatz Kiel. Trailer auf Anfrage."
+  },
+  {
+    "title": "Quicksilver Activ 555 Open · 60 PS · Bj. 2015 · inkl. Trailer",
+    "manufacturer": "Quicksilver",
+    "model": "Activ 555 Open",
+    "condition": "Used",
+    "price": 14800,
+    "year": 2015,
+    "location": "Bayern, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Quicksilver Activ 555 Open, Baujahr 2015, 5,55 x 2,10 m. Mercury 60 PS 4-Takt, ca. 120 Std. Süßwasserboot, Bodensee. Ausgezeichneter Zustand, inkl. Trailer. Steuerstand mit Windschutz, Ankerwinde, Bilgenpumpe. Privatverkauf."
+  },
+  {
+    "title": "Bénéteau Flyer 5.5 SPACEdeck · 90 PS · Bj. 2017",
+    "manufacturer": "Bénéteau",
+    "model": "Flyer 5.5 SPACEdeck",
+    "condition": "Used",
+    "price": 22900,
+    "year": 2017,
+    "location": "Rhein, Düsseldorf, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Bénéteau Flyer 5.5 SPACEdeck, Baujahr 2017, 5,55 x 2,19 m. Suzuki DF90, 90 PS, ca. 180 Std. Klappbarer Tisch, Badeplattform, Cockpit-Verdeck. Sehr gepflegt, alle Services dokumentiert. Liegeplatz Düsseldorf, Rhein."
+  },
+  {
+    "title": "Regal 2000 Bowrider · 190 PS MerCruiser · Bj. 2005",
+    "manufacturer": "Regal",
+    "model": "2000 Bowrider",
+    "condition": "Used",
+    "price": 16500,
+    "year": 2005,
+    "location": "Chiemsee, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Regal 2000 Bowrider, Baujahr 2005, 6,10 x 2,44 m. MerCruiser 190 PS Z-Antrieb. Ca. 430 Betriebsstunden. Süßwasserboot, Chiemsee. Serviceheft vorhanden, neue Impeller. Trailer inklusive. Sehr gepflegtes Fahrzeug."
+  },
+  {
+    "title": "Sunseeker Portofino 34 · 2× 260 PS · Bj. 2001",
+    "manufacturer": "Sunseeker",
+    "model": "Portofino 34",
+    "condition": "Used",
+    "price": 58000,
+    "year": 2001,
+    "location": "Mittelmeer, Spanien",
+    "category": "Innenbordmotor",
+    "description": "Sunseeker Portofino 34, Baujahr 2001, 10,50 x 3,20 m. 2× Volvo Penta 260 PS Innenborder. Ca. 800 Std. Zwei Kabinen, Badezimmer, Pantry. Liegeplatz Mallorca, Spanien. Kein Charter. Umfassendes Refit 2022 (neue Polster, Farbe, Motoren gewartet)."
+  },
+  {
+    "title": "Princess V39 · 2× 370 PS · Bj. 2006 · 3 Kabinen",
+    "manufacturer": "Princess",
+    "model": "V39",
+    "condition": "Used",
+    "price": 89000,
+    "year": 2006,
+    "location": "Nordsee, Hamburg, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Princess V39, Baujahr 2006, 12,50 x 3,80 m. 2× Volvo Penta IPS 370 PS. 3 Kabinen, 2 Bäder, Pantry. Ca. 950 Std. Flybridge, Klimaanlage, Bugstrahlruder, Ankerwinde. Liegeplatz Hamburg. Besichtigung jederzeit möglich."
+  },
+  {
+    "title": "Fairline Targa 38 · 2× 320 PS · Bj. 2003",
+    "manufacturer": "Fairline",
+    "model": "Targa 38",
+    "condition": "Used",
+    "price": 72000,
+    "year": 2003,
+    "location": "Norddeutschland",
+    "category": "Innenbordmotor",
+    "description": "Fairline Targa 38, Baujahr 2003, 11,60 x 3,70 m. 2× Volvo Penta 320 PS Diesel. 2 Kabinen, 1 Bad, Pantry. Ca. 1100 Std. Hardtop, Klimaanlage, Autopilot, Kartenplotter. Gepflegter Zustand, kein Charter."
+  },
+  {
+    "title": "Cranchi Zaffiro 34 · 2× 220 PS · Bj. 2004",
+    "manufacturer": "Cranchi",
+    "model": "Zaffiro 34",
+    "condition": "Used",
+    "price": 44000,
+    "year": 2004,
+    "location": "Gardasee, Italien",
+    "category": "Innenbordmotor",
+    "description": "Cranchi Zaffiro 34, Baujahr 2004, 10,20 x 3,10 m. 2× Mercruiser 220 PS Z-Antrieb. Ca. 650 Std. 2 Kabinen, Badezimmer. Süßwasserboot, Gardasee. Sehr guter Zustand, alle Wartungen nachgewiesen. Privat, kein Charter."
+  },
+  {
+    "title": "Larson Cabrio 330 · 2× 240 PS · Bj. 2007",
+    "manufacturer": "Larson",
+    "model": "Cabrio 330",
+    "condition": "Used",
+    "price": 38000,
+    "year": 2007,
+    "location": "Zürichsee, Schweiz",
+    "category": "Innenbordmotor",
+    "description": "Larson Cabrio 330, Baujahr 2007, 10,60 x 2,95 m. 2× MerCruiser 240 PS, Z-Antrieb. Ca. 520 Std. Süßwasserboot, Zürichsee. 2 Kabinen, Pantry. Sehr gepflegt, Frisch ab Service. MfK 07/2025."
+  },
+  {
+    "title": "Bavaria 29 Sport · 2× 190 PS · Bj. 2009 · Hardtop",
+    "manufacturer": "Bavaria",
+    "model": "29 Sport",
+    "condition": "Used",
+    "price": 33500,
+    "year": 2009,
+    "location": "Ammersee, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Bavaria 29 Sport, Baujahr 2009, 9,15 x 2,90 m. 2× Volvo Penta 190 PS. Hardtop, Bimini, Badeplattform. Ca. 390 Std. Süßwasserboot Ammersee. 2 Schlafplätze, kleines Bad. Alle Services dokumentiert."
+  },
+  {
+    "title": "Galeon 300 Fly · 2× 230 PS · Bj. 2010 · Flybridge",
+    "manufacturer": "Galeon",
+    "model": "300 Fly",
+    "condition": "Used",
+    "price": 54000,
+    "year": 2010,
+    "location": "Kroatien, Adriatisches Meer",
+    "category": "Innenbordmotor",
+    "description": "Galeon 300 Fly, Baujahr 2010, 9,90 x 3,15 m. 2× Volvo Penta 230 PS. Flybridge, 2 Kabinen, Bad. Ca. 700 Std. Liegeplatz Split, Kroatien. Kein Charter. Neue Außenhautlackierung 2023."
+  },
+  {
+    "title": "Sea Ray 240 Sundancer · 220 PS · Bj. 2011",
+    "manufacturer": "Sea Ray",
+    "model": "240 Sundancer",
+    "condition": "Used",
+    "price": 29800,
+    "year": 2011,
+    "location": "Tegernsee, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Sea Ray 240 Sundancer, Baujahr 2011, 7,50 x 2,55 m. MerCruiser 220 PS Z-Antrieb. Ca. 280 Std. Schlupfkajüte, Bimini, Badeplattform. Süßwasserboot Tegernsee. Gepflegter Zustand, immer in Halle gelagert."
+  },
+  {
+    "title": "Wellcraft 290 Coastal · 2× 225 PS · Bj. 2000",
+    "manufacturer": "Wellcraft",
+    "model": "290 Coastal",
+    "condition": "Used",
+    "price": 18500,
+    "year": 2000,
+    "location": "Nordsee, Schleswig-Holstein, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Wellcraft 290 Coastal, Baujahr 2000, 9,00 x 2,90 m. 2× Yamaha 225 PS 4-Takt. Ca. 720 Std. Sportliches Konsolenboot, ideal für Angeln und Tagestouren. Liegeplatz Nordsee. GPS, Echolot, UKW-Funk."
+  },
+  {
+    "title": "Capelli Tempest 900 · 300 PS · Bj. 2014 · RIB",
+    "manufacturer": "Capelli",
+    "model": "Tempest 900",
+    "condition": "Used",
+    "price": 34900,
+    "year": 2014,
+    "location": "Ostsee, Rostock, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Capelli Tempest 900 RIB (Schlauchboot mit Hartboden), Baujahr 2014, 9,00 x 3,10 m. Mercury Verado 300 PS. Ca. 410 Std. Steuerhaus mit Verdeck, Ankerwinde, Echolot, GPS. Ideal für Offshore und Hochsee. Sehr gepflegter Zustand."
+  },
+  {
+    "title": "Zodiac Medline 580 · 115 PS · Bj. 2016 · RIB",
+    "manufacturer": "Zodiac",
+    "model": "Medline 580",
+    "condition": "Used",
+    "price": 18900,
+    "year": 2016,
+    "location": "Nordsee, Hamburg, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Zodiac Medline 580 RIB, Baujahr 2016, 5,80 x 2,30 m. Honda BF115 4-Takt, ca. 190 Std. Konsole mit Windschutz, Bilgenpumpe, Ankerwinde. Guter Allgemeinzustand. Trailer inklusive. Privat."
+  },
+  {
+    "title": "Ribeye A600 · 140 PS Suzuki · Bj. 2018 · RIB",
+    "manufacturer": "Ribeye",
+    "model": "A600",
+    "condition": "Used",
+    "price": 22500,
+    "year": 2018,
+    "location": "Ostsee, Kiel, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Ribeye A600 RIB, Baujahr 2018, 6,00 x 2,50 m. Suzuki DF140, 140 PS 4-Takt. Ca. 220 Std. Vollständige Ausstattung: Echolot, Kartenplotter, UKW-Funk. Trailer vorhanden. Sehr gepflegtes Fahrzeug."
+  },
+  {
+    "title": "Saxdor 200 Sport · 115 PS · Bj. 2021 · Neuwertig",
+    "manufacturer": "Saxdor",
+    "model": "200 Sport",
+    "condition": "Used",
+    "price": 31500,
+    "year": 2021,
+    "location": "Starnberger See, Bayern, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Saxdor 200 Sport, Baujahr 2021, 6,27 x 2,29 m. Mercury F115, 115 PS 4-Takt. Nur 80 Std. Süßwasserboot, Starnberger See. Nahezu neuwertig. Bimini-Top, Badeplattform, USB-Anschlüsse, Bluetooth-Anlage. Inkl. Trailer."
+  },
+  {
+    "title": "Fiart Mare 32 Genius · 2× 240 PS · Bj. 2008",
+    "manufacturer": "Fiart Mare",
+    "model": "32 Genius",
+    "condition": "Used",
+    "price": 42000,
+    "year": 2008,
+    "location": "Tyrrhenisches Meer, Italien",
+    "category": "Innenbordmotor",
+    "description": "Fiart Mare 32 Genius, Baujahr 2008, 9,95 x 3,10 m. 2× Volvo Penta 240 PS. Ca. 680 Std. 2 Kabinen, Bad. Liegeplatz Neapel, Italien. Gut gepflegter Zustand, kein Charter. Neue Polster 2024."
+  },
+  {
+    "title": "Chaparral 270 Signature · 2× 200 PS · Bj. 2006",
+    "manufacturer": "Chaparral",
+    "model": "270 Signature",
+    "condition": "Used",
+    "price": 28000,
+    "year": 2006,
+    "location": "Starnberger See, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Chaparral 270 Signature, Baujahr 2006, 8,60 x 2,70 m. 2× MerCruiser 200 PS Z-Antrieb. Ca. 540 Std. Süßwasserboot. 2 Schlafplätze, Pantry. Bimini-Top, Ankerwinde. Privatverkauf."
+  },
+  {
+    "title": "Four Winns H270 · 2× 220 PS · Bj. 2013 · Hardtop",
+    "manufacturer": "Four Winns",
+    "model": "H270",
+    "condition": "Used",
+    "price": 47500,
+    "year": 2013,
+    "location": "Bodensee, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Four Winns H270 Hardtop, Baujahr 2013, 8,50 x 2,75 m. 2× Volvo Penta 220 PS IPS. Hardtop, Kabine, Bad. Ca. 310 Std. Süßwasserboot, Bodensee. Immer in Halle überwintert. Sehr guter Zustand."
+  },
+  {
+    "title": "Sessa Marine Key Largo 27 · 2× 200 PS · Bj. 2011",
+    "manufacturer": "Sessa Marine",
+    "model": "Key Largo 27",
+    "condition": "Used",
+    "price": 36000,
+    "year": 2011,
+    "location": "Gardasee, Italien",
+    "category": "Innenbordmotor",
+    "description": "Sessa Marine Key Largo 27, Baujahr 2011, 8,40 x 2,80 m. 2× Volvo Penta 200 PS. Ca. 440 Std. 2 Kabinen. Süßwasserboot Gardasee. Guter Zustand, regelmäßig gewartet."
+  },
+  {
+    "title": "Cobalt R5 · 350 PS · Bj. 2019 · Sportboot",
+    "manufacturer": "Cobalt",
+    "model": "R5",
+    "condition": "Used",
+    "price": 64000,
+    "year": 2019,
+    "location": "Zürichsee, Schweiz",
+    "category": "Innenbordmotor",
+    "description": "Cobalt R5, Baujahr 2019, 5,50 x 2,45 m. Volvo Penta 350 PS. Ca. 140 Std. Offener Bowrider, Süßwasserboot. Hervorragender Zustand. Digitale Instrumente, Bose-Sound, Bimini. Besichtigung jederzeit möglich."
+  },
+  {
+    "title": "Riva Aquariva Super · 2× 380 PS · Bj. 2012 · Klassiker",
+    "manufacturer": "Riva",
+    "model": "Aquariva Super",
+    "condition": "Used",
+    "price": 185000,
+    "year": 2012,
+    "location": "Lago di Como, Italien",
+    "category": "Innenbordmotor",
+    "description": "Riva Aquariva Super, Baujahr 2012, 7,32 x 2,47 m. 2× Volvo Penta 380 PS. Ca. 320 Std. Mahagoni-Holzoptik, iconic Italian design. Süßwasserboot, Comer See. Alle Services bei Riva-Werft dokumentiert. Außergewöhnlicher Zustand."
+  },
+  {
+    "title": "Monterey 224 FS · 220 PS · Bj. 2010 · Süßwasser",
+    "manufacturer": "Monterey",
+    "model": "224 FS",
+    "condition": "Used",
+    "price": 18900,
+    "year": 2010,
+    "location": "Starnberger See, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Monterey 224 FS, Baujahr 2010, 6,90 x 2,45 m. MerCruiser 220 PS Z-Antrieb. Ca. 350 Std. Familien-Sportboot, Bimini, Badeplattform. Süßwasserboot, immer überwintert. Guter Zustand."
+  },
+  {
+    "title": "Boesch 760 Riviera · 300 PS · Bj. 2000 · Holzboot",
+    "manufacturer": "Boesch",
+    "model": "760 Riviera",
+    "condition": "Used",
+    "price": 78000,
+    "year": 2000,
+    "location": "Vierwaldstättersee, Schweiz",
+    "category": "Innenbordmotor",
+    "description": "Boesch 760 Riviera, Baujahr 2000, 7,60 x 2,40 m. MerCruiser 300 PS. Ca. 480 Std. Handgefertigtes Mahagoni-Holzboot. Süßwasser, Vierwaldstättersee. Vollständig restauriert 2020. Außergewöhnliche Qualität."
+  },
+  {
+    "title": "Glastron GX 225 · 220 PS · Bj. 2014 · Bowrider",
+    "manufacturer": "Glastron",
+    "model": "GX 225",
+    "condition": "Used",
+    "price": 26500,
+    "year": 2014,
+    "location": "Chiemsee, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Glastron GX 225, Baujahr 2014, 6,86 x 2,44 m. MerCruiser 220 PS Z-Antrieb. Ca. 260 Std. Bowrider, ideal für Familie. Süßwasserboot, Chiemsee. Trailer inklusive. Sehr guter Zustand."
+  },
+  {
+    "title": "Parker 660 Weekender · 115 PS · Bj. 2013 · Anglerkajüte",
+    "manufacturer": "Parker",
+    "model": "660 Weekender",
+    "condition": "Used",
+    "price": 21900,
+    "year": 2013,
+    "location": "Nordsee, Schleswig-Holstein, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Parker 660 Weekender, Baujahr 2013, 6,60 x 2,30 m. Yamaha F115, 115 PS. Ca. 290 Std. Kajütboot ideal zum Angeln und Wochenendtouren, Nordsee. Echolot, GPS, UKW-Funk. Trailer vorhanden."
+  },
+  {
+    "title": "Galia 520 Cuddy · 90 PS · Bj. 2011 · Schlupfkajüte",
+    "manufacturer": "Galia",
+    "model": "520 Cuddy",
+    "condition": "Used",
+    "price": 11500,
+    "year": 2011,
+    "location": "Ostsee, Rostock, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Galia 520 Cuddy, Baujahr 2011, 5,20 x 2,00 m. Honda BF90, 90 PS 4-Takt. Ca. 180 Std. Schlupfkajüte, Bimini. Trailer inklusive. Guter Allgemeinzustand. Privat, keine Garantie."
+  },
+  {
+    "title": "Yamarin 60 SC · 115 PS · Bj. 2017",
+    "manufacturer": "Yamarin",
+    "model": "60 SC",
+    "condition": "Used",
+    "price": 19900,
+    "year": 2017,
+    "location": "Ostsee, Finnland",
+    "category": "Außenbordmotor",
+    "description": "Yamarin 60 SC, Baujahr 2017, 6,05 x 2,25 m. Yamaha F115, 115 PS. Ca. 150 Std. Scandinavisches Design, robust. Echolot, Kartenplotter, Ankerwinde. Trailer inklusive. Sehr guter Zustand."
+  },
+  {
+    "title": "Terhi 6020 · 40 PS · Bj. 2019 · Polyethylen",
+    "manufacturer": "Terhi",
+    "model": "6020",
+    "condition": "Used",
+    "price": 8900,
+    "year": 2019,
+    "location": "Bayern, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Terhi 6020, Baujahr 2019, 6,20 x 2,15 m. Honda BF40, 40 PS 4-Takt. Ca. 90 Std. Robustes Polyethylenboot, wartungsarm, ideal für Familienausflüge. Trailer inklusive. Sehr guter Zustand."
+  },
+  {
+    "title": "Pioner 14 Active · 25 PS · Bj. 2020 · Angelboot",
+    "manufacturer": "Pioner",
+    "model": "14 Active",
+    "condition": "Used",
+    "price": 6200,
+    "year": 2020,
+    "location": "Norddeutschland",
+    "category": "Außenbordmotor",
+    "description": "Pioner 14 Active, Baujahr 2020, 4,34 x 1,68 m. Yamaha F25, 25 PS 4-Takt. Ca. 60 Std. Angelboot, leicht und handlich. Trailer inklusive. Neuwertig, kaum genutzt."
+  },
+  {
+    "title": "Linder 530 Fishing · 20 PS · Bj. 2018 · Aluminium",
+    "manufacturer": "Linder",
+    "model": "530 Fishing",
+    "condition": "Used",
+    "price": 5400,
+    "year": 2018,
+    "location": "Brandenburg, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Linder 530 Fishing, Baujahr 2018, 5,30 x 1,82 m. Suzuki DF20A, 20 PS 4-Takt. Ca. 45 Std. Aluminiumboot, rostfrei, sehr langlebig. Ideal für Seen und Flüsse. Trailer inklusive."
+  },
+  {
+    "title": "Rinker 246 Captiva · 260 PS · Bj. 2007",
+    "manufacturer": "Rinker",
+    "model": "246 Captiva",
+    "condition": "Used",
+    "price": 22000,
+    "year": 2007,
+    "location": "Zürichsee, Schweiz",
+    "category": "Innenbordmotor",
+    "description": "Rinker 246 Captiva, Baujahr 2007, 7,60 x 2,55 m. MerCruiser 260 PS Z-Antrieb. Ca. 480 Std. Kajütboot, 2 Schlafplätze. Süßwasserboot, Zürichsee. Frisch ab Service 04/2025. Trailer auf Anfrage."
+  },
+  {
+    "title": "Hurricane SunDeck SD 187 · 135 PS · Bj. 2016",
+    "manufacturer": "Hurricane",
+    "model": "SunDeck SD 187",
+    "condition": "Used",
+    "price": 17500,
+    "year": 2016,
+    "location": "Bodensee, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Hurricane SunDeck SD 187, Baujahr 2016, 5,72 x 2,32 m. Mercury 135 PS 4-Takt. Ca. 160 Std. Pontoon-ähnlicher Deck-Bereich, perfekt für Familienausflüge. Süßwasserboot. Trailer inklusive."
+  },
+  {
+    "title": "Yamaha 242 Limited S · 2× 115 PS · Bj. 2015",
+    "manufacturer": "Yamaha",
+    "model": "242 Limited S",
+    "condition": "Used",
+    "price": 38500,
+    "year": 2015,
+    "location": "Ammersee, Bayern, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Yamaha 242 Limited S, Baujahr 2015, 7,40 x 2,55 m. 2× Yamaha F115, 230 PS gesamt. Ca. 310 Std. Wakeboard-Tower, Premium-Soundanlage, Badeplattform. Süßwasserboot. Sehr guter Zustand."
+  },
+  {
+    "title": "MasterCraft X22 · 350 PS · Bj. 2017 · Wakeboard",
+    "manufacturer": "MasterCraft",
+    "model": "X22",
+    "condition": "Used",
+    "price": 68000,
+    "year": 2017,
+    "location": "Tegernsee, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "MasterCraft X22, Baujahr 2017, 6,70 x 2,46 m. Ilmor 350 PS Inboarder. Ca. 420 Std. Surf-/Wakeboard-Spezialist mit Ballast-System, Premium Bose-Sound, Tower-Speakers. Süßwasserboot. Hervorragender Zustand."
+  },
+  {
+    "title": "Malibu Wakesetter 23 LSV · 400 PS · Bj. 2019",
+    "manufacturer": "Malibu",
+    "model": "Wakesetter 23 LSV",
+    "condition": "Used",
+    "price": 79000,
+    "year": 2019,
+    "location": "Starnberger See, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Malibu Wakesetter 23 LSV, Baujahr 2019, 7,03 x 2,59 m. Malibu Monsoon 400 PS. Ca. 280 Std. Wake/Surf-Boot, Power Wedge, Surf Gate, Monsoon Sound. Süßwasserboot. Sehr gepflegter Zustand."
+  },
+  {
+    "title": "Pearlsea 23 Open · 150 PS · Bj. 2022 · Carbon",
+    "manufacturer": "Pearlsea",
+    "model": "23 Open",
+    "condition": "Used",
+    "price": 42000,
+    "year": 2022,
+    "location": "Kroatien, Split",
+    "category": "Außenbordmotor",
+    "description": "Pearlsea 23 Open, Baujahr 2022, 7,10 x 2,30 m. Mercury F150, 150 PS. Nur 120 Std. Carbon-Rumpf, sehr leicht und schnell. Liegeplatz Split, Kroatien. Neuwertig, kaum genutzt."
+  },
+  {
+    "title": "Nimbus T9 · 2× 115 PS · Bj. 2018 · Tender",
+    "manufacturer": "Nimbus",
+    "model": "T9",
+    "condition": "Used",
+    "price": 54000,
+    "year": 2018,
+    "location": "Schweden, Stockholm",
+    "category": "Außenbordmotor",
+    "description": "Nimbus T9, Baujahr 2018, 9,25 x 3,15 m. 2× Mercury F115 4-Takt. Ca. 210 Std. Scandinavisches Design, robuster Aluminiumrumpf. GPS-Kartenplotter, Autopilot, UKW-Funk. Liegeplatz Stockholm."
+  },
+  {
+    "title": "Chris-Craft Corsair 25 · 350 PS · Bj. 2014 · Retro",
+    "manufacturer": "Chris-Craft",
+    "model": "Corsair 25",
+    "condition": "Used",
+    "price": 89000,
+    "year": 2014,
+    "location": "Zürichsee, Schweiz",
+    "category": "Innenbordmotor",
+    "description": "Chris-Craft Corsair 25, Baujahr 2014, 7,62 x 2,39 m. Crusader 350 PS. Ca. 380 Std. Klassisches retro Design, Mahagoni-Holz, moderne Technik. Süßwasserboot. Alle Services bei Chris-Craft-Händler."
+  },
+  {
+    "title": "Drago Boats 888 · 2× 150 PS · Bj. 2015 · Katamaran",
+    "manufacturer": "Drago Boats",
+    "model": "888",
+    "condition": "Used",
+    "price": 48000,
+    "year": 2015,
+    "location": "Ostsee, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Drago Boats 888 Katamaran, Baujahr 2015, 8,88 x 3,20 m. 2× Yamaha F150 4-Takt. Ca. 290 Std. Sehr stabiles, schnelles Angelboot/Sportkatamaran. Liegeplatz Ostsee. Echolot, GPS, Radar."
+  },
+  {
+    "title": "Beneteau Antares 7.80 · 200 PS · Bj. 2009 · Kajütboot",
+    "manufacturer": "Beneteau",
+    "model": "Antares 7.80",
+    "condition": "Used",
+    "price": 27500,
+    "year": 2009,
+    "location": "Atlantik, Bretagne, Frankreich",
+    "category": "Innenbordmotor",
+    "description": "Beneteau Antares 7.80, Baujahr 2009, 7,80 x 2,85 m. Volvo Penta 200 PS Innenborder. Ca. 520 Std. 2 Kabinen, Nasszelle, Pantry. Ideal für Atlantikküste und Frankreich. Kein Charter."
+  },
+  {
+    "title": "Jeanneau Merry Fisher 795 · 150 PS · Bj. 2016",
+    "manufacturer": "Jeanneau",
+    "model": "Merry Fisher 795",
+    "condition": "Used",
+    "price": 32000,
+    "year": 2016,
+    "location": "Atlantik, Spanien",
+    "category": "Außenbordmotor",
+    "description": "Jeanneau Merry Fisher 795, Baujahr 2016, 7,95 x 2,98 m. Yamaha F150, 150 PS 4-Takt. Ca. 340 Std. Kajütboot mit 2 Schlafplätzen, Pantry. Ideal für Küstenkreuzfahrt. Echolot, GPS, Autopilot."
+  },
+  {
+    "title": "Fjord 40 Open · 2× 370 PS · Bj. 2017",
+    "manufacturer": "Fjord",
+    "model": "40 Open",
+    "condition": "Used",
+    "price": 178000,
+    "year": 2017,
+    "location": "Norwegen, Oslo",
+    "category": "Innenbordmotor",
+    "description": "Fjord 40 Open, Baujahr 2017, 12,50 x 3,90 m. 2× Volvo Penta 370 PS IPS. Ca. 560 Std. Nordisches Design, offene Deckfläche, 3 Kabinen. Liegeplatz Oslo. Kein Charter. Vollausstattung."
+  },
+  {
+    "title": "Flipper 640 DC · 90 PS · Bj. 2014 · Doppelkonsole",
+    "manufacturer": "Flipper",
+    "model": "640 DC",
+    "condition": "Used",
+    "price": 16800,
+    "year": 2014,
+    "location": "Ostsee, Kiel, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Flipper 640 DC, Baujahr 2014, 6,40 x 2,35 m. Mercury F90, 90 PS 4-Takt. Ca. 200 Std. Doppelkonsole, Schlupfkajüte. Trailer inklusive. Guter Zustand, regelmäßig gewartet."
+  },
+  {
+    "title": "Maxum 2400 SCR · 220 PS · Bj. 2003 · Cruiser",
+    "manufacturer": "Maxum",
+    "model": "2400 SCR",
+    "condition": "Used",
+    "price": 14500,
+    "year": 2003,
+    "location": "Bodensee, Österreich",
+    "category": "Innenbordmotor",
+    "description": "Maxum 2400 SCR, Baujahr 2003, 7,40 x 2,60 m. MerCruiser 220 PS Z-Antrieb. Ca. 560 Std. 2 Schlafplätze, Pantry, WC. Süßwasserboot, Bodensee. Guter Zustand für Baujahr, alle Wartungen gepflegt."
+  },
+  {
+    "title": "Chapparal 21 H2O · 130 PS · Bj. 2018 · Sportboot",
+    "manufacturer": "Chaparral",
+    "model": "21 H2O",
+    "condition": "Used",
+    "price": 29500,
+    "year": 2018,
+    "location": "Ammersee, Bayern, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Chaparral 21 H2O, Baujahr 2018, 6,46 x 2,44 m. Mercury 130 PS 4-Takt. Ca. 180 Std. Sportliches Familienboot, Badeplattform, Bimini-Top. Süßwasserboot. Trailer inklusive. Sehr guter Zustand."
+  },
+  {
+    "title": "Yamaha XTO 425 · Außenborder · NEU · 2025",
+    "manufacturer": "Yamaha",
+    "model": "XTO 425",
+    "condition": "New",
+    "price": 34900,
+    "year": 2025,
+    "location": "Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Yamaha XTO Offshore 425 PS V8 4-Takt Außenborder. Brandneu, 0 Stunden, vollständige Garantie. Ideal für große Boote und Offshore-Einsatz. Auf Anfrage auch Montage möglich. Händlerpreis."
+  },
+  {
+    "title": "Mercury Verado 350 · Außenborder · NEU · 2024",
+    "manufacturer": "Mercury",
+    "model": "Verado 350",
+    "condition": "New",
+    "price": 28500,
+    "year": 2024,
+    "location": "Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Mercury Verado 350 PS Außenborder, Inline-6, Supercharged. Neu, 0 Stunden, Händler-Garantie. Ideal für Sport- und Motorboote ab 7 m. Inklusive Montagekit."
+  },
+  {
+    "title": "Suzuki DF250 · Außenborder · Gebraucht · 320 h",
+    "manufacturer": "Suzuki",
+    "model": "DF250",
+    "condition": "Used",
+    "price": 12800,
+    "year": 2019,
+    "location": "Ostsee, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Suzuki DF250 AP, 250 PS 4-Takt Außenborder. Baujahr 2019, ca. 320 Betriebsstunden. Ausgebaut aus verkauftem Sportboot. Sehr guter Zustand, alle Services nachgewiesen. Selbstabholung bevorzugt."
+  },
+  {
+    "title": "Honda BF350 · Außenborder · Gebraucht · 180 h",
+    "manufacturer": "Honda",
+    "model": "BF350",
+    "condition": "Used",
+    "price": 19500,
+    "year": 2021,
+    "location": "Bayern, Deutschland",
+    "category": "Außenbordmotor",
+    "description": "Honda BF350 V8 4-Takt Außenborder, 350 PS. Baujahr 2021, ca. 180 Betriebsstunden. Ausgebaut, sehr gepflegter Zustand. Alle Wartungen beim Honda-Händler. Versand möglich."
+  },
+  {
+    "title": "Volvo Penta D4-300 · Innenborder · Gebraucht · 650 h",
+    "manufacturer": "Volvo Penta",
+    "model": "D4-300",
+    "condition": "Used",
+    "price": 9800,
+    "year": 2012,
+    "location": "Hamburg, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Volvo Penta D4-300, 300 PS Diesel-Innenborder. Baujahr 2012, ca. 650 Betriebsstunden. Ausgebaut aus Motoryacht. Läuft einwandfrei. Alle Serviceunterlagen vorhanden."
+  },
+  {
+    "title": "Volvo Penta IPS 600 · 2× Antrieb · Bj. 2015 · 480 h",
+    "manufacturer": "Volvo Penta",
+    "model": "IPS 600",
+    "condition": "Used",
+    "price": 22000,
+    "year": 2015,
+    "location": "Hamburg, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Volvo Penta IPS 600, 2× Pod-Antriebe mit je 435 PS. Baujahr 2015, ca. 480 Betriebsstunden. Ausgebaut aus Flybridge-Motoryacht. Sehr guter Zustand, Antriebe komplett."
+  },
+  {
+    "title": "MerCruiser 350 Mag MPI · Z-Antrieb · Bj. 2008 · 520 h",
+    "manufacturer": "MerCruiser",
+    "model": "350 Mag MPI",
+    "condition": "Used",
+    "price": 5800,
+    "year": 2008,
+    "location": "Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "MerCruiser 350 Mag MPI, 300 PS Benzin Z-Antrieb. Baujahr 2008, ca. 520 Betriebsstunden. Ausgebaut aus Süßwasserboot. Läuft gut, keine Öllecks. Selbstabholung in Bayern."
+  },
+  {
+    "title": "Yanmar 4LHA-DTP · 240 PS Diesel · Bj. 2014 · 380 h",
+    "manufacturer": "Yanmar",
+    "model": "4LHA-DTP",
+    "condition": "Used",
+    "price": 7200,
+    "year": 2014,
+    "location": "Norddeutschland",
+    "category": "Innenbordmotor",
+    "description": "Yanmar 4LHA-DTP, 240 PS Diesel-Innenborder. Baujahr 2014, ca. 380 Betriebsstunden. Ausgebaut aus Motoryacht. Einwandfreier Zustand, alle Servicebelege vorhanden."
+  },
+  {
+    "title": "Torqeedo Deep Blue 50R · E-Motor · Bj. 2021 · Neu",
+    "manufacturer": "Torqeedo",
+    "model": "Deep Blue 50R",
+    "condition": "New",
+    "price": 18500,
+    "year": 2021,
+    "location": "Deutschland",
+    "category": "Elektro Bootsmotor",
+    "description": "Torqeedo Deep Blue 50R Elektromotor, 50 kW / 68 PS. Neu, 0 Stunden, vollständige Garantie. Geräuschlos, emissionsfrei. Ideal für Hausboote, Fähren, Sportboote. Inkl. Steuereinheit."
+  },
+  {
+    "title": "ePropulsion Navy 6.0 · E-Außenborder · Bj. 2023 · Gebraucht",
+    "manufacturer": "ePropulsion",
+    "model": "Navy 6.0",
+    "condition": "Used",
+    "price": 2800,
+    "year": 2023,
+    "location": "Bayern, Deutschland",
+    "category": "Elektro Bootsmotor",
+    "description": "ePropulsion Navy 6.0 Elektro-Außenborder, 6 kW / 8 PS. Baujahr 2023, ca. 40 Stunden. Nahezu neuwertig, alle Zubehörteile inklusive. Leise, emissionsfrei. Geeignet für Boote bis 400 kg."
+  },
+  {
+    "title": "Minn Kota Terrova 112 · Trollingmotor · Bj. 2022",
+    "manufacturer": "Minn Kota",
+    "model": "Terrova 112",
+    "condition": "Used",
+    "price": 1600,
+    "year": 2022,
+    "location": "Deutschland",
+    "category": "Elektro Bootsmotor",
+    "description": "Minn Kota Terrova 112 lbs Trollingmotor, 24V. Baujahr 2022, ca. 30 Stunden. Autopilot, GPS-Anker-Funktion. Sehr guter Zustand. Ideal zum Angeln."
+  },
+  {
+    "title": "Hinckley Picnic Boat 36 · 2× 320 PS · Bj. 2005",
+    "manufacturer": "Hinckley",
+    "model": "Picnic Boat 36",
+    "condition": "Used",
+    "price": 138000,
+    "year": 2005,
+    "location": "Atlantik, Maine, USA",
+    "category": "Innenbordmotor",
+    "description": "Hinckley Picnic Boat 36, Baujahr 2005, 10,97 x 3,51 m. 2× Yanmar 320 PS Diesel. Ca. 980 Std. Jet-Antrieb, sehr manövrierbar. Kabine, Pantry. Ikonisches amerikanisches Design. Hervorragender Zustand."
+  },
+  {
+    "title": "Chris-Craft Launch 25 Heritage Edition · 350 PS · Bj. 2020",
+    "manufacturer": "Chris-Craft",
+    "model": "Launch 25 Heritage Edition",
+    "condition": "Used",
+    "price": 115000,
+    "year": 2020,
+    "location": "Zürichsee, Schweiz",
+    "category": "Innenbordmotor",
+    "description": "Chris-Craft Launch 25 Heritage Edition, Baujahr 2020, 7,62 x 2,39 m. Crusader 350 PS. Ca. 180 Std. Klassisches Holz-Optik-Design, hochwertige Verarbeitung. Süßwasserboot Zürichsee. Alle Services dokumentiert."
+  },
+  {
+    "title": "Axopar 37 Cross Cabin · 2× 300 PS · Bj. 2020",
+    "manufacturer": "Axopar",
+    "model": "37 Cross Cabin",
+    "condition": "Used",
+    "price": 148000,
+    "year": 2020,
+    "location": "Ostsee, Finnland",
+    "category": "Außenbordmotor",
+    "description": "Axopar 37 Cross Cabin, Baujahr 2020, 11,00 x 3,35 m. 2× Mercury Verado 300 PS. Ca. 320 Std. 2 Schlafkabinen, Bad, Flybridge-Deck. Liegeplatz Helsinki. Kein Charter. Hervorragender Zustand."
+  },
+  {
+    "title": "XO Boats 270 RS · 2× 150 PS · Bj. 2019",
+    "manufacturer": "XO Boats",
+    "model": "270 RS",
+    "condition": "Used",
+    "price": 62000,
+    "year": 2019,
+    "location": "Ostsee, Schweden",
+    "category": "Außenbordmotor",
+    "description": "XO Boats 270 RS, Baujahr 2019, 8,25 x 2,90 m. 2× Suzuki DF150, 300 PS gesamt. Ca. 210 Std. Nordisches Sportboot, robust und schnell. Kartenplotter, UKW-Funk, Autopilot. Liegeplatz Göteborg."
+  },
+  {
+    "title": "Buster XXL · 115 PS · Bj. 2016 · Aluminium",
+    "manufacturer": "Buster",
+    "model": "XXL",
+    "condition": "Used",
+    "price": 23000,
+    "year": 2016,
+    "location": "Finnland",
+    "category": "Außenbordmotor",
+    "description": "Buster XXL, Baujahr 2016, 6,48 x 2,28 m. Yamaha F115, 115 PS 4-Takt. Ca. 170 Std. Aluminiumboot, robust und leicht. Ideal für Schären und Küstenfahrt. Windschutz, Echolot, Kartenplotter."
+  },
+  {
+    "title": "Crownline 235 SS · 220 PS · Bj. 2009 · Sportboot",
+    "manufacturer": "Crownline",
+    "model": "235 SS",
+    "condition": "Used",
+    "price": 20500,
+    "year": 2009,
+    "location": "Starnberger See, Bayern, Deutschland",
+    "category": "Innenbordmotor",
+    "description": "Crownline 235 SS, Baujahr 2009, 7,20 x 2,52 m. MerCruiser 220 PS Z-Antrieb. Ca. 430 Std. Offener Sportkruiser, Bimini, Badeplattform. Süßwasserboot. Trailer inklusive. Guter Zustand."
+  },
+  {
+    "title": "Grady-White Canyon 306 · 2× 250 PS · Bj. 2013 · Offshore",
+    "manufacturer": "Grady-White",
+    "model": "Canyon 306",
+    "condition": "Used",
+    "price": 78000,
+    "year": 2013,
+    "location": "Nordsee, Niederlande",
+    "category": "Außenbordmotor",
+    "description": "Grady-White Canyon 306, Baujahr 2013, 9,30 x 2,97 m. 2× Yamaha F250, 500 PS gesamt. Ca. 680 Std. Offshore-Angelboot, Kajüte, Pantry. Rigides GFK-Rumpf, sehr sicher. Echolot, Radar, GPS."
+  },
+  {
+    "title": "Boston Whaler 280 Outrage · 2× 250 PS · Bj. 2010",
+    "manufacturer": "Boston Whaler",
+    "model": "280 Outrage",
+    "condition": "Used",
+    "price": 58000,
+    "year": 2010,
+    "location": "Atlantik, Portugal",
+    "category": "Außenbordmotor",
+    "description": "Boston Whaler 280 Outrage, Baujahr 2010, 8,60 x 2,72 m. 2× Evinrude ETEC 250 PS. Ca. 820 Std. Unsinkbar dank Vollschaumfüllung. Liegeplatz Lissabon. Echolot, GPS, Radar, Outrigger."
+  },
+  {
+    "title": "Bayliner VR6 Bowrider · 150 PS · Bj. 2022 · Fast Neu",
+    "manufacturer": "Bayliner",
+    "model": "VR6",
+    "condition": "Used",
+    "price": 36000,
+    "year": 2022,
+    "location": "Norddeutschland",
+    "category": "Außenbordmotor",
+    "description": "Bayliner VR6 Bowrider, Baujahr 2022, 5,79 x 2,44 m. Mercury F150, 150 PS 4-Takt. Ca. 90 Std. Nahezu neuwertig. Badeplattform, Bimini, USB-Anschlüsse, Bluetooth. Trailer inklusive. Privatverkauf."
+  },
+  {
+    "title": "Finnmaster T7 · 2× 115 PS · Bj. 2017",
+    "manufacturer": "Finnmaster",
+    "model": "T7",
+    "condition": "Used",
+    "price": 44000,
+    "year": 2017,
+    "location": "Finnland, Helsinki",
+    "category": "Außenbordmotor",
+    "description": "Finnmaster T7, Baujahr 2017, 7,00 x 2,52 m. 2× Yamaha F115, 230 PS gesamt. Ca. 240 Std. Hochwertige finnische Verarbeitung. Kajüte, Pantry, WC. Kartenplotter, Autopilot, Echolot. Sehr guter Zustand."
+  },
+  {
+    "title": "GESUCH: Motorboot 5–7 m · bis 200 PS · bis 25.000 €",
+    "manufacturer": "Beliebig",
+    "model": "Motorboot 5-7m",
+    "condition": "Used",
+    "price": 25000,
+    "year": null,
+    "location": "Süddeutschland",
+    "category": "Außenbordmotor",
+    "description": "Suche Motorboot zwischen 5 und 7 Meter Länge mit Außenborder bis 200 PS. Budget max. 25.000 €. Süßwasser bevorzugt (Bodensee, Ammersee, Chiemsee). Auch leichte Schäden kein Problem. Bitte Angebote per E-Mail. Sofortkauf bei passendem Angebot."
+  },
+  {
+    "title": "GESUCH: Motoryacht 10–14 m · Diesel · bis 80.000 €",
+    "manufacturer": "Beliebig",
+    "model": "Motoryacht 10-14m",
+    "condition": "Used",
+    "price": 80000,
+    "year": null,
+    "location": "Mittelmeer",
+    "category": "Innenbordmotor",
+    "description": "Suche Motoryacht zwischen 10 und 14 Meter mit Diesel-Innenborder. Budget bis 80.000 €. Mittelmeer-Liegeplatz bevorzugt (Kroatien, Italien, Spanien). 2 Kabinen Minimum. Kein Charter. Bitte Angebote senden."
+  }
+];
+
+let importedIds = [];
+let statDone = 0, statErr = 0;
+
+async function startImport() {
+  const email = document.getElementById("email-input").value.trim();
+  const pass  = document.getElementById("pass-input").value;
+  if (!email || !pass) { alert("Bitte E-Mail und Passwort eingeben!"); return; }
+
+  document.getElementById("progress-card").style.display = "block";
+  document.getElementById("btn-start").disabled = true;
+  statDone = 0; statErr = 0; importedIds = [];
+  log("🔐 Einloggen...\n");
+
+  const { data: authData, error: authErr } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (authErr) { log("❌ Login fehlgeschlagen: " + authErr.message + "\n"); document.getElementById("btn-start").disabled = false; return; }
+
+  const user = authData.user;
+  log("✅ Eingeloggt als: " + user.email + "\n");
+
+  const { data: seller } = await sb.from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
+  if (!seller) { log("❌ Kein Händlerprofil gefunden!\n"); document.getElementById("btn-start").disabled = false; return; }
+  log("🏢 Händler: " + seller.company_name + "\n");
+
+  const { data: cats } = await sb.from("categories").select("id,name,slug");
+  const catMap = {};
+  if (cats) cats.forEach(c => {
+    catMap[c.name] = c.id;
+    catMap[c.name.toLowerCase()] = c.id;
+    catMap[c.slug] = c.id;
+  });
+  log("📦 " + cats.length + " Kategorien geladen\n\n");
+
+  document.getElementById("stat-total").textContent = INSERATE.length;
+
+  const BATCH = 10;
+  for (let i = 0; i < INSERATE.length; i += BATCH) {
+    const batch = INSERATE.slice(i, i + BATCH);
+    const payloads = [];
+
+    for (const ins of batch) {
+      let catId = catMap[ins.category] || catMap[ins.category.toLowerCase()];
+      if (!catId) {
+        const keywords = ["boot", "motor", "außen", "innen", "schiff", "marine", "wasser"];
+        let match = null;
+        for (const kw of keywords) {
+          match = cats.find(c => c.name.toLowerCase().includes(kw) || c.slug.includes(kw));
+          if (match) break;
+        }
+        catId = match ? match.id : cats[0].id;
+      }
+      payloads.push({
+        seller_id:    seller.id,
+        category_id:  catId,
+        title:        ins.title,
+        manufacturer: ins.manufacturer,
+        model:        ins.model,
+        condition:    ins.condition || "Used",
+        price:        ins.price || 0,
+        year:         ins.year || null,
+        location:     ins.location || "Europa",
+        description:  ins.description,
+        status:       "Freigegeben",
+        listing_type: ins.title.startsWith("GESUCH") ? "Gesuch" : "Verkauf",
+        price_type:   "Verhandlungsbasis",
+        image_urls:   []
+      });
+    }
+
+    const { data, error } = await sb.from("listings").insert(payloads).select("id");
+
+    if (error) {
+      statErr += batch.length;
+      log("❌ Batch [" + (i+1) + "-" + Math.min(i+BATCH, INSERATE.length) + "] FEHLER: " + error.message + "\n");
+    } else {
+      statDone += data.length;
+      data.forEach(d => importedIds.push(d.id));
+      log("✅ [" + (i+1) + "-" + Math.min(i+BATCH, INSERATE.length) + "/" + INSERATE.length + "] " + batch[0].title.substring(0,60) + "...\n");
+    }
+
+    const pct = Math.round(Math.min(i + BATCH, INSERATE.length) / INSERATE.length * 100);
+    document.getElementById("stat-done").textContent = statDone;
+    document.getElementById("stat-err").textContent  = statErr;
+    document.getElementById("progress-bar").style.width = pct + "%";
+    document.getElementById("progress-pct").textContent = pct + "%";
+    await new Promise(r => setTimeout(r, 50));
+  }
+
+  log("\n🎉 FERTIG! " + statDone + " Inserate eingefügt, " + statErr + " Fehler.\n");
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-delete").style.display = "block";
+}
+
+async function deleteAll() {
+  if (!importedIds.length) { alert("Keine IDs aus dieser Session gespeichert."); return; }
+  if (!confirm("Alle " + importedIds.length + " importierten Inserate löschen?")) return;
+  log("\n🗑️ Lösche " + importedIds.length + " Inserate...\n");
+  for (let i = 0; i < importedIds.length; i += 100) {
+    await sb.from("listings").delete().in("id", importedIds.slice(i, i + 100));
+  }
+  log("✅ Alle gelöscht!\n");
+  importedIds = [];
+}
+
+function log(msg) {
+  const el = document.getElementById("log");
+  el.textContent += msg;
+  el.scrollTop = el.scrollHeight;
+}
+</script>
+</body>
+</html>
