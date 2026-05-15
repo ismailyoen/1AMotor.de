@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="apple-touch-icon" href="favicon-192x192.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title id="page-title">Motoren kaufen – 1A Motor</title>
+<meta name="description" id="page-desc" content="Gebrauchte Motoren kaufen auf 1A Motor." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" id="page-canonical" href="https://1amotor.de/kategorie.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="1A Motor" />
+<meta property="og:title" id="og-title" content="1A Motor" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --dark:   #071524;
+  --navy:   #0d1f35;
+  --blue:   #1252a3;
+  --blue2:  #1868c0;
+  --sky:    #3a96f5;
+  --light:  #dceeff;
+  --white:  #ffffff;
+  --muted:  #64788e;
+  --border: #e4edf7;
+  --bg:     #f3f7fb;
+  --shadow: 0 2px 16px rgba(7,21,36,.08);
+  --r:      16px;
+  --max:    1340px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',Arial,sans-serif;background:var(--bg);color:var(--dark);line-height:1.55;}
+a{text-decoration:none;color:inherit;}
+.container{max-width:var(--max);margin:0 auto;padding:0 28px;}
+
+/* ── TOPBAR ── */
+.topbar{background:#060f1b;font-size:12px;color:rgba(255,255,255,.45);border-bottom:1px solid rgba(255,255,255,.04);}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;padding:6px 0;gap:12px;flex-wrap:wrap;}
+.topbar a{color:rgba(255,255,255,.45);transition:color .15s;}
+.topbar a:hover{color:var(--sky);}
+.top-left,.top-right{display:flex;gap:18px;align-items:center;}
+
+/* ── HEADER ── */
+.header{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:200;box-shadow:0 4px 24px rgba(7,21,36,.35);}
+.header-inner{display:flex;align-items:center;gap:18px;padding:11px 0;}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.logo-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(145deg,#1464c0,#3a96f5);display:grid;place-items:center;font-weight:900;font-size:16px;color:#fff;letter-spacing:-.5px;flex-shrink:0;font-family:'Outfit',Arial,sans-serif;}
+.logo-name{font-size:21px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.search-bar{flex:1;display:flex;align-items:stretch;border:1.5px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.07);height:44px;transition:border-color .2s;}
+.search-bar:focus-within{border-color:var(--sky);box-shadow:0 0 0 3px rgba(58,150,245,.2);}
+.search-bar input{flex:1;border:none;outline:none;padding:0 14px;font-size:13.5px;font-family:inherit;color:#fff;background:transparent;min-width:0;}
+.search-bar input::placeholder{color:rgba(255,255,255,.32);}
+.search-submit{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:0 20px;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.search-submit:hover{opacity:.9;}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.hdr-btn{font-size:13px;font-weight:600;padding:8px 15px;border-radius:8px;transition:all .15s;white-space:nowrap;border:none;background:none;font-family:inherit;cursor:pointer;}
+.hdr-ghost{color:rgba(255,255,255,.8);}
+.hdr-ghost:hover{background:rgba(255,255,255,.09);color:#fff;}
+.hdr-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 3px 10px rgba(18,82,163,.45);}
+.hdr-primary:hover{opacity:.9;}
+.mob-toggle{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-direction:column;gap:5px;}
+.mob-toggle span{display:block;width:22px;height:2px;background:rgba(255,255,255,.8);border-radius:2px;}
+.mob-nav{display:none;background:var(--navy);border-top:1px solid rgba(255,255,255,.08);padding:12px 24px 16px;}
+.mob-nav.open{display:block;}
+.mob-nav a{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;font-weight:600;color:rgba(255,255,255,.8);}
+.mob-nav a:last-child{border-bottom:none;}
+
+/* ── PAGE ── */
+.page{padding:24px 0 72px;}
+
+/* ── BREADCRUMBS ── */
+.breadcrumbs{display:flex;flex-wrap:wrap;gap:6px;color:var(--muted);font-size:12.5px;margin-bottom:20px;align-items:center;font-weight:500;}
+.breadcrumbs a{color:var(--muted);transition:color .12s;}
+.breadcrumbs a:hover{color:var(--blue2);}
+.breadcrumbs .sep{color:#b0c8e0;}
+
+/* ── HERO BANNER ── */
+.cat-hero {
+  border-radius: 20px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+}
+/* Gradient background — wird per JS mit Kategorie-Farbe überschrieben */
+.cat-hero-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+.cat-hero-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to right,
+    rgba(7,21,36,.96) 0%,
+    rgba(7,21,36,.82) 35%,
+    rgba(7,21,36,.55) 60%,
+    rgba(7,21,36,.2)  100%
+  );
+}
+.cat-hero-grid {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.cat-hero-content {
+  position: relative; z-index: 3;
+  padding: 36px 44px;
+  flex: 1;
+}
+.cat-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22);
+  color: rgba(255,255,255,.9); font-size: 12px; font-weight: 700;
+  padding: 5px 14px; border-radius: 999px; margin-bottom: 16px;
+  text-transform: uppercase; letter-spacing: .07em;
+}
+.cat-hero h1 {
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 900; color: #fff; letter-spacing: -.4px;
+  margin-bottom: 10px; max-width: 560px;
+}
+.cat-hero-desc {
+  font-size: 15px; color: rgba(255,255,255,.62);
+  max-width: 500px; line-height: 1.7; margin-bottom: 22px;
+}
+.cat-hero-stats {
+  display: flex; gap: 28px; flex-wrap: wrap;
+}
+.cat-stat-val { display: block; font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -.3px; }
+.cat-stat-lbl { font-size: 11px; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+
+/* Hero image placeholder */
+.cat-hero-placeholder {
+  position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
+  font-size: 100px; opacity: .08; z-index: 2; pointer-events: none;
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.filter-bar-label { font-size: 13px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.filter-chip {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1.5px solid var(--border); background: var(--white);
+  font-size: 13px; font-weight: 600; color: var(--dark);
+  cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.filter-chip:hover  { border-color: var(--blue2); color: var(--blue2); }
+.filter-chip.active { background: var(--blue2); border-color: var(--blue2); color: #fff; }
+.sort-select {
+  margin-left: auto; padding: 8px 14px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 13px; font-family: inherit; color: var(--dark);
+  background: var(--white); cursor: pointer; outline: none;
+}
+
+/* ── RESULTS HEADER ── */
+.results-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+}
+.results-head h2 { font-size: 18px; font-weight: 800; color: var(--dark); }
+.results-count { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+/* ── LISTING GRID ── */
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.listing-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  transition: box-shadow .2s, transform .15s;
+  display: block; text-decoration: none;
+}
+.listing-card:hover { box-shadow: 0 12px 32px rgba(7,21,36,.14); transform: translateY(-3px); }
+.listing-image {
+  height: 175px;
+  background: linear-gradient(135deg, #d8e8f4, #e8f2fb);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44px; position: relative;
+  background-size: cover; background-position: center;
+  overflow: hidden;
+}
+.listing-image::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(7,21,36,.2), transparent 50%);
+}
+.listing-badge {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  background: rgba(7,21,36,.7); color: #fff;
+  font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: 999px; backdrop-filter: blur(6px);
+}
+.listing-fav {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,.9); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.listing-body { padding: 14px 16px; }
+.listing-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 6px; line-height: 1.3; }
+.listing-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.listing-meta span { font-size: 11.5px; color: var(--muted); }
+.listing-meta span::after { content: '·'; margin-left: 6px; }
+.listing-meta span:last-child::after { content: ''; }
+.listing-price { font-size: 18px; font-weight: 900; color: var(--blue); margin-bottom: 6px; }
+.listing-footer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.listing-condition { background: var(--bg); padding: 3px 9px; border-radius: 999px; font-weight: 600; font-size: 11.5px; }
+
+/* Empty state */
+.empty-state {
+  grid-column: 1/-1; text-align: center; padding: 60px 24px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+.empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+.empty-state a {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  color: #fff; padding: 12px 22px; border-radius: 11px;
+  font-weight: 700; font-size: 14px;
+  box-shadow: 0 4px 14px rgba(18,82,163,.28);
+}
+
+/* Loading */
+.loading-grid {
+  grid-column: 1/-1; display: grid;
+  grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.skeleton {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; animation: pulse 1.5s ease-in-out infinite;
+}
+.skeleton-img { height: 175px; background: linear-gradient(90deg, #e4edf7 25%, #f0f6fb 50%, #e4edf7 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+.skeleton-body { padding: 14px 16px; }
+.skeleton-line { height: 14px; background: #e4edf7; border-radius: 6px; margin-bottom: 10px; }
+.skeleton-line.short { width: 60%; }
+.skeleton-line.price { height: 20px; width: 40%; background: #d0e4f7; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* SEO text */
+.seo-text {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 24px 28px; margin-top: 28px;
+}
+.seo-text h2 { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+.seo-text p { font-size: 14px; color: #3d5270; line-height: 1.82; margin-bottom: 10px; }
+.seo-text p:last-child { margin-bottom: 0; }
+
+/* Other categories */
+.other-cats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-top: 28px;
+}
+.other-cat-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center; transition: border-color .15s, transform .15s, box-shadow .15s;
+  text-decoration: none;
+}
+.other-cat-card:hover { border-color: var(--blue2); transform: translateY(-3px); box-shadow: var(--shadow); }
+.other-cat-icon { font-size: 28px; }
+.other-cat-name { font-size: 13px; font-weight: 700; color: var(--dark); }
+.other-cat-count { font-size: 11.5px; color: var(--muted); }
+
+/* ── FOOTER ── */
+.footer{background:var(--dark);color:rgba(255,255,255,.65);padding:48px 0 0;margin-top:60px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px;}
+.footer h4{color:#fff;font-size:13.5px;font-weight:700;margin-bottom:14px;}
+.footer ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.footer ul li a{font-size:13px;color:rgba(255,255,255,.5);transition:color .15s;}
+.footer ul li a:hover{color:var(--sky);}
+.footer-desc{font-size:13px;color:rgba(255,255,255,.45);line-height:1.65;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:18px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:12.5px;color:rgba(255,255,255,.35);}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap;}
+.footer-links a{color:rgba(255,255,255,.35);transition:color .15s;}
+.footer-links a:hover{color:var(--sky);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1000px){ .listing-grid{grid-template-columns:1fr 1fr;} .other-cats{grid-template-columns:1fr 1fr;} }
+@media(max-width:640px){
+  .container{padding:0 16px;}
+  .listing-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .listing-image{height:140px;}
+  .cat-hero-content{padding:24px 20px;}
+  .cat-hero h1{font-size:22px;}
+  .cat-hero-placeholder{display:none;}
+  .cat-hero-stats{gap:16px;}
+  .cat-stat-val{font-size:18px;}
+  .search-bar{display:none;}
+  .header-right .hdr-ghost{display:none;}
+  .mob-toggle{display:flex;}
+  .other-cats{grid-template-columns:1fr 1fr;}
+  .loading-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr;gap:22px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="top-left">
+      <span>🇩🇪 Deutschlands Motorenmarktplatz</span>
+      <a href="ratgeber.html">📖 Ratgeber</a>
+    </div>
+    <div class="top-right">
+      <a href="login.html" data-guest-only>Einloggen</a>
+      <a href="registrieren.html" data-guest-only>Registrieren</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Motor, Hersteller, Modell suchen…" />
+      <button class="search-submit" onclick="doSearch()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Suchen
+      </button>
+    </div>
+    <div class="header-right">
+      <a href="login.html" data-guest-only><button class="hdr-btn hdr-ghost">Einloggen</button></a>
+      <a href="anzeige-erstellen.html"><button class="hdr-btn hdr-primary">+ Anzeige erstellen</button></a>
+    </div>
+    <button class="mob-toggle" id="mob-toggle"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mob-nav" id="mob-nav">
+    <a href="index.html">🏠 Startseite</a>
+    <a href="suche.html">🔍 Alle Motoren</a>
+    <a href="ratgeber.html">📖 Ratgeber</a>
+    <a href="anzeige-erstellen.html">+ Anzeige erstellen</a>
+    <a href="login.html">Einloggen</a>
+  </nav>
+</header>
+
+<!-- MAIN -->
+<main class="page">
+  <div class="container">
+
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+      <a href="index.html">Startseite</a>
+      <span class="sep">›</span>
+      <a href="suche.html">Alle Motoren</a>
+      <span class="sep">›</span>
+      <span id="bc-current">Kategorie</span>
+    </nav>
+
+    <!-- HERO BANNER -->
+    <div class="cat-hero" id="cat-hero">
+      <div class="cat-hero-bg" id="cat-hero-bg"></div>
+      <div class="cat-hero-overlay"></div>
+      <div class="cat-hero-grid"></div>
+      <div class="cat-hero-placeholder" id="cat-hero-icon">⚙️</div>
+      <div class="cat-hero-content">
+        <div class="cat-badge" id="cat-badge">Motorkategorie</div>
+        <h1 id="cat-title">Motoren kaufen</h1>
+        <p class="cat-hero-desc" id="cat-desc">Gebrauchte und generalüberholte Motoren von geprüften Händlern.</p>
+        <div class="cat-hero-stats">
+          <div>
+            <span class="cat-stat-val" id="stat-count">–</span>
+            <span class="cat-stat-lbl">Angebote</span>
+          </div>
+          <div>
+            <span class="cat-stat-val">Geprüft</span>
+            <span class="cat-stat-lbl">Händler</span>
+          </div>
+          <div>
+            <span class="cat-stat-val">0%</span>
+            <span class="cat-stat-lbl">Provision</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter + Sort -->
+    <div class="filter-bar">
+      <span class="filter-bar-label">Zustand:</span>
+      <button class="filter-chip active" onclick="setFilter('all',this)">Alle</button>
+      <button class="filter-chip" onclick="setFilter('Gebraucht',this)">Gebraucht</button>
+      <button class="filter-chip" onclick="setFilter('Generalüberholt',this)">Generalüberholt</button>
+      <button class="filter-chip" onclick="setFilter('Neu',this)">Neu</button>
+      <select class="sort-select" id="sort-select" onchange="renderListings()">
+        <option value="latest">Neueste zuerst</option>
+        <option value="price_asc">Preis aufsteigend</option>
+        <option value="price_desc">Preis absteigend</option>
+      </select>
+    </div>
+
+    <!-- Results header -->
+    <div class="results-head">
+      <div>
+        <h2 id="results-title">Aktuelle Angebote</h2>
+        <div class="results-count" id="results-count">Wird geladen…</div>
+      </div>
+      <a href="suche.html" style="font-size:13px;color:var(--blue2);font-weight:700;">Alle Kategorien →</a>
+    </div>
+
+    <!-- Listings -->
+    <div class="listing-grid" id="listing-grid">
+      <!-- Skeletons while loading -->
+      <div class="loading-grid" id="loading-skeletons">
+        <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line price"></div></div></div>
+        <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line price"></div></div></div>
+        <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line price"></div></div></div>
+      </div>
+    </div>
+
+    <!-- SEO Text -->
+    <div class="seo-text" id="seo-text"></div>
+
+    <!-- Andere Kategorien -->
+    <div style="margin-top:36px;">
+      <h2 style="font-size:17px;font-weight:800;color:var(--dark);margin-bottom:16px;">Weitere Kategorien</h2>
+      <div class="other-cats" id="other-cats"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" style="display:flex;align-items:center;gap:9px;margin-bottom:14px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(145deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:13px;color:#fff;font-family:'Outfit',Arial,sans-serif;">1A</div>
+          <span style="font-size:18px;font-weight:800;color:#fff;letter-spacing:-.3px;font-family:'Outfit',Arial,sans-serif;">Motor</span>
+        </a>
+        <p class="footer-desc" style="max-width:220px;">Deutschlands Motorenmarktplatz. Motoren kaufen &amp; verkaufen – ohne Provision.</p>
+      </div>
+      <div><h4>Kaufen</h4><ul>
+        <li><a href="kategorie.html?cat=pkw">PKW-Motoren</a></li>
+        <li><a href="kategorie.html?cat=lkw">LKW-Motoren</a></li>
+        <li><a href="kategorie.html?cat=boot">Bootsmotoren</a></li>
+        <li><a href="kategorie.html?cat=industrie">Industriemotoren</a></li>
+        <li><a href="kategorie.html?cat=traktor">Traktormotoren</a></li>
+      </ul></div>
+      <div><h4>Ratgeber</h4><ul>
+        <li><a href="ratgeber.html#pkw">PKW-Motoren</a></li>
+        <li><a href="ratgeber.html#lkw">LKW-Motoren</a></li>
+        <li><a href="ratgeber.html#aussenbord">Bootsmotoren</a></li>
+        <li><a href="ratgeber.html#traktor">Traktormotoren</a></li>
+      </ul></div>
+      <div><h4>Unternehmen</h4><ul>
+        <li><a href="impressum.html">Impressum</a></li>
+        <li><a href="datenschutz.html">Datenschutz</a></li>
+        <li><a href="agb.html">AGB</a></li>
+        <li><a href="kontakt.html">Kontakt</a></li>
+        <li><a href="karriere.html">Karriere</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 1A Motor – Marktplatz für Motoren &amp; Antriebstechnik</span>
+      <div class="footer-links"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="auth-header.js"></script>
+<script src="mobile.js" defer></script>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  KATEGORIE-KONFIGURATION
+// ══════════════════════════════════════════════════════
+const CATEGORIES = {
+  pkw: {
+    title:       'PKW-Motoren kaufen',
+    badge:       '🚗 Fahrzeugmotoren',
+    desc:        'Gebrauchte und generalüberholte PKW-Motoren von geprüften Händlern – Benziner, Diesel, Hybrid und Elektro.',
+    icon:        '🚗',
+    accent:      '#1a3a6b',
+    supabaseCategories: ['Automotor','Benzinmotor Auto','Dieselmotor Auto','Hybridmotor','Elektromotor Auto'],
+    seoText:     'Beim Kauf eines gebrauchten PKW-Motors kommt es auf den richtigen Motorkennbuchstaben, Hubraum, Baujahr und Abgasnorm an. Seriöse Händler liefern Kompressionswerte, Laufleistung und Informationen zum Steuerkettenzustand. Auf 1A Motor findest du gebrauchte und generalüberholte PKW-Motoren aller Marken – direkt vom Händler, ohne Provision.',
+    ratgeber:    'ratgeber.html#pkw',
+    canonical:   'https://1amotor.de/kategorie.html?cat=pkw',
+    metaDesc:    'PKW-Motoren gebraucht kaufen auf 1A Motor. Benziner, Diesel, Hybrid – geprüfte Händler, faire Preise, keine Provision.',
+  },
+  lkw: {
+    title:       'LKW-Motoren kaufen',
+    badge:       '🚛 Nutzfahrzeuge',
+    desc:        'Gebrauchte LKW-Motoren mit klarer Herkunft, Betriebsstunden und Wartungshistorie – direkt vom Händler.',
+    icon:        '🚛',
+    accent:      '#1a2f1a',
+    supabaseCategories: ['LKW Motor','Busmotor','Transporter Motor'],
+    seoText:     'LKW-Motoren werden unter hoher Last und vielen Betriebsstunden eingesetzt. Entscheidend sind Einsatzart (Fernverkehr, Baustelle, Stadtverkehr), Wartungshistorie, Turbo- und Einspritzsystem sowie Abgasnachbehandlung. Auf 1A Motor findest du gebrauchte LKW-Motoren von gewerblichen Händlern mit klaren Angaben zu Betriebsstunden und Zustand.',
+    ratgeber:    'ratgeber.html#lkw',
+    canonical:   'https://1amotor.de/kategorie.html?cat=lkw',
+    metaDesc:    'LKW-Motoren gebraucht kaufen – Betriebsstunden, Wartungshistorie, geprüfte Händler auf 1A Motor.',
+  },
+  boot: {
+    title:       'Bootsmotoren kaufen',
+    badge:       '🚤 Bootsmotoren',
+    desc:        'Außenbord-, Innenbord- und Jetboot-Motoren – gebraucht und generalüberholt, mit Herkunftsnachweis.',
+    icon:        '🚤',
+    accent:      '#0d2a3a',
+    supabaseCategories: ['Bootsmotor','Außenbordmotor','Innenbordmotor','Jetski Motor','Schiffsdieselmotor'],
+    seoText:     'Beim Kauf eines gebrauchten Bootsmotors ist die Unterscheidung zwischen Salz- und Süßwassereinsatz besonders wichtig. Kompression, Korrosion, Betriebsstunden und Wartung sind entscheidende Faktoren. Auf 1A Motor findest du Außenbordmotoren, Innenbordmotoren und Marinediesel von geprüften Händlern.',
+    ratgeber:    'ratgeber.html#aussenbord',
+    canonical:   'https://1amotor.de/kategorie.html?cat=boot',
+    metaDesc:    'Bootsmotoren gebraucht kaufen – Außenbord, Innenbord, Jetboot. Geprüfte Händler auf 1A Motor.',
+  },
+  industrie: {
+    title:       'Industriemotoren kaufen',
+    badge:       '⚙️ Industrie & Elektro',
+    desc:        'Elektro-, Hydraulik-, Pumpen- und Generatormotoren für gewerbliche Anwendungen – mit Typenschild und Prüfprotokoll.',
+    icon:        '⚙️',
+    accent:      '#1a1a3a',
+    supabaseCategories: ['Elektromotor Industrie','Drehstrommotor','Asynchronmotor','Hydraulikmotor','Pumpenmotor','Kompressormotor','Generator Motor','Lüftermotor'],
+    seoText:     'Gebrauchte Industriemotoren müssen exakt zur Anwendung passen. Typenschild, Leistung, Spannung, Drehzahl, Schutzart und Isolationswiderstand sind bei Elektromotoren entscheidend. Bei Hydraulikmotoren zählen Druckbereich und Dichtheit. Auf 1A Motor findest du Industriemotoren aller Bauformen von gewerblichen Händlern.',
+    ratgeber:    'ratgeber.html#elektro',
+    canonical:   'https://1amotor.de/kategorie.html?cat=industrie',
+    metaDesc:    'Industriemotoren gebraucht kaufen – Elektro, Hydraulik, Pumpe, Generator. Geprüfte Händler auf 1A Motor.',
+  },
+  traktor: {
+    title:       'Traktormotoren kaufen',
+    badge:       '🚜 Landmaschinen',
+    desc:        'Gebrauchte Traktor- und Landmaschinenmotoren mit Betriebsstunden und Wartungshistorie – direkt vom Fachbetrieb.',
+    icon:        '🚜',
+    accent:      '#1a2a0d',
+    supabaseCategories: ['Traktormotor','Landmaschinenmotor','Schlepper Motor','Mähdrescher Motor','Aufsitzmäher Motor'],
+    seoText:     'Traktor- und Landmaschinenmotoren laufen oft viele Betriebsstunden unter hoher Last und Staub. Vor dem Kauf sollten Betriebsstunden, Ölverlust, Kühlung, Einspritzsystem und Ersatzteilversorgung geprüft werden. Auf 1A Motor findest du Traktormotoren aller gängigen Hersteller von spezialisierten Agrarhändlern.',
+    ratgeber:    'ratgeber.html#traktor',
+    canonical:   'https://1amotor.de/kategorie.html?cat=traktor',
+    metaDesc:    'Traktormotoren und Landmaschinenmotoren gebraucht kaufen – Betriebsstunden, Wartung. Auf 1A Motor.',
+  }
+};
+
+// Andere Kategorien für die "Weitere Kategorien" Section
+const OTHER_CAT_LINKS = [
+  { key:'pkw',       name:'PKW-Motoren',       icon:'🚗' },
+  { key:'lkw',       name:'LKW-Motoren',       icon:'🚛' },
+  { key:'boot',      name:'Bootsmotoren',      icon:'🚤' },
+  { key:'industrie', name:'Industriemotoren',  icon:'⚙️' },
+  { key:'traktor',   name:'Traktormotoren',    icon:'🚜' },
+];
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let catKey       = '';
+let catConfig    = null;
+let allListings  = [];
+let activeFilter = 'all';
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(window.location.search);
+  catKey = (params.get('cat') || 'pkw').toLowerCase();
+  catConfig = CATEGORIES[catKey];
+
+  if (!catConfig) {
+    window.location.href = 'suche.html';
+    return;
+  }
+
+  applyMeta();
+  applyHero();
+  renderOtherCats();
+
+  await loadListings();
+  renderListings();
+});
+
+// ══════════════════════════════════════════════════════
+//  META & SEO
+// ══════════════════════════════════════════════════════
+function applyMeta() {
+  document.getElementById('page-title').textContent    = catConfig.title + ' – 1A Motor';
+  document.getElementById('page-desc').content         = catConfig.metaDesc;
+  document.getElementById('page-canonical').href       = catConfig.canonical;
+  document.getElementById('og-title').content          = catConfig.title + ' – 1A Motor';
+  document.getElementById('bc-current').textContent    = catConfig.title;
+  document.title                                        = catConfig.title + ' – 1A Motor';
+}
+
+// ══════════════════════════════════════════════════════
+//  HERO
+// ══════════════════════════════════════════════════════
+function applyHero() {
+  const hero   = document.getElementById('cat-hero');
+  const bg     = document.getElementById('cat-hero-bg');
+  const icon   = document.getElementById('cat-hero-icon');
+  const badge  = document.getElementById('cat-badge');
+  const title  = document.getElementById('cat-title');
+  const desc   = document.getElementById('cat-desc');
+
+  // Gradient-Hintergrund mit Kategoriefarbe
+  bg.style.background = `linear-gradient(135deg, ${catConfig.accent} 0%, #1a3a6b 100%)`;
+
+  // Wenn später ein Bild eingebunden wird, hier:
+  // bg.style.backgroundImage = `linear-gradient(...), url('images/${catKey}-hero.jpg')`;
+
+  icon.textContent    = catConfig.icon;
+  badge.textContent   = catConfig.badge;
+  title.textContent   = catConfig.title;
+  desc.textContent    = catConfig.desc;
+
+  // SEO Text
+  document.getElementById('seo-text').innerHTML = `
+    <h2>Ratgeber: ${catConfig.title}</h2>
+    <p>${catConfig.seoText}</p>
+    <p><a href="${catConfig.ratgeber}" style="color:var(--blue2);font-weight:700;">→ Vollständigen Ratgeber lesen</a></p>
+  `;
+}
+
+// ══════════════════════════════════════════════════════
+//  LISTINGS LADEN
+// ══════════════════════════════════════════════════════
+async function loadListings() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('listings')
+      .select(`
+        id, title, manufacturer, model,
+        condition, price, location, created_at, image_urls,
+        categories(name),
+        seller_profiles(company_name)
+      `)
+      .eq('status', 'Freigegeben')
+      .in('categories.name', catConfig.supabaseCategories)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Nur Listings deren Kategorie wirklich in unserer Liste ist
+    allListings = (data || []).filter(l => {
+      const name = Array.isArray(l.categories) ? l.categories[0]?.name : l.categories?.name;
+      return catConfig.supabaseCategories.includes(name);
+    });
+
+    // Count im Hero updaten
+    const countEl = document.getElementById('stat-count');
+    if (countEl) countEl.textContent = allListings.length;
+
+  } catch (err) {
+    console.error('loadListings error:', err);
+    allListings = [];
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  LISTINGS RENDERN
+// ══════════════════════════════════════════════════════
+function renderListings() {
+  const grid    = document.getElementById('listing-grid');
+  const sortVal = document.getElementById('sort-select').value;
+
+  // Filter anwenden
+  let items = activeFilter === 'all'
+    ? [...allListings]
+    : allListings.filter(l => (l.condition || '') === activeFilter);
+
+  // Sortieren
+  if (sortVal === 'price_asc')  items.sort((a,b) => Number(a.price||0) - Number(b.price||0));
+  if (sortVal === 'price_desc') items.sort((a,b) => Number(b.price||0) - Number(a.price||0));
+  if (sortVal === 'latest')     items.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+  // Results count
+  document.getElementById('results-count').textContent =
+    `${items.length} Angebot${items.length !== 1 ? 'e' : ''} gefunden`;
+  document.getElementById('results-title').textContent =
+    catConfig.title + (activeFilter !== 'all' ? ` – ${activeFilter}` : '');
+
+  if (!items.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">${catConfig.icon}</div>
+        <h3>Noch keine Angebote in dieser Kategorie</h3>
+        <p>Schau später wieder vorbei oder stöbere in allen Angeboten.</p>
+        <a href="suche.html">Alle Motoren ansehen →</a>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(l => {
+    const category = Array.isArray(l.categories) ? l.categories[0]?.name : l.categories?.name || '';
+    const seller   = Array.isArray(l.seller_profiles) ? l.seller_profiles[0]?.company_name : l.seller_profiles?.company_name || 'Händler';
+    const price    = Number(l.price||0).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+    const img      = Array.isArray(l.image_urls) && l.image_urls[0];
+    const imgStyle = img ? `background-image:url('${img}');background-size:cover;background-position:center;` : '';
+    const icon     = img ? '' : catConfig.icon;
+
+    return `
+      <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(l.id)}">
+        <div class="listing-image" style="${imgStyle}">
+          ${icon ? `<span style="position:relative;z-index:1;">${icon}</span>` : ''}
+          <span class="listing-badge">${esc(category)}</span>
+          <button class="listing-fav" onclick="event.preventDefault()">♡</button>
+        </div>
+        <div class="listing-body">
+          <div class="listing-title">${esc(l.title||'Ohne Titel')}</div>
+          <div class="listing-meta">
+            <span>${esc(l.manufacturer||'–')}</span>
+            <span>${esc(l.location||'–')}</span>
+          </div>
+          <div class="listing-price">${price}</div>
+          <div class="listing-footer">
+            <span>${esc(seller)}</span>
+            <span class="listing-condition">${esc(l.condition||'Gebraucht')}</span>
+          </div>
+        </div>
+      </a>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  ANDERE KATEGORIEN
+// ══════════════════════════════════════════════════════
+function renderOtherCats() {
+  const el = document.getElementById('other-cats');
+  el.innerHTML = OTHER_CAT_LINKS
+    .filter(c => c.key !== catKey)
+    .map(c => `
+      <a href="kategorie.html?cat=${c.key}" class="other-cat-card">
+        <span class="other-cat-icon">${c.icon}</span>
+        <span class="other-cat-name">${c.name}</span>
+        <span class="other-cat-count">Jetzt ansehen →</span>
+      </a>`)
+    .join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  HILFSFUNKTIONEN
+// ══════════════════════════════════════════════════════
+function setFilter(val, btn) {
+  activeFilter = val;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderListings();
+}
+
+function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (q) window.location.href = `suche.html?q=${encodeURIComponent(q)}`;
+  else   window.location.href = 'suche.html';
+}
+
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+document.getElementById('mob-toggle').addEventListener('click', () => {
+  document.getElementById('mob-nav').classList.toggle('open');
+});
+
+function esc(v) {
+  return String(v||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+</body>
+</html>
