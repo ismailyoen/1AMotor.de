@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1A Motor – Bild-Motoren Import</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+  body { background:#f4f7fb; color:#1f2937; padding:32px 20px; }
+  .wrap { max-width:800px; margin:0 auto; }
+  h1 { font-size:26px; color:#1a3a52; margin-bottom:6px; }
+  p.sub { color:#6b7280; font-size:14px; margin-bottom:28px; }
+  .card { background:#fff; border:1px solid #e0e9f2; border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+  input, select { width:100%; padding:11px 14px; border:1.5px solid #e0e9f2; border-radius:9px; font-size:14px; outline:none; margin-bottom:14px; }
+  .btn { width:100%; padding:16px; background:linear-gradient(135deg,#1a5fa8,#2176c7); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+  .btn:hover { opacity:.9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-danger { background:linear-gradient(135deg,#dc2626,#b91c1c); }
+  .progress-wrap { background:#e0e9f2; border-radius:999px; height:18px; overflow:hidden; margin:14px 0; }
+  .progress-bar { background:linear-gradient(90deg,#1a5fa8,#4da6ff); height:100%; border-radius:999px; transition:width .3s; width:0%; }
+  .log { background:#0d1b2a; color:#4da6ff; border-radius:10px; padding:16px; font-family:monospace; font-size:13px; max-height:300px; overflow-y:auto; margin-top:16px; white-space:pre-wrap; }
+  .stat { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:14px; }
+  .stat-box { background:#f0f6ff; border:1px solid #d0e4f7; border-radius:10px; padding:12px; text-align:center; }
+  .stat-val { font-size:28px; font-weight:800; color:#1a5fa8; }
+  .stat-lbl { font-size:12px; color:#6b7280; margin-top:2px; }
+  .success { color:#10b981 !important; }
+  .error { color:#ef4444 !important; }
+  .warning { color:#f59e0b !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⚙️ 1A Motor – Bild-Motoren Import</h1>
+  <p class="sub">Importiert realistische Inserate für alle 19 Motortypen aus dem Kategorienbild direkt in deine Supabase Datenbank. Muss auf 1amotor.de geöffnet werden.</p>
+
+  <div class="card">
+    <label>Eingeloggter Händler (Email)</label>
+    <input type="email" id="email-input" placeholder="deine@email.de" />
+    <label>Passwort</label>
+    <input type="password" id="pass-input" placeholder="••••••••" />
+    <button class="btn" id="btn-start" onclick="startImport()">🚀 Bild-Inserate importieren</button>
+    <button class="btn btn-danger" id="btn-delete" style="margin-top:10px;display:none;" onclick="deleteAll()">🗑️ Alle importierten Inserate löschen</button>
+  </div>
+
+  <div class="card" id="progress-card" style="display:none;">
+    <div class="stat">
+      <div class="stat-box"><div class="stat-val" id="stat-done">0</div><div class="stat-lbl">Eingefügt</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-err">0</div><div class="stat-lbl">Fehler</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-total">50</div><div class="stat-lbl">Gesamt</div></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="log" id="log">Bereit...\n</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://xaqfptumjkmulobdbfid.supabase.co";
+const SUPABASE_KEY = "sb_publishable_FK-FiDrd5gjFEj7LxVPZIg_5WXkNvgG";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let importedIds = [];
+let statDone = 0, statErr = 0;
+
+// ── Inserate für alle 19 Motortypen aus dem Kategorienbild ───────────────────
+const INSERATE = [
+  // 1. GENERATOR KLEINMOTOR
+  { title:"Honda EU22i Inverter Generator 2200W – leise, leicht, neuwertig", manufacturer:"Honda", model:"EU22i", condition:"Gebraucht", price:890, year:2022, location:"Freiburg, Baden-Württemberg", category:"Generator Kleinmotor", description:"Honda EU22i Inverter-Stromerzeuger 2200 Watt. Nur ca. 15 Betriebsstunden, quasi neuwertig. Geräuschpegel nur 48–57 dB. Perfekt für Camping, Baustelle, Notstrombetrieb. Eco-Throttle Modus für sparsamsten Betrieb. Originalkarton und Zubehör vorhanden.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Yamaha EF2000iS 2000W Inverter-Generator – 4-Takt – sofort startklar", manufacturer:"Yamaha", model:"EF2000iS", condition:"Gebraucht", price:720, year:2020, location:"Regensburg, Bayern", category:"Generator Kleinmotor", description:"Yamaha EF2000iS 2000W Inverter-Stromerzeuger. Ca. 80 Betriebsstunden. Extrem leise (51,5 dB), kompakt und leicht (21 kg). Ideal für empfindliche Elektronik. Alle Services durchgeführt.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Kipor IG3000 3000W Benzin-Generator Inverter – wenig Stunden", manufacturer:"Kipor", model:"IG3000", condition:"Gebraucht", price:480, year:2019, location:"Heilbronn, Baden-Württemberg", category:"Generator Kleinmotor", description:"Kipor IG3000 3 kW Inverter-Generator mit 4-Takt OHV Motor. Ca. 120 Betriebsstunden. Stabile Sinuswelle, geeignet für Notebooks und Elektrowerkzeuge. Recoil-Start, Parallelschaltung möglich.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 2. GENERATOR MOTOR (INDUSTRIE / STATIONÄR)
+  { title:"Cummins QSB7 7.0L Dieselmotor 260 kW Aggregat – 3800 Bh – geprüft", manufacturer:"Cummins", model:"QSB7-G5", condition:"Gebraucht", price:14500, year:2015, location:"Hamburg", category:"Generator Motor", description:"Cummins QSB7 Diesel-Generatoraggregat, 260 kW / 325 kVA, 1500 U/min, 50 Hz. Ca. 3800 Betriebsstunden. Elektrisch einwandfrei, alle Servicewartungen dokumentiert. Sofort betriebsbereit. Auf Wunsch Besichtigung vor Ort.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Perkins 1106A-70TAG3 Dieselgenerator 150 kW – Notstromanlagen", manufacturer:"Perkins", model:"1106A-70TAG3", condition:"Gebraucht", price:9800, year:2013, location:"Hannover, Niedersachsen", category:"Generator Motor", description:"Perkins 1106A-70TAG3 6-Zylinder Dieselmotor für Generatoranwendung, 150 kW. Ca. 5200 Betriebsstunden. Aus zurückgebauter Notstromanlage eines Krankenhauses. Komplett mit Lichtmaschine, Motorsteuerung und Lüfter.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Volvo Penta TAD734GE Genset-Motor 225 kW – generalüberholt 2022", manufacturer:"Volvo Penta", model:"TAD734GE", condition:"Generalüberholt", price:22000, year:2011, location:"Bremen", category:"Generator Motor", description:"Volvo Penta TAD734GE 6-Zylinder Turbodiesel 225 kW / 306 PS für Generatorbetrieb. 2022 generalüberholt: neue Kolben, Lagerschalen, Steuertrieb, Einspritzpumpe. 12 Monate Garantie. Ideal für Rechenzentren oder Krankenhäuser.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 3. GETRIEBEMOTOR
+  { title:"SEW Eurodrive K57 DRE90 Kegelrad-Getriebemotor 1.5 kW – sofort verfügbar", manufacturer:"SEW Eurodrive", model:"K57 DRE90L4/TF", condition:"Gebraucht", price:420, year:2018, location:"Bruchsal, Baden-Württemberg", category:"Getriebemotor", description:"SEW Eurodrive Kegelrad-Getriebemotor K57, 1.5 kW, Ausgangsdrehzahl 35 U/min, i=40.14. Aus Abfüllanlage ausgebaut. Getriebe und Motor einwandfrei, kein Spiel, keine Geräusche. IP54.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Bauer BG05 Stirnradgetriebemotor 0.75 kW 230V – gebraucht funktionsfähig", manufacturer:"Bauer", model:"BG05-11/D04LA4", condition:"Gebraucht", price:180, year:2015, location:"Nürnberg, Bayern", category:"Getriebemotor", description:"Bauer Stirnradgetriebemotor BG05, 0.75 kW, 230V Einphasen. Ausgangsdrehzahl ca. 58 U/min. Aus kleiner Förderanlage. Läuft ruhig und geräuschlos. Abholung bevorzugt.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Siemens Motox 3 kW Schneckengetriebemotor – i=30 – guter Zustand", manufacturer:"Siemens", model:"Motox D 3kW i30", condition:"Gebraucht", price:350, year:2017, location:"Erlangen, Bayern", category:"Getriebemotor", description:"Siemens Motox Schneckengetriebemotor, 3 kW, Übersetzung i=30, Ausgangsdrehzahl ca. 50 U/min. Aus Verpackungsmaschine. Motor und Getriebe einwandfrei, nur leichte Gebrauchsspuren.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 4. GLEICHSTROMMOTOR
+  { title:"Bosch Gleichstrommotor 24V 500W – GPA-Reihe – für E-Fahrzeuge", manufacturer:"Bosch", model:"GPA 24V 500W", condition:"Gebraucht", price:290, year:2017, location:"Stuttgart, Baden-Württemberg", category:"Gleichstrommotor", description:"Bosch GPA-Reihe DC-Motor 24V / 500W. Permanentmagnet, hoher Wirkungsgrad, für Elektrofahrzeuge, Flurförderzeuge. Ca. 800 Betriebsstunden. Bürstenlos, leiser Lauf. Abmessungen auf Anfrage.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"ABB Gleichstrommotor DMI 132 M – 15 kW 1500 U/min 230V – gebraucht", manufacturer:"ABB", model:"DMI 132 M", condition:"Gebraucht", price:980, year:2014, location:"Mannheim, Baden-Württemberg", category:"Gleichstrommotor", description:"ABB Gleichstrommotor DMI 132 M, 15 kW, 1500 U/min, 230V Ankerspannung. Mit Tachogenerator. Aus Werkzeugmaschine. Wicklung geprüft (kein Kurzschluss, kein Erdschluss). Sofort einsatzbereit.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Siemens 1GG5 Gleichstrommotor 5.5 kW 440V – Gleichstromantrieb Industrie", manufacturer:"Siemens", model:"1GG5 136-0ND40-6YV3", condition:"Gebraucht", price:650, year:2012, location:"Leipzig, Sachsen", category:"Gleichstrommotor", description:"Siemens 1GG5 DC-Motor 5.5 kW, 440V, 1450 U/min. Nebenschlussmotor mit Kompensationswicklung. Aus Walzwerksanlage. Neuwicklung vor 3 Jahren, Protokoll vorhanden.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 5. GROSSMOTOR INDUSTRIE
+  { title:"MAN B&W 6S50ME-B9.2 Zweitakt-Großmotor 11.0 MW – Schiff-Hauptantrieb", manufacturer:"MAN Energy Solutions", model:"6S50ME-B9.2", condition:"Gebraucht", price:580000, year:2009, location:"Hamburg", category:"Großmotor Industrie", description:"MAN B&W 6S50ME-B9.2 Zweitakt-Langsamläufer, 11,0 MW / 14.950 PS, 127 U/min. Aus Container-Feederschiff nach Klasse-Umregistrierung. Alle Wartungsberichte vorhanden, letzter Hafenaufenthalt 2023. Besichtigung auf Anfrage.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Wärtsilä 6RT-flex60C Schiffsmotor 13.5 MW – Containerfrachtschiff", manufacturer:"Wärtsilä", model:"6RT-flex60C", condition:"Gebraucht", price:750000, year:2011, location:"Bremerhaven, Bremen", category:"Großmotor Industrie", description:"Wärtsilä 6RT-flex60C Common-Rail Zweitakt-Schiffsmotor, 13.500 kW, 102 U/min. Aus umgebauter Containerroute. Ca. 62.000 Betriebsstunden. Vollständige Überholungshistorie. Nur auf ernsthafte Anfrage.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 6. HECKENSCHERENMOTOR
+  { title:"Briggs & Stratton 190cc 5.5 PS OHV – Aufsitzrasenmäher / Heckenschere", manufacturer:"Briggs & Stratton", model:"500 Series 190cc", condition:"Gebraucht", price:120, year:2018, location:"Würzburg, Bayern", category:"Heckenscherenmotor", description:"Briggs & Stratton 500 Series OHV Motor, 190ccm, 5.5 PS. Ausgebaut aus Aufsitzmäher. Motor läuft einwandfrei, startet auf Anhieb, kein Rauchen. Inkl. Vergaser und Luftfilter.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Honda GX35 Mini 4-Takt Motor 1.3 PS – für Heckenschere Freischneider", manufacturer:"Honda", model:"GX35", condition:"Gebraucht", price:89, year:2020, location:"Karlsruhe, Baden-Württemberg", category:"Heckenscherenmotor", description:"Honda GX35 Viertaktmotor 1.3 PS / 35ccm. Ausgebaut aus Honda Freischneider. Kein Rauchen, einwandfreier Lauf. Kompatibel mit Heckenscheren, Rückenspritzen und Freischneidern von Honda.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 7. HOCHDREHZAHLMOTOR
+  { title:"Fischer & Krecke Hochdrehzahlmotor 24.000 U/min 5.5 kW – Spindelmotor CNC", manufacturer:"Fischer", model:"MFW-3502-21024", condition:"Gebraucht", price:1850, year:2019, location:"Bielefeld, Nordrhein-Westfalen", category:"Hochdrehzahlmotor", description:"Fischer Hochdrehzahl-Spindelmotor, 24.000 U/min, 5.5 kW, wassergekühlte Ausführung. Aus CNC Fräszentrum. Lager erneuert, läuft ruhig. Mit Spannzangen-System ER32.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Perske KNS 21.06-2 Hochfrequenzmotor 18.000 U/min – Holzbearbeitung", manufacturer:"Perske", model:"KNS 21.06-2", condition:"Gebraucht", price:1200, year:2016, location:"Gütersloh, Nordrhein-Westfalen", category:"Hochdrehzahlmotor", description:"Perske KNS Hochfrequenzmotor 18.000 U/min, 5.1 kW, 300 Hz. Aus CNC Holzbearbeitungszentrum. Motor geprüft, Lager i.O., keine Exzentrizität. Passend für diverse CNC-Bearbeitungszentren.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 8. HOCHLEISTUNGSMOTOR
+  { title:"BMW S58 3.0 Biturbo 510 PS M3/M4 G80 G82 – Austauschmotor NEU", manufacturer:"BMW M GmbH", model:"S58B30T0", condition:"Neu", price:18900, year:2024, location:"München, Bayern", category:"Hochleistungsmotor", description:"BMW S58 3.0L Biturbo Hochleistungsmotor 510 PS. Originaler BMW Austauschmotor (AT-Motor), fabrikneu. Passend für M3 G80 und M4 G82. Mit 24 Monaten BMW-Garantie. Inkl. Montagekit.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Mercedes-AMG M177 4.0 V8 Biturbo 600+ PS – aus GT63 S – komplett", manufacturer:"Mercedes-AMG", model:"M177 DE40 AL", condition:"Gebraucht", price:24500, year:2020, location:"Stuttgart, Baden-Württemberg", category:"Hochleistungsmotor", description:"Mercedes-AMG M177 4.0L V8 Biturbo Hochleistungsmotor aus AMG GT 63 S, ca. 630 PS. Aus Unfallfahrzeug (Heckschaden). Motor und Getriebe absolut unbeschädigt. Nur 28.000 km. Komplett mit Anbauteilen.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 9. HOCHSPANNUNGSMOTOR
+  { title:"ABB M3BP 355 MLG 6 kV Hochspannungsmotor 630 kW – gebraucht geprüft", manufacturer:"ABB", model:"M3BP 355 MLG2", condition:"Gebraucht", price:28000, year:2014, location:"Duisburg, Nordrhein-Westfalen", category:"Hochspannungsmotor", description:"ABB M3BP Hochspannungsmotor 630 kW, 6000V, 2975 U/min, IE2. IP54, Kühlart IC411. Aus Chemieanlage ausgebaut. Wicklung geprüft (Megger-Test Protokoll vorhanden). Lagerspiel i.O. Sofort verfügbar.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Siemens 1LE1 Hochspannungsmotor 250 kW 6.6 kV – Kühlmittelpumpe", manufacturer:"Siemens", model:"1LE1 5002-1CC23", condition:"Gebraucht", price:14500, year:2016, location:"Essen, Nordrhein-Westfalen", category:"Hochspannungsmotor", description:"Siemens 1LE1 Drehstrommotor 250 kW, 6600V, 1485 U/min, IE2. Aus Kraftwerks-Kühlmittelpumpenanlage. Ca. 18.000 Betriebsstunden. Wicklung gemessen, alle Werte i.O.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 10. HUBSCHRAUBERMOTOR
+  { title:"Rolls-Royce Allison 250-C20B Turbinentriebwerk – 420 PS – Bell 206", manufacturer:"Rolls-Royce", model:"250-C20B", condition:"Gebraucht", price:95000, year:2001, location:"München, Bayern", category:"Hubschraubermotor", description:"Rolls-Royce Allison 250-C20B Turbowellen-Triebwerk 420 PS / 313 kW aus Bell 206 JetRanger. Letzte Überholung 2018 durch zertifizierte Werkstatt. Ca. 1200 Stunden seit TBO. Inkl. vollständiger Dokumentation.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Turbomeca Arriel 1D1 Hubschraubertriebwerk 650 SHP – Eurocopter AS350", manufacturer:"Safran Helicopter Engines", model:"Arriel 1D1", condition:"Gebraucht", price:145000, year:2005, location:"Frankfurt am Main, Hessen", category:"Hubschraubermotor", description:"Turbomeca Arriel 1D1 Freiläuftriebwerk 650 SHP aus Eurocopter AS350B2. Letzter 1000h-Check 2021 durch zertifizierte MRO. Vollständiges EASA-Techniklog vorhanden. Nur ernsthafte Käufer.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 11. HYBRIDMOTOR
+  { title:"Toyota 2ZR-FXE Hybridmotor 1.8L 136 PS – Prius III – komplett mit MG1/MG2", manufacturer:"Toyota", model:"2ZR-FXE", condition:"Gebraucht", price:1850, year:2013, location:"Köln, Nordrhein-Westfalen", category:"Hybridmotor", description:"Toyota Prius III Hybridantrieb: 2ZR-FXE 1.8L Atkinson-Benzinmotor 99 PS + Hybridantriebseinheit MG1/MG2. Systemleistung 136 PS. Ca. 135.000 km. Alle Antriebskomponenten geprüft.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"BMW B48 2.0 Hybrid Motor 252 PS – aus 330e G20 – komplett mit E-Antrieb", manufacturer:"BMW", model:"B48B20", condition:"Gebraucht", price:4800, year:2021, location:"München, Bayern", category:"Hybridmotor", description:"BMW B48B20 2.0L Vierzylindermotor 252 PS Systemleistung (Benzin + E-Motor) aus 330e G20. Nur 48.000 km. Motor und E-Antriebseinheit komplett, inkl. Steuergeräten. Aus Unfallfahrzeug (Heckschaden).", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Honda CR-Z Hybridmotor LEA-MF6 1.5L 130 PS – mit IMA-Einheit – selten", manufacturer:"Honda", model:"LEA-MF6", condition:"Gebraucht", price:1100, year:2012, location:"Dortmund, Nordrhein-Westfalen", category:"Hybridmotor", description:"Honda CR-Z IMA Hybridantrieb: 1.5L i-VTEC Motor LEA-MF6 mit integriertem IMA-Elektromotor, 130 PS Systemleistung. Ca. 98.000 km. Seltener Hybridmotor, guter Zustand.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 12. HYDRAULIKMOTOR
+  { title:"Bosch Rexroth MCR5 Hydraulikmotor 160ccm – Radantrieb – sehr guter Zustand", manufacturer:"Bosch Rexroth", model:"MCR5 160ccm", condition:"Gebraucht", price:1450, year:2016, location:"Lohr am Main, Bayern", category:"Hydraulikmotor", description:"Bosch Rexroth MCR5 Radmotor 160 ccm Verdrängung, max. 350 bar. Aus Radlader. Kein Spiel, keine Innenundichtigkeit, Prüfprotokoll vorhanden. Inkl. Flansch und Anschlussblöcken.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Parker Hannifin Torqmotor TF0160 Hydraulikmotor – 160 ccm – gebraucht", manufacturer:"Parker Hannifin", model:"TF0160FW3ZAAC", condition:"Gebraucht", price:580, year:2018, location:"Kaarst, Nordrhein-Westfalen", category:"Hydraulikmotor", description:"Parker Torqmotor TF0160 Langsamläufer-Hochmomentmotor, 160 ccm, 315 bar. Aus Forstmaschinen-Steuerung. Motor geprüft, einwandfreie Funktion. Anschluss SAE 4-bolt.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Eaton Char-Lynn 101 Series Hydraulikmotor 200ccm – Erntemaschine", manufacturer:"Eaton", model:"101-1013-009", condition:"Gebraucht", price:420, year:2015, location:"Oldenburg, Niedersachsen", category:"Hydraulikmotor", description:"Eaton Char-Lynn 101-Series Orbitalmotor 200 ccm, 175 bar Nennbetriebsdruck. Aus Mähdrescher. Interne Leckage geprüft (i.O.). Mit Originalanschlüssen.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 13. INDUSTRIE DIESEL MOTOR
+  { title:"Deutz BF4M2012C Industriediesel 85 kW – Baumaschine – 4200 Bh", manufacturer:"Deutz", model:"BF4M2012C", condition:"Gebraucht", price:6800, year:2016, location:"Köln, Nordrhein-Westfalen", category:"Industrie Diesel Motor", description:"Deutz BF4M2012C 4-Zylinder Turbodiesel 85 kW / 115 PS. Ca. 4200 Betriebsstunden aus Vibrationswalze. Motor wurde bei 3800 h gewartet. Alle Filter erneuert. Läuft einwandfrei.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Perkins 1104D-44T Industriediesel 74 kW – komplett mit Anbauteilen", manufacturer:"Perkins", model:"1104D-44T", condition:"Gebraucht", price:4500, year:2014, location:"Bielefeld, Nordrhein-Westfalen", category:"Industrie Diesel Motor", description:"Perkins 1104D-44T 4-Zylinder Turbodiesel 74 kW aus Teleskopstapler. Ca. 5600 Betriebsstunden. Zuletzt revidiert bei 5000h. Komplett mit Turbo, Kühler, Auspuffkrümmer und Einspritzpumpe.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Mitsubishi S6S Industriediesel 55 kW – Gabelstapler Motor – geprüft", manufacturer:"Mitsubishi", model:"S6S-DT", condition:"Gebraucht", price:2900, year:2012, location:"Augsburg, Bayern", category:"Industrie Diesel Motor", description:"Mitsubishi S6S-DT 6-Zylinder Dieselmotor 55 kW aus Caterpillar/Mitsubishi Gabelstapler. Ca. 9800 Betriebsstunden. Motor revidiert, neue Injektoren eingebaut. Guter Lauf, kein Rauchen.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 14. INDUSTRIEROBOTER MOTOR
+  { title:"KUKA Servomotor KS 210/170-3x24 – Achse 1 KR 240 – geprüft", manufacturer:"KUKA", model:"KS 210/170-3x24", condition:"Gebraucht", price:1650, year:2017, location:"Augsburg, Bayern", category:"Industrieroboter Motor", description:"KUKA Servomotor für KR 240 Industrieroboter, Achse 1. Motor läuft einwandfrei, Resolver geprüft. Ausgebaut bei Umbau auf neueres Modell. Mit technischer Dokumentation.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Fanuc αiS 22/3000 Servo für R-2000iB Roboter – Achse 2 – funktionsfähig", manufacturer:"Fanuc", model:"αiS 22/3000", condition:"Gebraucht", price:1980, year:2018, location:"Wolfsburg, Niedersachsen", category:"Industrieroboter Motor", description:"Fanuc αiS 22/3000 Servo-Motor, 22 kW, 3000 U/min, pulsencoder. Aus Fanuc R-2000iB Roboter, Achse 2. Encoder-Funktionstest bestanden. Kein Kurzschluss in Wicklung.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"ABB Roboter Servomotor 3HAC17484-1 – IRB 6640 – mit Encoder", manufacturer:"ABB Robotics", model:"3HAC17484-1", condition:"Gebraucht", price:2200, year:2016, location:"Västerås (Stockholm), Mannheim, Baden-Württemberg", category:"Industrieroboter Motor", description:"ABB Servomotor 3HAC17484-1 für IRB 6640 Roboter. Absolutgeber Multiturn. Aus Automobilwerk ausgebaut. Volle Funktion geprüft, Feedback-Signal sauber. Mit Kabeladapter.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 15. INNENBORDMOTOR
+  { title:"Volvo Penta D4-260 Innenbordmotor 260 PS – IPS-Antrieb – 480 Bh", manufacturer:"Volvo Penta", model:"D4-260 IPS400", condition:"Gebraucht", price:19500, year:2018, location:"Kiel, Schleswig-Holstein", category:"Innenbordmotor", description:"Volvo Penta D4-260 Reihenvierzylinder-Diesel 260 PS mit IPS400-Antrieb. Nur 480 Betriebsstunden. Aus Cruiser-Sportboot. Alle Servicewartungen durch Volvo-Händler. Mit Joystick-Steuerungsmodul.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Yanmar 6LY2A-STP Innenbordmotor 315 PS – Segelyacht Zusatzmotor", manufacturer:"Yanmar", model:"6LY2A-STP", condition:"Gebraucht", price:11800, year:2014, location:"Hamburg", category:"Innenbordmotor", description:"Yanmar 6LY2A-STP 6-Zylinder Schiffsdiesel 315 PS aus Segelyacht. Ca. 1100 Betriebsstunden. Alle 250h Services ordnungsgemäß durchgeführt. Impeller und Riemen 2023 erneuert.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"MerCruiser 4.3L V6 MPI Alpha Innenbordaußenbordmotor 220 PS – Sportboot", manufacturer:"MerCruiser", model:"4.3L V6 MPI Alpha One", condition:"Gebraucht", price:5900, year:2016, location:"Bodensee, Konstanz, Baden-Württemberg", category:"Innenbordmotor", description:"MerCruiser 4.3L V6 MPI Alpha One Stern-Drive-Antrieb 220 PS. Aus Sportboot am Bodensee, Süßwasserbetrieb. Ca. 380 Stunden. Sehr guter Zustand, regelmäßig gewartet.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 16. IoT MOTOR
+  { title:"Siemens SIMOTICS S-1FL6 IoT Servomotor 1.7 kW – MindSphere-fähig", manufacturer:"Siemens", model:"1FL6042-1AF61-2AB1", condition:"Gebraucht", price:780, year:2021, location:"Erlangen, Bayern", category:"IoT Motor", description:"Siemens SIMOTICS S 1FL6 Servomotor 1.7 kW mit integrierter IoT-Anbindung via PROFINET. MindSphere-kompatibel, Edge-Computing-fähig. Aus Pilotanlage, nur 1200 Betriebsstunden. Mit Encoder.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"WEG W22 Smart Motor IE4 5.5 kW mit integriertem IoT-Gateway – neuwertig", manufacturer:"WEG", model:"W22 Smart 5.5kW IE4", condition:"Gebraucht", price:1250, year:2022, location:"Frankfurt am Main, Hessen", category:"IoT Motor", description:"WEG W22 Smart Motor 5.5 kW IE4 mit integriertem Gateway für Vibrations-, Temperatur- und Energiemonitoring. MQTT/OPC-UA fähig. Aus Testprojekt, nur 400 Bh. Wie neu.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 17. JETMOTOR
+  { title:"General Electric CF6-80C2B1F Turbofan 56.000 lbf – Boeing 747/767", manufacturer:"General Electric", model:"CF6-80C2B1F", condition:"Gebraucht", price:3800000, year:2003, location:"Frankfurt am Main, Hessen", category:"Jetmotor", description:"GE CF6-80C2B1F Hochbypass-Turbofan, 56.000 lbf Schub. Aus Boeing 767-300ER nach Airframe-Retirement. Ca. 42.000 Zyklen / 68.000 Stunden. Letzter Shopvisit 2019. Vollständiges CMM-Dossier. Nur an seriöse Käufer.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"CFM International CFM56-7B27 27.000 lbf – Boeing 737 NG – Teststand OK", manufacturer:"CFM International", model:"CFM56-7B27", condition:"Gebraucht", price:2200000, year:2007, location:"Hamburg", category:"Jetmotor", description:"CFM56-7B27 Turbofan 27.000 lbf aus Boeing 737-800. Ca. 38.000 Zyklen. Letzter Shopvisit 2021, APU-Protokoll vorhanden. EASA-konform dokumentiert. Bereit für nächste Shopinduktion oder als Teileträger.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  // 18. JETSKI MOTOR
+  { title:"Kawasaki Ultra 310X Supercharger Motor 1498ccm 310 PS – 2022 – top", manufacturer:"Kawasaki", model:"JT1500 Supercharged", condition:"Gebraucht", price:4800, year:2022, location:"München, Bayern", category:"Jetski Motor", description:"Kawasaki 4-Takt 4-Zylinder 1498ccm Supercharged Jetski-Motor 310 PS aus Ultra 310X. Nur 58 Betriebsstunden. Perfekter Zustand, kein Salzwasserbetrieb. Komplett mit Kompressor und Ansaugtrakt.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Sea-Doo Rotax 1630 ACE Jetski Motor 170 PS – aus RXT-X – Süßwasser", manufacturer:"Rotax (BRP)", model:"1630 ACE", condition:"Gebraucht", price:3200, year:2020, location:"Bodensee, Lindau, Bayern", category:"Jetski Motor", description:"BRP Rotax 1630 ACE 3-Zylinder Motor 170 PS aus Sea-Doo RXT-X. Ca. 110 Betriebsstunden, ausschließlich Süßwasserbetrieb am Bodensee. Alle 50h Services durch Fachhändler.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Yamaha FX Cruiser HO Waverunner Motor 1812ccm 180 PS – sehr wenig Stunden", manufacturer:"Yamaha", model:"MR-1 1812ccm HO", condition:"Gebraucht", price:3600, year:2021, location:"Hannover, Niedersachsen", category:"Jetski Motor", description:"Yamaha MR-1 High Output 4-Zylinder 1812ccm Motor 180 PS aus FX Cruiser HO. Nur 72 Betriebsstunden. Trocken eingelagert über Winter, immer nach Benutzung gespült.", listing_type:"Verkauf", price_type:"Festpreis" },
+
+  // 19. KARTMOTOR
+  { title:"IAME X30 125ccm 30 PS Kart Motor – Rotax Max Alternative – Rennklasse", manufacturer:"IAME", model:"X30 125 Superkart", condition:"Gebraucht", price:1650, year:2022, location:"Kerpen, Nordrhein-Westfalen", category:"Kartmotor", description:"IAME X30 125ccm Kart-Rennmotor, ca. 30 PS, 15.000 U/min. Aus einer Saison Junior-Klasse. Motor zuletzt bei spezialisierten Motorenbauer revidiert. Mit Vergaser und Ansaugtrakt.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Rotax Max Evo 125 DD2 – 43 PS Zweigangautomatik – Shifter-Kart Motor", manufacturer:"Rotax (BRP)", model:"Max Evo 125 DD2", condition:"Gebraucht", price:2400, year:2021, location:"Stuttgart, Baden-Württemberg", category:"Kartmotor", description:"Rotax 125 DD2 Evo Kart-Motor 43 PS mit DD2-Doppelkupplungsgetriebe. Aus 2 Saisons Clubsport-Betrieb. Zuletzt bei autorisierten Rotax-Händler revidiert. Mit komplettem DD2-Antriebsset.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"TM KZ10C 125ccm Shifter-Kart Motor 42 PS – Top-Rennmotor – Neuwertig", manufacturer:"TM Racing", model:"KZ10C", condition:"Gebraucht", price:2900, year:2023, location:"Ingolstadt, Bayern", category:"Kartmotor", description:"TM KZ10C 125ccm Kart-Motor 42 PS, 6-Gang-Getriebe. Nur 4 Rennen gelaufen. Neuwertig. Einer der schnellsten seriennahen Kart-Motoren am Markt. Mit Vergaser Dellorto VHSH30.", listing_type:"Verkauf", price_type:"Festpreis" },
+];
+
+async function startImport() {
+  const email = document.getElementById("email-input").value.trim();
+  const pass  = document.getElementById("pass-input").value;
+  if (!email || !pass) { alert("Bitte E-Mail und Passwort eingeben!"); return; }
+
+  document.getElementById("progress-card").style.display = "block";
+  document.getElementById("btn-start").disabled = true;
+  statDone = 0; statErr = 0;
+  log("🔐 Einloggen...\n");
+
+  const { data: authData, error: authErr } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (authErr) { log("❌ Login fehlgeschlagen: " + authErr.message + "\n"); document.getElementById("btn-start").disabled = false; return; }
+
+  const user = authData.user;
+  log("✅ Eingeloggt als: " + user.email + "\n");
+
+  // Seller profil laden
+  const { data: seller } = await sb.from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
+  if (!seller) { log("❌ Kein Händlerprofil gefunden!\n"); document.getElementById("btn-start").disabled = false; return; }
+  log("🏢 Händler: " + seller.company_name + " (ID: " + seller.id + ")\n\n");
+
+  // Kategorien laden
+  const { data: cats } = await sb.from("categories").select("id,name,slug");
+  const catMap = {};
+  if (cats) cats.forEach(c => { catMap[c.name] = c.id; catMap[c.slug] = c.id; });
+  log("📦 " + cats.length + " Kategorien geladen\n\n");
+
+  document.getElementById("stat-total").textContent = INSERATE.length;
+
+  for (let i = 0; i < INSERATE.length; i++) {
+    const ins = INSERATE[i];
+
+    // Kategorie-ID finden
+    let catId = catMap[ins.category];
+    if (!catId) {
+      // Fuzzy match: suche ähnlichen Namen
+      const match = cats.find(c => c.name.toLowerCase().includes(ins.category.toLowerCase().split(" ")[0]));
+      catId = match ? match.id : cats[0].id;
+    }
+
+    const payload = {
+      seller_id:    seller.id,
+      category_id:  catId,
+      title:        ins.title,
+      manufacturer: ins.manufacturer,
+      model:        ins.model,
+      condition:    ins.condition || "Gebraucht",
+      price:        ins.price,
+      year:         ins.year || null,
+      location:     ins.location || "Deutschland",
+      description:  ins.description,
+      status:       "Freigegeben",
+      listing_type: ins.listing_type || "Verkauf",
+      price_type:   ins.price_type || "Festpreis",
+      image_urls:   []
+    };
+
+    const { data, error } = await sb.from("listings").insert([payload]).select("id");
+
+    if (error) {
+      statErr++;
+      log("❌ [" + (i+1) + "/" + INSERATE.length + "] FEHLER: " + ins.title.substring(0,40) + "... → " + error.message + "\n");
+    } else {
+      statDone++;
+      importedIds.push(data[0].id);
+      log("✅ [" + (i+1) + "/" + INSERATE.length + "] " + ins.title.substring(0,55) + "...\n");
+    }
+
+    document.getElementById("stat-done").textContent = statDone;
+    document.getElementById("stat-err").textContent  = statErr;
+    document.getElementById("progress-bar").style.width = ((i+1)/INSERATE.length*100).toFixed(0) + "%";
+
+    // kurze Pause zwischen Inserts
+    await new Promise(r => setTimeout(r, 80));
+  }
+
+  log("\n🎉 FERTIG! " + statDone + " Inserate erfolgreich eingefügt, " + statErr + " Fehler.\n");
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-delete").style.display = "block";
+}
+
+async function deleteAll() {
+  if (!importedIds.length) { alert("Keine importierten IDs gespeichert. Nur in dieser Session löschbar."); return; }
+  if (!confirm("Alle " + importedIds.length + " importierten Inserate löschen?")) return;
+
+  log("\n🗑️ Lösche " + importedIds.length + " Inserate...\n");
+  const { error } = await sb.from("listings").delete().in("id", importedIds);
+  if (error) { log("❌ Fehler: " + error.message + "\n"); return; }
+  log("✅ Alle importierten Inserate gelöscht.\n");
+  importedIds = [];
+}
+
+function log(msg) {
+  const el = document.getElementById("log");
+  el.textContent += msg;
+  el.scrollTop = el.scrollHeight;
+}
+</script>
+</body>
+</html>
