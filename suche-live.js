@@ -25,6 +25,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const heroConfig = [
     {
+      match: ["automotor", "pkw motor", "benzinmotor auto", "dieselmotor auto", "elektromotor auto", "hybridmotor"],
+      title: "Automotoren",
+      image: "images/automotor-header.jpg"
+    },
+    {
       match: ["aufzug"],
       title: "Aufzugsmotoren",
       image: "images/aufzugsmotor-header.png"
