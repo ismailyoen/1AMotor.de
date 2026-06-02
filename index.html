@@ -370,6 +370,20 @@
       font-family: inherit; transition: all .15s;
     }
     .sidebar-reset:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+    .sidebar-ad-banner {
+      display: block;
+      margin: 0;
+      padding: 10px 12px;
+      background: #0d2145;
+      border-radius: 0;
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: opacity .2s;
+    }
+    .sidebar-ad-banner:hover { opacity: 0.88; }
+    .sidebar-ad-banner img { width: 100%; height: auto; display: block; border-radius: 6px; }
+    .sidebar-ad-label { font-size: 9px; color: #9ca3af; text-align: right; margin-top: 3px; letter-spacing: .3px; }
+
 
     .sidebar-inner { padding: 14px 18px 18px; }
     .sidebar-section { padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
@@ -1339,6 +1353,12 @@
 
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
+
+    <!-- Premio Tuning Werbebanner -->
+    <a class="sidebar-ad-banner" href="https://www.premio.de/tuning?srsltid=AfmBOoq8B5Rspvhi3E141p1y_dba1nJiOAkA8C0W-oMLAvZFovJwgp04#707091716!5F9628C" target="_blank" rel="noopener">
+      <img src="images/premio-tuning-logo.png" alt="Premio Tuning – Ihr Spezialist für Tuning & Performance" />
+      <div class="sidebar-ad-label">Werbung</div>
+    </a>
 
     <div class="sidebar-header">
       <div class="sidebar-header-title">
