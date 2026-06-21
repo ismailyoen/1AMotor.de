@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1A Motor – Import: Tor-, Garagen- & Markisenmotoren</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+  body { background:#f4f7fb; color:#1f2937; padding:32px 20px; }
+  .wrap { max-width:800px; margin:0 auto; }
+  h1 { font-size:26px; color:#1a3a52; margin-bottom:6px; }
+  p.sub { color:#6b7280; font-size:14px; margin-bottom:28px; }
+  .card { background:#fff; border:1px solid #e0e9f2; border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  .note { background:#fff8e6; border:1px solid #f5d98c; border-radius:10px; padding:14px 16px; font-size:13px; color:#7a5b00; margin-bottom:20px; line-height:1.5; }
+  label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+  input, select { width:100%; padding:11px 14px; border:1.5px solid #e0e9f2; border-radius:9px; font-size:14px; outline:none; margin-bottom:14px; }
+  .btn { width:100%; padding:16px; background:linear-gradient(135deg,#1a5fa8,#2176c7); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+  .btn:hover { opacity:.9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-danger { background:linear-gradient(135deg,#dc2626,#b91c1c); }
+  .progress-wrap { background:#e0e9f2; border-radius:999px; height:18px; overflow:hidden; margin:14px 0; }
+  .progress-bar { background:linear-gradient(90deg,#1a5fa8,#4da6ff); height:100%; border-radius:999px; transition:width .3s; width:0%; }
+  .log { background:#0d1b2a; color:#4da6ff; border-radius:10px; padding:16px; font-family:monospace; font-size:13px; max-height:300px; overflow-y:auto; margin-top:16px; white-space:pre-wrap; }
+  .stat { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:14px; }
+  .stat-box { background:#f0f6ff; border:1px solid #d0e4f7; border-radius:10px; padding:12px; text-align:center; }
+  .stat-val { font-size:28px; font-weight:800; color:#1a5fa8; }
+  .stat-lbl { font-size:12px; color:#6b7280; margin-top:2px; }
+  .success { color:#10b981 !important; }
+  .error { color:#ef4444 !important; }
+  .warning { color:#f59e0b !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🚪 1A Motor – Import: Tor-, Garagen- &amp; Markisenmotoren</h1>
+  <p class="sub">Importiert 10 realistische Inserate (Garagentorantriebe, Schiebetorantriebe, Markisen-/Rollladenmotoren) direkt in deine Supabase Datenbank. Muss auf 1amotor.de geöffnet werden (oder lokal mit deinen Dateien).</p>
+
+  <div class="note">
+    ⚠️ Es gibt aktuell <strong>keine eigene Kategorie</strong> "Tor-/Garagen-/Markisenmotoren" in deiner Plattform. Die Inserate werden daher unter <strong>"Sonstiges"</strong> importiert. Sag Bescheid, wenn ich dir eine eigene Kategorie (inkl. Dropdown, Bild-Fallback usw.) dafür anlegen soll.
+  </div>
+
+  <div class="card">
+    <label>Eingeloggter Händler (Email)</label>
+    <input type="email" id="email-input" placeholder="deine@email.de" />
+    <label>Passwort</label>
+    <input type="password" id="pass-input" placeholder="••••••••" />
+    <button class="btn" id="btn-start" onclick="startImport()">🚀 10 Inserate importieren</button>
+    <button class="btn btn-danger" id="btn-delete" style="margin-top:10px;display:none;" onclick="deleteAll()">🗑️ Alle importierten Inserate löschen</button>
+  </div>
+
+  <div class="card" id="progress-card" style="display:none;">
+    <div class="stat">
+      <div class="stat-box"><div class="stat-val" id="stat-done">0</div><div class="stat-lbl">Eingefügt</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-err">0</div><div class="stat-lbl">Fehler</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-total">10</div><div class="stat-lbl">Gesamt</div></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="log" id="log">Bereit...\n</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://xaqfptumjkmulobdbfid.supabase.co";
+const SUPABASE_KEY = "sb_publishable_FK-FiDrd5gjFEj7LxVPZIg_5WXkNvgG";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let importedIds = [];
+let statDone = 0, statErr = 0;
+
+// ── 10 realistische Tor-, Garagen- & Markisenmotoren ─────────────────────────
+const INSERATE = [
+  { title:"Hörmann SupraMatic P Garagentorantrieb – Funk-Set – für Sektionaltore", manufacturer:"Hörmann", model:"SupraMatic P", condition:"Gebraucht", price:220, year:2019, location:"Köln, Nordrhein-Westfalen", category:"Sonstiges", description:"Hörmann SupraMatic P Garagentorantrieb mit 800 N Zugkraft. Inkl. 2 Handsendern HSE2 BS und Laufschiene. Aus Garagenumbau ausgebaut, funktionierte bis zum Ausbau einwandfrei. Passend für Sektionaltore bis ca. 11,5 m².", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Marantec Comfort 220 Torantrieb – inkl. Funkhandsender – Sektionaltor", manufacturer:"Marantec", model:"Comfort 220", condition:"Gebraucht", price:180, year:2018, location:"Bielefeld, Nordrhein-Westfalen", category:"Sonstiges", description:"Marantec Comfort 220 Garagentorantrieb, 600 N Zugkraft. Komplett mit Schiene, Befestigungsmaterial und 2 Handsendern Digital 382. Läuft leise und zuverlässig, Ausbau wegen neuem Torsystem.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"SOMMER Pro+ 1042 Garagentorantrieb – neuwertig – originalverpackt", manufacturer:"SOMMER", model:"Pro+ 1042", condition:"Neu", price:290, year:2024, location:"Hamburg", category:"Sonstiges", description:"SOMMER Pro+ 1042 Funk-Garagentorantrieb, 800 N Zugkraft, mit Soft-Start/Stopp. Originalverpackt, nie montiert (Fehlbestellung). Inkl. 2 Handsendern und LED-Beleuchtung.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Becker Rohrmotor R12/17 für Markise – mit Funkempfänger", manufacturer:"Becker", model:"R12/17", condition:"Gebraucht", price:95, year:2020, location:"Stuttgart, Baden-Württemberg", category:"Sonstiges", description:"Becker Rohrmotor R12/17 für Gelenkarmmarkise, 12 Nm Drehmoment, integrierter Funkempfänger. Ausgebaut bei Markisentausch, läuft geräuschlos und einwandfrei. Mit Adapter für 60er Wickelwelle.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Somfy LT50 io Rohrmotor 20 Nm – Markise / Rollladen – inkl. Empfänger", manufacturer:"Somfy", model:"LT50 CSI io", condition:"Gebraucht", price:130, year:2021, location:"München, Bayern", category:"Sonstiges", description:"Somfy LT50 io Rohrmotor 20 Nm, kompatibel mit io-Homecontrol Steuerung. Aus Terrassenmarkise ausgebaut, funktioniert einwandfrei, kein Lagerschaden. Mit Adapterrad für 70er Rohr.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Novoferm NovoPort Garagentorantrieb – kompakt – wenig benutzt", manufacturer:"Novoferm", model:"NovoPort", condition:"Gebraucht", price:160, year:2022, location:"Düsseldorf, Nordrhein-Westfalen", category:"Sonstiges", description:"Novoferm NovoPort Torantrieb, platzsparend direkt an der Laufschiene montiert, 600 N Zugkraft. Nur ca. 1,5 Jahre genutzt, technisch einwandfrei. Inkl. 2 Handsendern und Wandtaster.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Elero ProLine 35 Rohrmotor – für Rollladen & Markise – neuwertig", manufacturer:"Elero", model:"ProLine 35", condition:"Neu", price:110, year:2024, location:"Nürnberg, Bayern", category:"Sonstiges", description:"Elero ProLine 35 Rohrmotor, 35 Nm Drehmoment, mit mechanischer Endabschaltung. Originalverpackt, falsche Größe bestellt. Für Rollladen oder Markise mit 60er Wickelwelle geeignet.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"FAAC 740 Schiebetorantrieb – elektromechanisch – Industrietor", manufacturer:"FAAC", model:"740", condition:"Gebraucht", price:480, year:2017, location:"Augsburg, Bayern", category:"Sonstiges", description:"FAAC 740 elektromechanischer Schiebetorantrieb für Tore bis 800 kg. Aus gewerblicher Hofeinfahrt ausgebaut wegen Umbau auf Drehtor. Motor lief bis zum Ausbau störungsfrei.", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+  { title:"Chamberlain ML1000EV Garagentorantrieb – myQ App-Steuerung – mit Kamera", manufacturer:"Chamberlain", model:"ML1000EV", condition:"Gebraucht", price:210, year:2021, location:"Frankfurt am Main, Hessen", category:"Sonstiges", description:"Chamberlain ML1000EV Garagentorantrieb mit myQ App-Steuerung und integrierter Kamera. 1000 N Zugkraft, Riemenantrieb (sehr leise). Funktioniert einwandfrei, Ausbau wegen Garagenabriss.", listing_type:"Verkauf", price_type:"Festpreis" },
+  { title:"Nice Robus 600 Schiebetorantrieb 24V – generalüberholt – inkl. Steuerung", manufacturer:"Nice", model:"Robus 600", condition:"Generalüberholt", price:350, year:2016, location:"Leipzig, Sachsen", category:"Sonstiges", description:"Nice Robus 600 24V-Schiebetorantrieb für Tore bis 600 kg. Generalüberholt: neue Kondensatoren, neue Dichtungen, Steuerung Mooving getestet. Inkl. Zahnstange (4 Meter).", listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+];
+
+async function startImport() {
+  const email = document.getElementById("email-input").value.trim();
+  const pass  = document.getElementById("pass-input").value;
+  if (!email || !pass) { alert("Bitte E-Mail und Passwort eingeben!"); return; }
+
+  document.getElementById("progress-card").style.display = "block";
+  document.getElementById("btn-start").disabled = true;
+  statDone = 0; statErr = 0;
+  log("🔐 Einloggen...\n");
+
+  const { data: authData, error: authErr } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (authErr) { log("❌ Login fehlgeschlagen: " + authErr.message + "\n"); document.getElementById("btn-start").disabled = false; return; }
+
+  const user = authData.user;
+  log("✅ Eingeloggt als: " + user.email + "\n");
+
+  // Seller profil laden
+  const { data: seller } = await sb.from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
+  if (!seller) { log("❌ Kein Händlerprofil gefunden!\n"); document.getElementById("btn-start").disabled = false; return; }
+  log("🏢 Händler: " + seller.company_name + " (ID: " + seller.id + ")\n\n");
+
+  // Kategorien laden
+  const { data: cats } = await sb.from("categories").select("id,name,slug");
+  const catMap = {};
+  if (cats) cats.forEach(c => { catMap[c.name] = c.id; catMap[c.slug] = c.id; });
+  log("📦 " + cats.length + " Kategorien geladen\n\n");
+
+  document.getElementById("stat-total").textContent = INSERATE.length;
+
+  for (let i = 0; i < INSERATE.length; i++) {
+    const ins = INSERATE[i];
+
+    // Kategorie-ID finden
+    let catId = catMap[ins.category];
+    if (!catId) {
+      // Fuzzy match: suche ähnlichen Namen
+      const match = cats.find(c => c.name.toLowerCase().includes(ins.category.toLowerCase().split(" ")[0]));
+      catId = match ? match.id : cats[0].id;
+    }
+
+    const payload = {
+      seller_id:    seller.id,
+      category_id:  catId,
+      title:        ins.title,
+      manufacturer: ins.manufacturer,
+      model:        ins.model,
+      condition:    ins.condition || "Gebraucht",
+      price:        ins.price,
+      year:         ins.year || null,
+      location:     ins.location || "Deutschland",
+      description:  ins.description,
+      status:       "Freigegeben",
+      listing_type: ins.listing_type || "Verkauf",
+      price_type:   ins.price_type || "Festpreis",
+      image_urls:   []
+    };
+
+    const { data, error } = await sb.from("listings").insert([payload]).select("id");
+
+    if (error) {
+      statErr++;
+      log("❌ [" + (i+1) + "/" + INSERATE.length + "] FEHLER: " + ins.title.substring(0,40) + "... → " + error.message + "\n");
+    } else {
+      statDone++;
+      importedIds.push(data[0].id);
+      log("✅ [" + (i+1) + "/" + INSERATE.length + "] " + ins.title.substring(0,55) + "...\n");
+    }
+
+    document.getElementById("stat-done").textContent = statDone;
+    document.getElementById("stat-err").textContent  = statErr;
+    document.getElementById("progress-bar").style.width = ((i+1)/INSERATE.length*100).toFixed(0) + "%";
+
+    // kurze Pause zwischen Inserts
+    await new Promise(r => setTimeout(r, 80));
+  }
+
+  log("\n🎉 FERTIG! " + statDone + " Inserate erfolgreich eingefügt, " + statErr + " Fehler.\n");
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-delete").style.display = "block";
+}
+
+async function deleteAll() {
+  if (!importedIds.length) { alert("Keine importierten IDs gespeichert. Nur in dieser Session löschbar."); return; }
+  if (!confirm("Alle " + importedIds.length + " importierten Inserate löschen?")) return;
+
+  log("\n🗑️ Lösche " + importedIds.length + " Inserate...\n");
+  const { error } = await sb.from("listings").delete().in("id", importedIds);
+  if (error) { log("❌ Fehler: " + error.message + "\n"); return; }
+  log("✅ Alle importierten Inserate gelöscht.\n");
+  importedIds = [];
+}
+
+function log(msg) {
+  const el = document.getElementById("log");
+  el.textContent += msg;
+  el.scrollTop = el.scrollHeight;
+}
+</script>
+</body>
+</html>
