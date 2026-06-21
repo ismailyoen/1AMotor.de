@@ -26,7 +26,7 @@ const translations = {
     "hero.subtitle":        "Fahrzeugmotoren, Industrieantriebe, Bootsmotoren und Spezialmotoren. Geprüfte Händler, direkte Anfragen, keine Provision.",
     "hero.cta.search":      "🔍 Jetzt suchen",
     "hero.cta.dealer":      "Als Händler starten",
-    "hero.pill":            "⚙️ Deutschlands Motorenmarktplatz",
+    "hero.pill":            "⚙️ Motor Marktplatz",
 
     // Suche / Search bar
     "search.placeholder":   "Motor, Hersteller, Modell oder Teilenummer suchen…",
