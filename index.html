@@ -1199,6 +1199,172 @@
   .sidebar-overlay { display: none !important; }
 }
 </style>
+
+<!-- ══════════════════════════════════════════════════════════
+     WERBEPLÄTZE — CSS  (Namespace: .wb-*)
+     Enthält: Billboard, Sidebar-Ad, In-Feed-Ad, Partner-Strip
+     ══════════════════════════════════════════════════════════ -->
+<style id="wb-werbung-css">
+  /* ── Gemeinsames "Anzeige"-Label ── */
+  .wb-tag {
+    position: absolute; top: 10px; right: 12px; z-index: 3;
+    font-size: 9.5px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: rgba(255,255,255,.7);
+    background: rgba(0,0,0,.28); padding: 3px 8px; border-radius: 5px;
+    backdrop-filter: blur(4px); pointer-events: none;
+  }
+  .wb-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+  }
+
+  /* ══ 1) BILLBOARD (unter Hero) ══ */
+  .wb-billboard-wrap {
+    max-width: var(--max); margin: 22px auto 0; padding: 0 24px;
+  }
+  .wb-billboard {
+    position: relative; border-radius: 16px; overflow: hidden;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+    display: block; transition: transform .2s, box-shadow .2s;
+  }
+  .wb-billboard:hover { transform: translateY(-2px); box-shadow: var(--shadow2); }
+  .wb-bb-inner {
+    display: flex; align-items: center; gap: 30px; padding: 26px 40px;
+    background: linear-gradient(120deg,#0c2733 0%,#0f5c6e 55%,#12a19a 100%);
+  }
+  .wb-bb-brand {
+    font-size: 34px; font-weight: 900; letter-spacing: -.5px;
+    color: #fff; flex-shrink: 0; line-height: 1;
+  }
+  .wb-bb-brand .wb-dot { color: #3fe0c5; }
+  .wb-bb-mid { flex: 1; color: #fff; min-width: 0; }
+  .wb-bb-mid h3 { font-size: 23px; font-weight: 800; margin-bottom: 5px; letter-spacing: -.3px; }
+  .wb-bb-mid p  { font-size: 14px; color: rgba(255,255,255,.75); margin: 0; }
+  .wb-bb-price  { flex-shrink: 0; text-align: right; color: #fff; }
+  .wb-bb-price .wb-small { font-size: 12px; color: rgba(255,255,255,.65); }
+  .wb-bb-price .wb-big   { font-size: 26px; font-weight: 900; color: #3fe0c5; line-height: 1.1; }
+  .wb-bb-cta {
+    flex-shrink: 0; background: #fff; color: #0c4c5a; font-weight: 800;
+    font-size: 15px; padding: 14px 26px; border-radius: 10px; white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .wb-bb-inner  { flex-wrap: wrap; gap: 14px; padding: 18px 20px; }
+    .wb-bb-brand  { font-size: 24px; }
+    .wb-bb-mid h3 { font-size: 16px; }
+    .wb-bb-mid p  { font-size: 12.5px; }
+    .wb-bb-price  { text-align: left; }
+    .wb-bb-cta    { padding: 11px 18px; font-size: 13px; }
+  }
+  @media (max-width: 560px) {
+    .wb-billboard-wrap { padding: 0 14px; margin-top: 16px; }
+    .wb-bb-mid { flex-basis: 100%; }
+    .wb-bb-cta { width: 100%; text-align: center; }
+  }
+
+  /* ══ 2) SIDEBAR-AD ══ */
+  .wb-sb-ad {
+    position: relative; border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--border); display: block;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .wb-sb-ad:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .wb-sb-ad .wb-tag { color: #94a3b8; background: rgba(0,0,0,.05); backdrop-filter: none; }
+  .wb-sb-top {
+    background: #fff; padding: 22px 16px 15px; text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .wb-sb-brand {
+    font-size: 26px; font-weight: 900; color: #e2001a;
+    letter-spacing: .5px; font-style: italic; line-height: 1;
+  }
+  .wb-sb-sub {
+    font-size: 10.5px; font-weight: 700; color: #5a6b7d;
+    letter-spacing: .16em; text-transform: uppercase; margin-top: 4px;
+  }
+  .wb-sb-mid {
+    background: linear-gradient(160deg,#f7fafc,#eaf1f8);
+    padding: 18px 16px; display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+  }
+  .wb-sb-mid .wb-ic { font-size: 40px; line-height: 1; }
+  .wb-sb-mid .wb-pr { font-size: 12px; color: var(--muted); }
+  .wb-sb-mid .wb-pr b { color: #e2001a; font-size: 15px; }
+  .wb-sb-body { padding: 15px 16px 16px; text-align: center; background: #fff; }
+  .wb-sb-body h4 { font-size: 14px; font-weight: 800; margin-bottom: 5px; line-height: 1.35; color: var(--dark); }
+  .wb-sb-body p  { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 13px; }
+  .wb-sb-btn {
+    display: block; background: #e2001a; color: #fff; font-size: 12.5px;
+    font-weight: 800; padding: 11px; border-radius: 8px; text-align: center;
+  }
+
+  /* ══ 3) IN-FEED NATIVE AD (in .listing-grid) ══ */
+  .wb-adcard {
+    border: 1.5px solid #ffd54a;
+    box-shadow: 0 4px 20px rgba(255,183,0,.18);
+    border-radius: var(--r); overflow: hidden; background: #fff;
+    position: relative; display: block;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .wb-adcard:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(255,183,0,.28); }
+  .wb-adcard-corner {
+    position: absolute; top: 10px; left: 10px; z-index: 3;
+    background: #ffb800; color: #3a2a00; font-size: 9.5px; font-weight: 800;
+    letter-spacing: .09em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .wb-adcard-img {
+    height: 170px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 3px;
+    background: linear-gradient(135deg,#00723f,#00a651);
+  }
+  .wb-adcard-img .wb-b { color: #fff; font-size: 30px; font-weight: 900; letter-spacing: -.4px; line-height: 1; }
+  .wb-adcard-img .wb-s { color: rgba(255,255,255,.8); font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+  .wb-adcard-body { padding: 14px 16px; }
+  .wb-adcard-body h4 { font-size: 14.5px; font-weight: 800; color: var(--dark); margin-bottom: 6px; line-height: 1.35; }
+  .wb-adcard-body p  { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+  .wb-adcard-btn {
+    display: inline-block; background: #00723f; color: #fff;
+    font-size: 12.5px; font-weight: 800; padding: 10px 18px; border-radius: 8px;
+  }
+  @media (max-width: 480px) {
+    .wb-adcard-img { height: 140px; }
+    .wb-adcard-img .wb-b { font-size: 24px; }
+  }
+
+  /* ══ 4) PARTNER-STRIP ══ */
+  .wb-partner-strip { max-width: var(--max); margin: 0 auto 40px; padding: 0 24px; }
+  .wb-partner-panel {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; box-shadow: var(--shadow); padding: 24px 26px;
+  }
+  .wb-partner-head {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 8px; margin-bottom: 18px;
+  }
+  .wb-partner-head h3 { font-size: 16px; font-weight: 800; color: var(--dark); }
+  .wb-partner-head .wb-ptag {
+    font-size: 10px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .wb-partner-logos { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .wb-plogo {
+    height: 64px; border: 1px solid var(--border); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px; background: var(--bg);
+    letter-spacing: .3px; text-align: center; padding: 4px;
+    transition: transform .2s, border-color .2s;
+  }
+  .wb-plogo:hover { transform: translateY(-2px); border-color: var(--blue2); }
+  @media (max-width: 1100px) { .wb-partner-logos { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 768px)  {
+    .wb-partner-strip { padding: 0 14px; }
+    .wb-partner-panel { padding: 18px; }
+    .wb-partner-logos { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .wb-plogo { height: 52px; font-size: 13px; }
+  }
+  @media (max-width: 420px) { .wb-partner-logos { grid-template-columns: repeat(2, 1fr); } }
+</style>
 </head>
 <body>
 
@@ -1305,6 +1471,28 @@
     </div>
   </div>
 </section>
+
+<!-- ══════════════════════════════════════════════════════════
+     WERBUNG 1/4 — BILLBOARD (unter Hero, volle Breite)
+     PLATZHALTER: Marke/Text/Link vor Live-Schaltung ersetzen.
+     ══════════════════════════════════════════════════════════ -->
+<div class="wb-billboard-wrap">
+  <a class="wb-billboard" href="#" rel="sponsored noopener" target="_blank">
+    <span class="wb-tag">Anzeige</span>
+    <div class="wb-bb-inner">
+      <div class="wb-bb-brand">AUTO<span class="wb-dot">DOC</span></div>
+      <div class="wb-bb-mid">
+        <h3>Über 5 Mio. Kfz-Ersatzteile für alle Marken</h3>
+        <p>Filter, Bremsen, Zündung, Dichtungen – Originalqualität, versandkostenfrei ab 120&nbsp;€.</p>
+      </div>
+      <div class="wb-bb-price">
+        <div class="wb-small">Rabatt für 1A&nbsp;Motor-Nutzer</div>
+        <div class="wb-big">–15&nbsp;%</div>
+      </div>
+      <span class="wb-bb-cta">Zum Shop →</span>
+    </div>
+  </a>
+</div>
 
 <!-- ══ MAIN ══ -->
 <div class="main-wrap">
@@ -1491,6 +1679,30 @@
             <label><input type="checkbox" name="seller" value="private"> 👤 Privat</label>
           </div>
         </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════
+           WERBUNG 2/4 — SIDEBAR-AD
+           PLATZHALTER: Marke/Text/Link vor Live-Schaltung ersetzen.
+           ══════════════════════════════════════════════════════ -->
+      <div class="sidebar-section" style="border-bottom:none;">
+        <div class="wb-label">Werbung</div>
+        <a class="wb-sb-ad" href="#" rel="sponsored noopener" target="_blank">
+          <span class="wb-tag">Anzeige</span>
+          <div class="wb-sb-top">
+            <div class="wb-sb-brand">BOSCH</div>
+            <div class="wb-sb-sub">Automotive Aftermarket</div>
+          </div>
+          <div class="wb-sb-mid">
+            <div class="wb-ic">🔩</div>
+            <div class="wb-pr">Zündkerzen-Set ab <b>19,90&nbsp;€</b></div>
+          </div>
+          <div class="wb-sb-body">
+            <h4>Original Bosch Ersatzteile</h4>
+            <p>Zündkerzen, Lambdasonden, Einspritz­technik – geprüfte OE-Qualität für jeden Motor.</p>
+            <span class="wb-sb-btn">Jetzt entdecken →</span>
+          </div>
+        </a>
       </div>
 
     </div><!-- /sidebar-inner -->
@@ -1784,6 +1996,33 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     WERBUNG 4/4 — PARTNER-STRIP
+     PLATZHALTER: Logos/Links vor Live-Schaltung ersetzen.
+     ══════════════════════════════════════════════════════════ -->
+<div class="wb-partner-strip">
+  <div class="wb-partner-panel">
+    <div class="wb-partner-head">
+      <h3>Unsere Werbepartner</h3>
+      <span class="wb-ptag">Anzeige · Hersteller &amp; Ersatzteil-Anbieter</span>
+    </div>
+    <div class="wb-partner-logos">
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#e2001a;font-style:italic;">BOSCH</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#00a651;">MAHLE</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#1a1a1a;">Continental</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#0a4a9e;">ZF</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#0c4c5a;">AUTODOC</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="background:#ffd200;color:#1a1a1a;">MANN-FILTER</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#c8102e;">febi</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#0f58a8;">SKF</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#00843d;">VALEO</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#e2001a;">Sachs</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#004a99;">HELLA</a>
+      <a class="wb-plogo" href="#" rel="sponsored noopener" style="color:#ff6a00;">kfzteile24</a>
+    </div>
   </div>
 </div>
 
@@ -2989,5 +3228,78 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeAccountChooser();
 });
 </script>
+<!-- ══════════════════════════════════════════════════════════
+     WERBUNG 3/4 — IN-FEED NATIVE AD
+     Wird per JS in #home-listing-grid eingefügt, da index-live.js
+     das Grid via innerHTML neu rendert (statisches HTML würde
+     dabei überschrieben). Position via WB_AD_POSITION steuerbar.
+     PLATZHALTER: Marke/Text/Link vor Live-Schaltung ersetzen.
+     ══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  "use strict";
+
+  // An welcher Stelle im Grid soll die Anzeige stehen? (0 = ganz vorne)
+  var WB_AD_POSITION = 3;
+
+  var WB_AD_HTML =
+    '<a class="wb-adcard" href="#" rel="sponsored noopener" target="_blank">' +
+      '<span class="wb-adcard-corner">Anzeige</span>' +
+      '<div class="wb-adcard-img">' +
+        '<span class="wb-b">MAHLE</span>' +
+        '<span class="wb-s">Original-Teile</span>' +
+      '</div>' +
+      '<div class="wb-adcard-body">' +
+        '<h4>MAHLE Kolben, Lager &amp; Filter</h4>' +
+        '<p>Erstausrüster-Qualität direkt vom Hersteller – passend für über 90 % aller Motoren im Markt.</p>' +
+        '<span class="wb-adcard-btn">Produkte ansehen →</span>' +
+      '</div>' +
+    '</a>';
+
+  function injectAd() {
+    var grid = document.getElementById("home-listing-grid");
+    if (!grid) return;
+
+    // Schon vorhanden? -> nichts tun (verhindert Endlosschleife)
+    if (grid.querySelector(".wb-adcard")) return;
+
+    // Nicht einfügen, solange nur Lade-/Leer-Hinweis steht
+    if (grid.querySelector(".empty-box")) return;
+
+    var cards = grid.children;
+    if (!cards.length) return;
+
+    var wrap = document.createElement("div");
+    wrap.innerHTML = WB_AD_HTML;
+    var ad = wrap.firstChild;
+
+    if (cards.length > WB_AD_POSITION) {
+      grid.insertBefore(ad, cards[WB_AD_POSITION]);
+    } else {
+      grid.appendChild(ad);
+    }
+  }
+
+  function start() {
+    var grid = document.getElementById("home-listing-grid");
+    if (!grid) return;
+
+    injectAd();
+
+    // Nach jedem Neu-Rendern durch index-live.js erneut einfügen
+    var observer = new MutationObserver(function () {
+      injectAd();
+    });
+    observer.observe(grid, { childList: true });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>
