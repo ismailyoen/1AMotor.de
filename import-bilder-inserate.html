@@ -254,9 +254,30 @@ async function startImport() {
   const user = authData.user;
   log("✅ Eingeloggt als: " + user.email + "\n");
 
-  const { data: seller } = await sb.from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
-  if (!seller) { log("❌ Kein Händlerprofil gefunden!\n"); document.getElementById("btn-start").disabled = false; return; }
-  log("🏢 Händler: " + seller.company_name + " (ID: " + seller.id + ")\n\n");
+  // Profil laden – oder automatisch anlegen (Käufer & Verkäufer dürfen inserieren)
+  let seller;
+  const { data: existingProfile, error: profErr } = await sb
+    .from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
+  if (profErr) { log("❌ Profil-Ladefehler: " + profErr.message + "\n"); document.getElementById("btn-start").disabled = false; return; }
+
+  if (existingProfile) {
+    seller = existingProfile;
+    log("🏢 Profil: " + (seller.company_name || "—") + " (ID: " + seller.id + ")\n\n");
+  } else {
+    const email = user.email || "";
+    const displayName = (user.user_metadata && user.user_metadata.full_name) || email.split("@")[0] || "Privat";
+    log("ℹ️ Kein Profil vorhanden – wird automatisch angelegt (" + displayName + ")...\n");
+    const { data: newProfile, error: createErr } = await sb
+      .from("seller_profiles")
+      .insert([{ user_id: user.id, email: email, company_name: displayName, city: "", country: "DE" }])
+      .select("id,company_name").single();
+    if (createErr || !newProfile) {
+      log("❌ Profil konnte nicht angelegt werden: " + (createErr ? createErr.message : "unbekannt") + "\n");
+      document.getElementById("btn-start").disabled = false; return;
+    }
+    seller = newProfile;
+    log("✅ Neues Profil angelegt (ID: " + seller.id + ")\n\n");
+  }
 
   const { data: cats } = await sb.from("categories").select("id,name,slug");
   const catMap = {};
