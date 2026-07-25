@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1A Motor – Bild-Inserate Import</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+  body { background:#f4f7fb; color:#1f2937; padding:32px 20px; }
+  .wrap { max-width:860px; margin:0 auto; }
+  h1 { font-size:26px; color:#1a3a52; margin-bottom:6px; }
+  p.sub { color:#6b7280; font-size:14px; margin-bottom:24px; line-height:1.5; }
+  .card { background:#fff; border:1px solid #e0e9f2; border-radius:14px; padding:22px; margin-bottom:18px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+  input[type=email], input[type=password] { width:100%; padding:11px 14px; border:1.5px solid #e0e9f2; border-radius:9px; font-size:14px; outline:none; margin-bottom:14px; }
+  .btn { width:100%; padding:16px; background:linear-gradient(135deg,#1a5fa8,#2176c7); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+  .btn:hover { opacity:.9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-danger { background:linear-gradient(135deg,#dc2626,#b91c1c); }
+  .progress-wrap { background:#e0e9f2; border-radius:999px; height:18px; overflow:hidden; margin:14px 0; }
+  .progress-bar { background:linear-gradient(90deg,#1a5fa8,#4da6ff); height:100%; border-radius:999px; transition:width .3s; width:0%; }
+  .log { background:#0d1b2a; color:#4da6ff; border-radius:10px; padding:16px; font-family:monospace; font-size:13px; max-height:300px; overflow-y:auto; margin-top:16px; white-space:pre-wrap; }
+  .stat { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:14px; }
+  .stat-box { background:#f0f6ff; border:1px solid #d0e4f7; border-radius:10px; padding:12px; text-align:center; }
+  .stat-val { font-size:28px; font-weight:800; color:#1a5fa8; }
+  .stat-lbl { font-size:12px; color:#6b7280; margin-top:2px; }
+  .success { color:#10b981 !important; }
+  .error { color:#ef4444 !important; }
+  .warning { color:#f59e0b !important; }
+
+  .hint { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:10px; padding:12px 14px; font-size:13px; line-height:1.5; margin-bottom:18px; }
+  .multi { border:2px dashed #b9d4ef; border-radius:12px; padding:16px; text-align:center; background:#f7fbff; margin-bottom:6px; }
+  .multi label.file { display:inline-block; cursor:pointer; background:#1a5fa8; color:#fff; padding:10px 18px; border-radius:8px; font-weight:700; font-size:14px; }
+  .multi input { display:none; }
+  .item { display:grid; grid-template-columns:96px 1fr; gap:14px; align-items:center; padding:12px 0; border-bottom:1px solid #eef3f9; }
+  .item:last-child { border-bottom:none; }
+  .thumb { width:96px; height:72px; border-radius:8px; background:#eef3f9 center/cover no-repeat; border:1px solid #e0e9f2; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; overflow:hidden; }
+  .thumb img { width:100%; height:100%; object-fit:cover; }
+  .it-title { font-size:14px; font-weight:700; color:#1a3a52; margin-bottom:2px; }
+  .it-meta { font-size:12px; color:#6b7280; }
+  .it-hint { font-size:12px; color:#1a5fa8; margin-top:3px; }
+  .it-file { margin-top:6px; }
+  .it-file label { display:inline-block; cursor:pointer; font-size:12px; color:#1a5fa8; text-decoration:underline; font-weight:700; }
+  .it-file input { display:none; }
+  .ok-pill { display:inline-block; font-size:11px; background:#dcfce7; color:#15803d; border-radius:999px; padding:2px 8px; margin-left:6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⚙️ 1A Motor – Bild-Inserate Import</h1>
+  <p class="sub">Legt 10 Inserate passend zu deinen Fotos an und lädt jedes Bild in deinen <b>listing-images</b> Bucket hoch.
+  Muss auf <b>1amotor.de</b> geöffnet werden (gleiche Domain wie Supabase-Login).</p>
+
+  <div class="hint">
+    ⚠️ <b>Bitte prüfen:</b> Hersteller, Modell, Leistung, Baujahr und Preis sind plausible Platzhalter zum jeweiligen Foto.
+    Passe sie im Dashboard an die echten Artikel an, bevor sie dauerhaft online bleiben.
+  </div>
+
+  <div class="card">
+    <label>Eingeloggter Händler (E-Mail)</label>
+    <input type="email" id="email-input" placeholder="deine@email.de" />
+    <label>Passwort</label>
+    <input type="password" id="pass-input" placeholder="••••••••" />
+  </div>
+
+  <div class="card">
+    <label>Bilder zuordnen</label>
+    <div class="multi">
+      <label class="file">📁 Alle 10 Bilder auf einmal wählen
+        <input type="file" id="multi-input" accept="image/*" multiple />
+      </label>
+      <div style="font-size:12px;color:#6b7280;margin-top:8px;">
+        Die Bilder werden nach Dateiname sortiert und der Reihe nach den Inseraten zugeordnet.<br>
+        Stimmt eine Zuordnung nicht, kannst du sie unten pro Inserat einzeln überschreiben.
+      </div>
+    </div>
+    <div id="items"></div>
+  </div>
+
+  <div class="card">
+    <button class="btn" id="btn-start" onclick="startImport()">🚀 10 Inserate importieren</button>
+    <button class="btn btn-danger" id="btn-delete" style="margin-top:10px;display:none;" onclick="deleteAll()">🗑️ Diese 10 Inserate wieder löschen</button>
+  </div>
+
+  <div class="card" id="progress-card" style="display:none;">
+    <div class="stat">
+      <div class="stat-box"><div class="stat-val" id="stat-done">0</div><div class="stat-lbl">Eingefügt</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-err">0</div><div class="stat-lbl">Fehler</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-total">10</div><div class="stat-lbl">Gesamt</div></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="log" id="log">Bereit...\n</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://xaqfptumjkmulobdbfid.supabase.co";
+const SUPABASE_KEY = "sb_publishable_FK-FiDrd5gjFEj7LxVPZIg_5WXkNvgG";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let importedIds = [];      // eingefügte Listing-IDs (für Löschen)
+let uploadedPaths = [];    // hochgeladene Storage-Pfade (für Löschen)
+let statDone = 0, statErr = 0;
+
+// ── 10 Inserate passend zu den Fotos ──────────────────────────────────────────
+// imgHint = kurze Beschreibung des passenden Fotos (Hilfe bei der Zuordnung)
+const INSERATE = [
+  { imgHint:"Foto: Kolbenkompressor, blauer Kessel (Rico)",
+    title:"Kolbenkompressor gebraucht – 270 L Kessel – werkstattgeprüft",
+    manufacturer:"Rico", model:"Kolbenkompressor 270L", condition:"Gebraucht", price:390, year:2015,
+    location:"Stuttgart, Baden-Württemberg", category:"Kompressormotor",
+    description:"Gebrauchter Zweizylinder-Kolbenkompressor mit ca. 270 L Druckkessel. Läuft einwandfrei, Druck wird sauber gehalten. Inkl. Manometer und Druckschalter. Ideal für Werkstatt und Hobby. Abholung bevorzugt, Versand auf Anfrage.",
+    listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  { imgHint:"Foto: Caterpillar 3306 Dieselmotor, gebraucht/rostig",
+    title:"Dieselmotor Caterpillar 3306 gebraucht – 6-Zylinder Industriediesel",
+    manufacturer:"Caterpillar", model:"3306", condition:"Gebraucht", price:6800, year:2007,
+    location:"Hannover, Niedersachsen", category:"Baumaschinenmotor",
+    description:"Caterpillar 3306 Reihen-6-Zylinder Industriediesel, ca. 250 PS. Ausgebaut aus Aggregat/Baumaschine. Komplett mit Turbolader und Einspritzpumpe. Verkauf als überholungsbedürftig bzw. für Ersatzteile – ideal für Bastler oder als Basis zur Revision.",
+    listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  { imgHint:"Foto: großes Dieselaggregat / Generator-Set",
+    title:"Dieselaggregat gebraucht – Notstrom-Generator mit Dieselmotor",
+    manufacturer:"Deutz", model:"BF6M1013 Aggregat", condition:"Gebraucht", price:8900, year:2012,
+    location:"Duisburg, Nordrhein-Westfalen", category:"Dieselaggregat Motor",
+    description:"Komplettes Diesel-Notstromaggregat: wassergekühlter Deutz-Dieselmotor mit Synchrongenerator auf gemeinsamem Rahmen. Betriebsbereit, geprüft, geringe Betriebsstunden. Ideal als Notstromversorgung für Betrieb, Baustelle oder Landwirtschaft.",
+    listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  { imgHint:"Foto: grauer Industrie-Elektromotor auf Palette, mit Ritzel",
+    title:"Elektromotor Industrie gebraucht – Drehstrom 45 kW mit Ritzel",
+    manufacturer:"Siemens", model:"1LG4 – 45 kW", condition:"Gebraucht", price:1650, year:2016,
+    location:"Leipzig, Sachsen", category:"Elektromotor Industrie",
+    description:"Siemens Drehstrom-Industriemotor ca. 45 kW, 1480 U/min, 400V, IP55. Antriebsritzel auf der Welle montiert. Aus laufender Produktion ausgebaut, geprüft und dreht einwandfrei. Auf Transportpalette, versandfertig.",
+    listing_type:"Verkauf", price_type:"Festpreis" },
+
+  { imgHint:"Foto: Kart-Rennmotor (Schaltkart)",
+    title:"Kart-Motor gebraucht – Schaltkart Rennmotor KZ – frisch überholt",
+    manufacturer:"TM Racing", model:"KZ R1", condition:"Gebraucht", price:1450, year:2021,
+    location:"Kerpen, Nordrhein-Westfalen", category:"Motorradmotor",
+    description:"Schaltkart-Rennmotor (KZ-Klasse), 125 ccm wassergekühlter 2-Takter, ca. 48 PS. Frisch überholt, mit Vergaser und Auslasssteuerung. Ideal für Schaltkart/KZ2. Wenige Läufe seit Revision. Weitere Ersatzteile auf Anfrage.",
+    listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  { imgHint:"Foto: grüner/oliver Reihen-Dieselmotor (Baumaschine/NATO)",
+    title:"Dieselmotor gebraucht – Mercedes OM366 6-Zylinder – NATO/Baumaschine",
+    manufacturer:"Mercedes-Benz", model:"OM366", condition:"Gebraucht", price:4200, year:2005,
+    location:"Kassel, Hessen", category:"LKW Motor",
+    description:"Mercedes OM366 Reihen-6-Zylinder Dieselmotor, ca. 170 PS, ehemals Bundeswehr/NATO-Bestand (olivgrün). Komplettes Aggregat, geringe Betriebsstunden, gepflegt. Passend für LKW, Unimog und Baumaschinen. Geprüft und startklar.",
+    listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  { imgHint:"Foto: großer grau/blauer Elektromotor auf Transportgestell",
+    title:"Elektromotor gebraucht – Drehstrom Großmotor 90 kW – geprüft",
+    manufacturer:"ABB", model:"M3BP 280 – 90 kW", condition:"Gebraucht", price:2900, year:2017,
+    location:"Essen, Nordrhein-Westfalen", category:"Drehstrommotor",
+    description:"ABB Drehstrom-Großmotor ca. 90 kW, 1485 U/min, 400/690V, IP55. Aus Industrieanlage ausgebaut, elektrisch geprüft, läuft ruhig ohne Geräusche. Auf stabilem Transportgestell, versandbereit per Spedition.",
+    listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  { imgHint:"Foto: zwei Drehstrommotoren auf Palette (weiß + grün)",
+    title:"2x Drehstrommotor gebraucht – Konvolut Industriemotoren",
+    manufacturer:"Siemens", model:"gemischt 11–15 kW", condition:"Gebraucht", price:1200, year:2014,
+    location:"Dortmund, Nordrhein-Westfalen", category:"Drehstrommotor",
+    description:"Konvolut aus zwei gebrauchten Drehstrommotoren, ca. 11–15 kW, verschiedene Hersteller. Aus Anlagenauflösung, beide geprüft und lauffähig. Verkauf nur zusammen. Ideal für Ersatzteile oder Wiederverwendung. Auf Palette abholbereit.",
+    listing_type:"Verkauf", price_type:"Verhandlungsbasis" },
+
+  { imgHint:"Foto: dunkler Drehstrommotor auf Palette",
+    title:"Drehstrommotor gebraucht – 30 kW – 1480 U/min IE3",
+    manufacturer:"WEG", model:"W22 200L", condition:"Gebraucht", price:1450, year:2018,
+    location:"Bremen", category:"Drehstrommotor",
+    description:"WEG W22 Drehstrommotor 30 kW, 1480 U/min, IE3 Premium-Wirkungsgrad, IP55. Aus Produktionsanlage ausgebaut, geprüft, dreht sauber. Fußausführung B3. Auf Palette, Versand möglich.",
+    listing_type:"Verkauf", price_type:"Festpreis" },
+
+  { imgHint:"Foto: grauer Drehstrommotor auf Holzpalette",
+    title:"Drehstrommotor gebraucht – 18,5 kW – IE2 Industriemotor",
+    manufacturer:"VEM", model:"K21R 180", condition:"Gebraucht", price:980, year:2015,
+    location:"Chemnitz, Sachsen", category:"Drehstrommotor",
+    description:"VEM Drehstrommotor 18,5 kW, ca. 1470 U/min, 400V, IP55, Fußausführung B3. Aus Betriebsauflösung, geprüft und lauffähig. Robuster Industriemotor für Pumpen, Lüfter, Förderanlagen. Auf Holzpalette versandfertig.",
+    listing_type:"Verkauf", price_type:"Festpreis" },
+];
+
+// ── Bild-Zuordnung ────────────────────────────────────────────────────────────
+const assigned = new Array(INSERATE.length).fill(null); // File-Objekte
+
+function renderItems() {
+  const wrap = document.getElementById("items");
+  wrap.innerHTML = INSERATE.map((ins, i) => `
+    <div class="item">
+      <div class="thumb" id="thumb-${i}">kein Bild</div>
+      <div>
+        <div class="it-title">${i+1}. ${ins.title}<span class="ok-pill" id="pill-${i}" style="display:none;">Bild ✓</span></div>
+        <div class="it-meta">${ins.category} · ${ins.price.toLocaleString("de-DE")} € · ${ins.location}</div>
+        <div class="it-hint">${ins.imgHint}</div>
+        <div class="it-file">
+          <label>Bild wählen / ändern
+            <input type="file" accept="image/*" data-idx="${i}" onchange="onSingle(event)" />
+          </label>
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+function setThumb(i, file) {
+  assigned[i] = file;
+  const t = document.getElementById("thumb-" + i);
+  const pill = document.getElementById("pill-" + i);
+  if (file) {
+    const url = URL.createObjectURL(file);
+    t.innerHTML = `<img src="${url}" alt="">`;
+    pill.style.display = "inline-block";
+  } else {
+    t.innerHTML = "kein Bild";
+    pill.style.display = "none";
+  }
+}
+
+function onSingle(e) {
+  const i = +e.target.dataset.idx;
+  const f = e.target.files[0];
+  if (f) setThumb(i, f);
+}
+
+document.getElementById("multi-input").addEventListener("change", (e) => {
+  const files = Array.from(e.target.files)
+    .filter(f => f.type.startsWith("image/"))
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  files.slice(0, INSERATE.length).forEach((f, i) => setThumb(i, f));
+});
+
+renderItems();
+
+// ── Import ────────────────────────────────────────────────────────────────────
+async function uploadImage(file, userId, i) {
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = `${userId}/${Date.now()}-${i}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await sb.storage.from("listing-images").upload(path, file);
+  if (error) { log("   ⚠️ Bild-Upload fehlgeschlagen: " + error.message + "\n"); return null; }
+  uploadedPaths.push(path);
+  const { data } = sb.storage.from("listing-images").getPublicUrl(path);
+  return data?.publicUrl || null;
+}
+
+async function startImport() {
+  const email = document.getElementById("email-input").value.trim();
+  const pass  = document.getElementById("pass-input").value;
+  if (!email || !pass) { alert("Bitte E-Mail und Passwort eingeben!"); return; }
+
+  document.getElementById("progress-card").style.display = "block";
+  document.getElementById("btn-start").disabled = true;
+  statDone = 0; statErr = 0; importedIds = []; uploadedPaths = [];
+  document.getElementById("log").textContent = "";
+  log("🔐 Einloggen...\n");
+
+  const { data: authData, error: authErr } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (authErr) { log("❌ Login fehlgeschlagen: " + authErr.message + "\n"); document.getElementById("btn-start").disabled = false; return; }
+  const user = authData.user;
+  log("✅ Eingeloggt als: " + user.email + "\n");
+
+  const { data: seller } = await sb.from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
+  if (!seller) { log("❌ Kein Händlerprofil gefunden!\n"); document.getElementById("btn-start").disabled = false; return; }
+  log("🏢 Händler: " + seller.company_name + " (ID: " + seller.id + ")\n\n");
+
+  const { data: cats } = await sb.from("categories").select("id,name,slug");
+  const catMap = {};
+  if (cats) cats.forEach(c => { catMap[c.name] = c.id; catMap[c.slug] = c.id; });
+  log("📦 " + (cats ? cats.length : 0) + " Kategorien geladen\n\n");
+
+  document.getElementById("stat-total").textContent = INSERATE.length;
+
+  for (let i = 0; i < INSERATE.length; i++) {
+    const ins = INSERATE[i];
+
+    // Kategorie-ID finden (exakt → fuzzy → Fallback)
+    let catId = catMap[ins.category];
+    if (!catId && cats && cats.length) {
+      const match = cats.find(c => c.name.toLowerCase().includes(ins.category.toLowerCase().split(" ")[0]));
+      catId = match ? match.id : cats[0].id;
+    }
+
+    // Bild hochladen (falls zugeordnet)
+    let imageUrls = [];
+    if (assigned[i]) {
+      log("🖼️  [" + (i+1) + "] lade Bild hoch...\n");
+      const url = await uploadImage(assigned[i], user.id, i);
+      if (url) imageUrls = [url];
+    } else {
+      log("ℹ️  [" + (i+1) + "] kein Bild zugeordnet – Inserat ohne Bild.\n");
+    }
+
+    const payload = {
+      seller_id:    seller.id,
+      category_id:  catId,
+      title:        ins.title,
+      manufacturer: ins.manufacturer,
+      model:        ins.model,
+      condition:    ins.condition || "Gebraucht",
+      price:        ins.price,
+      year:         ins.year || null,
+      location:     ins.location || "Deutschland",
+      description:  ins.description,
+      status:       "Freigegeben",
+      listing_type: ins.listing_type || "Verkauf",
+      price_type:   ins.price_type || "Festpreis",
+      image_urls:   imageUrls
+    };
+
+    const { data, error } = await sb.from("listings").insert([payload]).select("id");
+
+    if (error) {
+      statErr++;
+      log("❌ [" + (i+1) + "/" + INSERATE.length + "] FEHLER: " + ins.title.substring(0,40) + "... → " + error.message + "\n");
+    } else {
+      statDone++;
+      importedIds.push(data[0].id);
+      log("✅ [" + (i+1) + "/" + INSERATE.length + "] " + ins.title.substring(0,55) + "...\n");
+    }
+
+    document.getElementById("stat-done").textContent = statDone;
+    document.getElementById("stat-err").textContent  = statErr;
+    document.getElementById("progress-bar").style.width = ((i+1)/INSERATE.length*100).toFixed(0) + "%";
+    await new Promise(r => setTimeout(r, 80));
+  }
+
+  log("\n🎉 FERTIG! " + statDone + " Inserate eingefügt, " + statErr + " Fehler.\n");
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-delete").style.display = "block";
+}
+
+async function deleteAll() {
+  if (!importedIds.length) { alert("Keine importierten IDs in dieser Session gespeichert."); return; }
+  if (!confirm("Diese " + importedIds.length + " Inserate (und hochgeladene Bilder) wieder löschen?")) return;
+
+  log("\n🗑️ Lösche " + importedIds.length + " Inserate...\n");
+  const { error } = await sb.from("listings").delete().in("id", importedIds);
+  if (error) { log("❌ Fehler beim Löschen der Inserate: " + error.message + "\n"); return; }
+  log("✅ Inserate gelöscht.\n");
+
+  if (uploadedPaths.length) {
+    const { error: sErr } = await sb.storage.from("listing-images").remove(uploadedPaths);
+    if (sErr) log("⚠️ Bilder im Storage konnten nicht gelöscht werden: " + sErr.message + "\n");
+    else log("✅ " + uploadedPaths.length + " Bilder aus Storage entfernt.\n");
+  }
+  importedIds = []; uploadedPaths = [];
+}
+
+function log(msg) {
+  const el = document.getElementById("log");
+  el.textContent += msg;
+  el.scrollTop = el.scrollHeight;
+}
+</script>
+</body>
+</html>
