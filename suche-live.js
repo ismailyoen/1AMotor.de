@@ -25,11 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const heroConfig = [
     {
-      match: ["automotor", "pkw motor", "benzinmotor auto", "dieselmotor auto", "elektromotor auto", "hybridmotor"],
-      title: "Automotoren",
-      image: "images/automotor-header.jpg"
-    },
-    {
       match: ["aufzug"],
       title: "Aufzugsmotoren",
       image: "images/aufzugsmotor-header.png"
@@ -439,35 +434,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     resultsInfo.textContent = `${listings.length} Ergebnis${listings.length === 1 ? "" : "se"} gefunden`;
   }
 
-  if (!listings.length) {
-    grid.innerHTML = `
-      <div class="empty-box">
-        <h3>Keine passenden Anzeigen gefunden</h3>
-        <p>Ändere deinen Suchbegriff oder wähle eine andere Kategorie.</p>
-      </div>
-    `;
-  } else {
-    grid.innerHTML = listings.map((listing) => {
-      const category = Array.isArray(listing.categories)
-        ? listing.categories[0]?.name || "Unbekannt"
-        : listing.categories?.name || "Unbekannt";
+  // ────────── SEITENBLÄTTERUNG (Pagination) ──────────
+  const PAGE_SIZE = 24;
+  const initialPage = Math.max(1, parseInt(params.get("page") || "1", 10) || 1);
 
-      const icon = getCategoryIcon(category);
-      const createdAt = new Date(listing.created_at).toLocaleDateString("de-DE");
+  // Baut die HTML einer einzelnen Anzeigen-Karte
+  function buildCard(listing) {
+    const category = Array.isArray(listing.categories)
+      ? listing.categories[0]?.name || "Unbekannt"
+      : listing.categories?.name || "Unbekannt";
 
-      const firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length
-        ? listing.image_urls[0]
-        : null;
+    const icon = getCategoryIcon(category);
+    const createdAt = new Date(listing.created_at).toLocaleDateString("de-DE");
 
-      // Kategoriebild als Fallback wenn kein eigenes Bild vorhanden
-      const fallbackImg = window.getCategoryImage ? window.getCategoryImage(category) : null;
-      const displayImage = firstImage || fallbackImg;
+    const firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length
+      ? listing.image_urls[0]
+      : null;
 
-      const imageStyle = displayImage
-        ? `style="background-image:url('${displayImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
-        : "";
+    // Kategoriebild als Fallback wenn kein eigenes Bild vorhanden
+    const fallbackImg = window.getCategoryImage ? window.getCategoryImage(category) : null;
+    const displayImage = firstImage || fallbackImg;
 
-      return `
+    const imageStyle = displayImage
+      ? `style="background-image:url('${displayImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
+      : "";
+
+    return `
         <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(listing.id)}">
           <div class="card-image" ${imageStyle}>
             <span class="badge">Live</span>
@@ -492,7 +484,105 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
         </a>
       `;
-    }).join("");
+  }
+
+  // Stellt sicher, dass das Pagination-CSS einmalig vorhanden ist
+  function ensurePgStyles() {
+    if (document.getElementById("wb-pg-styles")) return;
+    const st = document.createElement("style");
+    st.id = "wb-pg-styles";
+    st.textContent = `
+      #search-pagination.wb-pg{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin:32px 0 8px;}
+      .wb-pg-btn{min-width:40px;height:40px;padding:0 12px;border:1px solid #e0e9f2;background:#fff;color:#1b2d42;border-radius:10px;font:600 14px/1 'Outfit',Arial,sans-serif;cursor:pointer;transition:all .15s;}
+      .wb-pg-btn:hover:not(:disabled):not(.active){border-color:#2176c7;color:#2176c7;}
+      .wb-pg-btn.active{background:#2176c7;border-color:#2176c7;color:#fff;cursor:default;}
+      .wb-pg-btn:disabled{opacity:.4;cursor:not-allowed;}
+      .wb-pg-arrow{font-size:18px;padding:0;}
+      .wb-pg-gap{min-width:24px;text-align:center;color:#7a93ae;user-select:none;}
+    `;
+    document.head.appendChild(st);
+  }
+
+  // Liste der anzuzeigenden Seitenzahlen (mit … bei vielen Seiten)
+  function pageList(current, total) {
+    const out = [];
+    if (total <= 7) { for (let i = 1; i <= total; i++) out.push(i); return out; }
+    out.push(1);
+    if (current > 4) out.push("...");
+    const s = Math.max(2, current - 1), e = Math.min(total - 1, current + 1);
+    for (let i = s; i <= e; i++) out.push(i);
+    if (current < total - 3) out.push("...");
+    out.push(total);
+    return out;
+  }
+
+  // Rendert die Blätter-Navigation unter dem Grid
+  function renderPagination(current, totalPages) {
+    let nav = document.getElementById("search-pagination");
+    if (!nav) {
+      nav = document.createElement("nav");
+      nav.id = "search-pagination";
+      nav.className = "wb-pg";
+      nav.setAttribute("aria-label", "Seitenblätterung");
+      grid.insertAdjacentElement("afterend", nav);
+    }
+    if (totalPages <= 1) { nav.innerHTML = ""; return; }
+
+    let html = `<button class="wb-pg-btn wb-pg-arrow" ${current === 1 ? "disabled" : ""} data-pg="${current - 1}" aria-label="Vorherige Seite">‹</button>`;
+    pageList(current, totalPages).forEach((p) => {
+      if (p === "...") html += `<span class="wb-pg-gap">…</span>`;
+      else html += `<button class="wb-pg-btn ${p === current ? "active" : ""}" data-pg="${p}"${p === current ? ' aria-current="page"' : ""}>${p}</button>`;
+    });
+    html += `<button class="wb-pg-btn wb-pg-arrow" ${current === totalPages ? "disabled" : ""} data-pg="${current + 1}" aria-label="Nächste Seite">›</button>`;
+    nav.innerHTML = html;
+
+    nav.querySelectorAll("button[data-pg]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const target = parseInt(b.dataset.pg, 10);
+        renderPage(target);
+        const top = grid.getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+      });
+    });
+  }
+
+  // Rendert eine bestimmte Seite
+  function renderPage(page) {
+    const totalPages = Math.max(1, Math.ceil(listings.length / PAGE_SIZE));
+    const current = Math.min(Math.max(1, page), totalPages);
+    const start = (current - 1) * PAGE_SIZE;
+    const slice = listings.slice(start, start + PAGE_SIZE);
+
+    grid.innerHTML = slice.map(buildCard).join("");
+    renderPagination(current, totalPages);
+
+    // URL aktualisieren, damit Seite teilbar / per Zurück-Button erreichbar ist
+    const p = new URLSearchParams(window.location.search);
+    if (current > 1) p.set("page", current); else p.delete("page");
+    const qs = p.toString();
+    history.replaceState(null, "", qs ? "?" + qs : window.location.pathname);
+
+    // Ergebnis-Info aktualisieren
+    if (resultsInfo) {
+      const from = listings.length ? start + 1 : 0;
+      const to = start + slice.length;
+      resultsInfo.textContent = `${from}–${to} von ${listings.length} Ergebnis${listings.length === 1 ? "" : "sen"} · Seite ${current}/${totalPages}`;
+    }
+  }
+
+  if (!listings.length) {
+    grid.innerHTML = `
+      <div class="empty-box">
+        <h3>Keine passenden Anzeigen gefunden</h3>
+        <p>Ändere deinen Suchbegriff oder wähle eine andere Kategorie.</p>
+      </div>
+    `;
+    const nav = document.getElementById("search-pagination");
+    if (nav) nav.innerHTML = "";
+    if (resultsInfo) resultsInfo.textContent = "0 Ergebnisse gefunden";
+  } else {
+    ensurePgStyles();
+    renderPage(initialPage);
   }
 
   searchButton?.addEventListener("click", goToSearch);
