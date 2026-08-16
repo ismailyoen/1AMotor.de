@@ -1,42 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const listingGrid = document.getElementById("home-listing-grid");
   const resultsInfo = document.getElementById("home-results-info");
-
-  // ── In-Feed Technologie-Partner Kacheln (Supabase & Cloudflare) ────────────
-  const SPONSOR_TILES = {
-    supabase: `
-      <a class="sponsor-tile sp-supabase" href="https://supabase.com" target="_blank" rel="noopener sponsored">
-        <div class="sponsor-hero">
-          <span class="sponsor-tag">Anzeige</span>
-          <svg viewBox="0 0 48 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M27.6 63.2c-1.3 1.6-3.9.7-3.9-1.4l-.6-25.4H40c3.1 0 4.8 3.5 2.9 5.9L27.6 63.2z" fill="#fff"/>
-            <path d="M20.4.8c1.3-1.6 3.9-.7 3.9 1.4l.3 25.4H8c-3.1 0-4.8-3.5-2.9-5.9L20.4.8z" fill="#fff" fill-opacity="0.65"/>
-          </svg>
-        </div>
-        <div class="sponsor-body">
-          <div class="sponsor-kicker">Technologie-Partner</div>
-          <div class="sponsor-name">Supabase</div>
-          <div class="sponsor-desc">Die Open-Source-Datenbank hinter 1A Motor – Postgres, Auth &amp; Storage in Sekunden.</div>
-          <div class="sponsor-cta">Mehr erfahren →</div>
-        </div>
-      </a>`,
-    cloudflare: `
-      <a class="sponsor-tile sp-cloudflare" href="https://www.cloudflare.com" target="_blank" rel="noopener sponsored">
-        <div class="sponsor-hero">
-          <span class="sponsor-tag">Anzeige</span>
-          <svg viewBox="0 0 72 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M52 30H17a11 11 0 0 1-2.3-21.8A14 14 0 0 1 41 7.5a10 10 0 0 1 13.7 7A9 9 0 0 1 52 30z" fill="#fff"/>
-            <path d="M58 30H36l1.8-3.3a1.6 1.6 0 0 1 1.3-.8l19-.7c1 0 1 1.4 0 1.6l-.1 3.2z" fill="#fff" fill-opacity="0.7"/>
-          </svg>
-        </div>
-        <div class="sponsor-body">
-          <div class="sponsor-kicker">Technologie-Partner</div>
-          <div class="sponsor-name">Cloudflare</div>
-          <div class="sponsor-desc">Schützt &amp; beschleunigt 1A Motor weltweit – CDN, DNS und Web-Analytics.</div>
-          <div class="sponsor-cta">Mehr erfahren →</div>
-        </div>
-      </a>`
-  };
   const sortSelect = document.getElementById("home-sort-select");
   const searchInput = document.getElementById("home-search-input");
   const categorySelect = document.getElementById("home-category-select");
@@ -187,7 +151,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     listings = data || [];
 
     if (resultsInfo) {
-      resultsInfo.textContent = `${listings.length} aktuelle Angebote aus Supabase`;
+      resultsInfo.textContent = listings.length
+        ? `${listings.length} aktuelle Angebote`
+        : "";
     }
   }
 
@@ -215,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const _cards = items.map((listing) => {
+    listingGrid.innerHTML = items.map((listing) => {
       const category = Array.isArray(listing.categories)
         ? listing.categories[0]?.name || "Unbekannt"
         : listing.categories?.name || "Unbekannt";
@@ -266,11 +232,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
         </a>
       `;
-    });
-
-    // Zwei Partner-Kacheln fest ins Feed einsetzen (Position 7 & 8, überlebt Re-Render)
-    _cards.splice(Math.min(6, _cards.length), 0, SPONSOR_TILES.supabase, SPONSOR_TILES.cloudflare);
-    listingGrid.innerHTML = _cards.join("");
+    }).join("");
   }
 
   function bindSearch() {
