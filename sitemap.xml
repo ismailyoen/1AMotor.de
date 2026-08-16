@@ -145,9 +145,15 @@
   </url>
   <url>
     <loc>https://1amotor.de/datenschutz.html</loc>
-    <lastmod>2026-04-27</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.35</priority>
+  </url>
+  <url>
+    <loc>https://1amotor.de/privacy.html</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.30</priority>
   </url>
   <url>
     <loc>https://1amotor.de/impressum.html</loc>
