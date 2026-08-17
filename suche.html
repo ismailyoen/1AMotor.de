@@ -149,6 +149,38 @@
     .se-price input:focus { border-color: var(--sky); }
     .se-price input::-webkit-outer-spin-button, .se-price input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
+    /* Erweiterte Filter-Abschnitte (Kategorie, Zustand, Baujahr, Hersteller, Anbieter) */
+    .se-fsection-head { display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin-bottom: 9px; user-select: none; }
+    .se-fsection-head .se-flabel { margin-bottom: 0; }
+    .se-fchev { width: 11px; height: 11px; color: #6f88a1; transition: transform .15s; flex-shrink: 0; }
+    .se-fsection.collapsed .se-fchev { transform: rotate(-90deg); }
+    .se-fsection.collapsed .se-fbody { display: none; }
+    .se-fsearch {
+      width: 100%; height: 36px; border: 1px solid rgba(255,255,255,0.14); border-radius: 8px;
+      background: rgba(255,255,255,0.04); color: #eaf1f8; padding: 0 10px; font-size: 12.5px; font-family: inherit;
+      outline: none; margin-bottom: 8px;
+    }
+    .se-fsearch::placeholder { color: #6f88a1; }
+    .se-fsearch:focus { border-color: var(--sky); }
+    .se-fcheck-list { display: flex; flex-direction: column; gap: 2px; max-height: 210px; overflow-y: auto; padding-right: 2px; }
+    .se-fcheck-list::-webkit-scrollbar { width: 6px; }
+    .se-fcheck-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 6px; }
+    .se-fcheck {
+      display: flex; align-items: center; gap: 9px; font-size: 13px; color: #cddcec;
+      cursor: pointer; padding: 6px 4px; border-radius: 7px; transition: background .12s;
+    }
+    .se-fcheck:hover { background: rgba(255,255,255,0.04); }
+    .se-fcheck input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--sky); flex-shrink: 0; cursor: pointer; }
+    .se-fcheck .se-fname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .se-fcheck .se-fcnt { font-size: 11px; color: #6f88a1; flex-shrink: 0; }
+    .se-fcheck.se-fempty { opacity: .4; }
+    .se-fnote { font-size: 11px; color: #6f88a1; margin-top: 6px; line-height: 1.5; }
+    .se-active-count {
+      display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
+      padding: 0 5px; border-radius: 999px; background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: #fff; font-size: 11px; font-weight: 700; margin-left: 6px;
+    }
+
     /* Ergebnis-Hauptbereich */
     .se-breadcrumb { font-size: 13px; color: #7f97af; margin-bottom: 8px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
     .se-breadcrumb a { color: #7f97af; }
@@ -385,6 +417,25 @@
             Filter zurücksetzen
           </button>
         </div>
+        <div class="se-fsection" id="se-fsec-kategorie">
+          <div class="se-fsection-head" onclick="window.__seToggleSection && window.__seToggleSection('se-fsec-kategorie')">
+            <div class="se-flabel">Kategorie</div>
+            <svg class="se-fchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="se-fbody">
+            <input id="se-fkat-search" class="se-fsearch" type="text" placeholder="Kategorie suchen…" />
+            <div class="se-fcheck-list" id="se-fkat-list"></div>
+          </div>
+        </div>
+        <div class="se-fsection" id="se-fsec-zustand">
+          <div class="se-fsection-head" onclick="window.__seToggleSection && window.__seToggleSection('se-fsec-zustand')">
+            <div class="se-flabel">Zustand</div>
+            <svg class="se-fchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="se-fbody">
+            <div class="se-fcheck-list" id="se-fzustand-list"></div>
+          </div>
+        </div>
         <div class="se-fsection">
           <div class="se-flabel">Standort</div>
           <select id="se-fstandort" class="se-fselect"></select>
@@ -396,13 +447,40 @@
             <input id="se-max" type="number" inputmode="numeric" min="0" placeholder="Max. €" />
           </div>
         </div>
+        <div class="se-fsection">
+          <div class="se-flabel">Baujahr</div>
+          <div class="se-price">
+            <input id="se-jahr-min" type="number" inputmode="numeric" min="1900" max="2100" placeholder="Von" />
+            <input id="se-jahr-max" type="number" inputmode="numeric" min="1900" max="2100" placeholder="Bis" />
+          </div>
+        </div>
+        <div class="se-fsection collapsed" id="se-fsec-hersteller">
+          <div class="se-fsection-head" onclick="window.__seToggleSection && window.__seToggleSection('se-fsec-hersteller')">
+            <div class="se-flabel">Hersteller</div>
+            <svg class="se-fchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="se-fbody">
+            <input id="se-fherst-search" class="se-fsearch" type="text" placeholder="Hersteller suchen…" />
+            <div class="se-fcheck-list" id="se-fherst-list"></div>
+          </div>
+        </div>
+        <div class="se-fsection" id="se-fsec-anbieter">
+          <div class="se-fsection-head" onclick="window.__seToggleSection && window.__seToggleSection('se-fsec-anbieter')">
+            <div class="se-flabel">Anbieter</div>
+            <svg class="se-fchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="se-fbody">
+            <div class="se-fcheck-list" id="se-fanbieter-list"></div>
+            <div class="se-fnote">"Geprüfte Händler" fehlt hier bewusst – dafür gibt es aktuell kein Datenfeld in der Datenbank.</div>
+          </div>
+        </div>
       </aside>
 
       <!-- Ergebnisse -->
       <section class="se-main">
         <button class="se-mobfilter" id="se-mobfilter">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
-          Filter
+          Filter<span class="se-active-count" id="se-active-count" style="display:none;"></span>
         </button>
 
         <div class="se-breadcrumb" id="se-breadcrumb">
@@ -527,6 +605,38 @@
     "Mecklenburg-Vorpommern": ["mv"],
     "Sachsen-Anhalt": ["sachsen anhalt"]
   };
+  // Best-effort Stadt→Bundesland-Zuordnung, damit der Standort-Filter auch greift,
+  // wenn im Anzeigen-Standort nur die Stadt steht (z. B. "München" statt "München, Bayern").
+  // Nicht erschöpfend – deckt die größeren deutschen Städte ab.
+  var CITY_TO_BUNDESLAND = {
+    "münchen": "Bayern", "nürnberg": "Bayern", "augsburg": "Bayern", "würzburg": "Bayern", "regensburg": "Bayern", "ingolstadt": "Bayern",
+    "berlin": "Berlin",
+    "hamburg": "Hamburg",
+    "köln": "Nordrhein-Westfalen", "duesseldorf": "Nordrhein-Westfalen", "düsseldorf": "Nordrhein-Westfalen", "dortmund": "Nordrhein-Westfalen", "essen": "Nordrhein-Westfalen", "bonn": "Nordrhein-Westfalen", "bielefeld": "Nordrhein-Westfalen", "wuppertal": "Nordrhein-Westfalen", "münster": "Nordrhein-Westfalen",
+    "stuttgart": "Baden-Württemberg", "mannheim": "Baden-Württemberg", "karlsruhe": "Baden-Württemberg", "freiburg": "Baden-Württemberg", "schwarzwald": "Baden-Württemberg", "heidelberg": "Baden-Württemberg",
+    "frankfurt": "Hessen", "wiesbaden": "Hessen", "kassel": "Hessen", "darmstadt": "Hessen",
+    "hannover": "Niedersachsen", "braunschweig": "Niedersachsen", "wolfsburg": "Niedersachsen", "oldenburg": "Niedersachsen", "osnabrück": "Niedersachsen",
+    "leipzig": "Sachsen", "dresden": "Sachsen", "chemnitz": "Sachsen",
+    "bremen": "Bremen", "bremerhaven": "Bremen",
+    "dortmund ": "Nordrhein-Westfalen",
+    "mainz": "Rheinland-Pfalz", "ludwigshafen": "Rheinland-Pfalz", "koblenz": "Rheinland-Pfalz", "trier": "Rheinland-Pfalz",
+    "saarbrücken": "Saarland",
+    "kiel": "Schleswig-Holstein", "lübeck": "Schleswig-Holstein", "flensburg": "Schleswig-Holstein",
+    "rostock": "Mecklenburg-Vorpommern", "schwerin": "Mecklenburg-Vorpommern",
+    "magdeburg": "Sachsen-Anhalt", "halle": "Sachsen-Anhalt",
+    "erfurt": "Thüringen", "jena": "Thüringen",
+    "potsdam": "Brandenburg", "cottbus": "Brandenburg", "essen ": "Nordrhein-Westfalen",
+    "würzburg ": "Bayern", "künzelsau": "Baden-Württemberg", "bruchsal": "Baden-Württemberg"
+  };
+
+  // ── Zustand (Kondition) ──
+  var CONDITIONS = ["Neu", "Gebraucht", "Generalüberholt", "Austauschmotor"];
+  // Normalisiert Umlaute zu ASCII (z. B. für den Sitemap-Link ?condition=Generalueberholt),
+  // damit URL-Parameter unabhängig von Groß/Kleinschreibung und ü/ue zuverlässig matchen.
+  function normText(v) {
+    return String(v || "").toLowerCase()
+      .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss");
+  }
 
   // ── SVG-Icons für Kacheln (keyword -> icon) ──
   var TILE_ICONS = {
@@ -554,9 +664,14 @@
   }
 
   // ── State ──
-  var ALL = [];        // alle freigegebenen Anzeigen
-  var CATS = [];       // Kategorienamen
-  var state = { q: "", category: "", standort: "Deutschland", min: null, max: null, sort: "new", view: "grid", page: 1 };
+  var ALL = [];         // alle freigegebenen Anzeigen
+  var CATS = [];        // Kategorienamen
+  var RATINGS = {};     // seller_id -> Durchschnittsbewertung
+  var state = {
+    q: "", category: "", standort: "Deutschland", min: null, max: null,
+    zustand: [], hersteller: [], jahrMin: null, jahrMax: null, anbieter: [],
+    sort: "new", view: "grid", page: 1
+  };
   var FAVS = loadFavs();
 
   // ── DOM ──
@@ -582,10 +697,24 @@
     } catch (e) { CATS = []; }
     fillCategorySelects();
 
-    // Anzeigen laden
+    // Bewertungen laden (für Anbieter-Filter "Top-Bewertung") — best effort, Suche darf ohne nicht scheitern
+    try {
+      var revRes = await supabaseClient.from("reviews").select("seller_id,rating");
+      if (!revRes.error && revRes.data) {
+        var sums = {}, counts = {};
+        revRes.data.forEach(function (r) {
+          if (!r.seller_id) return;
+          sums[r.seller_id] = (sums[r.seller_id] || 0) + Number(r.rating || 0);
+          counts[r.seller_id] = (counts[r.seller_id] || 0) + 1;
+        });
+        Object.keys(sums).forEach(function (sid) { RATINGS[sid] = sums[sid] / counts[sid]; });
+      }
+    } catch (e) { /* Bewertungen optional — Top-Bewertung-Filter zeigt dann einfach nichts an */ }
+
+    // Anzeigen laden (inkl. Anbieter-Typ für den Anbieter-Filter)
     var res = await supabaseClient
       .from("listings")
-      .select("id,title,manufacturer,model,condition,price,year,location,description,status,created_at,image_urls,categories(name)")
+      .select("id,title,manufacturer,model,condition,price,year,location,description,status,created_at,image_urls,seller_id,categories(name),seller_profiles(company_type)")
       .eq("status", "Freigegeben")
       .order("created_at", { ascending: false });
 
@@ -597,16 +726,29 @@
     ALL = (res.data || []).map(normalize);
 
     buildTiles();
+    buildKategorieList();
+    buildZustandList();
+    buildHerstellerList();
+    buildAnbieterList();
     render();
   }
 
   function normalize(l) {
     var cat = Array.isArray(l.categories) ? (l.categories[0] && l.categories[0].name) : (l.categories && l.categories.name);
     l._cat = cat || "";
+    var sp = Array.isArray(l.seller_profiles) ? l.seller_profiles[0] : l.seller_profiles;
+    l._gewerblich = !!(sp && sp.company_type && String(sp.company_type).trim());
+    var avg = l.seller_id != null ? RATINGS[l.seller_id] : null;
+    l._topRated = avg != null && avg >= 4.5;
     return l;
   }
 
-  /* ── URL <-> State ── */
+  /* ── URL <-> State ──
+     Bekannte Alt-/SEO-Links (sitemap.xml, Footer):
+       ?category=Automotor            → einzelner oder kommagetrennter Kategoriewert
+       ?condition=Neu|Gebraucht|Generalueberholt  → Zustand (auch ASCII-Variante ohne Umlaut)
+     Neue Filter (Kategorie mehrfach, Hersteller, Baujahr, Anbieter) hängen sich mit denselben
+     Konventionen an, damit alte Links weiter funktionieren und neue Filter teilbar/bookmarkbar sind. */
   function readUrl() {
     var p = new URLSearchParams(location.search);
     state.q = (p.get("q") || "").trim();
@@ -614,10 +756,16 @@
     state.standort = (p.get("standort") || "Deutschland").trim();
     state.min = numOrNull(p.get("min"));
     state.max = numOrNull(p.get("max"));
+    state.zustand = splitParam(p.get("condition"));
+    state.hersteller = splitParam(p.get("hersteller"));
+    state.jahrMin = numOrNull(p.get("baujahr_min"));
+    state.jahrMax = numOrNull(p.get("baujahr_max"));
+    state.anbieter = splitParam(p.get("anbieter"));
     state.sort = p.get("sort") || "new";
     state.view = p.get("view") === "list" ? "list" : "grid";
     state.page = Math.max(1, parseInt(p.get("page"), 10) || 1);
   }
+  function splitParam(v) { return (v || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean); }
   function syncUrl() {
     var p = new URLSearchParams();
     if (state.q) p.set("q", state.q);
@@ -625,6 +773,11 @@
     if (state.standort && state.standort !== "Deutschland") p.set("standort", state.standort);
     if (state.min != null) p.set("min", state.min);
     if (state.max != null) p.set("max", state.max);
+    if (state.zustand.length) p.set("condition", state.zustand.join(","));
+    if (state.hersteller.length) p.set("hersteller", state.hersteller.join(","));
+    if (state.jahrMin != null) p.set("baujahr_min", state.jahrMin);
+    if (state.jahrMax != null) p.set("baujahr_max", state.jahrMax);
+    if (state.anbieter.length) p.set("anbieter", state.anbieter.join(","));
     if (state.sort !== "new") p.set("sort", state.sort);
     if (state.view === "list") p.set("view", "list");
     if (state.page > 1) p.set("page", state.page);
@@ -653,6 +806,8 @@
     $("se-q").value = state.q;
     if ($("se-min")) $("se-min").value = state.min != null ? state.min : "";
     if ($("se-max")) $("se-max").value = state.max != null ? state.max : "";
+    if ($("se-jahr-min")) $("se-jahr-min").value = state.jahrMin != null ? state.jahrMin : "";
+    if ($("se-jahr-max")) $("se-jahr-max").value = state.jahrMax != null ? state.jahrMax : "";
     $("se-sort").value = state.sort;
     setView(state.view, true);
   }
@@ -688,7 +843,10 @@
         state.category = btn.getAttribute("data-cat") || "";
         state.page = 1;
         $("se-cat").value = state.category;
+        var homeSel = $("home-category-select");
+        if (homeSel) homeSel.value = state.category;
         buildTiles();
+        buildKategorieList($("se-fkat-search") ? $("se-fkat-search").value : "");
         render();
       });
     });
@@ -699,6 +857,109 @@
       '<span><span class="se-tile-name">' + esc(name) + '</span><br>' +
       '<span class="se-tile-count">' + fmtInt(count) + (count === 1 ? ' Anzeige' : ' Anzeigen') + '</span></span>' +
       '</button>';
+  }
+
+  /* ── Filter-Sidebar: Kategorie (Mehrfachauswahl, ergänzt die Kacheln) ── */
+  function buildKategorieList(filterText) {
+    var list = $("se-fkat-list");
+    if (!list) return;
+    var counts = {};
+    ALL.forEach(function (l) { if (l._cat) counts[l._cat] = (counts[l._cat] || 0) + 1; });
+    var names = CATS.length ? CATS.slice() : Object.keys(counts);
+    names.sort(function (a, b) { return (counts[b] || 0) - (counts[a] || 0) || a.localeCompare(b, "de"); });
+    var q = (filterText || "").toLowerCase();
+    var selected = state.category ? state.category.split(",").map(function (s) { return s.trim(); }) : [];
+    var html = names.filter(function (n) { return !q || n.toLowerCase().indexOf(q) > -1; }).map(function (n) {
+      var c = counts[n] || 0;
+      return '<label class="se-fcheck' + (c === 0 ? ' se-fempty' : '') + '">' +
+        '<input type="checkbox" data-kat="' + esc(n) + '"' + (selected.indexOf(n) > -1 ? ' checked' : '') + ' />' +
+        '<span class="se-fname">' + esc(n) + '</span><span class="se-fcnt">' + fmtInt(c) + '</span></label>';
+    }).join("");
+    list.innerHTML = html || '<div class="se-fnote">Keine Treffer.</div>';
+    Array.prototype.forEach.call(list.querySelectorAll("input[data-kat]"), function (cb) {
+      cb.addEventListener("change", function () {
+        var checked = Array.prototype.filter.call(list.querySelectorAll("input[data-kat]"), function (c) { return c.checked; })
+          .map(function (c) { return c.getAttribute("data-kat"); });
+        state.category = checked.join(",");
+        state.page = 1;
+        $("se-cat").value = checked.length === 1 ? checked[0] : "";
+        buildTiles();
+        render();
+      });
+    });
+  }
+
+  /* ── Filter-Sidebar: Zustand ── */
+  function buildZustandList() {
+    var list = $("se-fzustand-list");
+    if (!list) return;
+    var counts = {};
+    ALL.forEach(function (l) { if (l.condition) counts[l.condition] = (counts[l.condition] || 0) + 1; });
+    var html = CONDITIONS.map(function (c) {
+      var n = counts[c] || 0;
+      return '<label class="se-fcheck' + (n === 0 ? ' se-fempty' : '') + '">' +
+        '<input type="checkbox" data-zustand="' + esc(c) + '"' + (state.zustand.some(function (z) { return normText(z) === normText(c); }) ? ' checked' : '') + ' />' +
+        '<span class="se-fname">' + esc(c) + '</span><span class="se-fcnt">' + fmtInt(n) + '</span></label>';
+    }).join("");
+    list.innerHTML = html;
+    Array.prototype.forEach.call(list.querySelectorAll("input[data-zustand]"), function (cb) {
+      cb.addEventListener("change", function () {
+        state.zustand = Array.prototype.filter.call(list.querySelectorAll("input[data-zustand]"), function (c) { return c.checked; })
+          .map(function (c) { return c.getAttribute("data-zustand"); });
+        state.page = 1;
+        render();
+      });
+    });
+  }
+
+  /* ── Filter-Sidebar: Hersteller (aus tatsächlich vorhandenen Anzeigen) ── */
+  function buildHerstellerList(filterText) {
+    var list = $("se-fherst-list");
+    if (!list) return;
+    var counts = {};
+    ALL.forEach(function (l) { var m = (l.manufacturer || "").trim(); if (m) counts[m] = (counts[m] || 0) + 1; });
+    var names = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b, "de"); });
+    var q = (filterText || "").toLowerCase();
+    var html = names.filter(function (n) { return !q || n.toLowerCase().indexOf(q) > -1; }).map(function (n) {
+      return '<label class="se-fcheck">' +
+        '<input type="checkbox" data-herst="' + esc(n) + '"' + (state.hersteller.indexOf(n) > -1 ? ' checked' : '') + ' />' +
+        '<span class="se-fname">' + esc(n) + '</span><span class="se-fcnt">' + fmtInt(counts[n]) + '</span></label>';
+    }).join("");
+    list.innerHTML = html || '<div class="se-fnote">Keine Treffer.</div>';
+    Array.prototype.forEach.call(list.querySelectorAll("input[data-herst]"), function (cb) {
+      cb.addEventListener("change", function () {
+        state.hersteller = Array.prototype.filter.call(list.querySelectorAll("input[data-herst]"), function (c) { return c.checked; })
+          .map(function (c) { return c.getAttribute("data-herst"); });
+        state.page = 1;
+        render();
+      });
+    });
+  }
+
+  /* ── Filter-Sidebar: Anbieter (Gewerblich/Privat aus seller_profiles.company_type,
+     Top-Bewertung aus dem reviews-Durchschnitt). "Geprüfte Händler" gibt es bewusst nicht,
+     weil dafür kein Datenfeld existiert. ── */
+  function buildAnbieterList() {
+    var list = $("se-fanbieter-list");
+    if (!list) return;
+    var opts = [
+      { key: "gewerblich", label: "Gewerblich", count: ALL.filter(function (l) { return l._gewerblich; }).length },
+      { key: "privat", label: "Privat", count: ALL.filter(function (l) { return !l._gewerblich; }).length },
+      { key: "top", label: "Top-Bewertung (⌀ ≥ 4,5 ★)", count: ALL.filter(function (l) { return l._topRated; }).length }
+    ];
+    list.innerHTML = opts.map(function (o) {
+      return '<label class="se-fcheck' + (o.count === 0 ? ' se-fempty' : '') + '">' +
+        '<input type="checkbox" data-anbieter="' + o.key + '"' + (state.anbieter.indexOf(o.key) > -1 ? ' checked' : '') + ' />' +
+        '<span class="se-fname">' + esc(o.label) + '</span><span class="se-fcnt">' + fmtInt(o.count) + '</span></label>';
+    }).join("");
+    Array.prototype.forEach.call(list.querySelectorAll("input[data-anbieter]"), function (cb) {
+      cb.addEventListener("change", function () {
+        state.anbieter = Array.prototype.filter.call(list.querySelectorAll("input[data-anbieter]"), function (c) { return c.checked; })
+          .map(function (c) { return c.getAttribute("data-anbieter"); });
+        state.page = 1;
+        render();
+      });
+    });
   }
 
   /* ── Filter + Sortierung ── */
@@ -716,17 +977,38 @@
       });
     }
     if (state.category) {
-      list = list.filter(function (l) { return l._cat === state.category; });
+      var cats = state.category.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      list = list.filter(function (l) { return cats.indexOf(l._cat) > -1; });
     }
     if (state.standort && state.standort !== "Deutschland") {
       var needles = [state.standort.toLowerCase()].concat(STANDORT_ALIAS[state.standort] || []);
       list = list.filter(function (l) {
         var loc = (l.location || "").toLowerCase();
-        return needles.some(function (n) { return loc.indexOf(n) > -1; });
+        if (needles.some(function (n) { return loc.indexOf(n) > -1; })) return true;
+        // Fallback: Stadt aus dem Standort-Text gegen die Bundesland-Zuordnung prüfen
+        return Object.keys(CITY_TO_BUNDESLAND).some(function (city) {
+          return CITY_TO_BUNDESLAND[city] === state.standort && loc.indexOf(city) > -1;
+        });
       });
     }
     if (state.min != null) list = list.filter(function (l) { return Number(l.price || 0) >= state.min; });
     if (state.max != null) list = list.filter(function (l) { return Number(l.price || 0) <= state.max; });
+    if (state.zustand.length) {
+      var wantedZustand = state.zustand.map(normText);
+      list = list.filter(function (l) { return wantedZustand.indexOf(normText(l.condition)) > -1; });
+    }
+    if (state.hersteller.length) {
+      list = list.filter(function (l) { return state.hersteller.indexOf((l.manufacturer || "").trim()) > -1; });
+    }
+    if (state.jahrMin != null) list = list.filter(function (l) { return l.year != null && Number(l.year) >= state.jahrMin; });
+    if (state.jahrMax != null) list = list.filter(function (l) { return l.year != null && Number(l.year) <= state.jahrMax; });
+    if (state.anbieter.length) {
+      list = list.filter(function (l) {
+        return (state.anbieter.indexOf("gewerblich") > -1 && l._gewerblich) ||
+               (state.anbieter.indexOf("privat") > -1 && !l._gewerblich) ||
+               (state.anbieter.indexOf("top") > -1 && l._topRated);
+      });
+    }
 
     // Sortierung
     list.sort(function (a, b) {
@@ -749,12 +1031,14 @@
     if (state.page > pages) state.page = pages;
 
     // Breadcrumb + Titel
-    var label = state.category || "Alle Motoren";
+    var catList = state.category ? state.category.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
+    var label = catList.length === 1 ? catList[0] : (catList.length > 1 ? catList.length + " Kategorien" : "Alle Motoren");
     $("se-breadcrumb").innerHTML =
       '<a href="index.html">Startseite</a><span class="sep">›</span>' +
       '<a href="suche.html">Suche</a>' +
-      (state.category ? '<span class="sep">›</span><span class="cur">' + esc(state.category) + '</span>' : '');
+      (catList.length ? '<span class="sep">›</span><span class="cur">' + esc(label) + '</span>' : '');
     $("se-title").innerHTML = esc(label) + ' – <b>' + fmtInt(total) + ' Ergebnis' + (total === 1 ? '' : 'se') + '</b>';
+    updateActiveCount();
 
     if (!total) {
       grid.innerHTML = errBox("Keine passenden Anzeigen gefunden", "Ändere deinen Suchbegriff oder setze die Filter zurück.");
@@ -769,6 +1053,22 @@
     wireCards();
     renderPager(pages);
     syncUrl();
+  }
+
+  /* ── Aktive-Filter-Zähler auf dem mobilen Filter-Button ── */
+  function updateActiveCount() {
+    var n = 0;
+    var catList = state.category ? state.category.split(",").filter(Boolean) : [];
+    n += catList.length + state.zustand.length + state.hersteller.length + state.anbieter.length;
+    if (state.standort && state.standort !== "Deutschland") n++;
+    if (state.min != null) n++;
+    if (state.max != null) n++;
+    if (state.jahrMin != null) n++;
+    if (state.jahrMax != null) n++;
+    var badge = $("se-active-count");
+    if (!badge) return;
+    if (n > 0) { badge.textContent = n; badge.style.display = "inline-flex"; }
+    else { badge.style.display = "none"; }
   }
 
   function cardHtml(l) {
@@ -860,10 +1160,20 @@
 
   /* ── Controls ── */
   function wireControls() {
+    // Reusable: Enter-Taste in einem Zahlenfeld löst sofort das change-Event aus
+    // (Zahlenfelder ohne umgebendes <form> feuern "change" sonst erst beim Verlassen des Felds)
+    function fireChangeOnEnter(id) {
+      var el = $(id);
+      if (el) el.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); el.blur(); el.dispatchEvent(new Event("change")); } });
+    }
+
     // Hero-Suche
     $("se-search").addEventListener("click", runHeroSearch);
     $("se-q").addEventListener("keydown", function (e) { if (e.key === "Enter") runHeroSearch(); });
-    $("se-cat").addEventListener("change", function () { state.category = $("se-cat").value; state.page = 1; buildTiles(); render(); });
+    $("se-cat").addEventListener("change", function () {
+      state.category = $("se-cat").value; state.page = 1;
+      buildTiles(); buildKategorieList($("se-fkat-search") ? $("se-fkat-search").value : ""); render();
+    });
     $("se-standort").addEventListener("change", function () {
       state.standort = $("se-standort").value; state.page = 1;
       $("se-fstandort").value = state.standort; render();
@@ -876,6 +1186,15 @@
     });
     $("se-min").addEventListener("change", function () { state.min = numOrNull($("se-min").value); state.page = 1; render(); });
     $("se-max").addEventListener("change", function () { state.max = numOrNull($("se-max").value); state.page = 1; render(); });
+    fireChangeOnEnter("se-min"); fireChangeOnEnter("se-max");
+
+    if ($("se-jahr-min")) $("se-jahr-min").addEventListener("change", function () { state.jahrMin = numOrNull($("se-jahr-min").value); state.page = 1; render(); });
+    if ($("se-jahr-max")) $("se-jahr-max").addEventListener("change", function () { state.jahrMax = numOrNull($("se-jahr-max").value); state.page = 1; render(); });
+    fireChangeOnEnter("se-jahr-min"); fireChangeOnEnter("se-jahr-max");
+
+    if ($("se-fkat-search")) $("se-fkat-search").addEventListener("input", function () { buildKategorieList(this.value); });
+    if ($("se-fherst-search")) $("se-fherst-search").addEventListener("input", function () { buildHerstellerList(this.value); });
+
     $("se-reset").addEventListener("click", resetFilters);
 
     // Sortierung + Ansicht
@@ -910,16 +1229,27 @@
     state.standort = $("se-standort").value;
     state.page = 1;
     $("se-fstandort").value = state.standort;
+    var homeSel = $("home-category-select");
+    if (homeSel) homeSel.value = state.category;
     buildTiles();
+    buildKategorieList();
     render();
   }
   function resetFilters() {
     state.q = ""; state.category = ""; state.standort = "Deutschland";
     state.min = null; state.max = null; state.page = 1;
+    state.zustand = []; state.hersteller = []; state.jahrMin = null; state.jahrMax = null; state.anbieter = [];
     $("se-q").value = ""; $("se-cat").value = "";
     $("se-standort").value = "Deutschland"; $("se-fstandort").value = "Deutschland";
     $("se-min").value = ""; $("se-max").value = "";
-    buildTiles(); render();
+    $("se-jahr-min").value = ""; $("se-jahr-max").value = "";
+    if ($("se-fkat-search")) $("se-fkat-search").value = "";
+    if ($("se-fherst-search")) $("se-fherst-search").value = "";
+    var homeSel = $("home-category-select");
+    if (homeSel) homeSel.value = "";
+    buildTiles();
+    buildKategorieList(); buildZustandList(); buildHerstellerList(); buildAnbieterList();
+    render();
   }
   function setView(v, silent) {
     state.view = v;
@@ -932,6 +1262,12 @@
   /* ── Favoriten (localStorage) ── */
   function loadFavs() { try { return JSON.parse(localStorage.getItem("1amotor-favs") || "[]"); } catch (e) { return []; } }
   function saveFavs() { try { localStorage.setItem("1amotor-favs", JSON.stringify(FAVS)); } catch (e) {} }
+
+  /* ── Auf-/Zuklappen einzelner Filter-Abschnitte (Kategorie, Hersteller, ...) ── */
+  window.__seToggleSection = function (id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle("collapsed");
+  };
 
   /* ── Helfer ── */
   function numOrNull(v) { if (v === "" || v == null) return null; var n = Number(v); return isNaN(n) ? null : n; }

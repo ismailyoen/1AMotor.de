@@ -1,637 +1,350 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const categoryHero = document.getElementById("category-hero");
-  const categoryHeroTitle = document.getElementById("category-hero-title");
-  const pageHead = document.querySelector(".page-head");
-  const grid = document.getElementById("search-results");
-  const resultsInfo = document.getElementById("results-info");
-  const searchInput = document.getElementById("search-input");
-  const categoryFilter = document.getElementById("category-filter");
-  const searchButton = document.getElementById("search-button");
+  const listingGrid = document.getElementById("home-listing-grid");
+  const resultsInfo = document.getElementById("home-results-info");
+  const sortSelect = document.getElementById("home-sort-select");
+  const searchInput = document.getElementById("home-search-input");
+  const categorySelect = document.getElementById("home-category-select");
+  const searchButton = document.getElementById("home-search-btn");
+  const categoryLinks = document.getElementById("home-category-links");
+  const sidebarCategoryList = document.getElementById("sidebar-category-list");
 
-  if (!grid) return;
+  const HOME_LISTING_LIMIT = 6;
 
-  const params = new URLSearchParams(window.location.search);
-  const urlQuery = (params.get("q") || "").trim();
-  const urlCategory = (params.get("category") || "").trim();
+  let listings = [];
+  let categories = [];
 
-  if (searchInput) searchInput.value = urlQuery;
-
-  grid.innerHTML = `
-    <div class="empty-box">
-      <h3>Anzeigen werden geladen</h3>
-      <p>Bitte kurz warten...</p>
-    </div>
-  `;
-
-  const heroConfig = [
-    {
-      match: ["aufzug"],
-      title: "Aufzugsmotoren",
-      image: "images/aufzugsmotor-header.png"
-    },
-    {
-      match: ["boot"],
-      title: "Bootsmotoren",
-      image: "images/bootsmotor-header.png"
-    },
-    {
-      match: ["achterbahn"],
-      title: "Achterbahnmotoren",
-      image: "images/achterbahnmotor-header.png"
-    },
-    {
-      match: ["arcade"],
-      title: "Arcade Motor",
-      image: "images/arcade-motor-header.png"
-    },
-    {
-      match: ["asynchron"],
-      title: "Asynchronmotor",
-      image: "images/asynchronmotor-header.png"
-    },
-
-    {
-      match: ["karussell"],
-      title: "Karussellmotor",
-      image: "images/karussellmotor-header.png"
-    },
-    {
-      match: ["fahrgeschäft"],
-      title: "Fahrgeschäft Motor",
-      image: "images/fahrgeschaeft-motor-header.png"
-    },
-    {
-      match: ["schausteller"],
-      title: "Schausteller Motor",
-      image: "images/schausteller-motor-header.png"
-    },
-    {
-      match: ["spielautomat"],
-      title: "Spielautomaten Motor",
-      image: "images/spielautomaten-motor-header.png"
-    },
-    {
-      match: ["drohne"],
-      title: "Drohnenmotor",
-      image: "images/drohnenmotor-header.png"
-    },
-    {
-      match: ["modellbau"],
-      title: "Modellbau Motor",
-      image: "images/modellbau-motor-header.png"
-    },
-    {
-      match: ["rc motor", "rc"],
-      title: "RC Motor",
-      image: "images/rc-motor-header.png"
-    },
-    {
-      match: ["kartmotor", "kart"],
-      title: "Kartmotor",
-      image: "images/kartmotor-header.png"
-    },
-    {
-      match: ["rasenmäher", "rasenmaeher"],
-      title: "Rasenmähermotor",
-      image: "images/rasenmaehermotor-header.png"
-    },
-    {
-      match: ["aufsitzmäher", "aufsitzmaeher"],
-      title: "Aufsitzmäher Motor",
-      image: "images/aufsitzmaeher-motor-header.png"
-    },
-    {
-      match: ["kettensäge", "kettensaege"],
-      title: "Kettensägenmotor",
-      image: "images/kettensaegenmotor-header.png"
-    },
-    {
-      match: ["heckenschere"],
-      title: "Heckenscherenmotor",
-      image: "images/heckenscherenmotor-header.png"
-    },
-    {
-      match: ["laubbläser", "laubblaeser"],
-      title: "Laubbläser Motor",
-      image: "images/laubblaeser-motor-header.png"
-    },
-    {
-      match: ["schneefräse", "schneefraese"],
-      title: "Schneefräsenmotor",
-      image: "images/schneefraesenmotor-header.png"
-    },
-    {
-      match: ["generator kleinmotor"],
-      title: "Generator Kleinmotor",
-      image: "images/generator-kleinmotor-header.png"
-    },
-    {
-      match: ["stromaggregat"],
-      title: "Stromaggregat Motor",
-      image: "images/stromaggregat-motor-header.png"
-    },
-    {
-      match: ["wasserpumpe"],
-      title: "Wasserpumpenmotor",
-      image: "images/wasserpumpenmotor-header.png"
-    },
-    {
-      match: ["gartenmaschine"],
-      title: "Gartenmaschinenmotor",
-      image: "images/gartenmaschinenmotor-header.png"
-    },
-    {
-      match: ["hydraulik"],
-      title: "Hydraulikmotor",
-      image: "images/hydraulikmotor-header.png"
-    },
-    {
-      match: ["pneumatik"],
-      title: "Pneumatikmotor",
-      image: "images/pneumatikmotor-header.png"
-    },
-    {
-      match: ["vibration"],
-      title: "Vibrationsmotor",
-      image: "images/vibrationsmotor-header.png"
-    },
-    {
-      match: ["spindel"],
-      title: "Spindelmotor",
-      image: "images/spindelmotor-header.png"
-    },
-    {
-      match: ["hochleistung"],
-      title: "Hochleistungsmotor",
-      image: "images/hochleistungsmotor-header.png"
-    },
-    {
-      match: ["präzision", "praezision"],
-      title: "Präzisionsmotor",
-      image: "images/praezisionsmotor-header.png"
-    },
-    {
-      match: ["cnc"],
-      title: "CNC Motor",
-      image: "images/cnc-motor-header.png"
-    },
-    {
-      match: ["roboter"],
-      title: "Robotermotor",
-      image: "images/robotermotor-header.png"
-    },
-    {
-      match: ["industrieroboter"],
-      title: "Industrieroboter Motor",
-      image: "images/industrieroboter-motor-header.png"
-    },
-    {
-      match: ["werkzeugmaschine"],
-      title: "Werkzeugmaschinenmotor",
-      image: "images/werkzeugmaschinenmotor-header.png"
-    },
-    {
-      match: ["e-bike", "ebike"],
-      title: "E-Bike Motor",
-      image: "images/e-bike-motor-header.png"
-    },
-    {
-      match: ["elektro roller"],
-      title: "Elektro Roller Motor",
-      image: "images/elektro-roller-motor-header.png"
-    },
-    {
-      match: ["elektro motorrad"],
-      title: "Elektro Motorrad Motor",
-      image: "images/elektro-motorrad-motor-header.png"
-    },
-    {
-      match: ["elektro bootsmotor"],
-      title: "Elektro Bootsmotor",
-      image: "images/elektro-bootsmotor-header.png"
-    },
-    {
-      match: ["elektro außenbord", "elektro aussenbord"],
-      title: "Elektro Außenbordmotor",
-      image: "images/elektro-aussenbordmotor-header.png"
-    },
-    {
-      match: ["elektro flug"],
-      title: "Elektro Flugmotor",
-      image: "images/elektro-flugmotor-header.png"
-    },
-    {
-      match: ["smart motor"],
-      title: "Smart Motor",
-      image: "images/smart-motor-header.png"
-    },
-    {
-      match: ["iot"],
-      title: "IoT Motor",
-      image: "images/iot-motor-header.png"
-    },
-    {
-      match: ["energiespar"],
-      title: "Energiesparmotor",
-      image: "images/energiesparmotor-header.png"
-    },
-    {
-      match: ["permanentmagnet"],
-      title: "Permanentmagnet Motor",
-      image: "images/permanentmagnet-motor-header.png"
-    },
-    {
-      match: ["gasturbine"],
-      title: "Gasturbinenmotor",
-      image: "images/gasturbinenmotor-header.png"
-    },
-    {
-      match: ["dampfturbine"],
-      title: "Dampfturbinenmotor",
-      image: "images/dampfturbinenmotor-header.png"
-    },
-    {
-      match: ["dieselaggregat"],
-      title: "Dieselaggregat Motor",
-      image: "images/dieselaggregat-motor-header.png"
-    },
-    {
-      match: ["notstromaggregat"],
-      title: "Notstromaggregat Motor",
-      image: "images/notstromaggregat-motor-header.png"
-    },
-    {
-      match: ["industrie diesel"],
-      title: "Industrie Diesel Motor",
-      image: "images/industrie-diesel-motor-header.png"
-    },
-    {
-      match: ["schiffsturbine"],
-      title: "Schiffsturbinenmotor",
-      image: "images/schiffsturbinenmotor-header.png"
-    },
-    {
-      match: ["hochdrehzahl"],
-      title: "Hochdrehzahlmotor",
-      image: "images/hochdrehzahlmotor-header.png"
-    },
-    {
-      match: ["schwerlast"],
-      title: "Schwerlastmotor",
-      image: "images/schwerlastmotor-header.png"
-    },
-    {
-      match: ["spezialanfertigung"],
-      title: "Spezialanfertigung Motor",
-      image: "images/spezialanfertigung-motor-header.png"
-    },
-    {
-      match: ["austausch"],
-      title: "Austauschmotor",
-      image: "images/austauschmotor-header.png"
-    },
-    {
-      match: ["sonstiges"],
-      title: "Sonstiges",
-      image: "images/sonstiges-header.png"
-    }
-  ];
-
-  applyCategoryHero(urlCategory);
-
-  const { data: categories, error: categoriesError } = await supabaseClient
-    .from("categories")
-    .select("id, name")
-    .order("name", { ascending: true });
-
-  if (!categoriesError && categoryFilter) {
-    categoryFilter.innerHTML = `
-      <option value="">Alle Kategorien</option>
-      ${(categories || []).map(cat => `
-        <option value="${escapeHtml(cat.name)}">${escapeHtml(cat.name)}</option>
-      `).join("")}
-    `;
-    categoryFilter.value = urlCategory;
-  }
-
-  // Kategorie-Checkboxen in der Sidebar befüllen
-  const categoryCheckboxList = document.getElementById("sidebar-category-list");
-  if (!categoriesError && categoryCheckboxList && categories) {
-    categoryCheckboxList.innerHTML = categories.map(cat => `
-      <label class="filter-option">
-        <input type="checkbox" name="category" value="${escapeHtml(cat.name)}"
-          ${urlCategory === cat.name ? "checked" : ""} />
-        ${escapeHtml(cat.name)}
-      </label>
-    `).join("");
-
-    // Event Listener auf Checkboxen
-    categoryCheckboxList.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      cb.addEventListener("change", () => {
-        const checked = [...categoryCheckboxList.querySelectorAll("input:checked")].map(c => c.value);
-        const q = (searchInput?.value || "").trim();
-        const nextParams = new URLSearchParams();
-        if (q) nextParams.set("q", q);
-        if (checked.length === 1) nextParams.set("category", checked[0]);
-        const qs = nextParams.toString();
-        window.location.href = qs ? "suche.html?" + qs : "suche.html";
-      });
-    });
-  }
-
-  // Zustand-Checkboxen Event Listener
-  document.querySelectorAll("input[name='zustand']").forEach(cb => {
-    if (urlCategory) {
-      // pre-check matching condition filter from URL if any
-    }
-    cb.addEventListener("change", () => {
-      const checkedConditions = [...document.querySelectorAll("input[name='zustand']:checked")].map(c => c.value);
-      const q = (searchInput?.value || "").trim();
-      const nextParams = new URLSearchParams();
-      if (q) nextParams.set("q", q);
-      if (urlCategory) nextParams.set("category", urlCategory);
-      if (checkedConditions.length) nextParams.set("condition", checkedConditions.join(","));
-      const qs = nextParams.toString();
-      window.location.href = qs ? "suche.html?" + qs : "suche.html";
-    });
-  });
-
-  const { data, error } = await supabaseClient
-    .from("listings")
-    .select(`
-      id,
-      title,
-      manufacturer,
-      model,
-      condition,
-      price,
-      year,
-      location,
-      description,
-      status,
-      created_at,
-      image_urls,
-      categories(name)
-    `)
-    .eq("status", "Freigegeben")
-    .order("created_at", { ascending: false });
-
-  console.log("SUPABASE LISTINGS:", data);
-  console.log("SUPABASE LISTINGS ERROR:", error);
-
-  if (error) {
-    grid.innerHTML = `
+  if (listingGrid) {
+    listingGrid.innerHTML = `
       <div class="empty-box">
-        <h3>Fehler beim Laden der Anzeigen</h3>
-        <p>Schau in die Browser-Konsole, um den genauen Fehler zu sehen.</p>
+        Angebote werden geladen...
       </div>
     `;
-    return;
   }
 
-  let listings = data || [];
-  const urlConditions = (params.get("condition") || "").split(",").filter(Boolean);
-
-  if (urlConditions.length) {
-    // Pre-check condition checkboxes
-    document.querySelectorAll("input[name='zustand']").forEach(cb => {
-      if (urlConditions.includes(cb.value)) cb.checked = true;
-    });
+  try {
+    await loadCategories();
+    await loadStats();
+    await loadListings();
+    renderListings("latest");
+    bindSearch();
+    loadCategoryCounts(); // Echte Zählungen aus DB — läuft im Hintergrund
+  } catch (err) {
+    console.error("INIT ERROR:", err);
+    if (resultsInfo) resultsInfo.textContent = "Fehler beim Laden der Startseite.";
+    if (listingGrid) {
+      listingGrid.innerHTML = `
+        <div class="empty-box">
+          Die Startseite konnte nicht vollständig geladen werden.
+        </div>
+      `;
+    }
   }
 
-  if (urlQuery) {
-    const q = urlQuery.toLowerCase();
-    listings = listings.filter((listing) => {
-      const categoryName = Array.isArray(listing.categories)
-        ? listing.categories[0]?.name || ""
-        : listing.categories?.name || "";
+  sortSelect?.addEventListener("change", () => {
+    renderListings(sortSelect.value);
+  });
 
-      return (
-        (listing.title || "").toLowerCase().includes(q) ||
-        (listing.manufacturer || "").toLowerCase().includes(q) ||
-        (listing.model || "").toLowerCase().includes(q) ||
-        (listing.description || "").toLowerCase().includes(q) ||
-        categoryName.toLowerCase().includes(q)
-      );
-    });
+  async function loadCategories() {
+    const { data, error } = await supabaseClient
+      .from("categories")
+      .select("id, name, slug")
+      .order("name", { ascending: true });
+
+    console.log("INDEX CATEGORIES:", data);
+    console.log("INDEX CATEGORIES ERROR:", error);
+
+    if (error) {
+      console.error("Fehler beim Laden der Kategorien:", error);
+      return;
+    }
+
+    categories = data || [];
+
+    if (categorySelect) {
+      categorySelect.innerHTML = `
+        <option value="">Alle Kategorien</option>
+        ${categories.map(cat => `
+          <option value="${escapeHtml(cat.name)}">${escapeHtml(cat.name)}</option>
+        `).join("")}
+      `;
+    }
+
+    if (categoryLinks) {
+      categoryLinks.innerHTML = `
+        <a href="suche.html" class="active">Top-Angebote</a>
+        ${categories.slice(0, 10).map(cat => `
+          <a href="suche.html?category=${encodeURIComponent(cat.name)}">${escapeHtml(cat.name)}</a>
+        `).join("")}
+      `;
+    }
+
+    // Sidebar-HTML bleibt erhalten — Zählungen werden von loadCategoryCounts() gesetzt
+
+    const statCategories = document.getElementById("stat-categories");
+    if (statCategories) statCategories.textContent = categories.length;
   }
 
-  if (urlConditions.length) {
-    listings = listings.filter(listing => urlConditions.includes(listing.condition || ""));
+  async function loadStats() {
+    const statListings = document.getElementById("stat-listings");
+    const statDealers = document.getElementById("stat-dealers");
+
+    const listingsCountResult = await supabaseClient
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "Freigegeben");
+
+    const dealerCountResult = await supabaseClient
+      .from("seller_profiles")
+      .select("id", { count: "exact", head: true });
+
+    if (listingsCountResult.error) {
+      console.error("STAT LISTINGS ERROR:", listingsCountResult.error);
+    }
+
+    if (dealerCountResult.error) {
+      console.error("STAT DEALERS ERROR:", dealerCountResult.error);
+    }
+
+    if (statListings) {
+      statListings.textContent = listingsCountResult.count ?? 0;
+    }
+
+    if (statDealers) {
+      statDealers.textContent = dealerCountResult.count ?? 0;
+    }
   }
 
-  if (urlCategory) {
-    listings = listings.filter((listing) => {
-      const categoryName = Array.isArray(listing.categories)
-        ? listing.categories[0]?.name || ""
-        : listing.categories?.name || "";
+  async function loadListings() {
+    const { data, error } = await supabaseClient
+      .from("listings")
+      .select(`
+        id,
+        title,
+        manufacturer,
+        model,
+        condition,
+        price,
+        location,
+        created_at,
+        image_urls,
+        categories(name),
+        seller_profiles(company_name)
+      `)
+      .eq("status", "Freigegeben")
+      .order("created_at", { ascending: false });
 
-      return categoryName === urlCategory;
-    });
-  }
+    console.log("INDEX LISTINGS:", data);
+    console.log("INDEX LISTINGS ERROR:", error);
 
-  if (resultsInfo) {
-    resultsInfo.textContent = `${listings.length} Ergebnis${listings.length === 1 ? "" : "se"} gefunden`;
-  }
-
-  // ────────── SEITENBLÄTTERUNG (Pagination) ──────────
-  const PAGE_SIZE = 24;
-  const initialPage = Math.max(1, parseInt(params.get("page") || "1", 10) || 1);
-
-  // Baut die HTML einer einzelnen Anzeigen-Karte
-  function buildCard(listing) {
-    const category = Array.isArray(listing.categories)
-      ? listing.categories[0]?.name || "Unbekannt"
-      : listing.categories?.name || "Unbekannt";
-
-    const icon = getCategoryIcon(category);
-    const createdAt = new Date(listing.created_at).toLocaleDateString("de-DE");
-
-    const firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length
-      ? listing.image_urls[0]
-      : null;
-
-    // Kategoriebild als Fallback wenn kein eigenes Bild vorhanden
-    const fallbackImg = window.getCategoryImage ? window.getCategoryImage(category) : null;
-    const displayImage = firstImage || fallbackImg;
-
-    const imageStyle = displayImage
-      ? `style="background-image:url('${displayImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
-      : "";
-
-    return `
-        <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(listing.id)}">
-          <div class="card-image" ${imageStyle}>
-            <span class="badge">Live</span>
-            ${displayImage ? "" : icon}
+    if (error) {
+      if (resultsInfo) resultsInfo.textContent = "Fehler beim Laden.";
+      if (listingGrid) {
+        listingGrid.innerHTML = `
+          <div class="empty-box">
+            Die Angebote konnten nicht geladen werden.
           </div>
-          <div class="card-body">
-            <div class="card-title">${escapeHtml(listing.title || "Ohne Titel")}</div>
-            <div class="card-meta">
-              <span>Kategorie: ${escapeHtml(category)}</span>
-              <span>Zustand: ${escapeHtml(listing.condition || "-")}</span>
-            </div>
-            <div class="price">${formatPrice(listing.price)}</div>
-            <div class="card-meta">
-              <span>${escapeHtml(listing.manufacturer || "")}</span>
-              <span>${escapeHtml(listing.model || "")}</span>
+        `;
+      }
+      return;
+    }
+
+    listings = data || [];
+
+    if (resultsInfo) {
+      resultsInfo.textContent = `${listings.length} aktuelle Angebote aus Supabase`;
+    }
+  }
+
+  function renderListings(sortMode = "latest") {
+    if (!listingGrid) return;
+
+    let items = [...listings];
+
+    if (sortMode === "price_asc") {
+      items.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+    } else if (sortMode === "price_desc") {
+      items.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+    } else {
+      // Standardansicht ("Neueste zuerst"): statt immer strikt nach Datum zu sortieren,
+      // wird die Reihenfolge alle 20 Minuten neu gemischt (deterministisch pro Zeitfenster,
+      // damit die Seite innerhalb der 20 Minuten für alle Besucher gleich aussieht, sich
+      // danach aber automatisch neu anordnet — so wirkt die Startseite nicht immer identisch).
+      items = seededShuffle(items, timeBucketSeed(20));
+    }
+
+    items = items.slice(0, HOME_LISTING_LIMIT);
+
+    if (!items.length) {
+      listingGrid.innerHTML = `
+        <div class="empty-box">
+          Noch keine freigegebenen Angebote vorhanden.
+        </div>
+      `;
+      return;
+    }
+
+    listingGrid.innerHTML = items.map((listing) => {
+      const category = Array.isArray(listing.categories)
+        ? listing.categories[0]?.name || "Unbekannt"
+        : listing.categories?.name || "Unbekannt";
+
+      const seller = Array.isArray(listing.seller_profiles)
+        ? listing.seller_profiles[0]?.company_name || "Händler"
+        : listing.seller_profiles?.company_name || "Händler";
+
+      const price = Number(listing.price || 0).toLocaleString("de-DE", {
+        style: "currency",
+        currency: "EUR"
+      });
+
+      const firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length
+        ? listing.image_urls[0]
+        : null;
+
+      // Kategoriebild als Fallback wenn kein eigenes Bild vorhanden
+      const fallbackImg = window.getCategoryImage ? window.getCategoryImage(category) : null;
+      const displayImage = firstImage || fallbackImg;
+
+      const imageStyle = displayImage
+        ? `style="background-image:url('${displayImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
+        : "";
+
+      const imageContent = displayImage ? "" : getCategoryIcon(category);
+
+      return `
+        <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(listing.id)}">
+          <div class="listing-image" ${imageStyle}>
+            <span class="badge">${escapeHtml(category)}</span>
+            <span class="fav">♡</span>
+            ${imageContent}
+          </div>
+          <div class="listing-body">
+            <div class="listing-title">${escapeHtml(listing.title || "Ohne Titel")}</div>
+            <div class="meta">
+              <span>${escapeHtml(listing.manufacturer || "-")}</span>
+              <span>${escapeHtml(listing.model || "-")}</span>
               <span>${escapeHtml(listing.location || "-")}</span>
             </div>
-            <div class="card-actions">
-              <span class="action-btn primary">Details ansehen</span>
-              <span class="action-btn">${createdAt}</span>
+            <div class="price">${price}</div>
+            <div class="shipping">${escapeHtml(listing.condition || "Gebraucht")}</div>
+            <div class="seller">
+              <span>${escapeHtml(seller)}</span>
+              <span class="rating">Live</span>
             </div>
           </div>
         </a>
       `;
+    }).join("");
   }
 
-  // Stellt sicher, dass das Pagination-CSS einmalig vorhanden ist
-  function ensurePgStyles() {
-    if (document.getElementById("wb-pg-styles")) return;
-    const st = document.createElement("style");
-    st.id = "wb-pg-styles";
-    st.textContent = `
-      #search-pagination.wb-pg{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin:32px 0 8px;}
-      .wb-pg-btn{min-width:40px;height:40px;padding:0 12px;border:1px solid #e0e9f2;background:#fff;color:#1b2d42;border-radius:10px;font:600 14px/1 'Outfit',Arial,sans-serif;cursor:pointer;transition:all .15s;}
-      .wb-pg-btn:hover:not(:disabled):not(.active){border-color:#2176c7;color:#2176c7;}
-      .wb-pg-btn.active{background:#2176c7;border-color:#2176c7;color:#fff;cursor:default;}
-      .wb-pg-btn:disabled{opacity:.4;cursor:not-allowed;}
-      .wb-pg-arrow{font-size:18px;padding:0;}
-      .wb-pg-gap{min-width:24px;text-align:center;color:#7a93ae;user-select:none;}
-    `;
-    document.head.appendChild(st);
-  }
-
-  // Liste der anzuzeigenden Seitenzahlen (mit … bei vielen Seiten)
-  function pageList(current, total) {
-    const out = [];
-    if (total <= 7) { for (let i = 1; i <= total; i++) out.push(i); return out; }
-    out.push(1);
-    if (current > 4) out.push("...");
-    const s = Math.max(2, current - 1), e = Math.min(total - 1, current + 1);
-    for (let i = s; i <= e; i++) out.push(i);
-    if (current < total - 3) out.push("...");
-    out.push(total);
-    return out;
-  }
-
-  // Rendert die Blätter-Navigation unter dem Grid
-  function renderPagination(current, totalPages) {
-    let nav = document.getElementById("search-pagination");
-    if (!nav) {
-      nav = document.createElement("nav");
-      nav.id = "search-pagination";
-      nav.className = "wb-pg";
-      nav.setAttribute("aria-label", "Seitenblätterung");
-      grid.insertAdjacentElement("afterend", nav);
-    }
-    if (totalPages <= 1) { nav.innerHTML = ""; return; }
-
-    let html = `<button class="wb-pg-btn wb-pg-arrow" ${current === 1 ? "disabled" : ""} data-pg="${current - 1}" aria-label="Vorherige Seite">‹</button>`;
-    pageList(current, totalPages).forEach((p) => {
-      if (p === "...") html += `<span class="wb-pg-gap">…</span>`;
-      else html += `<button class="wb-pg-btn ${p === current ? "active" : ""}" data-pg="${p}"${p === current ? ' aria-current="page"' : ""}>${p}</button>`;
-    });
-    html += `<button class="wb-pg-btn wb-pg-arrow" ${current === totalPages ? "disabled" : ""} data-pg="${current + 1}" aria-label="Nächste Seite">›</button>`;
-    nav.innerHTML = html;
-
-    nav.querySelectorAll("button[data-pg]").forEach((b) => {
-      b.addEventListener("click", () => {
-        const target = parseInt(b.dataset.pg, 10);
-        renderPage(target);
-        const top = grid.getBoundingClientRect().top + window.scrollY - 90;
-        window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-      });
+  function bindSearch() {
+    searchButton?.addEventListener("click", goToSearch);
+    searchInput?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        goToSearch();
+      }
     });
   }
-
-  // Rendert eine bestimmte Seite
-  function renderPage(page) {
-    const totalPages = Math.max(1, Math.ceil(listings.length / PAGE_SIZE));
-    const current = Math.min(Math.max(1, page), totalPages);
-    const start = (current - 1) * PAGE_SIZE;
-    const slice = listings.slice(start, start + PAGE_SIZE);
-
-    grid.innerHTML = slice.map(buildCard).join("");
-    renderPagination(current, totalPages);
-
-    // URL aktualisieren, damit Seite teilbar / per Zurück-Button erreichbar ist
-    const p = new URLSearchParams(window.location.search);
-    if (current > 1) p.set("page", current); else p.delete("page");
-    const qs = p.toString();
-    history.replaceState(null, "", qs ? "?" + qs : window.location.pathname);
-
-    // Ergebnis-Info aktualisieren
-    if (resultsInfo) {
-      const from = listings.length ? start + 1 : 0;
-      const to = start + slice.length;
-      resultsInfo.textContent = `${from}–${to} von ${listings.length} Ergebnis${listings.length === 1 ? "" : "sen"} · Seite ${current}/${totalPages}`;
-    }
-  }
-
-  if (!listings.length) {
-    grid.innerHTML = `
-      <div class="empty-box">
-        <h3>Keine passenden Anzeigen gefunden</h3>
-        <p>Ändere deinen Suchbegriff oder wähle eine andere Kategorie.</p>
-      </div>
-    `;
-    const nav = document.getElementById("search-pagination");
-    if (nav) nav.innerHTML = "";
-    if (resultsInfo) resultsInfo.textContent = "0 Ergebnisse gefunden";
-  } else {
-    ensurePgStyles();
-    renderPage(initialPage);
-  }
-
-  searchButton?.addEventListener("click", goToSearch);
-  searchInput?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      goToSearch();
-    }
-  });
-  categoryFilter?.addEventListener("change", goToSearch);
 
   function goToSearch() {
     const q = (searchInput?.value || "").trim();
-    const category = (categoryFilter?.value || "").trim();
+    const category = (categorySelect?.value || "").trim();
 
-    const nextParams = new URLSearchParams();
-    if (q) nextParams.set("q", q);
-    if (category) nextParams.set("category", category);
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (category) params.set("category", category);
 
-    const queryString = nextParams.toString();
-    window.location.href = queryString ? `suche.html?${queryString}` : "suche.html";
-  }
-
-  function applyCategoryHero(categoryValue) {
-    if (!categoryHero || !categoryHeroTitle || !categoryValue) return;
-
-    const normalizedCategory = categoryValue.toLowerCase();
-    const hero = heroConfig.find(entry =>
-      entry.match.some(keyword => normalizedCategory.includes(keyword))
-    );
-
-    if (!hero) return;
-
-    categoryHero.style.display = "block";
-    categoryHero.style.backgroundImage = `url('${hero.image}')`;
-    categoryHeroTitle.textContent = hero.title;
-
-    if (pageHead) {
-      pageHead.style.display = "none";
-    }
+    const query = params.toString();
+    window.location.href = query ? `suche.html?${query}` : "suche.html";
   }
 });
 
-function formatPrice(price) {
-  const value = Number(price || 0);
-  return value.toLocaleString("de-DE", {
-    style: "currency",
-    currency: "EUR"
-  });
+// ── Echte Kategorie-Zählungen aus Supabase ────────────────────────────────────
+async function loadCategoryCounts() {
+  try {
+    const { data, error } = await supabaseClient
+      .from("listings")
+      .select("categories(name)")
+      .eq("status", "Freigegeben");
+
+    if (error || !data) {
+      console.warn("CATEGORY COUNTS ERROR:", error);
+      return;
+    }
+
+    // Zählungen berechnen
+    const counts = {};
+    data.forEach(row => {
+      const name = Array.isArray(row.categories)
+        ? row.categories[0]?.name
+        : row.categories?.name;
+      if (name) counts[name] = (counts[name] || 0) + 1;
+    });
+
+    console.log("LIVE CATEGORY COUNTS:", counts);
+
+    // ── Unterkategorien aktualisieren ──────────────────────────────────
+    document.querySelectorAll("#sidebar-category-list .cat-sublist label").forEach(label => {
+      const cb = label.querySelector("input[type='checkbox']");
+      if (!cb) return;
+      const span = label.querySelector(".cat-count");
+      if (!span) return;
+      const count = counts[cb.value] || 0;
+      span.textContent = count.toLocaleString("de-DE");
+      label.style.opacity = count === 0 ? "0.4" : "1";
+    });
+
+    // ── Gruppen-Summen aktualisieren ───────────────────────────────────
+    document.querySelectorAll("#sidebar-category-list .cat-group-head").forEach(head => {
+      const onclickAttr = head.getAttribute("onclick") || "";
+      const grpMatch = onclickAttr.match(/['"]([^'"]+)['"]/);
+      if (!grpMatch) return;
+      const sublist = document.getElementById(grpMatch[1]);
+      if (!sublist) return;
+
+      let total = 0;
+      sublist.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        total += counts[cb.value] || 0;
+      });
+
+      const span = head.querySelector(".cat-count");
+      if (span) span.textContent = total.toLocaleString("de-DE");
+    });
+
+    // ── Gesamt-Stat-Zähler ─────────────────────────────────────────────
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    const statEl = document.getElementById("stat-listings");
+    if (statEl && total > 0) statEl.textContent = total.toLocaleString("de-DE");
+
+  } catch (err) {
+    console.warn("loadCategoryCounts error:", err);
+  }
+}
+
+// ── Zeitgesteuertes Mischen ("alle 20 Minuten verschieben") ──────────────────
+// Deterministische Pseudozufallszahl aus einem Seed (mulberry32) — dieselbe Eingabe
+// erzeugt immer dieselbe Reihenfolge, damit alle Besucher im selben 20-Minuten-Fenster
+// dasselbe sehen, es sich aber automatisch mit jedem neuen Zeitfenster ändert.
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function timeBucketSeed(minutes) {
+  return Math.floor(Date.now() / (minutes * 60 * 1000));
+}
+function seededShuffle(arr, seed) {
+  const rng = mulberry32(seed);
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
 function getCategoryIcon(category) {
