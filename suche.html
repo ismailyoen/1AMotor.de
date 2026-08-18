@@ -563,6 +563,7 @@
           <li><a href="agb.html">AGB</a></li>
           <li><a href="kontakt.html">Kontakt</a></li>
           <li><a href="meine-anfragen.html">Nachrichten</a></li>
+          <li><a href="#" data-cookie-settings>Cookie-Einstellungen</a></li>
         </ul>
       </div>
     </div>
@@ -573,11 +574,13 @@
         <a href="datenschutz.html">Datenschutz</a>
         <a href="agb.html">AGB</a>
         <a href="kontakt.html">Kontakt</a>
+        <a href="#" data-cookie-settings>Cookie-Einstellungen</a>
       </div>
     </div>
   </div>
 </footer>
 
+<script src="cookie-consent.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="category-images.js"></script>
@@ -1011,15 +1014,22 @@
     }
 
     // Sortierung
-    list.sort(function (a, b) {
-      switch (state.sort) {
-        case "old": return new Date(a.created_at) - new Date(b.created_at);
-        case "price-asc": return Number(a.price || 0) - Number(b.price || 0);
-        case "price-desc": return Number(b.price || 0) - Number(a.price || 0);
-        case "title": return (a.title || "").localeCompare(b.title || "", "de");
-        default: return new Date(b.created_at) - new Date(a.created_at);
-      }
-    });
+    if (state.sort === "new") {
+      // Standardansicht ("Neueste zuerst"): statt starr nach Datum wird die Reihenfolge
+      // alle 20 Minuten neu gemischt (deterministisch je Zeitfenster — alle Besucher sehen
+      // innerhalb der 20 Minuten dieselbe Reihenfolge, danach ändert sie sich automatisch).
+      list = seededShuffle(list, timeBucketSeed(20));
+    } else {
+      list.sort(function (a, b) {
+        switch (state.sort) {
+          case "old": return new Date(a.created_at) - new Date(b.created_at);
+          case "price-asc": return Number(a.price || 0) - Number(b.price || 0);
+          case "price-desc": return Number(b.price || 0) - Number(a.price || 0);
+          case "title": return (a.title || "").localeCompare(b.title || "", "de");
+          default: return 0;
+        }
+      });
+    }
     return list;
   }
 
@@ -1268,6 +1278,29 @@
     var el = document.getElementById(id);
     if (el) el.classList.toggle("collapsed");
   };
+
+  /* ── Zeitgesteuertes Mischen ("alle 20 Minuten verschieben") ──
+     Deterministische Pseudozufallszahl aus einem Seed (mulberry32) — dieselbe Eingabe
+     erzeugt immer dieselbe Reihenfolge, damit alle Besucher im selben 20-Minuten-Fenster
+     dasselbe sehen, es sich aber automatisch mit jedem neuen Zeitfenster ändert. ── */
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function timeBucketSeed(minutes) { return Math.floor(Date.now() / (minutes * 60 * 1000)); }
+  function seededShuffle(arr, seed) {
+    var rng = mulberry32(seed);
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(rng() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
 
   /* ── Helfer ── */
   function numOrNull(v) { if (v === "" || v == null) return null; var n = Number(v); return isNaN(n) ? null : n; }

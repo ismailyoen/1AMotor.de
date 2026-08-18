@@ -25,6 +25,20 @@ Crawl-delay: 1
 # Sitemap
 Sitemap: https://1amotor.de/sitemap.xml
 
+# Google AdSense – Werbe-Crawler braucht uneingeschränkten Zugriff auf alle
+# öffentlichen Seiten, damit passende Anzeigen ausgeliefert werden können.
+User-agent: Mediapartners-Google
+Allow: /
+Disallow: /dashboard.html
+Disallow: /profil.html
+Disallow: /anfragen.html
+Disallow: /meine-anzeigen.html
+Disallow: /meine-anfragen.html
+Disallow: /anzeige-erstellen.html
+Disallow: /admin.html
+Disallow: /admin-import.html
+Disallow: /login.html
+
 # Google
 User-agent: Googlebot
 Allow: /

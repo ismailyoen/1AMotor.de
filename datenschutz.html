@@ -74,6 +74,12 @@
   }
   .notice-box p{ margin:0; font-size:13px; color:#92400e; }
 
+  table.cookie-table{ width:100%; border-collapse:collapse; margin:10px 0 16px; font-size:13px; }
+  table.cookie-table th, table.cookie-table td{
+    border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top;
+  }
+  table.cookie-table th{ background:#f8fafc; color:var(--dark-blue); font-weight:700; }
+
   footer{
     margin-top:40px; padding:20px 0;
     border-top:1px solid var(--border);
@@ -145,14 +151,15 @@
 
     <div class="card">
       <h1>Datenschutzerklärung</h1>
-      <p class="subtitle">Zuletzt aktualisiert: August 2026 · gemäß DSGVO, BDSG & TDDDG</p>
+      <p class="subtitle">Zuletzt aktualisiert: August 2026 · gemäß DSGVO, TTDSG & BDSG</p>
 
       <h2>1. Verantwortlicher</h2>
       <div class="info-block">
         <p>
           <strong>Ismail Yön</strong> · 1A Motor<br />
           In der Breite 12 · 71116 Gärtringen · Deutschland<br />
-          E-Mail: <a href="mailto:info@1amotor.de">info@1amotor.de</a>
+          Telefon: 01785648456<br />
+          E-Mail: <a href="/cdn-cgi/l/email-protection#0960676f6649386864667d667b276d6c"><span class="__cf_email__" data-cfemail="e38a8d858ca3d2828e8c978c91cd8786">[email&#160;protected]</span></a>
         </p>
       </div>
 
@@ -178,29 +185,46 @@
       <p>Wir verwenden <strong>Supabase</strong> (Supabase Inc., 970 Toa Payoh North, Singapur) als Backend-Dienst für Datenbank, Authentifizierung und Dateiablage. Supabase verarbeitet personenbezogene Daten auf Servern in der EU (Frankfurt). Es besteht ein Data Processing Agreement (DPA) gemäß Art. 28 DSGVO.</p>
       <p>Weitere Informationen: <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></p>
 
-      <h2>4. Cloudflare (CDN & Sicherheit)</h2>
-      <p>Zur schnellen und sicheren Auslieferung der Website nutzen wir das Content Delivery Network der <strong>Cloudflare, Inc.</strong> (101 Townsend St, San Francisco, CA 94107, USA). Cloudflare verarbeitet dabei technisch notwendige Daten wie die IP-Adresse, um Inhalte auszuliefern und Angriffe (z.&nbsp;B. DDoS) abzuwehren. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an Sicherheit und Performance). Für die Übermittlung in die USA besteht ein Auftragsverarbeitungsvertrag mit Standardvertragsklauseln; Cloudflare ist unter dem EU-US Data Privacy Framework zertifiziert.</p>
-      <p>Weitere Informationen: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">cloudflare.com/privacypolicy</a></p>
+      <h2>4. Cookies und ähnliche Technologien</h2>
+      <p>Wir setzen Cookies und vergleichbare Technologien (z. B. Local Storage) in drei Kategorien ein. Mit Ausnahme technisch notwendiger Cookies erfolgt der Einsatz erst nach deiner ausdrücklichen Einwilligung über unser Cookie-Consent-Banner (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TTDSG). Du kannst deine Auswahl jederzeit über den Link „Cookie-Einstellungen" im Footer widerrufen oder ändern.</p>
 
-      <h2>5. Cookies & Einwilligung</h2>
-      <p>Wir unterscheiden zwischen technisch notwendigen und optionalen Cookies:</p>
+      <table class="cookie-table">
+        <tr><th>Kategorie</th><th>Zweck</th><th>Anbieter</th><th>Einwilligung nötig?</th></tr>
+        <tr>
+          <td>Technisch notwendig</td>
+          <td>Login-Session (Session-Token), Sicherheit, Speicherung deiner Cookie-Auswahl</td>
+          <td>1A Motor / Supabase</td>
+          <td>Nein – § 25 Abs. 2 Nr. 2 TTDSG</td>
+        </tr>
+        <tr>
+          <td>Statistik</td>
+          <td>Anonymisierte Reichweitenmessung zur Verbesserung der Seite</td>
+          <td>Cloudflare Web Analytics</td>
+          <td>Ja</td>
+        </tr>
+        <tr>
+          <td>Werbung</td>
+          <td>Einblendung und ggf. Personalisierung von Anzeigen, Erfolgsmessung</td>
+          <td>Google AdSense (Google Ireland Ltd.)</td>
+          <td>Ja</td>
+        </tr>
+      </table>
+
+      <h2>5. Google AdSense und Werbung</h2>
+      <p>Wir finanzieren 1A Motor unter anderem über <strong>Google AdSense</strong>, einen Werbedienst der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland ("Google"). Google AdSense verwendet Cookies und vergleichbare Technologien, um Anzeigen auf Basis früherer Besuche unserer Website oder anderer Websites einzublenden.</p>
+      <p>Sofern du eingewilligt hast, kann Google die dabei erhobenen Informationen (u. a. Cookie-ID, ungefährer Standort, besuchte Seiten) nutzen, um dir interessenbezogene Werbung anzuzeigen. Ohne Einwilligung schalten wir – soweit technisch von Google unterstützt – nicht-personalisierte Anzeigen, die weiterhin auf Cookies zu Zwecken wie Betrugsprävention, Aggregation und Reporting beruhen können.</p>
+      <p>Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TTDSG), soweit personalisierte Werbung/Cookies betroffen sind. Eine Datenübermittlung kann dabei auch in die USA erfolgen; Google verweist dafür auf Standardvertragsklauseln der EU-Kommission als Garantie.</p>
+      <p>Du kannst der Nutzung von Cookies durch Google für personalisierte Werbung wie folgt widersprechen bzw. sie verwalten:</p>
       <ul>
-        <li><strong>Notwendige Cookies:</strong> Halten deine Login-Session aufrecht (Session-Token) und gewährleisten den Grundbetrieb. Rechtsgrundlage: § 25 Abs. 2 TDDDG i.&nbsp;V.&nbsp;m. Art. 6 Abs. 1 lit. f DSGVO. Eine Einwilligung ist hierfür nicht erforderlich.</li>
-        <li><strong>Statistik-Cookies (optional):</strong> Anonyme Reichweitenmessung zur Verbesserung des Angebots. Werden nur nach deiner Einwilligung gesetzt.</li>
-        <li><strong>Marketing-Cookies (optional):</strong> Für die Auslieferung und Messung von Werbung (siehe Abschnitt „Google AdSense"). Werden nur nach deiner Einwilligung gesetzt.</li>
+        <li>über unser Cookie-Banner ("Cookie-Einstellungen" im Footer),</li>
+        <li>über die <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google Ads-Einstellungen</a>,</li>
+        <li>über <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info/choices</a> bzw. für Nutzer in der EU über <a href="https://www.youronlinechoices.eu" target="_blank" rel="noopener">youronlinechoices.eu</a>,</li>
+        <li>über die Browsereinstellungen (Deaktivierung/Löschung von Cookies).</li>
       </ul>
-      <p>Für optionale Cookies holen wir deine Einwilligung über unser Cookie-Banner ein (§ 25 Abs. 1 TDDDG, Art. 6 Abs. 1 lit. a DSGVO). Du kannst deine Auswahl jederzeit anpassen oder widerrufen:</p>
-      <p><a href="javascript:void(0)" onclick="if(window.openCookieSettings){window.openCookieSettings();}return false;"><strong>› Cookie-Einstellungen ändern</strong></a></p>
+      <p>Weitere Informationen zur Datennutzung durch Google: <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">policies.google.com/technologies/partner-sites</a> und <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+      <p>Die auf 1A Motor angezeigten Anzeigen werden von Werbetreibenden bereitgestellt; wir prüfen Inhalte nach besten Kräften, übernehmen jedoch keine Haftung für die Angebote verlinkter Websites Dritter.</p>
 
-      <h2>6. Google AdSense</h2>
-      <div class="notice-box" style="margin:0 0 12px;background:#eff6ff;border-color:#93c5fd;">
-        <p style="color:#1e40af;">ℹ️ <strong>Hinweis für Ismail (nicht veröffentlichen):</strong> Diesen Abschnitt erst aktiv lassen, wenn AdSense freigegeben ist und tatsächlich Anzeigen ausgespielt werden. Vorher unten den kompletten Absatz auskommentieren.</p>
-      </div>
-      <p>Diese Website nutzt <strong>Google AdSense</strong>, einen Dienst der Google Ireland Limited (Gordon House, Barrow Street, Dublin 4, Irland), zur Einbindung von Werbeanzeigen. Google verwendet dafür Cookies und ähnliche Technologien, um Anzeigen auf Basis früherer Besuche auszuspielen und deren Reichweite zu messen. Hierbei kann die IP-Adresse verarbeitet und an Server von Google (auch in den USA) übertragen werden.</p>
-      <p>Die Verarbeitung erfolgt ausschließlich auf Grundlage deiner Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TDDDG), die du über unser Consent-Banner erteilst und jederzeit widerrufen kannst. Für die Datenübermittlung in die USA stützt sich Google auf das <strong>EU-US Data Privacy Framework</strong> sowie Standardvertragsklauseln.</p>
-      <p>Personalisierte Werbung deaktivieren: <a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a> · Weitere Infos: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">policies.google.com/technologies/ads</a></p>
-
-      <h2>7. Deine Rechte</h2>
+      <h2>6. Deine Rechte</h2>
       <p>Du hast nach der DSGVO folgende Rechte:</p>
       <ul>
         <li><strong>Auskunft</strong> (Art. 15 DSGVO): Welche Daten wir über dich gespeichert haben</li>
@@ -209,17 +233,22 @@
         <li><strong>Einschränkung</strong> (Art. 18 DSGVO): Einschränkung der Verarbeitung</li>
         <li><strong>Widerspruch</strong> (Art. 21 DSGVO): Widerspruch gegen die Verarbeitung</li>
         <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO): Export deiner Daten</li>
+        <li><strong>Widerruf der Einwilligung</strong>: Für Statistik- und Werbe-Cookies jederzeit über "Cookie-Einstellungen" im Footer, mit Wirkung für die Zukunft</li>
       </ul>
-      <p>Zur Ausübung dieser Rechte wende dich an: <a href="mailto:info@1amotor.de">info@1amotor.de</a></p>
+      <p>Zur Ausübung dieser Rechte wende dich an: <a href="/cdn-cgi/l/email-protection#1d74737b725d2c7c707269726f337978"><span class="__cf_email__" data-cfemail="6c05020a032c5d0d010318031e420809">[email&#160;protected]</span></a></p>
 
-      <h2>8. Beschwerderecht</h2>
+      <h2>7. Beschwerderecht</h2>
       <p>Du hast das Recht, dich bei der zuständigen Datenschutzaufsichtsbehörde zu beschweren. Für Baden-Württemberg ist dies der Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg.</p>
 
-      <h2>9. Datensicherheit</h2>
+      <h2>8. Datensicherheit</h2>
       <p>Alle Datenübertragungen erfolgen verschlüsselt über HTTPS (TLS). Passwörter werden ausschließlich gehasht gespeichert. Wir treffen technische und organisatorische Maßnahmen gemäß Art. 32 DSGVO.</p>
 
-      <h2>10. Speicherdauer</h2>
-      <p>Deine Daten werden so lange gespeichert, wie dein Konto aktiv ist oder wie es zur Erfüllung gesetzlicher Aufbewahrungspflichten notwendig ist. Nach Kontolöschung werden personenbezogene Daten innerhalb von 30 Tagen gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
+      <h2>9. Speicherdauer</h2>
+      <p>Deine Daten werden so lange gespeichert, wie dein Konto aktiv ist oder wie es zur Erfüllung gesetzlicher Aufbewahrungspflichten notwendig ist. Nach Kontolöschung werden personenbezogene Daten innerhalb von 30 Tagen gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Deine Cookie-Einwilligung bleibt bis zu deinem Widerruf lokal in deinem Browser gespeichert.</p>
+
+      <div class="notice-box">
+        <p>⚠️ <strong>Hinweis:</strong> Diese Datenschutzerklärung wurde auf Basis deiner Angaben erstellt. Bitte lass sie vor dem Launch von einem Rechtsanwalt prüfen, insbesondere wenn du gewerbsmäßig Nutzerdaten verarbeitest.</p>
+      </div>
     </div>
 
   </div>
@@ -231,11 +260,14 @@
     <a href="impressum.html">Impressum</a>
     <a href="datenschutz.html">Datenschutz</a>
     <a href="agb.html">AGB</a>
-    <a href="privacy.html">Privacy (EN)</a>
-    <a href="javascript:void(0)" onclick="if(window.openCookieSettings){window.openCookieSettings();}return false;">Cookie-Einstellungen</a>
+    <a href="kontakt.html">Kontakt</a>
+    <a href="#" id="cookie-settings-link">Cookie-Einstellungen</a>
   </div>
 </footer>
 
-<script src="cookie-consent.js" defer></script>
+<script src="cookie-consent.js"></script>
+<!-- Cloudflare Web Analytics (wird erst nach Einwilligung "Statistik" aktiviert) -->
+<script type="text/plain" data-cookiecategory="statistics" defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+<!-- End Cloudflare Web Analytics -->
 </body>
 </html>

@@ -588,24 +588,6 @@
       color: var(--muted); font-size: 14px;
     }
 
-    /* ── Sponsor / Technologie-Partner Kacheln (In-Feed) ── */
-    .sponsor-tile { background: var(--white); border: 1px solid var(--border); border-radius: var(--r);
-      overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow);
-      text-decoration: none; transition: transform .2s, box-shadow .2s, border-color .2s; position: relative; }
-    .sponsor-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow2); border-color: #b3d3f0; }
-    .sponsor-hero { height: 190px; display: flex; align-items: center; justify-content: center; position: relative; padding: 26px; }
-    .sponsor-hero svg { width: 100%; height: 100%; max-height: 96px; }
-    .sponsor-tag { position: absolute; top: 10px; left: 10px; font-size: 10px; font-weight: 700;
-      letter-spacing: .07em; text-transform: uppercase; color: #fff; background: rgba(0,0,0,.30);
-      backdrop-filter: blur(4px); padding: 3px 9px; border-radius: 6px; z-index: 2; }
-    .sponsor-body { padding: 14px 16px 16px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
-    .sponsor-kicker { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-    .sponsor-name { font-size: 18px; font-weight: 800; color: var(--dark); }
-    .sponsor-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
-    .sponsor-cta { margin-top: auto; padding-top: 10px; font-size: 13px; font-weight: 700; color: var(--blue); }
-    .sp-supabase .sponsor-hero { background: linear-gradient(135deg, #0b2f24 0%, #167c5c 55%, #3ecf8e 100%); }
-    .sp-cloudflare .sponsor-hero { background: linear-gradient(135deg, #3a2a12 0%, #d0691a 55%, #f6821f 100%); }
-
     /* ── Features ── */
     .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 22px; }
     .feature-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
@@ -1178,11 +1160,15 @@
   }
   </script>
 
+  <!-- Cookie-Consent-Skript MUSS vor allen Werbe-/Analyse-Skripten geladen werden -->
+  <script src="cookie-consent.js"></script>
+
   <!-- ═══ GOOGLE ADSENSE ═══════════════════════════════════════════════════
        SCHRITT: Ersetze ca-pub-4690558719999917 mit deiner echten Publisher-ID
        Die ID bekommst du unter: adsense.google.com → Konto → Publisher-ID
+       Wird erst nach Cookie-Einwilligung ("Werbung") von cookie-consent.js aktiviert.
   ═══════════════════════════════════════════════════════════════════════ -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4690558719999917"
+  <script type="text/plain" data-cookiecategory="marketing" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4690558719999917"
      crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="mobile.css" />
@@ -1376,7 +1362,7 @@
 
             <!-- Fahrzeugmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-fz')">
-              <span style="display:inline-flex;width:17px;height:17px;color:var(--blue);flex-shrink:0;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.5-4A2 2 0 0 1 8.4 5.7h7.2A2 2 0 0 1 17.5 7L19 11"/><path d="M4 11h16v5H4z"/><circle cx="7.5" cy="16.2" r="1.3"/><circle cx="16.5" cy="16.2" r="1.3"/></svg></span>
+              <span style="font-size:15px;">🚗</span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);">Fahrzeugmotoren</span>
               <span class="cat-count">412</span>
               <svg id="grp-fz-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1391,7 +1377,7 @@
 
             <!-- Bootsmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-boot')">
-              <span style="display:inline-flex;width:17px;height:17px;color:var(--blue);flex-shrink:0;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h18l-2.6 4.5H5.6z"/><path d="M12 15V3l7 10z"/><path d="M12 15V6l-4 6"/></svg></span>
+              <span style="font-size:15px;">⛵</span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);">Bootsmotoren</span>
               <span class="cat-count">187</span>
               <svg id="grp-boot-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1405,7 +1391,7 @@
 
             <!-- Industriemotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-ind')">
-              <span style="display:inline-flex;width:17px;height:17px;color:var(--blue);flex-shrink:0;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V10l5 3V10l5 3V7l8 4v9z"/><path d="M3 20h18"/><path d="M8 20v-3M13 20v-3M18 20v-3"/></svg></span>
+              <span style="font-size:15px;">🏭</span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);">Industriemotoren</span>
               <span class="cat-count">263</span>
               <svg id="grp-ind-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1421,7 +1407,7 @@
 
             <!-- Agrarmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-agr')">
-              <span style="display:inline-flex;width:17px;height:17px;color:var(--blue);flex-shrink:0;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="15.5" r="3.2"/><circle cx="17.5" cy="16.5" r="2"/><path d="M10 14h4l1-5h3.5"/><path d="M7 12.3V8.5h3.5l1.3 3.4"/></svg></span>
+              <span style="font-size:15px;">🚜</span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);">Agrar- & Landmaschinen</span>
               <span class="cat-count">145</span>
               <svg id="grp-agr-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1435,7 +1421,7 @@
 
             <!-- Sondermotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-sond')">
-              <span style="display:inline-flex;width:17px;height:17px;color:var(--blue);flex-shrink:0;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg></span>
+              <span style="font-size:15px;">⚙️</span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);">Spezial- & Sondermotoren</span>
               <span class="cat-count">198</span>
               <svg id="grp-sond-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1453,7 +1439,7 @@
 
             <!-- Motorrad -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-moto')">
-              <span style="display:inline-flex;width:17px;height:17px;color:var(--blue);flex-shrink:0;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="16" r="3"/><circle cx="18.5" cy="16" r="3"/><path d="M5.5 16l3-5h5.5l2 3h2.5"/><path d="M8 11h4.5"/></svg></span>
+              <span style="font-size:15px;">🏍️</span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);">Motorrad & Zweirad</span>
               <span class="cat-count">134</span>
               <svg id="grp-moto-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1466,7 +1452,7 @@
 
             <!-- Austauschmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-aus')">
-              <span style="display:inline-flex;width:17px;height:17px;color:var(--blue);flex-shrink:0;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8.5A8 8 0 0 0 6 5.2M4 4.5v4h4"/><path d="M4 15.5A8 8 0 0 0 18 18.8M20 19.5v-4h-4"/></svg></span>
+              <span style="font-size:15px;">🔄</span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);">Austausch- & Reman</span>
               <span class="cat-count">221</span>
               <svg id="grp-aus-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1486,12 +1472,12 @@
         <div class="sidebar-title" onclick="sidebarToggle(this)">Kraftstoff / Antrieb</div>
         <div class="sidebar-body">
           <div class="sidebar-list">
-            <label><input type="checkbox" name="fuel" value="Diesel"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h8v11H6z"/><path d="M14 11h2.2l2 2v6H14"/><path d="M8 6V4.2h4V6"/></svg></span>Diesel</label>
-            <label><input type="checkbox" name="fuel" value="Benzin"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14"/><path d="M4 20h10"/><path d="M8 9h3"/><path d="M13 8.5l3 3V17a2 2 0 0 0 4 0V10l-2.5-2.5"/></svg></span>Benzin</label>
-            <label><input type="checkbox" name="fuel" value="Elektrisch"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 13.5H11l-1 8 8.5-11.5H12z"/></svg></span>Elektrisch</label>
-            <label><input type="checkbox" name="fuel" value="Gas LPG"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c2 3 5 4.5 5 8.5a5 5 0 0 1-10 0c0-2 .8-3 1.8-4 .5 1 1 1.5 2 2 0-3-1-4.5.9-6.5z"/></svg></span>Gas (LPG/CNG)</label>
-            <label><input type="checkbox" name="fuel" value="Hybrid"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-7 5-13 14-14 1 8-3 15-10 15-2 0-4-1-4-1z"/><path d="M9.5 15c2-2 4-3 6-4"/></svg></span>Hybrid</label>
-            <label><input type="checkbox" name="fuel" value="Wasserstoff"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>Wasserstoff</label>
+            <label><input type="checkbox" name="fuel" value="Diesel"> 🛢 Diesel</label>
+            <label><input type="checkbox" name="fuel" value="Benzin"> ⛽ Benzin</label>
+            <label><input type="checkbox" name="fuel" value="Elektrisch"> ⚡ Elektrisch</label>
+            <label><input type="checkbox" name="fuel" value="Gas LPG"> 🔵 Gas (LPG/CNG)</label>
+            <label><input type="checkbox" name="fuel" value="Hybrid"> 🔋 Hybrid</label>
+            <label><input type="checkbox" name="fuel" value="Wasserstoff"> 💧 Wasserstoff</label>
           </div>
         </div>
       </div>
@@ -1502,10 +1488,10 @@
         <div class="sidebar-body">
           <div class="sidebar-list">
             <label><input type="radio" name="cond" value=""> Alle Zustände</label>
-            <label><input type="radio" name="cond" value="Neu"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.9L18 9.7l-4.2 1.8L12 16l-1.8-4.5L6 9.7l4.2-1.8z"/><path d="M18.5 14.5l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z"/></svg></span>Neu</label>
-            <label><input type="radio" name="cond" value="Gebraucht"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 6.2a4 4 0 0 0-5.3 5.1L4 17.5 6.5 20l6.2-6.2a4 4 0 0 0 5.1-5.3l-2.6 2.6-2-2z"/></svg></span>Gebraucht</label>
-            <label><input type="radio" name="cond" value="Generalüberholt"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8.5A8 8 0 0 0 6 5.2M4 4.5v4h4"/><path d="M4 15.5A8 8 0 0 0 18 18.8M20 19.5v-4h-4"/></svg></span>Generalüberholt</label>
-            <label><input type="radio" name="cond" value="Defekt"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.5h.01"/></svg></span>Defekt / Teile</label>
+            <label><input type="radio" name="cond" value="Neu"> ✨ Neu</label>
+            <label><input type="radio" name="cond" value="Gebraucht"> 🔧 Gebraucht</label>
+            <label><input type="radio" name="cond" value="Generalüberholt"> 🔄 Generalüberholt</label>
+            <label><input type="radio" name="cond" value="Defekt"> ⚠️ Defekt / Teile</label>
           </div>
         </div>
       </div>
@@ -1527,10 +1513,10 @@
         <div class="sidebar-title" onclick="sidebarToggle(this)">Anbieter</div>
         <div class="sidebar-body">
           <div class="sidebar-list">
-            <label><input type="checkbox" name="seller" value="verified"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>Geprüfte Händler</label>
-            <label><input type="checkbox" name="seller" value="top"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></span>Top-Bewertung</label>
-            <label><input type="checkbox" name="seller" value="commercial"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16"/><path d="M14 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h2M8 12h2M8 16h2"/><path d="M3 21h18"/></svg></span>Gewerblich</label>
-            <label><input type="checkbox" name="seller" value="private"><span style="display:inline-flex;width:15px;height:15px;vertical-align:-3px;margin:0 5px 0 3px;color:var(--blue);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>Privat</label>
+            <label><input type="checkbox" name="seller" value="verified"> ✅ Geprüfte Händler</label>
+            <label><input type="checkbox" name="seller" value="top"> ⭐ Top-Bewertung</label>
+            <label><input type="checkbox" name="seller" value="commercial"> 🏢 Gewerblich</label>
+            <label><input type="checkbox" name="seller" value="private"> 👤 Privat</label>
           </div>
         </div>
       </div>
@@ -1544,9 +1530,9 @@
              data-ad-slot="4564801273"
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <script type="text/plain" data-cookiecategory="marketing">(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <div id="adsense-placeholder" style="background:linear-gradient(135deg,#f0f4f8,#e8eef5);border:1.5px dashed #c8d6e5;border-radius:10px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;">
-          <div style="color:#94a3b8;display:flex;"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4a1 1 0 0 0 1 1h2l4 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M14 8.5a5 5 0 0 1 0 7"/></svg></div>
+          <div style="font-size:28px;">📢</div>
           <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.07em;">Werbung</div>
           <div style="font-size:11px;color:#94a3b8;line-height:1.5;">Google AdSense<br>erscheint nach Freischaltung</div>
           <a href="kontakt.html" style="margin-top:6px;font-size:11px;font-weight:600;color:#3b82f6;text-decoration:none;background:rgba(59,130,246,.08);padding:5px 12px;border-radius:999px;border:1px solid rgba(59,130,246,.2);">Direkt hier werben →</a>
@@ -1900,6 +1886,7 @@
           <li><a href="kontakt.html">Kontakt</a></li>
           <li><a href="karriere.html">Karriere</a></li>
           <li><a href="meine-anfragen.html">Nachrichten</a></li>
+          <li><a href="#" data-cookie-settings>Cookie-Einstellungen</a></li>
         </ul>
       </div>
     </div>
@@ -1910,6 +1897,7 @@
         <a href="datenschutz.html">Datenschutz</a>
         <a href="agb.html">AGB</a>
         <a href="kontakt.html">Kontakt</a>
+        <a href="#" data-cookie-settings>Cookie-Einstellungen</a>
       </div>
     </div>
   </div>
@@ -1977,7 +1965,7 @@
     document.getElementById("nl-email").value = "";
   }
 </script>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
+<!-- Cloudflare Web Analytics (wird erst nach Einwilligung "Statistik" aktiviert) --><script type="text/plain" data-cookiecategory="statistics" defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script><!-- End Cloudflare Web Analytics -->
 
 <script>
 // ══════════════════════════════════════════════════
