@@ -798,23 +798,41 @@
       line-height: 1.6; max-width: 380px;
       margin-bottom: 22px;
     }
-    .faq-count-row {
-      display: flex; gap: 10px; flex-wrap: wrap;
+    /* ── Werbefläche im Hero (ersetzt die frühere Demo-Statistik) ── */
+    .faq-ad-slot {
+      position: relative;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      padding: 16px 18px 14px;
+      max-width: 420px;
     }
-    .faq-count-pill {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px; padding: 8px 18px;
-      display: flex; flex-direction: column; align-items: center;
-      min-width: 72px;
+    .faq-ad-tag {
+      position: absolute; top: -9px; left: 14px;
+      background: #0d1b2a;
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.55);
+      font-size: 9.5px; font-weight: 700;
+      letter-spacing: .8px; text-transform: uppercase;
+      padding: 2px 9px; border-radius: 999px;
     }
-    .faq-count-pill strong {
-      font-size: 19px; font-weight: 800; color: var(--sky); line-height: 1;
+    .faq-ad-placeholder {
+      display: flex; align-items: center; gap: 12px;
+      min-height: 58px;
     }
-    .faq-count-pill span {
-      font-size: 10.5px; color: rgba(255,255,255,0.4);
-      margin-top: 3px; letter-spacing: .3px;
+    .faq-ad-placeholder-icon { font-size: 22px; flex-shrink: 0; }
+    .faq-ad-placeholder-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+    .faq-ad-placeholder-text strong { font-size: 13px; color: #fff; font-weight: 700; }
+    .faq-ad-placeholder-text span { font-size: 11px; color: rgba(255,255,255,0.45); }
+    .faq-ad-placeholder-cta {
+      font-size: 11px; font-weight: 700; color: var(--sky);
+      text-decoration: none; white-space: nowrap;
+      background: rgba(77,166,255,0.12);
+      border: 1px solid rgba(77,166,255,0.3);
+      padding: 6px 13px; border-radius: 999px;
+      transition: background .15s;
     }
+    .faq-ad-placeholder-cta:hover { background: rgba(77,166,255,0.22); }
 
     /* ── Fragen-Grid ── */
     .faq-body {
@@ -1586,10 +1604,25 @@
           <div class="faq-hero-label">Häufige Fragen</div>
           <h2>Alles über <span>gebrauchte &amp;<br>generalüberholte</span> Motoren</h2>
           <p class="faq-hero-sub">Antworten auf die wichtigsten Fragen rund um Kauf, Einbau und Betrieb.</p>
-          <div class="faq-count-row">
-            <div class="faq-count-pill"><strong id="faq-stat-visitors">–</strong><span>Besucher heute</span></div>
-            <div class="faq-count-pill"><strong id="faq-stat-listings">–</strong><span>Aktive Inserate</span></div>
-            <div class="faq-count-pill"><strong id="faq-stat-inquiries">–</strong><span>Anfragen heute</span></div>
+          <div class="faq-ad-slot">
+            <span class="faq-ad-tag">Anzeige</span>
+            <!-- Echtes AdSense-Ad-Unit: sobald in AdSense ein eigener Anzeigenblock
+                 für diese Fläche angelegt wurde, data-ad-slot mit der echten ID ersetzen. -->
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; min-height:58px;"
+                 data-ad-client="ca-pub-4690558719999917"
+                 data-ad-slot="0000000000"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+            <script type="text/plain" data-cookiecategory="marketing">(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <div class="faq-ad-placeholder">
+              <span class="faq-ad-placeholder-icon">📢</span>
+              <div class="faq-ad-placeholder-text">
+                <strong>Werbefläche</strong>
+                <span>Hier könnte Ihre Anzeige stehen</span>
+              </div>
+              <a href="kontakt.html" class="faq-ad-placeholder-cta">Jetzt hier werben →</a>
+            </div>
           </div>
         </div>
       </div>
@@ -2166,49 +2199,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 })();
 </script>
-
-  <script>
-  // ── Tagesbasierte Zufallszahlen ───────────────────────────────────────────
-  // Jeder Tag liefert immer dieselben Zahlen (deterministisch), aber
-  // von Tag zu Tag wechseln die Werte stark — wirkt wie echter Traffic.
-  (function() {
-    var now  = new Date();
-    var base = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
-
-    // Wang Hash – viel bessere Bitstreuung als einfaches LCG
-    function wh(s) {
-      s = s >>> 0;
-      s = (((s >>> 16) ^ s) * 0x45d9f3b) >>> 0;
-      s = (((s >>> 16) ^ s) * 0x45d9f3b) >>> 0;
-      s = ((s >>> 16) ^ s) >>> 0;
-      return s / 0xffffffff;
-    }
-
-    // Besucher: 420–1.240
-    var visitors  = Math.round(wh(base ^ 0xA1B2) * 820 + 420);
-    // Aktive Inserate: 180–980
-    var listings  = Math.round(wh(base ^ 0xC3D4) * 800 + 180);
-    // Anfragen heute: 18–94
-    var inquiries = Math.round(wh(base ^ 0xE5F6) * 76  + 18);
-
-    // Count-Up Animation
-    function countUp(el, target, duration) {
-      if (!el) return;
-      var start = 0, step = target / (duration / 16);
-      var t = setInterval(function() {
-        start += step;
-        if (start >= target) { start = target; clearInterval(t); }
-        el.textContent = Math.round(start).toLocaleString('de-DE');
-      }, 16);
-    }
-
-    setTimeout(function() {
-      countUp(document.getElementById('faq-stat-visitors'),  visitors,  900);
-      countUp(document.getElementById('faq-stat-listings'),  listings,  1100);
-      countUp(document.getElementById('faq-stat-inquiries'), inquiries, 700);
-    }, 200);
-  })();
-  </script>
 
 
 <!-- ══ HÄNDLER-REGISTRIERUNG (SCHARF — kein Demo-Modus) ══ -->
