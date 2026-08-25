@@ -10,6 +10,78 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const HOME_LISTING_LIMIT = 6;
 
+  // ══════════════════════════════════════════════════════════════
+  //  BEZAHLTE PLATZIERUNGEN (Native Ads) — Werbepartner
+  //  WICHTIG: Diese Karten sind Werbung und werden mit "Anzeige"
+  //  gekennzeichnet (Pflicht nach § 5a Abs. 4 UWG). Nur echte,
+  //  vertraglich vereinbarte Partner hier eintragen.
+  //  Reihenfolge = Anzeige-Reihenfolge (oben in der Grid-Reihe).
+  // ══════════════════════════════════════════════════════════════
+  const HOME_ADS = [
+    {
+      title: "Kress EyePilot® 4×4 RTKⁿ Mähroboter · bis 1.500 m²",
+      manufacturer: "Kress",
+      model: "KR281E",
+      price: "€ 2.999,00",
+      note: "Mähroboter · Neu",
+      advertiser: "Kress",
+      image: "https://www.kress.com/wp-content/uploads/2026/02/4x4-White-1.png",
+      url: "https://www.kress.com/de-de/kress-eyepilot-4x4-rtk%e2%81%bf-1500-m%c2%b2-maehroboter-kr281e/?utm_source=1amotor.de&utm_medium=display&utm_campaign=eyepilot4x4"
+    },
+    {
+      title: "Kress EyePilot® 4×4 RTKⁿ Mähroboter · bis 3.000 m²",
+      manufacturer: "Kress",
+      model: "KR283E",
+      price: "€ 3.799,00",
+      note: "Mähroboter · Neu",
+      advertiser: "Kress",
+      image: "https://www.kress.com/wp-content/uploads/2026/02/4WD_Red_02-1.jpg",
+      url: "https://www.kress.com/de-de/kress-eyepilot-4x4-rtk%e2%81%bf-3000-m%c2%b2-maehroboter-kr283e/?utm_source=1amotor.de&utm_medium=display&utm_campaign=eyepilot4x4"
+    },
+    {
+      title: "Kress EyePilot® 4×4 RTKⁿ Mähroboter · bis 10.000 m²",
+      manufacturer: "Kress",
+      model: "KR285E",
+      price: "€ 4.499,00",
+      note: "Mähroboter · Neu",
+      advertiser: "Kress",
+      image: "https://www.kress.com/wp-content/uploads/2026/02/4WD-gray-1-1-e1771513297499.png",
+      url: "https://www.kress.com/de-de/kress-eyepilot-4x4-rtk%e2%81%bf-10000-m%c2%b2-maehroboter-kr285e/?utm_source=1amotor.de&utm_medium=display&utm_campaign=eyepilot4x4"
+    }
+  ];
+
+  function renderAdCards() {
+    return HOME_ADS.map((ad) => {
+      const imageStyle = ad.image
+        ? `style="background-image:url('${ad.image}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
+        : "";
+      return `
+        <a class="listing-card wb-ad-card"
+           href="${ad.url}"
+           target="_blank"
+           rel="sponsored noopener nofollow"
+           aria-label="Anzeige: ${escapeHtml(ad.title)}">
+          <div class="listing-image wb-ad-image" ${imageStyle}>
+            <span class="wb-ad-badge">Anzeige</span>
+          </div>
+          <div class="listing-body">
+            <div class="listing-title">${escapeHtml(ad.title)}</div>
+            <div class="meta">
+              <span>${escapeHtml(ad.manufacturer)}</span>
+              <span>${escapeHtml(ad.model)}</span>
+            </div>
+            <div class="price">${escapeHtml(ad.price)}</div>
+            <div class="shipping">${escapeHtml(ad.note || "")}</div>
+            <div class="seller">
+              <span>Werbung · ${escapeHtml(ad.advertiser)}</span>
+              <span class="wb-ad-link">Zum Anbieter →</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }).join("");
+  }
+
   let listings = [];
   let categories = [];
 
@@ -151,9 +223,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     listings = data || [];
 
     if (resultsInfo) {
-      resultsInfo.textContent = listings.length
-        ? `${listings.length} aktuelle Angebote`
-        : "";
+      resultsInfo.textContent = `${listings.length} aktuelle Angebote aus Supabase`;
     }
   }
 
@@ -167,21 +237,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else if (sortMode === "price_desc") {
       items.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
     } else {
-      items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      // Standardansicht ("Neueste zuerst"): statt immer strikt nach Datum zu sortieren,
+      // wird die Reihenfolge alle 20 Minuten neu gemischt (deterministisch pro Zeitfenster,
+      // damit die Seite innerhalb der 20 Minuten für alle Besucher gleich aussieht, sich
+      // danach aber automatisch neu anordnet — so wirkt die Startseite nicht immer identisch).
+      items = seededShuffle(items, timeBucketSeed(20));
     }
 
     items = items.slice(0, HOME_LISTING_LIMIT);
 
+    // Bezahlte Platzierungen stehen immer oben ("die 3 oberen Inserate").
+    const adsHtml = renderAdCards();
+
     if (!items.length) {
-      listingGrid.innerHTML = `
+      listingGrid.innerHTML = adsHtml + `
         <div class="empty-box">
-          Noch keine freigegebenen Angebote vorhanden.
+          Weitere Angebote folgen in Kürze.
         </div>
       `;
       return;
     }
 
-    listingGrid.innerHTML = items.map((listing) => {
+    listingGrid.innerHTML = adsHtml + items.map((listing) => {
       const category = Array.isArray(listing.categories)
         ? listing.categories[0]?.name || "Unbekannt"
         : listing.categories?.name || "Unbekannt";
@@ -320,6 +397,30 @@ async function loadCategoryCounts() {
   }
 }
 
+// ── Zeitgesteuertes Mischen ("alle 20 Minuten verschieben") ──────────────────
+// Deterministische Pseudozufallszahl aus einem Seed (mulberry32) — dieselbe Eingabe
+// erzeugt immer dieselbe Reihenfolge, damit alle Besucher im selben 20-Minuten-Fenster
+// dasselbe sehen, es sich aber automatisch mit jedem neuen Zeitfenster ändert.
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function timeBucketSeed(minutes) {
+  return Math.floor(Date.now() / (minutes * 60 * 1000));
+}
+function seededShuffle(arr, seed) {
+  const rng = mulberry32(seed);
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function getCategoryIcon(category) {
   const map = {

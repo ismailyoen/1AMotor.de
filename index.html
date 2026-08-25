@@ -582,6 +582,23 @@
     }
     .rating { color: var(--blue2); font-weight: 700; }
 
+    /* ── Native Ads / Bezahlte Platzierungen (wb-) ── */
+    .wb-ad-card { position: relative; }
+    .wb-ad-card .listing-image {
+      background: linear-gradient(135deg, #eef4fb, #ffffff);
+    }
+    .wb-ad-badge {
+      position: absolute; top: 10px; left: 10px; z-index: 3;
+      background: #f0a500; color: #1b1300;
+      font-size: 11px; font-weight: 800; letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: 4px 10px; border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
+    .wb-ad-card .wb-ad-link { color: var(--blue2); font-weight: 700; }
+    .wb-ad-card { border-color: #f2d9a0; }
+    .wb-ad-card:hover { border-color: #f0a500; }
+
     /* Empty Box */
     .empty-box {
       grid-column: 1/-1; padding: 40px; text-align: center;
