@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let listings = [];
   let categories = [];
+  let batteryListings = [];
 
   // ── Werbeflächen-Pool (12 Slots, thematisch nach Motoren-Kategorien) ──────
   // WICHTIG: Keine erfundenen Hersteller-/Markennamen. Solange kein echter
@@ -75,6 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderListings("latest");
     bindSearch();
     loadCategoryCounts(); // Echte Zählungen aus DB — läuft im Hintergrund
+    loadBatteryListings(); // Eigener Batterien-Bereich, läuft unabhängig im Hintergrund
   } catch (err) {
     console.error("INIT ERROR:", err);
     if (resultsInfo) resultsInfo.textContent = "Fehler beim Laden der Startseite.";
@@ -392,6 +394,145 @@ async function loadCategoryCounts() {
   }
 }
 
+// ── Batterien-Bereich (eigenes Panel auf der Startseite) ─────────────────────
+async function loadBatteryListings() {
+  const grid = document.getElementById("battery-listing-grid");
+  const info = document.getElementById("battery-results-info");
+  if (!grid) return;
+
+  try {
+    // 1) IDs der Batterie-Kategorien ermitteln
+    const { data: cats, error: catError } = await supabaseClient
+      .from("categories")
+      .select("id, name, slug")
+      .in("slug", window.BATTERY_SLUGS || []);
+
+    if (catError) {
+      console.error("BATTERY CATEGORIES ERROR:", catError);
+      renderBatteryEmptyState(grid, info);
+      return;
+    }
+
+    const catIds = (cats || []).map(c => c.id);
+
+    if (!catIds.length) {
+      // Kategorien wurden in Supabase noch nicht angelegt
+      renderBatteryEmptyState(grid, info);
+      return;
+    }
+
+    // 2) Freigegebene Angebote in diesen Kategorien laden
+    const { data, error } = await supabaseClient
+      .from("listings")
+      .select(`
+        id, title, manufacturer, model, condition, price, location, created_at,
+        image_urls, categories(name), seller_profiles(company_name)
+      `)
+      .in("category_id", catIds)
+      .eq("status", "Freigegeben")
+      .order("created_at", { ascending: false })
+      .limit(BATTERY_LIMIT_FALLBACK);
+
+    if (error) {
+      console.error("BATTERY LISTINGS ERROR:", error);
+      renderBatteryEmptyState(grid, info);
+      return;
+    }
+
+    const items = data || [];
+
+    if (info) {
+      info.textContent = items.length
+        ? `${items.length} Batterie-Angebote aus Supabase`
+        : "Noch keine Batterie-Angebote — sei einer der Ersten";
+    }
+
+    if (!items.length) {
+      renderBatteryEmptyState(grid, info);
+      return;
+    }
+
+    grid.innerHTML = items.map(renderBatteryListingCard).join("");
+  } catch (err) {
+    console.error("loadBatteryListings error:", err);
+    renderBatteryEmptyState(grid, info);
+  }
+}
+const BATTERY_LIMIT_FALLBACK = 6;
+window.BATTERY_SLUGS = [
+  "e-auto-batterie",
+  "starterbatterie",
+  "solarbatterie",
+  "industriebatterie",
+  "gabelstapler-batterie",
+  "e-bike-batterie"
+];
+
+function renderBatteryListingCard(listing) {
+  const category = Array.isArray(listing.categories)
+    ? listing.categories[0]?.name || "Batterie"
+    : listing.categories?.name || "Batterie";
+
+  const seller = Array.isArray(listing.seller_profiles)
+    ? listing.seller_profiles[0]?.company_name || "Händler"
+    : listing.seller_profiles?.company_name || "Händler";
+
+  const price = Number(listing.price || 0).toLocaleString("de-DE", {
+    style: "currency",
+    currency: "EUR"
+  });
+
+  const firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length
+    ? listing.image_urls[0]
+    : null;
+
+  // Kein erzwungener Bild-Fallback (fallback=null) — sonst würde z. B. ein
+  // Auto-Motorbild angezeigt, wenn für die Batterie-Kategorie noch kein
+  // eigenes Foto in category-images.js hinterlegt ist. Ohne Bild greift
+  // stattdessen der Icon-Fallback (getCategoryIcon) weiter unten.
+  const fallbackImg = window.getCategoryImage ? window.getCategoryImage(category, null) : null;
+  const displayImage = firstImage || fallbackImg;
+
+  const imageStyle = displayImage
+    ? `style="background-image:url('${displayImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
+    : "";
+  const imageContent = displayImage ? "" : getCategoryIcon(category);
+
+  return `
+    <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(listing.id)}">
+      <div class="listing-image" ${imageStyle}>
+        <span class="badge">${escapeHtml(category)}</span>
+        <span class="fav">♡</span>
+        ${imageContent}
+      </div>
+      <div class="listing-body">
+        <div class="listing-title">${escapeHtml(listing.title || "Ohne Titel")}</div>
+        <div class="meta">
+          <span>${escapeHtml(listing.manufacturer || "-")}</span>
+          <span>${escapeHtml(listing.model || "-")}</span>
+          <span>${escapeHtml(listing.location || "-")}</span>
+        </div>
+        <div class="price">${price}</div>
+        <div class="shipping">${escapeHtml(listing.condition || "Gebraucht")}</div>
+        <div class="seller">
+          <span>${escapeHtml(seller)}</span>
+          <span class="rating">Live</span>
+        </div>
+      </div>
+    </a>
+  `;
+}
+
+function renderBatteryEmptyState(grid, info) {
+  if (info) info.textContent = "Noch keine Batterie-Angebote — sei einer der Ersten";
+  grid.innerHTML = `
+    <div class="empty-box" style="grid-column:1/-1;">
+      <p style="margin-bottom:12px;">Noch keine Batterie-Inserate vorhanden.</p>
+      <a href="anzeige-erstellen.html" class="view-all-link">Jetzt erste Batterie-Anzeige erstellen →</a>
+    </div>
+  `;
+}
+
 // ── Zeitgesteuertes Mischen ("alle 20 Minuten verschieben") ──────────────────
 // Deterministische Pseudozufallszahl aus einem Seed (mulberry32) — dieselbe Eingabe
 // erzeugt immer dieselbe Reihenfolge, damit alle Besucher im selben 20-Minuten-Fenster
@@ -519,7 +660,14 @@ function getCategoryIcon(category) {
     "Schwerlastmotor": "🏋️",
     "Spezialanfertigung Motor": "🛠️",
     "Austauschmotor": "🔄",
-    "Sonstiges": "📦"
+    "Sonstiges": "📦",
+    // ── Batterien ──
+    "E-Auto-Batterie": "🔋",
+    "Starterbatterie": "🔋",
+    "Solar-/Speicherbatterie": "🔋",
+    "Industriebatterie": "🔋",
+    "Gabelstapler-Batterie": "🔋",
+    "E-Bike-Batterie": "🔋"
   };
   return map[category] || "📦";
 }

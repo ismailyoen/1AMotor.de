@@ -582,22 +582,13 @@
     }
     .rating { color: var(--blue2); font-weight: 700; }
 
-    /* ── Native Ads / Bezahlte Platzierungen (wb-) ── */
-    .wb-ad-card { position: relative; }
-    .wb-ad-card .listing-image {
-      background: linear-gradient(135deg, #eef4fb, #ffffff);
+    /* ── Werbeflächen (klar als Anzeige gekennzeichnet, §5a UWG / AdSense-konform) ── */
+    .badge.ad-badge {
+      background: rgba(217, 119, 6, .92); /* amber, bewusst anders als normaler Badge */
     }
-    .wb-ad-badge {
-      position: absolute; top: 10px; left: 10px; z-index: 3;
-      background: #f0a500; color: #1b1300;
-      font-size: 11px; font-weight: 800; letter-spacing: .04em;
-      text-transform: uppercase;
-      padding: 4px 10px; border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.18);
-    }
-    .wb-ad-card .wb-ad-link { color: var(--blue2); font-weight: 700; }
-    .wb-ad-card { border-color: #f2d9a0; }
-    .wb-ad-card:hover { border-color: #f0a500; }
+    .ad-card .listing-image { background: linear-gradient(135deg, var(--navy, #1b2d42), var(--blue, #2a4a6b)); }
+    .ad-card .seller .rating { color: #d97706; }
+    .ad-card .ad-cta { font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
 
     /* Empty Box */
     .empty-box {
@@ -1611,6 +1602,24 @@
       </div>
     </div>
 
+    <!-- Batterien kaufen & verkaufen -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>🔋 Batterien kaufen &amp; verkaufen</h2>
+          <p id="battery-results-info">Batterie-Angebote werden geladen…</p>
+        </div>
+        <div class="panel-head-right">
+          <a href="anzeige-erstellen.html" class="view-all-link">Batterie inserieren →</a>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="listing-grid" id="battery-listing-grid">
+          <div class="empty-box">Batterie-Angebote werden geladen…</div>
+        </div>
+      </div>
+    </div>
+
     <!-- FAQ -->
     <div class="faq-panel">
 
@@ -1955,7 +1964,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="index-live.js?v=2"></script>
+<script src="index-live.js?v=3"></script>
 <script src="auth-header.js"></script>
   <script src="i18n.js"></script>
   <script>
