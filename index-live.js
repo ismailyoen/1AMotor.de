@@ -10,80 +10,55 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const HOME_LISTING_LIMIT = 6;
 
-  // ══════════════════════════════════════════════════════════════
-  //  BEZAHLTE PLATZIERUNGEN (Native Ads) — Werbepartner
-  //  WICHTIG: Diese Karten sind Werbung und werden mit "Anzeige"
-  //  gekennzeichnet (Pflicht nach § 5a Abs. 4 UWG). Nur echte,
-  //  vertraglich vereinbarte Partner hier eintragen.
-  //  Reihenfolge = Anzeige-Reihenfolge (oben in der Grid-Reihe).
-  // ══════════════════════════════════════════════════════════════
-  const HOME_ADS = [
-    {
-      title: "Kress EyePilot® 4×4 RTKⁿ Mähroboter · bis 1.500 m²",
-      manufacturer: "Kress",
-      model: "KR281E",
-      price: "€ 2.999,00",
-      note: "Mähroboter · Neu",
-      advertiser: "Kress",
-      image: "https://www.kress.com/wp-content/uploads/2026/02/4x4-White-1.png",
-      url: "https://www.kress.com/de-de/kress-eyepilot-4x4-rtk%e2%81%bf-1500-m%c2%b2-maehroboter-kr281e/?utm_source=1amotor.de&utm_medium=display&utm_campaign=eyepilot4x4"
-    },
-    {
-      title: "Kress EyePilot® 4×4 RTKⁿ Mähroboter · bis 3.000 m²",
-      manufacturer: "Kress",
-      model: "KR283E",
-      price: "€ 3.799,00",
-      note: "Mähroboter · Neu",
-      advertiser: "Kress",
-      image: "https://www.kress.com/wp-content/uploads/2026/02/4WD_Red_02-1.jpg",
-      url: "https://www.kress.com/de-de/kress-eyepilot-4x4-rtk%e2%81%bf-3000-m%c2%b2-maehroboter-kr283e/?utm_source=1amotor.de&utm_medium=display&utm_campaign=eyepilot4x4"
-    },
-    {
-      title: "Kress EyePilot® 4×4 RTKⁿ Mähroboter · bis 10.000 m²",
-      manufacturer: "Kress",
-      model: "KR285E",
-      price: "€ 4.499,00",
-      note: "Mähroboter · Neu",
-      advertiser: "Kress",
-      image: "https://www.kress.com/wp-content/uploads/2026/02/4WD-gray-1-1-e1771513297499.png",
-      url: "https://www.kress.com/de-de/kress-eyepilot-4x4-rtk%e2%81%bf-10000-m%c2%b2-maehroboter-kr285e/?utm_source=1amotor.de&utm_medium=display&utm_campaign=eyepilot4x4"
-    }
-  ];
-
-  function renderAdCards() {
-    return HOME_ADS.map((ad) => {
-      const imageStyle = ad.image
-        ? `style="background-image:url('${ad.image}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
-        : "";
-      return `
-        <a class="listing-card wb-ad-card"
-           href="${ad.url}"
-           target="_blank"
-           rel="sponsored noopener nofollow"
-           aria-label="Anzeige: ${escapeHtml(ad.title)}">
-          <div class="listing-image wb-ad-image" ${imageStyle}>
-            <span class="wb-ad-badge">Anzeige</span>
-          </div>
-          <div class="listing-body">
-            <div class="listing-title">${escapeHtml(ad.title)}</div>
-            <div class="meta">
-              <span>${escapeHtml(ad.manufacturer)}</span>
-              <span>${escapeHtml(ad.model)}</span>
-            </div>
-            <div class="price">${escapeHtml(ad.price)}</div>
-            <div class="shipping">${escapeHtml(ad.note || "")}</div>
-            <div class="seller">
-              <span>Werbung · ${escapeHtml(ad.advertiser)}</span>
-              <span class="wb-ad-link">Zum Anbieter →</span>
-            </div>
-          </div>
-        </a>
-      `;
-    }).join("");
-  }
-
   let listings = [];
   let categories = [];
+
+  // ── Werbeflächen-Pool (12 Slots, thematisch nach Motoren-Kategorien) ──────
+  // WICHTIG: Keine erfundenen Hersteller-/Markennamen. Solange kein echter
+  // Werbevertrag existiert, bleibt jeder Slot ein klar gekennzeichneter
+  // Platzhalter, der zur Kontaktseite verlinkt ("Werbepartner werden").
+  // Sobald ein echter Partner zusagt (wie bei Kress), ersetzt ein eigener
+  // Eintrag hier die jeweilige Platzhalterkarte 1:1.
+  const AD_POOL = [
+    { icon: "🚗", category: "PKW-Motoren", cta: "Werbefläche frei", sub: "Ihre Anzeige für PKW-Motoren hier" },
+    { icon: "🚛", category: "LKW-Motoren", cta: "Werbefläche frei", sub: "Erreichen Sie LKW-Käufer & Händler" },
+    { icon: "🚜", category: "Landmaschinen", cta: "Werbefläche frei", sub: "Sichtbarkeit bei Landmaschinen-Käufern" },
+    { icon: "🚧", category: "Baumaschinen", cta: "Werbefläche frei", sub: "Anzeige im Baumaschinen-Bereich" },
+    { icon: "🚤", category: "Bootsmotoren", cta: "Werbefläche frei", sub: "Werbeplatz für Marine-Antriebe" },
+    { icon: "✈️", category: "Flugzeugmotoren", cta: "Werbefläche frei", sub: "Anzeige im Luftfahrt-Segment" },
+    { icon: "🏍️", category: "Motorradmotoren", cta: "Werbefläche frei", sub: "Sichtbar bei Motorrad-Interessenten" },
+    { icon: "🏁", category: "Motorsport", cta: "Werbefläche frei", sub: "Werbeplatz im Motorsport-Bereich" },
+    { icon: "⚙️", category: "Industriemotoren", cta: "Werbefläche frei", sub: "Anzeige für Industrie-Antriebstechnik" },
+    { icon: "🔋", category: "Elektromotoren", cta: "Werbefläche frei", sub: "Werbeplatz im E-Antriebs-Segment" },
+    { icon: "🏗️", category: "Gabelstapler & Krane", cta: "Werbefläche frei", sub: "Anzeige bei Flurförder-/Hebetechnik" },
+    { icon: "🌱", category: "Garten- & Kleinmotoren", cta: "Werbefläche frei", sub: "Werbeplatz für Garten-/Kleinmotoren" }
+  ];
+
+  function renderAdCard(ad) {
+    return `
+      <a class="listing-card ad-card" href="kontakt.html?betreff=Werbepartner" rel="sponsored noopener nofollow">
+        <div class="listing-image">
+          <span class="badge ad-badge">Anzeige</span>
+          <span>${ad.icon}</span>
+        </div>
+        <div class="listing-body">
+          <div class="listing-title">${escapeHtml(ad.category)}</div>
+          <div class="meta"><span>Werbepartnerschaft</span></div>
+          <div class="ad-cta">${escapeHtml(ad.cta)}</div>
+          <div class="shipping" style="color:var(--muted);">${escapeHtml(ad.sub)}</div>
+          <div class="seller">
+            <span>1amotor.de</span>
+            <span class="rating">Jetzt Partner werden →</span>
+          </div>
+        </div>
+      </a>
+    `;
+  }
+
+  function renderAdCards() {
+    return AD_POOL.map(renderAdCard);
+  }
+  window.renderAdCards = renderAdCards;
 
   if (listingGrid) {
     listingGrid.innerHTML = `
@@ -246,19 +221,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     items = items.slice(0, HOME_LISTING_LIMIT);
 
-    // Bezahlte Platzierungen stehen immer oben ("die 3 oberen Inserate").
-    const adsHtml = renderAdCards();
-
     if (!items.length) {
-      listingGrid.innerHTML = adsHtml + `
+      listingGrid.innerHTML = `
         <div class="empty-box">
-          Weitere Angebote folgen in Kürze.
+          Noch keine freigegebenen Angebote vorhanden.
         </div>
       `;
+      renderAdCards().forEach(html => { listingGrid.innerHTML += html; });
       return;
     }
 
-    listingGrid.innerHTML = adsHtml + items.map((listing) => {
+    const listingCards = items.map((listing) => {
       const category = Array.isArray(listing.categories)
         ? listing.categories[0]?.name || "Unbekannt"
         : listing.categories?.name || "Unbekannt";
@@ -309,7 +282,29 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
         </a>
       `;
-    }).join("");
+    });
+
+    // ── Werbeflächen einstreuen ─────────────────────────────────────────
+    // 12 Werbeplätze sind angelegt, davon werden hier (rotierend, wie die
+    // Angebote alle 20 Min. neu gemischt) 3 zwischen den echten Angeboten
+    // gezeigt — so wirkt die Seite nicht ad-überladen. Jede Karte trägt ein
+    // deutliches "Anzeige"-Label (§5a UWG / AdSense-Placement-Policy) und
+    // ist noch NICHT an einen echten Werbekunden vergeben — Klick führt zur
+    // Kontaktseite. Sobald ein echter Partner (wie Kress) zugesagt hat,
+    // ersetzt ein eigener Eintrag im AD_POOL diese Platzhalterkarte 1:1.
+    const rotatingAds = seededShuffle(AD_POOL, timeBucketSeed(20)).slice(0, 3);
+    const adCards = rotatingAds.map(renderAdCard);
+
+    const combined = [...listingCards];
+    // nach jeder 2. Angebotskarte eine Werbekarte einstreuen
+    let insertPos = 2;
+    adCards.forEach((adHtml) => {
+      const pos = Math.min(insertPos, combined.length);
+      combined.splice(pos, 0, adHtml);
+      insertPos += 3; // 2 Angebote, 1 Anzeige, wiederholen
+    });
+
+    listingGrid.innerHTML = combined.join("");
   }
 
   function bindSearch() {
