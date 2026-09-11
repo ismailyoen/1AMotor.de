@@ -1,3 +1,23 @@
+// ══════════════════════════════════════════════════════════════════════════════
+//  index-live.js  v4  —  mehrsprachig (DE / EN / FR)
+//  Alle sichtbaren Texte laufen über I18n.t().
+//  Kategorien und Zustände kommen deutsch aus der Datenbank und werden über
+//  I18n.term() für die Anzeige übersetzt — der Filterwert bleibt deutsch,
+//  damit die Supabase-Abfragen unverändert funktionieren.
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Kurzhelfer — greifen auf i18n.js zu, funktionieren aber auch ohne
+function T(key, vars)  { return window.I18n ? window.I18n.t(key, vars) : key; }
+function TERM(name)    { return window.I18n ? window.I18n.term(name) : name; }
+function PRICE(value)  {
+  if (window.I18n) return window.I18n.price(value);
+  return Number(value || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+}
+function NUM(value) {
+  if (window.I18n) return window.I18n.num(value);
+  return Number(value || 0).toLocaleString("de-DE");
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const listingGrid = document.getElementById("home-listing-grid");
   const resultsInfo = document.getElementById("home-results-info");
@@ -12,60 +32,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let listings = [];
   let categories = [];
-  let batteryListings = [];
-
-  // ── Werbeflächen-Pool (12 Slots, thematisch nach Motoren-Kategorien) ──────
-  // WICHTIG: Keine erfundenen Hersteller-/Markennamen. Solange kein echter
-  // Werbevertrag existiert, bleibt jeder Slot ein klar gekennzeichneter
-  // Platzhalter, der zur Kontaktseite verlinkt ("Werbepartner werden").
-  // Sobald ein echter Partner zusagt (wie bei Kress), ersetzt ein eigener
-  // Eintrag hier die jeweilige Platzhalterkarte 1:1.
-  const AD_POOL = [
-    { icon: "🚗", category: "PKW-Motoren", cta: "Werbefläche frei", sub: "Ihre Anzeige für PKW-Motoren hier" },
-    { icon: "🚛", category: "LKW-Motoren", cta: "Werbefläche frei", sub: "Erreichen Sie LKW-Käufer & Händler" },
-    { icon: "🚜", category: "Landmaschinen", cta: "Werbefläche frei", sub: "Sichtbarkeit bei Landmaschinen-Käufern" },
-    { icon: "🚧", category: "Baumaschinen", cta: "Werbefläche frei", sub: "Anzeige im Baumaschinen-Bereich" },
-    { icon: "🚤", category: "Bootsmotoren", cta: "Werbefläche frei", sub: "Werbeplatz für Marine-Antriebe" },
-    { icon: "✈️", category: "Flugzeugmotoren", cta: "Werbefläche frei", sub: "Anzeige im Luftfahrt-Segment" },
-    { icon: "🏍️", category: "Motorradmotoren", cta: "Werbefläche frei", sub: "Sichtbar bei Motorrad-Interessenten" },
-    { icon: "🏁", category: "Motorsport", cta: "Werbefläche frei", sub: "Werbeplatz im Motorsport-Bereich" },
-    { icon: "⚙️", category: "Industriemotoren", cta: "Werbefläche frei", sub: "Anzeige für Industrie-Antriebstechnik" },
-    { icon: "🔋", category: "Elektromotoren", cta: "Werbefläche frei", sub: "Werbeplatz im E-Antriebs-Segment" },
-    { icon: "🏗️", category: "Gabelstapler & Krane", cta: "Werbefläche frei", sub: "Anzeige bei Flurförder-/Hebetechnik" },
-    { icon: "🌱", category: "Garten- & Kleinmotoren", cta: "Werbefläche frei", sub: "Werbeplatz für Garten-/Kleinmotoren" }
-  ];
-
-  function renderAdCard(ad) {
-    return `
-      <a class="listing-card ad-card" href="kontakt.html?betreff=Werbepartner" rel="sponsored noopener nofollow">
-        <div class="listing-image">
-          <span class="badge ad-badge">Anzeige</span>
-          <span>${ad.icon}</span>
-        </div>
-        <div class="listing-body">
-          <div class="listing-title">${escapeHtml(ad.category)}</div>
-          <div class="meta"><span>Werbepartnerschaft</span></div>
-          <div class="ad-cta">${escapeHtml(ad.cta)}</div>
-          <div class="shipping" style="color:var(--muted);">${escapeHtml(ad.sub)}</div>
-          <div class="seller">
-            <span>1amotor.de</span>
-            <span class="rating">Jetzt Partner werden →</span>
-          </div>
-        </div>
-      </a>
-    `;
-  }
-
-  function renderAdCards() {
-    return AD_POOL.map(renderAdCard);
-  }
-  window.renderAdCards = renderAdCards;
 
   if (listingGrid) {
     listingGrid.innerHTML = `
-      <div class="empty-box">
-        Angebote werden geladen...
-      </div>
+      <div class="empty-box">${T("idx.list.loading")}</div>
     `;
   }
 
@@ -76,15 +46,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderListings("latest");
     bindSearch();
     loadCategoryCounts(); // Echte Zählungen aus DB — läuft im Hintergrund
-    loadBatteryListings(); // Eigener Batterien-Bereich, läuft unabhängig im Hintergrund
   } catch (err) {
     console.error("INIT ERROR:", err);
-    if (resultsInfo) resultsInfo.textContent = "Fehler beim Laden der Startseite.";
+    if (resultsInfo) resultsInfo.textContent = T("idx.list.errorpage");
     if (listingGrid) {
       listingGrid.innerHTML = `
-        <div class="empty-box">
-          Die Startseite konnte nicht vollständig geladen werden.
-        </div>
+        <div class="empty-box">${T("idx.list.errorpagebox")}</div>
       `;
     }
   }
@@ -109,28 +76,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     categories = data || [];
 
-    if (categorySelect) {
-      categorySelect.innerHTML = `
-        <option value="">Alle Kategorien</option>
-        ${categories.map(cat => `
-          <option value="${escapeHtml(cat.name)}">${escapeHtml(cat.name)}</option>
-        `).join("")}
-      `;
-    }
-
-    if (categoryLinks) {
-      categoryLinks.innerHTML = `
-        <a href="suche.html" class="active">Top-Angebote</a>
-        ${categories.slice(0, 10).map(cat => `
-          <a href="suche.html?category=${encodeURIComponent(cat.name)}">${escapeHtml(cat.name)}</a>
-        `).join("")}
-      `;
-    }
+    renderCategoryUi();
 
     // Sidebar-HTML bleibt erhalten — Zählungen werden von loadCategoryCounts() gesetzt
 
     const statCategories = document.getElementById("stat-categories");
     if (statCategories) statCategories.textContent = categories.length;
+  }
+
+  // Kategorie-Dropdown + Kategorieleiste — in eigener Funktion, damit sie
+  // beim Sprachwechsel neu aufgebaut werden können.
+  function renderCategoryUi() {
+    if (categorySelect) {
+      const current = categorySelect.value;
+      categorySelect.innerHTML = `
+        <option value="">${escapeHtml(T("search.allcats"))}</option>
+        ${categories.map(cat => `
+          <option value="${escapeHtml(cat.name)}">${escapeHtml(TERM(cat.name))}</option>
+        `).join("")}
+      `;
+      if (current) categorySelect.value = current;
+    }
+
+    if (categoryLinks) {
+      categoryLinks.innerHTML = `
+        <a href="suche.html" class="active">${escapeHtml(T("idx.catbar.top"))}</a>
+        ${categories.slice(0, 10).map(cat => `
+          <a href="suche.html?category=${encodeURIComponent(cat.name)}">${escapeHtml(TERM(cat.name))}</a>
+        `).join("")}
+      `;
+    }
   }
 
   async function loadStats() {
@@ -155,11 +130,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (statListings) {
-      statListings.textContent = listingsCountResult.count ?? 0;
+      statListings.textContent = NUM(listingsCountResult.count ?? 0);
     }
 
     if (statDealers) {
-      statDealers.textContent = dealerCountResult.count ?? 0;
+      statDealers.textContent = NUM(dealerCountResult.count ?? 0);
     }
   }
 
@@ -186,12 +161,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("INDEX LISTINGS ERROR:", error);
 
     if (error) {
-      if (resultsInfo) resultsInfo.textContent = "Fehler beim Laden.";
+      if (resultsInfo) resultsInfo.textContent = T("idx.list.error");
       if (listingGrid) {
         listingGrid.innerHTML = `
-          <div class="empty-box">
-            Die Angebote konnten nicht geladen werden.
-          </div>
+          <div class="empty-box">${T("idx.list.errorbox")}</div>
         `;
       }
       return;
@@ -199,9 +172,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     listings = data || [];
 
-    if (resultsInfo) {
-      resultsInfo.textContent = `${listings.length} aktuelle Angebote aus Supabase`;
-    }
+    updateResultsInfo();
+  }
+
+  function updateResultsInfo() {
+    if (!resultsInfo) return;
+    resultsInfo.textContent = listings.length === 1
+      ? T("idx.list.count.one")
+      : T("idx.list.count", { n: NUM(listings.length) });
   }
 
   function renderListings(sortMode = "latest") {
@@ -225,27 +203,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!items.length) {
       listingGrid.innerHTML = `
-        <div class="empty-box">
-          Noch keine freigegebenen Angebote vorhanden.
-        </div>
+        <div class="empty-box">${T("idx.list.empty")}</div>
       `;
-      renderAdCards().forEach(html => { listingGrid.innerHTML += html; });
       return;
     }
 
-    const listingCards = items.map((listing) => {
+    listingGrid.innerHTML = items.map((listing) => {
+      // Kategoriename bleibt intern deutsch (für Bild-/Icon-Zuordnung),
+      // angezeigt wird die übersetzte Fassung.
       const category = Array.isArray(listing.categories)
-        ? listing.categories[0]?.name || "Unbekannt"
-        : listing.categories?.name || "Unbekannt";
+        ? listing.categories[0]?.name || ""
+        : listing.categories?.name || "";
+      const categoryLabel = category ? TERM(category) : T("idx.card.unknown");
 
       const seller = Array.isArray(listing.seller_profiles)
-        ? listing.seller_profiles[0]?.company_name || "Händler"
-        : listing.seller_profiles?.company_name || "Händler";
+        ? listing.seller_profiles[0]?.company_name || T("idx.card.dealer")
+        : listing.seller_profiles?.company_name || T("idx.card.dealer");
 
-      const price = Number(listing.price || 0).toLocaleString("de-DE", {
-        style: "currency",
-        currency: "EUR"
-      });
+      const price = PRICE(listing.price);
 
       const firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length
         ? listing.image_urls[0]
@@ -264,50 +239,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       return `
         <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(listing.id)}">
           <div class="listing-image" ${imageStyle}>
-            <span class="badge">${escapeHtml(category)}</span>
+            <span class="badge">${escapeHtml(categoryLabel)}</span>
             <span class="fav">♡</span>
             ${imageContent}
           </div>
           <div class="listing-body">
-            <div class="listing-title">${escapeHtml(listing.title || "Ohne Titel")}</div>
+            <div class="listing-title">${escapeHtml(listing.title || T("idx.card.untitled"))}</div>
             <div class="meta">
               <span>${escapeHtml(listing.manufacturer || "-")}</span>
               <span>${escapeHtml(listing.model || "-")}</span>
               <span>${escapeHtml(listing.location || "-")}</span>
             </div>
             <div class="price">${price}</div>
-            <div class="shipping">${escapeHtml(listing.condition || "Gebraucht")}</div>
+            <div class="shipping">${escapeHtml(TERM(listing.condition || "Gebraucht"))}</div>
             <div class="seller">
               <span>${escapeHtml(seller)}</span>
-              <span class="rating">Live</span>
+              <span class="rating">${escapeHtml(T("idx.card.live"))}</span>
             </div>
           </div>
         </a>
       `;
-    });
-
-    // ── Werbeflächen einstreuen ─────────────────────────────────────────
-    // 12 Werbeplätze sind angelegt, davon werden hier (rotierend, wie die
-    // Angebote alle 20 Min. neu gemischt) 3 zwischen den echten Angeboten
-    // gezeigt — so wirkt die Seite nicht ad-überladen. Jede Karte trägt ein
-    // deutliches "Anzeige"-Label (§5a UWG / AdSense-Placement-Policy) und
-    // ist noch NICHT an einen echten Werbekunden vergeben — Klick führt zur
-    // Kontaktseite. Sobald ein echter Partner (wie Kress) zugesagt hat,
-    // ersetzt ein eigener Eintrag im AD_POOL diese Platzhalterkarte 1:1.
-    const rotatingAds = seededShuffle(AD_POOL, timeBucketSeed(20)).slice(0, 3);
-    const adCards = rotatingAds.map(renderAdCard);
-
-    const combined = [...listingCards];
-    // nach jeder 2. Angebotskarte eine Werbekarte einstreuen
-    let insertPos = 2;
-    adCards.forEach((adHtml) => {
-      const pos = Math.min(insertPos, combined.length);
-      combined.splice(pos, 0, adHtml);
-      insertPos += 3; // 2 Angebote, 1 Anzeige, wiederholen
-    });
-
-    listingGrid.innerHTML = combined.join("");
+    }).join("");
   }
+
+  // Sprachwechsel → Kategorien, Ergebniszeile und Karten neu aufbauen
+  window.addEventListener("i18n:changed", () => {
+    renderCategoryUi();
+    updateResultsInfo();
+    renderListings(sortSelect?.value || "latest");
+    loadCategoryCounts();
+  });
 
   function bindSearch() {
     searchButton?.addEventListener("click", goToSearch);
@@ -363,7 +324,7 @@ async function loadCategoryCounts() {
       const span = label.querySelector(".cat-count");
       if (!span) return;
       const count = counts[cb.value] || 0;
-      span.textContent = count.toLocaleString("de-DE");
+      span.textContent = NUM(count);
       label.style.opacity = count === 0 ? "0.4" : "1";
     });
 
@@ -381,156 +342,17 @@ async function loadCategoryCounts() {
       });
 
       const span = head.querySelector(".cat-count");
-      if (span) span.textContent = total.toLocaleString("de-DE");
+      if (span) span.textContent = NUM(total);
     });
 
     // ── Gesamt-Stat-Zähler ─────────────────────────────────────────────
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
     const statEl = document.getElementById("stat-listings");
-    if (statEl && total > 0) statEl.textContent = total.toLocaleString("de-DE");
+    if (statEl && total > 0) statEl.textContent = NUM(total);
 
   } catch (err) {
     console.warn("loadCategoryCounts error:", err);
   }
-}
-
-// ── Batterien-Bereich (eigenes Panel auf der Startseite) ─────────────────────
-async function loadBatteryListings() {
-  const grid = document.getElementById("battery-listing-grid");
-  const info = document.getElementById("battery-results-info");
-  if (!grid) return;
-
-  try {
-    // 1) IDs der Batterie-Kategorien ermitteln
-    const { data: cats, error: catError } = await supabaseClient
-      .from("categories")
-      .select("id, name, slug")
-      .in("slug", window.BATTERY_SLUGS || []);
-
-    if (catError) {
-      console.error("BATTERY CATEGORIES ERROR:", catError);
-      renderBatteryEmptyState(grid, info);
-      return;
-    }
-
-    const catIds = (cats || []).map(c => c.id);
-
-    if (!catIds.length) {
-      // Kategorien wurden in Supabase noch nicht angelegt
-      renderBatteryEmptyState(grid, info);
-      return;
-    }
-
-    // 2) Freigegebene Angebote in diesen Kategorien laden
-    const { data, error } = await supabaseClient
-      .from("listings")
-      .select(`
-        id, title, manufacturer, model, condition, price, location, created_at,
-        image_urls, categories(name), seller_profiles(company_name)
-      `)
-      .in("category_id", catIds)
-      .eq("status", "Freigegeben")
-      .order("created_at", { ascending: false })
-      .limit(BATTERY_LIMIT_FALLBACK);
-
-    if (error) {
-      console.error("BATTERY LISTINGS ERROR:", error);
-      renderBatteryEmptyState(grid, info);
-      return;
-    }
-
-    const items = data || [];
-
-    if (info) {
-      info.textContent = items.length
-        ? `${items.length} Batterie-Angebote aus Supabase`
-        : "Noch keine Batterie-Angebote — sei einer der Ersten";
-    }
-
-    if (!items.length) {
-      renderBatteryEmptyState(grid, info);
-      return;
-    }
-
-    grid.innerHTML = items.map(renderBatteryListingCard).join("");
-  } catch (err) {
-    console.error("loadBatteryListings error:", err);
-    renderBatteryEmptyState(grid, info);
-  }
-}
-const BATTERY_LIMIT_FALLBACK = 6;
-window.BATTERY_SLUGS = [
-  "e-auto-batterie",
-  "starterbatterie",
-  "solarbatterie",
-  "industriebatterie",
-  "gabelstapler-batterie",
-  "e-bike-batterie"
-];
-
-function renderBatteryListingCard(listing) {
-  const category = Array.isArray(listing.categories)
-    ? listing.categories[0]?.name || "Batterie"
-    : listing.categories?.name || "Batterie";
-
-  const seller = Array.isArray(listing.seller_profiles)
-    ? listing.seller_profiles[0]?.company_name || "Händler"
-    : listing.seller_profiles?.company_name || "Händler";
-
-  const price = Number(listing.price || 0).toLocaleString("de-DE", {
-    style: "currency",
-    currency: "EUR"
-  });
-
-  const firstImage = Array.isArray(listing.image_urls) && listing.image_urls.length
-    ? listing.image_urls[0]
-    : null;
-
-  // Kein erzwungener Bild-Fallback (fallback=null) — sonst würde z. B. ein
-  // Auto-Motorbild angezeigt, wenn für die Batterie-Kategorie noch kein
-  // eigenes Foto in category-images.js hinterlegt ist. Ohne Bild greift
-  // stattdessen der Icon-Fallback (getCategoryIcon) weiter unten.
-  const fallbackImg = window.getCategoryImage ? window.getCategoryImage(category, null) : null;
-  const displayImage = firstImage || fallbackImg;
-
-  const imageStyle = displayImage
-    ? `style="background-image:url('${displayImage}'); background-size:cover; background-position:center; background-repeat:no-repeat;"`
-    : "";
-  const imageContent = displayImage ? "" : getCategoryIcon(category);
-
-  return `
-    <a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(listing.id)}">
-      <div class="listing-image" ${imageStyle}>
-        <span class="badge">${escapeHtml(category)}</span>
-        <span class="fav">♡</span>
-        ${imageContent}
-      </div>
-      <div class="listing-body">
-        <div class="listing-title">${escapeHtml(listing.title || "Ohne Titel")}</div>
-        <div class="meta">
-          <span>${escapeHtml(listing.manufacturer || "-")}</span>
-          <span>${escapeHtml(listing.model || "-")}</span>
-          <span>${escapeHtml(listing.location || "-")}</span>
-        </div>
-        <div class="price">${price}</div>
-        <div class="shipping">${escapeHtml(listing.condition || "Gebraucht")}</div>
-        <div class="seller">
-          <span>${escapeHtml(seller)}</span>
-          <span class="rating">Live</span>
-        </div>
-      </div>
-    </a>
-  `;
-}
-
-function renderBatteryEmptyState(grid, info) {
-  if (info) info.textContent = "Noch keine Batterie-Angebote — sei einer der Ersten";
-  grid.innerHTML = `
-    <div class="empty-box" style="grid-column:1/-1;">
-      <p style="margin-bottom:12px;">Noch keine Batterie-Inserate vorhanden.</p>
-      <a href="anzeige-erstellen.html" class="view-all-link">Jetzt erste Batterie-Anzeige erstellen →</a>
-    </div>
-  `;
 }
 
 // ── Zeitgesteuertes Mischen ("alle 20 Minuten verschieben") ──────────────────
@@ -660,14 +482,7 @@ function getCategoryIcon(category) {
     "Schwerlastmotor": "🏋️",
     "Spezialanfertigung Motor": "🛠️",
     "Austauschmotor": "🔄",
-    "Sonstiges": "📦",
-    // ── Batterien ──
-    "E-Auto-Batterie": "🔋",
-    "Starterbatterie": "🔋",
-    "Solar-/Speicherbatterie": "🔋",
-    "Industriebatterie": "🔋",
-    "Gabelstapler-Batterie": "🔋",
-    "E-Bike-Batterie": "🔋"
+    "Sonstiges": "📦"
   };
   return map[category] || "📦";
 }
