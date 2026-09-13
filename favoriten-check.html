@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" /><meta name="robots" content="noindex" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Merkliste – Selbsttest</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f5f6fa;color:#1a1d23;line-height:1.55;padding:28px 18px 70px;}
+.wrap{max-width:760px;margin:0 auto;}
+h1{font-size:21px;font-weight:700;margin-bottom:4px;}
+.lead{font-size:13.5px;color:#6b7280;margin-bottom:22px;}
+.row{display:flex;gap:12px;background:#fff;border:1px solid #e8eaef;border-radius:11px;padding:14px 16px;margin-bottom:10px;}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:6px;background:#cbd5e1;}
+.dot.ok{background:#10b981;}.dot.bad{background:#ef4444;}.dot.warn{background:#f59e0b;}
+.body{flex:1;min-width:0;}
+.name{font-size:14px;font-weight:600;}
+.msg{font-size:13px;color:#475569;margin-top:2px;word-break:break-word;}
+.fix{font-size:12.5px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 11px;margin-top:8px;}
+pre{background:#0f1117;color:#e2e8f0;font-size:11.5px;border-radius:10px;padding:14px;overflow:auto;margin-top:18px;}
+button{background:#1c6ea4;color:#fff;border:none;border-radius:9px;padding:11px 20px;font:600 14px 'Inter',sans-serif;cursor:pointer;margin-bottom:18px;}
+button:hover{background:#175a87;}
+a{color:#1c6ea4;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Merkliste – Selbsttest</h1>
+  <p class="lead">Prüft der Reihe nach, woran das Merken scheitert. Diese Seite auf 1amotor.de öffnen, am besten eingeloggt.</p>
+  <button id="run" type="button">Test erneut starten</button>
+  <div id="out"></div>
+  <pre id="raw">–</pre>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="favorites.js?v=2"></script>
+<script>
+const out = document.getElementById("out");
+const raw = document.getElementById("raw");
+const log = [];
+
+function add(state, name, msg, fix) {
+  log.push(`[${state}] ${name}: ${msg}`);
+  const d = document.createElement("div");
+  d.className = "row";
+  d.innerHTML = `<div class="dot ${state}"></div><div class="body">
+    <div class="name">${esc(name)}</div>
+    <div class="msg">${esc(msg)}</div>
+    ${fix ? `<div class="fix">${fix}</div>` : ""}</div>`;
+  out.appendChild(d);
+}
+function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+async function fileLive(path, marker, label) {
+  try {
+    const r = await fetch(path + (path.includes("?") ? "&" : "?") + "check=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) { add("bad", label, `${path} antwortet mit HTTP ${r.status}.`,
+      "Datei ist nicht deployed. <code>git add</code> mit dem Dateinamen, pushen, dann Cloudflare „Purge Everything“."); return false; }
+    const t = await r.text();
+    if (marker && !t.includes(marker)) { add("warn", label, `${path} ist erreichbar, enthält aber die neue Version nicht (Suchtext „${marker}“ fehlt).`,
+      "Alte Datei im Cache oder alte Version deployed. Cloudflare „Purge Everything“, dann Seite mit Strg+F5 neu laden."); return false; }
+    add("ok", label, `${path} ist live und aktuell.`);
+    return true;
+  } catch (e) {
+    add("bad", label, `${path} nicht abrufbar: ${e.message}`); return false;
+  }
+}
+
+async function run() {
+  out.innerHTML = ""; log.length = 0;
+
+  // 1 ─ Dateien überhaupt deployed?
+  await fileLive("favorites.js", "1amotor-favs-synced", "Datei favorites.js");
+  await fileLive("favoriten.html", "fav-summary", "Seite favoriten.html");
+  await fileLive("dashboard.html", "fav-list", "Dashboard mit Merklisten-Panel");
+  await fileLive("suche.html", "data-fav", "Suche mit Herz-Buttons");
+
+  // 2 ─ Module im Browser
+  if (!window.supabaseClient) {
+    add("bad", "supabase.js", "supabaseClient fehlt – ohne den geht gar nichts.",
+      "Prüfen, ob supabase.js vor favorites.js eingebunden ist.");
+    return finish();
+  }
+  add("ok", "supabase.js", "Client ist geladen.");
+
+  if (!window.Favs) {
+    add("bad", "favorites.js", "window.Favs fehlt – das Modul wurde nicht ausgeführt.",
+      "Script-Tag <code>&lt;script src=\"favorites.js?v=2\"&gt;&lt;/script&gt;</code> fehlt auf der Seite, oder die Datei liefert 404.");
+    return finish();
+  }
+  await Favs.ready;
+  add("ok", "favorites.js", "Modul geladen, Version mit Konto-Abgleich.");
+
+  // 3 ─ Login
+  const { data: sd } = await supabaseClient.auth.getSession();
+  const user = sd?.session?.user || null;
+  if (!user) {
+    add("warn", "Anmeldung", "Nicht eingeloggt. Favoriten liegen nur in diesem Browser.",
+      "Für den vollen Test bitte einloggen und die Seite neu laden.");
+  } else {
+    add("ok", "Anmeldung", `Eingeloggt als ${user.email || user.id}`);
+  }
+
+  // 4 ─ Tabelle favorites
+  let tableOk = false;
+  const sel = await supabaseClient.from("favorites").select("listing_id").limit(1);
+  if (sel.error) {
+    const c = sel.error.code || "";
+    const missing = c === "42P01" || /does not exist|schema cache/i.test(sel.error.message || "");
+    add("bad", "Tabelle favorites",
+      `Lesen schlägt fehl (${c || "ohne Code"}): ${sel.error.message}`,
+      missing
+        ? "Die Tabelle existiert noch nicht. <b>favoriten-setup.sql</b> im Supabase SQL Editor ausführen – das ist mit hoher Wahrscheinlichkeit die Ursache."
+        : "Sieht nach einer RLS-Policy aus. Die drei Policies aus favoriten-setup.sql prüfen.");
+  } else {
+    tableOk = true;
+    add("ok", "Tabelle favorites", `Lesen funktioniert, ${sel.data.length} Zeile(n) im Test abgefragt.`);
+  }
+
+  // 5 ─ Echter Schreibtest
+  if (tableOk && user) {
+    const l = await supabaseClient.from("listings").select("id,title").eq("status","Freigegeben").limit(1);
+    const listing = l.data && l.data[0];
+    if (!listing) {
+      add("warn", "Schreibtest", "Kein freigegebenes Inserat gefunden, Schreibtest übersprungen.");
+    } else {
+      const ins = await supabaseClient.from("favorites")
+        .upsert({ user_id: user.id, listing_id: listing.id }, { onConflict: "user_id,listing_id" });
+      if (ins.error) {
+        add("bad", "Schreibtest", `Speichern abgelehnt (${ins.error.code || "–"}): ${ins.error.message}`,
+          "Meist die INSERT-Policy. In favoriten-setup.sql ist das <code>favorites_insert_own</code>.");
+      } else {
+        const back = await supabaseClient.from("favorites").select("listing_id").eq("listing_id", listing.id);
+        if (back.error || !back.data.length) {
+          add("bad", "Schreibtest", "Gespeichert, aber nicht wieder lesbar – die SELECT-Policy passt nicht.",
+            "<code>favorites_select_own</code> aus favoriten-setup.sql prüfen.");
+        } else {
+          add("ok", "Schreibtest", `„${listing.title}“ gespeichert und wieder gelesen. Der Weg funktioniert komplett.`);
+        }
+        const del = await supabaseClient.from("favorites")
+          .delete().eq("user_id", user.id).eq("listing_id", listing.id);
+        if (del.error) add("warn", "Aufräumen", `Testeintrag blieb stehen: ${del.error.message}`);
+      }
+    }
+  }
+
+  // 6 ─ Aktueller Stand
+  const st = Favs.status();
+  add(st.count > 0 ? "ok" : "warn", "Gemerkte Inserate",
+    `${st.count} im Browser, Modus: ${st.mode}` + (st.lastError ? ` · letzter Fehler: ${st.lastError}` : ""));
+
+  finish();
+}
+
+function finish() {
+  raw.textContent = log.join("\n") +
+    "\n\nlocalStorage 1amotor-favs = " + (localStorage.getItem("1amotor-favs") || "leer") +
+    "\nlocalStorage 1amotor-favs-synced = " + (localStorage.getItem("1amotor-favs-synced") || "leer") +
+    "\nURL = " + location.href;
+}
+
+document.getElementById("run").addEventListener("click", run);
+run();
+</script>
+</body>
+</html>

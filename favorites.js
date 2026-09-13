@@ -26,8 +26,10 @@
   "use strict";
 
   var LS_KEY = "1amotor-favs";
+  var LS_SYNCED = "1amotor-favs-synced";   // Konten, die schon einmal migriert wurden
   var ids = new Set();
   var user = null;
+  var status = { signedIn: false, tableOk: null, mode: "lokal", lastError: null };
   var listeners = [];
   var resolveReady;
   var ready = new Promise(function (res) { resolveReady = res; });
@@ -48,6 +50,35 @@
   }
   function writeLocal() {
     try { localStorage.setItem(LS_KEY, JSON.stringify(Array.from(ids))); } catch (e) {}
+  }
+
+  function syncedAccounts() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(LS_SYNCED) || "[]");
+      return Array.isArray(raw) ? raw.map(String) : [];
+    } catch (e) { return []; }
+  }
+  function markSynced(uid) {
+    try {
+      var list = syncedAccounts();
+      if (list.indexOf(String(uid)) === -1) list.push(String(uid));
+      localStorage.setItem(LS_SYNCED, JSON.stringify(list));
+    } catch (e) {}
+  }
+  function unmarkSynced(uid) {
+    try {
+      var list = syncedAccounts().filter(function (x) { return x !== String(uid); });
+      localStorage.setItem(LS_SYNCED, JSON.stringify(list));
+    } catch (e) {}
+  }
+  function degrade(err, op) {
+    status.tableOk = false;
+    status.mode = "lokal (Speichern im Konto fehlgeschlagen)";
+    status.lastError = (err && (err.message || err.hint || err.code)) || String(err);
+    if (user) unmarkSynced(user.id);
+    console.warn("[Favs] " + op + " im Konto fehlgeschlagen – der Favorit bleibt lokal gespeichert. " +
+                 "Grund: " + status.lastError);
+    try { document.dispatchEvent(new CustomEvent("favs:degraded", { detail: { error: status.lastError, op: op } })); } catch (e) {}
   }
 
   /* ── Änderungen bekanntgeben ──────────────────────────────────────────── */
@@ -96,12 +127,14 @@
       .upsert({ user_id: user.id, listing_id: id }, { onConflict: "user_id,listing_id" })
       .then(function (r) {
         if (r.error) throw r.error;
+        status.tableOk = true;
         return true;
       })
       .catch(function (err) {
-        ids.delete(id); writeLocal(); emit();
-        console.warn("[Favs] Konnte nicht gespeichert werden:", err.message || err);
-        return false;
+        // Lokal behalten statt löschen: lieber ein Favorit nur auf diesem Gerät
+        // als ein Klick, der scheinbar wirkungslos verpufft.
+        degrade(err, "Speichern");
+        return true;
       });
   }
 
@@ -115,12 +148,12 @@
       .delete().eq("user_id", user.id).eq("listing_id", id)
       .then(function (r) {
         if (r.error) throw r.error;
+        status.tableOk = true;
         return false;
       })
       .catch(function (err) {
-        ids.add(id); writeLocal(); emit();
-        console.warn("[Favs] Konnte nicht entfernt werden:", err.message || err);
-        return true;
+        degrade(err, "Entfernen");
+        return false;
       });
   }
 
@@ -129,24 +162,45 @@
     var client = sb();
     if (!client || !user) return Promise.resolve();
 
-    return client.from("favorites").select("listing_id").eq("user_id", user.id)
+    var uid = String(user.id);
+    var alreadySynced = syncedAccounts().indexOf(uid) > -1;
+
+    return client.from("favorites").select("listing_id").eq("user_id", uid)
       .then(function (res) {
         if (res.error) throw res.error;
+        status.tableOk = true;
+        status.mode = "Konto";
+
         var remote = new Set((res.data || []).map(function (r) { return String(r.listing_id); }));
         var pending = Array.from(ids).filter(function (i) { return !remote.has(i); });
 
-        if (!pending.length) { ids = remote; writeLocal(); emit(); return; }
+        // Kein Nachschub nötig: Konto ist die Quelle, sobald einmal migriert wurde.
+        if (!pending.length) {
+          if (alreadySynced) ids = remote; else { remote.forEach(function (i) { ids.add(i); }); }
+          markSynced(uid); writeLocal(); emit(); return;
+        }
 
-        var rows = pending.map(function (i) { return { user_id: user.id, listing_id: i }; });
+        // Erstmigration oder neue lokale Favoriten -> hochladen
+        var rows = pending.map(function (i) { return { user_id: uid, listing_id: i }; });
         return client.from("favorites")
           .upsert(rows, { onConflict: "user_id,listing_id" })
           .then(function (ins) {
-            if (!ins.error) pending.forEach(function (i) { remote.add(i); });
-            ids = remote; writeLocal(); emit();
+            if (ins.error) {
+              // Hochladen ging schief: lokale Liste bleibt vollständig bestehen.
+              remote.forEach(function (i) { ids.add(i); });
+              degrade(ins.error, "Übernahme ins Konto");
+            } else {
+              pending.forEach(function (i) { remote.add(i); });
+              ids = remote;
+              markSynced(uid);
+            }
+            writeLocal(); emit();
           });
       })
       .catch(function (err) {
-        console.warn("[Favs] Abgleich mit dem Konto fehlgeschlagen:", err.message || err);
+        // Tabelle fehlt oder RLS blockiert: lokale Favoriten bleiben unangetastet.
+        degrade(err, "Abgleich");
+        emit();
       });
   }
 
@@ -230,6 +284,8 @@
     client.auth.getSession()
       .then(function (s) {
         user = (s && s.data && s.data.session && s.data.session.user) || null;
+        status.signedIn = !!user;
+        status.mode = user ? "Konto" : "lokal";
         return user ? sync() : null;
       })
       .catch(function () { user = null; })
@@ -244,6 +300,8 @@
       user = next;
 
       if (event === "SIGNED_OUT") {
+        status.signedIn = false;
+        status.mode = "lokal";
         ids = new Set();
         writeLocal();
         emit();
@@ -276,6 +334,17 @@
       return '<button type="button" class="' + (className || "fav-btn") + '" data-fav="' +
         String(id).replace(/"/g, "&quot;") + '" aria-pressed="false">' + HEART + '</button>';
     },
-    heartSvg: HEART
+    heartSvg: HEART,
+    status: function () {
+      return {
+        signedIn: status.signedIn,
+        userId: user ? user.id : null,
+        mode: status.mode,
+        tableOk: status.tableOk,
+        lastError: status.lastError,
+        count: ids.size,
+        ids: Array.from(ids)
+      };
+    }
   };
 })(window);
