@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" /><meta name="robots" content="noindex" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Merkliste – 1A Motor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f5f6fa;color:#1a1d23;line-height:1.5;display:flex;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+.sidebar{width:220px;min-height:100vh;background:#0f1117;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;border-right:1px solid rgba(255,255,255,0.06);}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:20px 18px 18px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+.logo-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#1b4f72,#2e86c1);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;}
+.logo-name{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,0.5);font-size:13.5px;font-weight:500;transition:all .15s;cursor:pointer;}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.nav-item.active{background:#1c6ea4;color:#fff;font-weight:600;}
+.nav-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;}
+.nav-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 10px;}
+.nav-item.logout{color:rgba(239,68,68,0.6);}
+.nav-item.logout:hover{color:#ef4444;background:rgba(239,68,68,0.1);}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.user-info{min-width:0;}
+.user-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:rgba(255,255,255,0.4);}
+.sidebar-ad{margin:10px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#1e3a52,#2a5278);position:relative;padding:14px 10px;text-align:center;}
+.sidebar-ad-text{font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.sidebar-ad-label{font-size:12px;font-weight:700;color:#fff;}
+
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #e8eaef;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:15px;font-weight:600;color:#6b7280;}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.topbar-user{display:flex;align-items:center;gap:8px;background:#f5f6fa;border:1px solid #e8eaef;border-radius:999px;padding:5px 12px 5px 5px;}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;}
+.topbar-username{font-size:13px;font-weight:600;color:#374151;}
+.new-listing-btn{background:#1c6ea4;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;}
+
+.page{padding:28px 28px 56px;flex:1;}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+.page-head h1{font-size:22px;font-weight:700;color:#111827;margin-bottom:3px;}
+.page-head p{font-size:13.5px;color:#6b7280;}
+.toolbar{display:flex;align-items:center;gap:10px;}
+.select{appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5 6 8l3-3.5' fill='none' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center/12px;border:1px solid #e8eaef;border-radius:8px;padding:8px 30px 8px 12px;font:500 13px 'Inter',sans-serif;color:#374151;cursor:pointer;}
+.select:focus-visible{outline:2px solid #1c6ea4;outline-offset:1px;}
+.ghost-btn{border:1px solid #e8eaef;background:#fff;border-radius:8px;padding:8px 14px;font:600 13px 'Inter',sans-serif;color:#b91c1c;cursor:pointer;}
+.ghost-btn:hover{background:#fef2f2;border-color:#fecaca;}
+.ghost-btn:focus-visible{outline:2px solid #1c6ea4;outline-offset:1px;}
+
+.hint{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e8eaef;border-left:3px solid #f59e0b;border-radius:10px;padding:12px 16px;font-size:13px;color:#475569;margin-bottom:18px;}
+.hint a{color:#1c6ea4;font-weight:600;}
+
+.fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:16px;}
+.card{background:#fff;border:1px solid #e8eaef;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .18s,border-color .18s;}
+.card:hover{box-shadow:0 6px 24px rgba(15,23,42,0.09);border-color:#d6dbe4;}
+.card-img{position:relative;height:150px;background:#eef2f7 center/cover no-repeat;display:grid;place-items:center;font-size:34px;}
+.card-status{position:absolute;left:10px;top:10px;background:rgba(15,17,23,.78);color:#fff;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;}
+.fav-btn{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.93);cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.fav-btn svg{width:16px;height:16px;fill:none;stroke:#64748b;stroke-width:2;}
+.fav-btn.on svg{fill:#ef4444;stroke:#ef4444;}
+.fav-btn:hover{background:#fff;}
+.fav-btn:focus-visible{outline:2px solid #1c6ea4;outline-offset:2px;}
+.card-body{padding:14px 15px 15px;display:flex;flex-direction:column;gap:6px;flex:1;}
+.card-title{font-size:14.5px;font-weight:700;color:#111827;line-height:1.32;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-sub{font-size:12.5px;color:#9ca3af;}
+.card-meta{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:12px;color:#64748b;}
+.card-foot{display:flex;align-items:baseline;justify-content:space-between;margin-top:auto;padding-top:8px;}
+.card-price{font-size:17px;font-weight:800;color:#1c6ea4;}
+.card-date{font-size:11.5px;color:#9ca3af;}
+
+.empty{background:#fff;border:1px solid #e8eaef;border-radius:12px;padding:56px 24px;text-align:center;}
+.empty-icon{font-size:34px;display:block;margin-bottom:10px;}
+.empty h2{font-size:16px;font-weight:700;color:#111827;margin-bottom:6px;}
+.empty p{font-size:13.5px;color:#6b7280;margin-bottom:18px;}
+.empty .cta{display:inline-block;background:#1c6ea4;color:#fff;padding:10px 20px;border-radius:9px;font-size:13.5px;font-weight:600;}
+
+@media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.page{padding:18px 14px 48px;}.topbar{padding:0 16px;}.new-listing-btn{display:none;}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+<link rel="stylesheet" href="mobile.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-logo"><div class="logo-mark">1A</div><div class="logo-name">Motor</div></a>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+    <a href="meine-anzeigen.html" class="nav-item"><span class="icon">📋</span> Meine Anzeigen</a>
+    <a href="anfragen.html" class="nav-item"><span class="icon">💬</span> Anfragen</a>
+    <a href="favoriten.html" class="nav-item active"><span class="icon">❤️</span> Favoriten <span class="nav-badge" data-fav-count>0</span></a>
+    <a href="profil.html#bewertungen" class="nav-item"><span class="icon">⭐</span> Bewertungen</a>
+    <div class="nav-divider"></div>
+    <a href="profil.html" class="nav-item"><span class="icon">⚙️</span> Einstellungen</a>
+    <a href="profil.html" class="nav-item"><span class="icon">👤</span> Mein Konto</a>
+    <div class="nav-divider"></div>
+    <a href="suche.html" class="nav-item"><span class="icon">🔍</span> Zur Suche</a>
+    <a href="#" class="nav-item logout" id="sidebar-logout"><span class="icon">🚪</span> Ausloggen</a>
+  </nav>
+  <div class="sidebar-ad">
+    <div class="sidebar-ad-text">Werbung</div>
+    <div class="sidebar-ad-label">Hier könnte Ihre<br/>Werbung stehen.</div>
+    <a href="kontakt.html" style="display:inline-block;margin-top:8px;font-size:10px;color:#4da6ff;font-weight:600;">Jetzt anfragen</a>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="sidebar-avatar">?</div>
+    <div class="user-info"><div class="user-name" id="sidebar-name">Gast</div><div class="user-role" id="sidebar-role">Nicht angemeldet</div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Merkliste</div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar">?</div>
+        <span class="topbar-username" id="topbar-name">Gast</span>
+      </div>
+      <a href="suche.html" class="new-listing-btn">Inserate durchsuchen</a>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Merkliste</h1>
+        <p id="fav-summary">Wird geladen…</p>
+      </div>
+      <div class="toolbar" id="toolbar" style="display:none;">
+        <label for="sort" style="font-size:12.5px;color:#6b7280;">Sortieren</label>
+        <select class="select" id="sort">
+          <option value="new">Neueste zuerst</option>
+          <option value="price-asc">Preis aufsteigend</option>
+          <option value="price-desc">Preis absteigend</option>
+          <option value="title">Titel A–Z</option>
+        </select>
+        <button class="ghost-btn" id="clear-all" type="button">Alle entfernen</button>
+      </div>
+    </div>
+
+    <div id="guest-hint" class="hint" style="display:none;">
+      <span>🔒</span>
+      <span>Du bist nicht angemeldet. Deine Merkliste liegt nur auf diesem Gerät. <a href="login.html">Anmelden</a>, damit sie überall verfügbar ist.</span>
+    </div>
+
+    <div id="fav-content"><div class="empty"><span class="empty-icon">⏳</span><h2>Merkliste wird geladen</h2><p>Einen Moment.</p></div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="category-images.js"></script>
+<script src="favorites.js?v=1"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const content = document.getElementById("fav-content");
+  const summary = document.getElementById("fav-summary");
+  const toolbar = document.getElementById("toolbar");
+  const sortSel = document.getElementById("sort");
+
+  // ── Konto in Sidebar/Topbar ───────────────────────────────────────────────
+  const { data: sd } = await supabaseClient.auth.getSession();
+  const user = sd?.session?.user || null;
+
+  if (user) {
+    const { data: seller } = await supabaseClient
+      .from("seller_profiles").select("company_name").eq("user_id", user.id).maybeSingle();
+    const name = seller?.company_name || user.email || "Konto";
+    const ini = name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase() || "?";
+    setText("sidebar-name", name); setText("topbar-name", name);
+    setText("sidebar-avatar", ini); setText("topbar-avatar", ini);
+    setText("sidebar-role", seller ? "Händlerkonto" : "Käuferkonto");
+  } else {
+    document.getElementById("guest-hint").style.display = "flex";
+  }
+
+  document.getElementById("sidebar-logout")?.addEventListener("click", async e => {
+    e.preventDefault();
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
+  });
+
+  // ── Merkliste ─────────────────────────────────────────────────────────────
+  let rows = [];
+  let token = 0;
+
+  async function load() {
+    const my = ++token;
+    if (Favs.count() === 0) { rows = []; paint(); return; }
+    rows = await Favs.listings();
+    if (my !== token) return;
+    paint();
+  }
+
+  function paint() {
+    const saved = Favs.count();
+    const shown = rows.length;
+    const missing = Math.max(0, saved - shown);
+
+    summary.textContent = saved === 0
+      ? "Noch keine Inserate gemerkt."
+      : `${saved} ${saved === 1 ? "Inserat" : "Inserate"} gemerkt${missing ? ` · ${missing} nicht mehr verfügbar` : ""}`;
+
+    toolbar.style.display = shown > 0 ? "flex" : "none";
+
+    if (!shown) {
+      content.innerHTML = saved === 0
+        ? `<div class="empty"><span class="empty-icon">🤍</span><h2>Deine Merkliste ist leer</h2>
+             <p>Klick bei einem Inserat auf das Herz, um es hier zu sammeln und später wiederzufinden.</p>
+             <a class="cta" href="suche.html">Inserate durchsuchen</a></div>`
+        : `<div class="empty"><span class="empty-icon">📭</span><h2>Nichts mehr verfügbar</h2>
+             <p>Die gemerkten Inserate sind offline oder wurden verkauft.</p>
+             <a class="cta" href="suche.html">Neue Inserate ansehen</a></div>`;
+      return;
+    }
+
+    const sorted = sortRows(rows.slice(), sortSel.value);
+    content.innerHTML = `<div class="fav-grid">${sorted.map(cardHtml).join("")}</div>`;
+    Favs.paint(content);
+  }
+
+  function sortRows(arr, mode) {
+    if (mode === "price-asc")  return arr.sort((a,b)=>num(a.price)-num(b.price));
+    if (mode === "price-desc") return arr.sort((a,b)=>num(b.price)-num(a.price));
+    if (mode === "title")      return arr.sort((a,b)=>String(a.title||"").localeCompare(String(b.title||""),"de"));
+    return arr.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+  }
+
+  function cardHtml(l) {
+    const cat = l.categories?.name || "";
+    const own = Array.isArray(l.image_urls) && l.image_urls.length ? l.image_urls[0] : null;
+    const fallback = window.getCategoryImage ? window.getCategoryImage(cat) : null;
+    const img = own || fallback;
+    const style = img ? ` style="background-image:url('${esc(img)}');"` : "";
+    const price = num(l.price) > 0
+      ? num(l.price).toLocaleString("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0})
+      : "Preis auf Anfrage";
+    const sub = [l.manufacturer, l.model].filter(Boolean).join(" ") || cat;
+    const meta = [cat, l.condition, l.year, l.location].filter(Boolean).map(v=>`<span>${esc(v)}</span>`).join("");
+    const date = l.created_at ? new Date(l.created_at).toLocaleDateString("de-DE") : "";
+    const offline = l.status !== "Freigegeben";
+
+    return `<article class="card">
+      <a class="card-img"${style} href="listing-detail.html?id=${encodeURIComponent(l.id)}">
+        ${img ? "" : "🔧"}
+        ${offline ? `<span class="card-status">${esc(l.status||"Offline")}</span>` : ""}
+        <button type="button" class="fav-btn on" data-fav="${esc(l.id)}" aria-pressed="true">${Favs.heartSvg}</button>
+      </a>
+      <div class="card-body">
+        <a href="listing-detail.html?id=${encodeURIComponent(l.id)}">
+          <div class="card-title">${esc(l.title||"Ohne Titel")}</div>
+          ${sub ? `<div class="card-sub">${esc(sub)}</div>` : ""}
+        </a>
+        ${meta ? `<div class="card-meta">${meta}</div>` : ""}
+        <div class="card-foot"><span class="card-price">${price}</span><span class="card-date">${date}</span></div>
+      </div>
+    </article>`;
+  }
+
+  sortSel.addEventListener("change", paint);
+
+  document.getElementById("clear-all").addEventListener("click", async () => {
+    if (!confirm("Alle Inserate aus der Merkliste entfernen?")) return;
+    for (const id of Favs.ids()) await Favs.remove(id);
+  });
+
+  document.addEventListener("favs:change", () => {
+    rows = rows.filter(r => Favs.has(r.id));
+    if (Favs.count() > rows.length) load(); else paint();
+  });
+
+  await Favs.ready;
+  await load();
+});
+
+function setText(id, v){ const e=document.getElementById(id); if(e) e.textContent=v; }
+function num(v){ return Number(v||0); }
+function esc(v){ return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
+<script src="mobile.js" defer></script>
+</body>
+</html>

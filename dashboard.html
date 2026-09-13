@@ -42,11 +42,28 @@ a{text-decoration:none;color:inherit;}
 .page-head{margin-bottom:24px;}
 .page-head h1{font-size:22px;font-weight:700;color:#111827;margin-bottom:3px;}
 .page-head p{font-size:13.5px;color:#6b7280;}
-.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;}
 .stat-card{background:#fff;border:1px solid #e8eaef;border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s;}
-.stat-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+.stat-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);border-color:#d6dbe4;}
+.stat-card:focus-visible{outline:2px solid #1c6ea4;outline-offset:2px;}
+.fav-row{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid #f8fafc;}
+.fav-row:last-child{border-bottom:none;}
+.fav-row:hover{background:#fafbff;}
+.fav-link{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.fav-thumb{width:38px;height:38px;border-radius:8px;background:#f1f5f9;display:grid;place-items:center;font-size:16px;flex-shrink:0;overflow:hidden;}
+.fav-thumb img{width:100%;height:100%;object-fit:cover;}
+.fav-info{flex:1;min-width:0;}
+.fav-title{font-size:12.5px;font-weight:600;color:#1a1d23;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fav-sub{font-size:11px;color:#9ca3af;margin-top:1px;}
+.fav-price{font-size:12.5px;font-weight:700;color:#1c6ea4;white-space:nowrap;}
+.fav-btn{width:28px;height:28px;border-radius:50%;border:none;background:transparent;cursor:pointer;display:grid;place-items:center;flex-shrink:0;}
+.fav-btn svg{width:15px;height:15px;fill:none;stroke:#cbd5e1;stroke-width:2;}
+.fav-btn.on svg{fill:#ef4444;stroke:#ef4444;}
+.fav-btn:hover svg{stroke:#ef4444;}
+.fav-btn:focus-visible{outline:2px solid #1c6ea4;outline-offset:1px;}
+.panel-note{padding:10px 20px;font-size:11.5px;color:#9ca3af;border-top:1px solid #f1f3f6;}
 .stat-icon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:20px;flex-shrink:0;}
-.si-blue{background:#e8f4fd;}.si-green{background:#e8fdf0;}.si-orange{background:#fdf3e8;}.si-purple{background:#f0e8fd;}.si-teal{background:#e8fdf9;}
+.si-blue{background:#e8f4fd;}.si-green{background:#e8fdf0;}.si-orange{background:#fdf3e8;}.si-purple{background:#f0e8fd;}.si-teal{background:#e8fdf9;}.si-red{background:#fdeaea;}
 .stat-body{min-width:0;}
 .stat-label{font-size:11.5px;color:#9ca3af;font-weight:500;margin-bottom:3px;}
 .stat-value{font-size:24px;font-weight:700;color:#111827;line-height:1;}
@@ -106,7 +123,8 @@ a{text-decoration:none;color:inherit;}
 .sidebar-ad-text{font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
 .sidebar-ad-label{font-size:12px;font-weight:700;color:#fff;}
 
-@media(max-width:1300px){.stats-grid{grid-template-columns:repeat(3,1fr);}.charts-row{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:1500px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:1300px){.charts-row{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.stats-grid{grid-template-columns:1fr 1fr;}.bottom-grid{grid-template-columns:1fr;}}
 
   @media (max-width: 768px) {
@@ -141,9 +159,9 @@ a{text-decoration:none;color:inherit;}
     <a href="dashboard.html" class="nav-item active"><span class="icon">📊</span> Dashboard</a>
     <a href="meine-anzeigen.html" class="nav-item"><span class="icon">📋</span> Meine Anzeigen</a>
     <a href="anfragen.html" class="nav-item"><span class="icon">💬</span> Anfragen <span class="nav-badge" id="nav-badge" style="display:none;"></span></a>
-    <a href="#" class="nav-item"><span class="icon">❤️</span> Favoriten</a>
+    <a href="favoriten.html" class="nav-item"><span class="icon">❤️</span> Favoriten <span class="nav-badge" id="fav-nav-badge" data-fav-count style="display:none;background:#ef4444;">0</span></a>
     <a href="#" class="nav-item"><span class="icon">📈</span> Statistiken</a>
-    <a href="#" class="nav-item"><span class="icon">⭐</span> Bewertungen</a>
+    <a href="profil.html#bewertungen" class="nav-item"><span class="icon">⭐</span> Bewertungen</a>
     <div class="nav-divider"></div>
     <a href="profil.html" class="nav-item"><span class="icon">⚙️</span> Einstellungen</a>
     <a href="profil.html" class="nav-item"><span class="icon">👤</span> Mein Konto</a>
@@ -160,7 +178,7 @@ a{text-decoration:none;color:inherit;}
   </div>
   <div class="sidebar-user">
     <div class="user-avatar" id="sidebar-avatar">?</div>
-    <div class="user-info"><div class="user-name" id="sidebar-name">Laden...</div><div class="user-role">Händlerkonto</div></div>
+    <div class="user-info"><div class="user-name" id="sidebar-name">Laden...</div><div class="user-role" id="sidebar-role">Konto</div></div>
   </div>
 </aside>
 
@@ -182,17 +200,18 @@ a{text-decoration:none;color:inherit;}
     <div class="page-head"><h1>Dashboard</h1><p>Willkommen zurück! Hier ist deine Übersicht.</p></div>
 
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-icon si-blue">🚗</div><div class="stat-body"><div class="stat-label">Aktive Inserate</div><div class="stat-value" id="s-active">–</div><div class="stat-note" id="s-active-n">–</div></div></div>
-      <div class="stat-card"><div class="stat-icon si-green">👁</div><div class="stat-body"><div class="stat-label">Anzeigen gesamt</div><div class="stat-value" id="s-total">–</div><div class="stat-note" id="s-total-n">–</div></div></div>
-      <div class="stat-card"><div class="stat-icon si-orange">💬</div><div class="stat-body"><div class="stat-label">Anfragen</div><div class="stat-value" id="s-inq">–</div><div class="stat-note" id="s-inq-n">–</div></div></div>
+      <a href="meine-anzeigen.html" class="stat-card"><div class="stat-icon si-blue">🚗</div><div class="stat-body"><div class="stat-label">Aktive Inserate</div><div class="stat-value" id="s-active">–</div><div class="stat-note" id="s-active-n">–</div></div></a>
+      <a href="meine-anzeigen.html" class="stat-card"><div class="stat-icon si-green">📦</div><div class="stat-body"><div class="stat-label">Anzeigen gesamt</div><div class="stat-value" id="s-total">–</div><div class="stat-note" id="s-total-n">–</div></div></a>
+      <a href="anfragen.html" class="stat-card"><div class="stat-icon si-orange">💬</div><div class="stat-body"><div class="stat-label">Anfragen</div><div class="stat-value" id="s-inq">–</div><div class="stat-note" id="s-inq-n">–</div></div></a>
       <div class="stat-card"><div class="stat-icon si-purple">💶</div><div class="stat-body"><div class="stat-label">Gesamtwert</div><div class="stat-value" id="s-val">–</div><div class="stat-note" id="s-val-n">–</div></div></div>
-      <div class="stat-card"><div class="stat-icon si-teal">📝</div><div class="stat-body"><div class="stat-label">Entwürfe</div><div class="stat-value" id="s-drf">–</div><div class="stat-note" id="s-drf-n">–</div></div></div>
+      <a href="meine-anzeigen.html" class="stat-card"><div class="stat-icon si-teal">📝</div><div class="stat-body"><div class="stat-label">Entwürfe</div><div class="stat-value" id="s-drf">–</div><div class="stat-note" id="s-drf-n">–</div></div></a>
+      <a href="favoriten.html" class="stat-card"><div class="stat-icon si-red">❤️</div><div class="stat-body"><div class="stat-label">Merkliste</div><div class="stat-value" id="s-fav" data-fav-count>0</div><div class="stat-note" id="s-fav-n">gemerkte Inserate</div></div></a>
     </div>
 
     <div class="charts-row">
       <div class="panel">
-        <div class="panel-head"><h2>Inserats-Aufrufe</h2><span style="font-size:12px;color:#9ca3af;">Letzte 7 Tage</span></div>
-        <div class="chart-area"><svg width="100%" height="100%" viewBox="0 0 600 150" preserveAspectRatio="none" id="chart-svg"><text x="300" y="80" text-anchor="middle" fill="#d1d5db" font-size="13" font-family="Inter">Wird geladen...</text></svg></div>
+        <div class="panel-head"><h2>Anfragen im Verlauf</h2><span style="font-size:12px;color:#9ca3af;">Letzte 7 Tage</span></div>
+        <div class="chart-area"><svg width="100%" height="100%" viewBox="0 0 600 150" preserveAspectRatio="none" id="chart-svg"><text x="300" y="80" text-anchor="middle" fill="#d1d5db" font-size="13" font-family="Inter">Wird geladen…</text></svg></div>
       </div>
       <div class="panel">
         <div class="panel-head"><h2>Anfragen-Übersicht</h2></div>
@@ -224,8 +243,8 @@ a{text-decoration:none;color:inherit;}
         <div id="recent-inq"><div class="empty-state">Wird geladen...</div></div>
       </div>
       <div class="panel">
-        <div class="panel-head"><h2>Zuletzt angesehen</h2><a class="panel-link" href="meine-anzeigen.html">Alle anzeigen</a></div>
-        <div id="recent-list"><div class="empty-state">Wird geladen...</div></div>
+        <div class="panel-head"><h2>Meine Merkliste</h2><a class="panel-link" href="favoriten.html">Alle anzeigen</a></div>
+        <div id="fav-list"><div class="empty-state">Wird geladen…</div></div>
       </div>
     </div>
   </div>
@@ -234,24 +253,28 @@ a{text-decoration:none;color:inherit;}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="auth-header.js"></script>
+<script src="favorites.js?v=1"></script>
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   const {data:sd} = await supabaseClient.auth.getSession();
   const user = sd?.session?.user;
   if (!user) { window.location.href="login.html"; return; }
 
-  // Logout immer verfügbar – unabhängig vom Seller-Status
-  document.getElementById("sidebar-logout")?.addEventListener("click",async e=>{e.preventDefault();await supabaseClient.auth.signOut();window.location.href="index.html";});
+  const {data:seller} = await supabaseClient.from("seller_profiles").select("id,company_name").eq("user_id",user.id).maybeSingle();
 
-  const {data:seller} = await supabaseClient.from("seller_profiles").select("id,company_name").eq("user_id",user.id).single();
-  if (!seller) return;
-
-  const name = seller.company_name||user.email||"Händler";
+  const name = (seller&&seller.company_name)||user.email||"Händler";
   const ini  = name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()||"?";
   ["sidebar-avatar","topbar-avatar"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=ini;});
   ["sidebar-name","topbar-name"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=name;});
+  const roleEl=document.getElementById("sidebar-role");
+  if(roleEl) roleEl.textContent = seller ? "Händlerkonto" : "Käuferkonto";
+  document.getElementById("sidebar-logout")?.addEventListener("click",async e=>{e.preventDefault();await supabaseClient.auth.signOut();window.location.href="index.html";});
 
-  const {data:listings} = await supabaseClient.from("listings").select("id,title,manufacturer,price,status,created_at,image_urls,categories(name)").eq("seller_id",seller.id).order("created_at",{ascending:false});
+  let listings=[];
+  if(seller){
+    const r=await supabaseClient.from("listings").select("id,title,manufacturer,price,status,created_at,image_urls,categories(name)").eq("seller_id",seller.id).order("created_at",{ascending:false});
+    listings=r.data||[];
+  }
   const all=listings||[], ids=all.map(l=>l.id);
 
   let inqs=[];
@@ -310,7 +333,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const inqMap={};inqs.forEach(iq=>{inqMap[iq.listing_id]=(inqMap[iq.listing_id]||0)+1;});
   const top=[...all].filter(l=>l.status==="Freigegeben").sort((a,b)=>(inqMap[b.id]||0)-(inqMap[a.id]||0)||Number(b.price||0)-Number(a.price||0)).slice(0,5);
   const topEl=document.getElementById("top-motors");
-  if(!top.length){topEl.innerHTML=`<div class="empty-state">Noch keine aktiven Anzeigen</div>`;}
+  if(!top.length){topEl.innerHTML=seller?`<div class="empty-state">Noch keine aktiven Anzeigen.<br/><a href="anzeige-erstellen.html" style="color:#1c6ea4;font-weight:600;">Erste Anzeige erstellen</a></div>`:`<div class="empty-state">Du hast noch kein Händlerprofil.<br/><a href="profil.html" style="color:#1c6ea4;font-weight:600;">Profil anlegen</a></div>`;}
   else{
     const mx=Math.max(...top.map(l=>inqMap[l.id]||0),1);
     topEl.innerHTML=top.map((l,i)=>{
@@ -337,15 +360,56 @@ document.addEventListener("DOMContentLoaded", async () => {
     return `<div class="inq-item"><div class="inq-avatar">${esc(ini2)}</div><div class="inq-body"><div class="inq-name">${esc(iq.name||"Unbekannt")}</div><div class="inq-listing">${esc(lt)}</div></div><div class="inq-right"><div class="inq-time">${relT(iq.created_at)}</div><div class="inq-badge ${bc}">${esc(iq.status||"Neu")}</div></div></div>`;
   }).join("");}
 
-  // Recent
-  const recEl=document.getElementById("recent-list");
-  if(!all.length){recEl.innerHTML=`<div class="empty-state">Noch keine Anzeigen</div>`;}
-  else{recEl.innerHTML=all.slice(0,5).map(l=>{
-    const img=Array.isArray(l.image_urls)&&l.image_urls[0];
-    const th=img?`<img src="${img}" alt=""/>`:getIcon(l.categories?.name||"");
-    return `<div class="recent-item" onclick="location.href='listing-detail.html?id=${l.id}'"><div class="recent-thumb">${th}</div><div class="recent-info"><div class="recent-title">${esc(l.title||"Ohne Titel")}</div><div class="recent-time">Erstellt ${relT(l.created_at)}</div></div><div class="recent-arrow">&#8250;</div></div>`;
-  }).join("");}
+  // Merkliste
+  renderFavs();
+  document.addEventListener("favs:change", renderFavs);
 });
+
+// ── Merkliste im Dashboard ───────────────────────────────────────────────────
+let favRenderToken = 0;
+async function renderFavs(){
+  const el=document.getElementById("fav-list");
+  if(!el||!window.Favs) return;
+  const token=++favRenderToken;
+
+  updateFavBadge();
+
+  if(Favs.count()===0){
+    el.innerHTML=`<div class="empty-state">Noch nichts gemerkt.<br/><a href="suche.html" style="color:#1c6ea4;font-weight:600;">Inserate durchsuchen</a></div>`;
+    return;
+  }
+
+  const rows=await Favs.listings(5);
+  if(token!==favRenderToken) return;
+
+  const gone=Favs.count()-rows.length;
+  const note=gone>0?`<div class="panel-note">${gone} gemerkte${gone===1?"s Inserat ist":" Inserate sind"} nicht mehr verfügbar.</div>`:"";
+
+  if(!rows.length){ el.innerHTML=`<div class="empty-state">Die gemerkten Inserate sind nicht mehr online.</div>${note}`; return; }
+
+  el.innerHTML=rows.map(l=>{
+    const img=Array.isArray(l.image_urls)&&l.image_urls[0];
+    const th=img?`<img src="${esc(img)}" alt=""/>`:getIcon(l.categories?.name||"");
+    const pr=Number(l.price||0)>0?Number(l.price).toLocaleString("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}):"auf Anfrage";
+    const sub=[l.manufacturer,l.location].filter(Boolean).join(" · ")||(l.categories?.name||"");
+    return `<div class="fav-row">
+      <a class="fav-link" href="listing-detail.html?id=${encodeURIComponent(l.id)}">
+        <div class="fav-thumb">${th}</div>
+        <div class="fav-info"><div class="fav-title">${esc(l.title||"Ohne Titel")}</div><div class="fav-sub">${esc(sub)}</div></div>
+      </a>
+      <span class="fav-price">${pr}</span>
+      <button type="button" class="fav-btn on" data-fav="${esc(l.id)}" aria-pressed="true" title="Aus der Merkliste entfernen">${Favs.heartSvg}</button>
+    </div>`;
+  }).join("")+note;
+}
+
+function updateFavBadge(){
+  const b=document.getElementById("fav-nav-badge");
+  if(!b||!window.Favs) return;
+  const n=Favs.count();
+  b.textContent=n;
+  b.style.display=n>0?"inline-block":"none";
+}
 function setText(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function esc(v){return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function getIcon(c){return({"Automotor":"🚗","Dieselmotor Auto":"🚗","Benzinmotor Auto":"🚗","LKW Motor":"🚛","Bootsmotor":"🚤","Außenbordmotor":"🚤","Innenbordmotor":"🚤","Flugzeugmotor":"✈️","Elektromotor Industrie":"⚙️","Drehstrommotor":"⚙️","Servomotor":"🤖","Getriebemotor":"🔩","Baumaschinenmotor":"🚧","Traktormotor":"🚜","Motorradmotor":"🏍️","Hydraulikmotor":"🛠️","Aufzugmotor":"🏢"}[c]||"⚙️");}
