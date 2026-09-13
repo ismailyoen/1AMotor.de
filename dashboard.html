@@ -5,246 +5,465 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dashboard – 1A Motor</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script>
+  /* Theme so früh wie möglich setzen, damit es kein Aufblitzen gibt */
+  (function () {
+    try {
+      var t = localStorage.getItem("1am-theme");
+      if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+  })();
+</script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:#f5f6fa;color:#1a1d23;line-height:1.5;display:flex;min-height:100vh;}
-a{text-decoration:none;color:inherit;}
-.sidebar{width:220px;min-height:100vh;background:#0f1117;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;border-right:1px solid rgba(255,255,255,0.06);}
-.sidebar-logo{display:flex;align-items:center;gap:10px;padding:20px 18px 18px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
-.logo-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#1b4f72,#2e86c1);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;}
-.logo-name{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px;}
-.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,0.5);font-size:13.5px;font-weight:500;transition:all .15s;cursor:pointer;}
-.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
-.nav-item.active{background:#1c6ea4;color:#fff;font-weight:600;}
-.nav-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
-.nav-badge{margin-left:auto;background:#e74c3c;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;}
-.nav-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 10px;}
-.nav-item.logout{color:rgba(239,68,68,0.6);}
-.nav-item.logout:hover{color:#ef4444;background:rgba(239,68,68,0.1);}
-.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;}
-.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
-.user-info{min-width:0;}
-.user-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.user-role{font-size:11px;color:rgba(255,255,255,0.4);}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
-.topbar{height:60px;background:#fff;border-bottom:1px solid #e8eaef;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-size:15px;font-weight:600;color:#6b7280;}
-.topbar-right{display:flex;align-items:center;gap:14px;}
-.topbar-bell{width:34px;height:34px;border-radius:50%;background:#f5f6fa;display:grid;place-items:center;font-size:16px;cursor:pointer;position:relative;border:1px solid #e8eaef;}
-.topbar-bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#e74c3c;border:1.5px solid #fff;}
-.topbar-user{display:flex;align-items:center;gap:8px;background:#f5f6fa;border:1px solid #e8eaef;border-radius:999px;padding:5px 12px 5px 5px;cursor:pointer;}
-.topbar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1c6ea4,#48b4e0);display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;}
-.topbar-username{font-size:13px;font-weight:600;color:#374151;}
-.new-listing-btn{background:#1c6ea4;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;}
-.page{padding:28px 28px 56px;flex:1;}
-.page-head{margin-bottom:24px;}
-.page-head h1{font-size:22px;font-weight:700;color:#111827;margin-bottom:3px;}
-.page-head p{font-size:13.5px;color:#6b7280;}
-.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;}
-.stat-card{background:#fff;border:1px solid #e8eaef;border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s;}
-.stat-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);border-color:#d6dbe4;}
-.stat-card:focus-visible{outline:2px solid #1c6ea4;outline-offset:2px;}
-.fav-row{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid #f8fafc;}
-.fav-row:last-child{border-bottom:none;}
-.fav-row:hover{background:#fafbff;}
-.fav-link{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
-.fav-thumb{width:38px;height:38px;border-radius:8px;background:#f1f5f9;display:grid;place-items:center;font-size:16px;flex-shrink:0;overflow:hidden;}
-.fav-thumb img{width:100%;height:100%;object-fit:cover;}
-.fav-info{flex:1;min-width:0;}
-.fav-title{font-size:12.5px;font-weight:600;color:#1a1d23;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fav-sub{font-size:11px;color:#9ca3af;margin-top:1px;}
-.fav-price{font-size:12.5px;font-weight:700;color:#1c6ea4;white-space:nowrap;}
-.fav-btn{width:28px;height:28px;border-radius:50%;border:none;background:transparent;cursor:pointer;display:grid;place-items:center;flex-shrink:0;}
-.fav-btn svg{width:15px;height:15px;fill:none;stroke:#cbd5e1;stroke-width:2;}
-.fav-btn.on svg{fill:#ef4444;stroke:#ef4444;}
-.fav-btn:hover svg{stroke:#ef4444;}
-.fav-btn:focus-visible{outline:2px solid #1c6ea4;outline-offset:1px;}
-.panel-note{padding:10px 20px;font-size:11.5px;color:#9ca3af;border-top:1px solid #f1f3f6;}
-.stat-icon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:20px;flex-shrink:0;}
-.si-blue{background:#e8f4fd;}.si-green{background:#e8fdf0;}.si-orange{background:#fdf3e8;}.si-purple{background:#f0e8fd;}.si-teal{background:#e8fdf9;}.si-red{background:#fdeaea;}
-.stat-body{min-width:0;}
-.stat-label{font-size:11.5px;color:#9ca3af;font-weight:500;margin-bottom:3px;}
-.stat-value{font-size:24px;font-weight:700;color:#111827;line-height:1;}
-.stat-note{font-size:11px;color:#10b981;font-weight:500;margin-top:3px;}
-.charts-row{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:24px;}
-.panel{background:#fff;border:1px solid #e8eaef;border-radius:12px;overflow:hidden;}
-.panel-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #f1f3f6;}
-.panel-head h2{font-size:14px;font-weight:600;color:#111827;}
-.panel-link{font-size:12.5px;color:#1c6ea4;font-weight:500;}
-.chart-area{padding:16px 20px 20px;height:190px;}
-.donut-wrap{padding:20px;display:flex;align-items:center;gap:20px;}
-.donut-legend{display:flex;flex-direction:column;gap:10px;}
-.legend-item{display:flex;align-items:center;gap:8px;}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.legend-text{font-size:12px;color:#6b7280;flex:1;}
-.legend-pct{font-size:12px;font-weight:600;color:#374151;white-space:nowrap;}
-.bottom-grid{display:grid;grid-template-columns:1fr 1fr 310px;gap:16px;}
-.motor-item{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid #f8fafc;cursor:pointer;transition:background .12s;}
-.motor-item:last-child{border-bottom:none;}
-.motor-item:hover{background:#fafbff;}
-.rank-badge{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0;}
-.rk1{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;}
-.rk2{background:linear-gradient(135deg,#94a3b8,#cbd5e1);color:#fff;}
-.rk3{background:linear-gradient(135deg,#b45309,#d97706);color:#fff;}
-.rkn{background:#f1f5f9;color:#94a3b8;}
-.motor-thumb{width:42px;height:42px;border-radius:9px;flex-shrink:0;background:#f1f5f9;overflow:hidden;display:grid;place-items:center;font-size:18px;}
-.motor-thumb img{width:100%;height:100%;object-fit:cover;}
-.motor-info{flex:1;min-width:0;}
-.motor-title{font-size:13px;font-weight:600;color:#1a1d23;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.motor-sub{font-size:11.5px;color:#9ca3af;margin-top:2px;}
-.motor-bar{height:3px;background:#f1f5f9;border-radius:2px;margin-top:5px;}
-.motor-bar-fill{height:100%;background:#1c6ea4;border-radius:2px;}
-.motor-price{font-size:13px;font-weight:700;color:#1c6ea4;white-space:nowrap;}
-.inq-item{display:flex;align-items:flex-start;gap:10px;padding:12px 20px;border-bottom:1px solid #f8fafc;}
-.inq-item:last-child{border-bottom:none;}
-.inq-avatar{width:34px;height:34px;border-radius:50%;background:#e8f0fe;display:grid;place-items:center;font-size:12px;font-weight:700;color:#1c6ea4;flex-shrink:0;}
-.inq-body{flex:1;min-width:0;}
-.inq-name{font-size:13px;font-weight:600;color:#1a1d23;}
-.inq-listing{font-size:12px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.inq-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
-.inq-time{font-size:11px;color:#9ca3af;white-space:nowrap;}
-.inq-badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;}
-.b-new{background:#dcfce7;color:#16a34a;}.b-read{background:#fef9c3;color:#ca8a04;}.b-done{background:#f1f5f9;color:#64748b;}
-.recent-item{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid #f8fafc;cursor:pointer;transition:background .12s;}
-.recent-item:last-child{border-bottom:none;}
-.recent-item:hover{background:#fafbff;}
-.recent-thumb{width:38px;height:38px;border-radius:8px;background:#f1f5f9;display:grid;place-items:center;font-size:16px;flex-shrink:0;overflow:hidden;}
-.recent-thumb img{width:100%;height:100%;object-fit:cover;}
-.recent-info{flex:1;min-width:0;}
-.recent-title{font-size:12.5px;font-weight:600;color:#1a1d23;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recent-time{font-size:11px;color:#9ca3af;margin-top:1px;}
-.recent-arrow{color:#d1d5db;font-size:14px;flex-shrink:0;}
-.empty-state{padding:28px 20px;text-align:center;color:#9ca3af;font-size:13px;}
-.sidebar-ad{margin:10px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#1e3a52,#2a5278);position:relative;}
-.sidebar-ad-img{width:100%;height:90px;object-fit:cover;opacity:0.7;display:block;}
-.sidebar-ad-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px;text-align:center;}
-.sidebar-ad-text{font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
-.sidebar-ad-label{font-size:12px;font-weight:700;color:#fff;}
+:root {
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f8fbff; --border:#e0e9f2; --line:#eef3f8;
+  --ink:#0d1b2a; --ink2:#2c4257; --muted:#7a93ae; --muted2:#93aac1;
+  --accent:#1a5fa8; --accent2:#2176c7; --accent-ink:#1a5fa8; --accent-soft:#eef4fb; --accent-brd:#cfe0f2;
+  --ok:#0f8a5f; --ok-soft:#e8f7ef; --ok-brd:#d7ead9;
+  --warn:#8a6100; --warn-soft:#fdf6e3; --warn-line:#f5a623;
+  --danger:#b91c1c; --danger-soft:#fdeaea; --heart:#ef4444;
+  --neutral-soft:#f1f5f9; --neutral-ink:#64748b;
+  --shadow:0 4px 18px rgba(13,27,42,.05); --shadow2:0 6px 24px rgba(13,27,42,.09);
+}
+[data-theme="dark"] {
+  --bg:#0b1420; --surface:#12202f; --surface2:#0f1c2a; --border:#1e3247; --line:#1a2c3f;
+  --ink:#e9f1f8; --ink2:#c3d3e2; --muted:#8ba2ba; --muted2:#6f88a1;
+  --accent:#2176c7; --accent2:#4da6ff; --accent-ink:#7bc0ff; --accent-soft:rgba(77,166,255,.14); --accent-brd:rgba(77,166,255,.32);
+  --ok:#34d399; --ok-soft:rgba(16,185,129,.14); --ok-brd:rgba(16,185,129,.3);
+  --warn:#fbbf24; --warn-soft:rgba(245,166,35,.14); --warn-line:#f5a623;
+  --danger:#fca5a5; --danger-soft:rgba(239,68,68,.16); --heart:#f87171;
+  --neutral-soft:rgba(255,255,255,.07); --neutral-ink:#9fb6cd;
+  --shadow:0 4px 18px rgba(0,0,0,.32); --shadow2:0 10px 30px rgba(0,0,0,.45);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Outfit',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; display:flex; min-height:100vh; }
+a { text-decoration:none; color:inherit; }
+a:hover { color:var(--accent-ink); }
+button { font-family:inherit; cursor:pointer; }
+:focus-visible { outline:2px solid var(--accent2); outline-offset:2px; }
 
-@media(max-width:1500px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:1300px){.charts-row{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.stats-grid{grid-template-columns:1fr 1fr;}.bottom-grid{grid-template-columns:1fr;}}
+/* ══ SIDEBAR (hell / im Dark Mode dunkel, einklappbar) ══ */
+.sidebar { width:236px; min-height:100vh; background:var(--surface); border-right:1px solid var(--border); position:fixed; top:0; left:0; z-index:100; display:flex; flex-direction:column; transition:width .18s; }
+.sidebar-logo { display:flex; align-items:center; gap:10px; padding:18px; border-bottom:1px solid var(--line); }
+.logo-mark { width:36px; height:36px; border-radius:9px; background:linear-gradient(145deg,#1a5fa8,#4da6ff); display:grid; place-items:center; font-weight:900; font-size:14px; color:#fff; flex-shrink:0; }
+.logo-name { font-size:19px; font-weight:800; letter-spacing:-.3px; }
+.sidebar-nav { flex:1; padding:12px 10px; display:flex; flex-direction:column; gap:2px; }
+.nav-item { display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:9px; color:var(--ink2); font-size:13.5px; font-weight:600; transition:background .14s,color .14s; }
+.nav-item svg { width:17px; height:17px; flex-shrink:0; stroke:var(--muted); fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.nav-item:hover { background:var(--accent-soft); color:var(--accent-ink); }
+.nav-item:hover svg { stroke:var(--accent-ink); }
+.nav-item.active { background:var(--accent-soft); color:var(--accent-ink); font-weight:700; }
+.nav-item.active svg { stroke:var(--accent-ink); }
+.nav-count { margin-left:auto; font-size:11.5px; font-weight:700; color:var(--muted); }
+.nav-badge { margin-left:auto; min-width:20px; text-align:center; background:var(--heart); color:#fff; font-size:11px; font-weight:800; padding:2px 6px; border-radius:999px; }
+.nav-badge.blue { background:var(--accent); }
+.nav-divider { height:1px; background:var(--line); margin:8px 4px; }
+.nav-item.logout { color:var(--danger); }
+.nav-item.logout svg { stroke:currentColor; }
+.nav-item.logout:hover { background:var(--danger-soft); color:var(--danger); }
+.sidebar-ad { margin:0 10px; border:1px dashed var(--accent-brd); border-radius:10px; padding:14px; background:var(--surface2); }
+.sidebar-ad-text { font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--muted2); text-transform:uppercase; margin-bottom:6px; }
+.sidebar-ad-label { font-size:12.5px; font-weight:700; line-height:1.4; }
+.sidebar-user { display:flex; align-items:center; gap:10px; margin:14px 10px 16px; padding-top:12px; border-top:1px solid var(--line); }
+.user-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#1a5fa8,#4da6ff); display:grid; place-items:center; font-size:12.5px; font-weight:800; color:#fff; flex-shrink:0; }
+.user-info { min-width:0; }
+.user-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-role { font-size:11.5px; color:var(--muted); }
 
-  @media (max-width: 768px) {
-    .dash-layout, .layout { grid-template-columns: 1fr !important; }
-    .page-sidebar { display: none !important; }
-    .dash-main { padding: 0 !important; }
-    .stats-row, .stat-cards { 
-      display: grid !important; 
-      grid-template-columns: 1fr 1fr !important; 
-      gap: 10px !important; 
-    }
-    .stat-card { padding: 14px !important; border-radius: 12px !important; }
-    .stat-value { font-size: 20px !important; }
-    .panel { border-radius: 12px !important; }
-    .panel-head { padding: 14px 16px !important; }
-    .panel-body { padding: 0 !important; }
-    .listings-table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
-    table { font-size: 12px !important; min-width: 580px; }
-    th, td { padding: 10px 8px !important; }
-    .page-head h1 { font-size: 22px !important; }
-    .activity-list { padding: 14px !important; }
-  }
+/* eingeklappt */
+body.nav-collapsed .sidebar { width:72px; }
+body.nav-collapsed .sidebar-logo { justify-content:center; padding:18px 0; }
+body.nav-collapsed .logo-name,
+body.nav-collapsed .nav-item span,
+body.nav-collapsed .nav-count,
+body.nav-collapsed .sidebar-ad,
+body.nav-collapsed .user-info { display:none; }
+body.nav-collapsed .nav-item { justify-content:center; padding:11px 0; }
+body.nav-collapsed .nav-badge { position:absolute; margin:0; transform:translate(14px,-11px); }
+body.nav-collapsed .nav-item { position:relative; }
+body.nav-collapsed .sidebar-user { justify-content:center; }
+body.nav-collapsed .main { margin-left:72px; }
 
+/* ══ MAIN + TOPBAR ══ */
+.main { margin-left:236px; flex:1; display:flex; flex-direction:column; min-height:100vh; transition:margin-left .18s; }
+.topbar { height:58px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; padding:0 24px; position:sticky; top:0; z-index:50; }
+.icon-btn { width:34px; height:34px; border:1px solid var(--border); border-radius:9px; background:var(--surface); display:grid; place-items:center; position:relative; color:var(--ink2); }
+.icon-btn svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.icon-btn:hover { border-color:var(--accent-brd); color:var(--accent-ink); }
+.topbar-search { display:flex; align-items:center; gap:10px; height:36px; border:1px solid var(--border); border-radius:9px; background:var(--surface2); padding:0 12px; width:320px; max-width:38vw; }
+.topbar-search svg { width:15px; height:15px; fill:none; stroke:var(--muted2); stroke-width:2.2; stroke-linecap:round; }
+.topbar-search input { border:none; outline:none; background:transparent; font-family:inherit; font-size:13px; color:var(--ink); width:100%; }
+.topbar-search input::placeholder { color:var(--muted2); }
+.topbar-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+.bell-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--heart); border:1.5px solid var(--surface); }
+.topbar-user { display:flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:999px; padding:4px 12px 4px 4px; }
+.topbar-avatar { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#1a5fa8,#4da6ff); display:grid; place-items:center; color:#fff; font-size:11px; font-weight:800; }
+.topbar-username { font-size:13px; font-weight:600; }
+.btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; font-size:13px; font-weight:700; padding:9px 16px; border-radius:9px; border:none; }
+.btn-primary:hover { background:var(--accent2); color:#fff; }
+.btn-primary svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; }
+
+/* ══ PAGE ══ */
+.page { padding:26px 26px 48px; flex:1; }
+.page-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap; }
+.page-head h1 { font-size:28px; font-weight:800; letter-spacing:-.8px; margin-bottom:4px; }
+.page-head p { font-size:14px; color:var(--ink2); }
+.seg { display:flex; border:1px solid var(--border); border-radius:9px; overflow:hidden; background:var(--surface); }
+.seg button { padding:9px 14px; font-size:13px; font-weight:600; color:var(--ink2); background:transparent; border:none; border-left:1px solid var(--border); }
+.seg button:first-child { border-left:none; }
+.seg button.active { background:var(--accent); color:#fff; font-weight:700; }
+
+/* Onboarding */
+.onb { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:18px; box-shadow:var(--shadow); }
+.onb-head { display:flex; align-items:center; gap:14px; margin-bottom:14px; flex-wrap:wrap; }
+.onb-title { font-size:15px; font-weight:800; }
+.onb-bar { flex:1; max-width:320px; height:6px; border-radius:3px; background:var(--line); overflow:hidden; }
+.onb-bar span { display:block; height:100%; background:var(--accent); border-radius:3px; transition:width .3s; }
+.onb-count { font-size:13px; font-weight:700; color:var(--ink2); }
+.onb-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.onb-step { display:flex; align-items:center; gap:10px; border:1px solid var(--border); border-radius:10px; padding:12px 14px; background:var(--surface); }
+.onb-step.done { border-color:var(--ok-brd); background:var(--ok-soft); }
+.onb-step.next { border:1.5px solid var(--accent); box-shadow:0 4px 14px rgba(26,95,168,.12); }
+.onb-step.next .onb-step-t { color:var(--accent-ink); }
+.onb-num { width:26px; height:26px; border-radius:50%; background:var(--neutral-soft); color:var(--muted); display:grid; place-items:center; font-size:12.5px; font-weight:800; flex-shrink:0; }
+.onb-step.next .onb-num { background:var(--accent-soft); color:var(--accent-ink); }
+.onb-check { width:20px; height:20px; flex-shrink:0; fill:none; stroke:var(--ok); stroke-width:2.6; stroke-linecap:round; }
+.onb-step-t { font-size:13px; font-weight:700; }
+.onb-step-s { font-size:11.5px; color:var(--muted); }
+
+/* KPI */
+.kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:18px; }
+.kpi { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px; display:block; transition:border-color .15s, box-shadow .15s; }
+.kpi:hover { border-color:var(--accent-brd); box-shadow:var(--shadow2); color:inherit; }
+.kpi-label { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.kpi-row { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin-top:8px; }
+.kpi-value { font-size:28px; font-weight:800; letter-spacing:-1px; line-height:1; }
+.kpi-note { font-size:12px; color:var(--ink2); margin-top:5px; font-weight:600; }
+.kpi-note.ok { color:var(--ok); }
+.kpi-note.warn { color:var(--warn); }
+.kpi-ic { width:38px; height:38px; border-radius:10px; background:var(--accent-soft); display:grid; place-items:center; flex-shrink:0; }
+.kpi-ic svg { width:18px; height:18px; fill:none; stroke:var(--accent-ink); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+/* Panels */
+.cols { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; align-items:start; }
+.col { display:flex; flex-direction:column; gap:18px; }
+.panel { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+.panel-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); }
+.panel-head h2 { font-size:15px; font-weight:800; }
+.panel-head .left { display:flex; align-items:center; gap:10px; }
+.panel-link { font-size:13px; font-weight:700; color:var(--accent-ink); }
+.pill { font-size:11.5px; font-weight:800; padding:3px 8px; border-radius:999px; white-space:nowrap; }
+.pill-open { background:var(--danger-soft); color:var(--danger); }
+.pill-new { background:var(--ok-soft); color:var(--ok); }
+.pill-work { background:var(--warn-soft); color:var(--warn); }
+.pill-done { background:var(--neutral-soft); color:var(--neutral-ink); }
+.pill-blue { background:var(--accent-soft); color:var(--accent-ink); }
+.panel-note { padding:10px 20px; font-size:11.5px; color:var(--muted2); border-top:1px solid var(--line); }
+.empty { padding:30px 20px; text-align:center; color:var(--muted); font-size:13.5px; }
+.empty a { color:var(--accent-ink); font-weight:700; }
+
+/* Anfragen-Zeilen */
+.inq { display:flex; align-items:center; gap:12px; padding:14px 20px; border-bottom:1px solid var(--line); }
+.inq:last-child { border-bottom:none; }
+.inq:hover { background:var(--surface2); }
+.inq-avatar { width:36px; height:36px; border-radius:50%; background:var(--accent-soft); color:var(--accent-ink); display:grid; place-items:center; font-size:12.5px; font-weight:800; flex-shrink:0; }
+.inq-body { flex:1; min-width:0; }
+.inq-name { font-size:13.5px; font-weight:700; }
+.inq-sub { font-size:12.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.inq-time { font-size:12px; color:var(--muted2); white-space:nowrap; }
+.btn-sm { font-size:12.5px; font-weight:700; padding:7px 13px; border-radius:8px; background:var(--accent); color:#fff; white-space:nowrap; }
+.btn-sm:hover { background:var(--accent2); color:#fff; }
+.btn-sm.ghost { background:transparent; color:var(--ink2); border:1px solid var(--border); }
+.btn-sm.ghost:hover { border-color:var(--accent-brd); color:var(--accent-ink); }
+
+/* Performance-Tabelle */
+.perf-head, .perf-row { display:grid; grid-template-columns:1fr 96px 110px; gap:10px; align-items:center; padding:12px 20px; }
+.perf-head { border-bottom:1px solid var(--line); font-size:11.5px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.perf-row { border-bottom:1px solid var(--line); }
+.perf-row:last-child { border-bottom:none; }
+.perf-row:hover { background:var(--surface2); }
+.perf-main { display:flex; align-items:center; gap:11px; min-width:0; }
+.thumb { width:40px; height:40px; border-radius:9px; background:var(--accent-soft); display:grid; place-items:center; flex-shrink:0; overflow:hidden; }
+.thumb img { width:100%; height:100%; object-fit:cover; }
+.thumb svg { width:19px; height:19px; fill:none; stroke:var(--accent-ink); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.perf-title { font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.perf-sub { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.perf-num { text-align:right; font-size:13.5px; font-weight:700; }
+.perf-bar { height:4px; background:var(--line); border-radius:2px; margin-top:5px; }
+.perf-bar span { display:block; height:100%; background:var(--accent); border-radius:2px; }
+
+/* Chart / Donut */
+.chart-area { padding:16px 20px 22px; height:210px; }
+.chart-area svg { width:100%; height:100%; }
+.donut-wrap { padding:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+.donut-legend { display:flex; flex-direction:column; gap:9px; flex:1; min-width:150px; }
+.legend-item { display:flex; align-items:center; gap:8px; }
+.legend-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.legend-text { font-size:12.5px; color:var(--ink2); flex:1; }
+.legend-pct { font-size:12.5px; font-weight:700; white-space:nowrap; }
+
+/* Entwürfe */
+.draft { padding:14px 20px; border-bottom:1px solid var(--line); }
+.draft:last-child { border-bottom:none; }
+.draft-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.draft-title { font-size:13.5px; font-weight:700; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.draft-missing { font-size:12px; color:var(--muted); margin:6px 0 8px; }
+.draft-bar { height:5px; background:var(--line); border-radius:3px; }
+.draft-bar span { display:block; height:100%; background:var(--warn-line); border-radius:3px; }
+
+/* Merkliste */
+.fav-row { display:flex; align-items:center; gap:10px; padding:12px 20px; border-bottom:1px solid var(--line); }
+.fav-row:last-child { border-bottom:none; }
+.fav-row:hover { background:var(--surface2); }
+.fav-link { display:flex; align-items:center; gap:11px; flex:1; min-width:0; }
+.fav-thumb { width:36px; height:36px; border-radius:8px; background:var(--accent-soft); display:grid; place-items:center; flex-shrink:0; overflow:hidden; }
+.fav-thumb img { width:100%; height:100%; object-fit:cover; }
+.fav-thumb svg { width:17px; height:17px; fill:none; stroke:var(--accent-ink); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.fav-title { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fav-sub { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fav-price { font-size:12.5px; font-weight:700; color:var(--accent-ink); white-space:nowrap; }
+.fav-btn { width:28px; height:28px; border-radius:50%; border:none; background:transparent; display:grid; place-items:center; flex-shrink:0; }
+.fav-btn svg { width:15px; height:15px; fill:none; stroke:var(--muted2); stroke-width:2; }
+.fav-btn.on svg { fill:var(--heart); stroke:var(--heart); }
+
+@media (max-width:1500px) { .kpis { grid-template-columns:repeat(3,1fr); } }
+@media (max-width:1240px) { .cols { grid-template-columns:1fr; } .onb-steps { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:900px) {
+  .sidebar { display:none; }
+  .main, body.nav-collapsed .main { margin-left:0; }
+  .kpis { grid-template-columns:1fr 1fr; }
+  .topbar-search { display:none; }
+  .page { padding:18px 16px 40px; }
+  .page-head h1 { font-size:23px; }
+  .onb-steps { grid-template-columns:1fr; }
+  .perf-head, .perf-row { grid-template-columns:1fr 70px; }
+  .perf-rate { display:none; }
+}
 </style>
   <link rel="stylesheet" href="mobile.css" />
 <!-- 1AM-MOBILE -->
 </head>
 <body>
+
 <aside class="sidebar">
-  <a href="index.html" class="sidebar-logo" style="text-decoration:none;"><div class="logo-mark">1A</div><div class="logo-name">Motor</div></a>
+  <a href="index.html" class="sidebar-logo"><div class="logo-mark">1A</div><div class="logo-name">Motor</div></a>
   <nav class="sidebar-nav">
-    <a href="dashboard.html" class="nav-item active"><span class="icon">📊</span> Dashboard</a>
-    <a href="meine-anzeigen.html" class="nav-item"><span class="icon">📋</span> Meine Anzeigen</a>
-    <a href="anfragen.html" class="nav-item"><span class="icon">💬</span> Anfragen <span class="nav-badge" id="nav-badge" style="display:none;"></span></a>
-    <a href="favoriten.html" class="nav-item"><span class="icon">❤️</span> Favoriten <span class="nav-badge" id="fav-nav-badge" data-fav-count style="display:none;background:#ef4444;">0</span></a>
-    <a href="#" class="nav-item"><span class="icon">📈</span> Statistiken</a>
-    <a href="profil.html#bewertungen" class="nav-item"><span class="icon">⭐</span> Bewertungen</a>
+    <a href="dashboard.html" class="nav-item active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="meine-anzeigen.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"></rect><line x1="8" y1="8" x2="16" y2="8"></line><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="13" y2="16"></line></svg>
+      <span>Meine Anzeigen</span><span class="nav-count" id="nav-listings-count"></span>
+    </a>
+    <a href="anfragen.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      <span>Anfragen</span><span class="nav-badge" id="nav-badge" style="display:none;"></span>
+    </a>
+    <a href="meine-anfragen.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"></rect><polyline points="3 6 12 13 21 6"></polyline></svg>
+      <span>Nachrichten</span><span class="nav-badge blue" id="nav-msg-badge" style="display:none;"></span>
+    </a>
+    <a href="favoriten.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+      <span>Merkliste</span><span class="nav-badge" id="fav-nav-badge" data-fav-count style="display:none;">0</span>
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      <span>Statistiken</span>
+    </a>
+    <a href="profil.html#bewertungen" class="nav-item">
+      <svg viewBox="0 0 24 24"><polygon points="12 3 14.9 9.1 21.5 10 16.7 14.6 17.9 21.2 12 18 6.1 21.2 7.3 14.6 2.5 10 9.1 9.1 12 3"></polygon></svg>
+      <span>Bewertungen</span>
+    </a>
     <div class="nav-divider"></div>
-    <a href="profil.html" class="nav-item"><span class="icon">⚙️</span> Einstellungen</a>
-    <a href="profil.html" class="nav-item"><span class="icon">👤</span> Mein Konto</a>
+    <a href="profil.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"></path></svg>
+      <span>Einstellungen</span>
+    </a>
+    <a href="profil.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+      <span>Mein Konto</span>
+    </a>
     <div class="nav-divider"></div>
-    <a href="suche.html" class="nav-item"><span class="icon">🔍</span> Zur Suche</a>
-    <a href="#" class="nav-item logout" id="sidebar-logout"><span class="icon">🚪</span> Ausloggen</a>
+    <a href="suche.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <span>Zur Suche</span>
+    </a>
+    <a href="#" class="nav-item logout" id="sidebar-logout">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      <span>Ausloggen</span>
+    </a>
   </nav>
   <div class="sidebar-ad">
-    <div class="sidebar-ad-overlay">
-      <div class="sidebar-ad-text">Werbung</div>
-      <div class="sidebar-ad-label">Hier könnte Ihre<br/>Werbung stehen.</div>
-      <a href="kontakt.html" style="margin-top:8px;font-size:10px;color:#4da6ff;font-weight:600;">Jetzt anfragen →</a>
-    </div>
+    <div class="sidebar-ad-text">Werbung</div>
+    <div class="sidebar-ad-label">Hier könnte Ihre Werbung stehen.</div>
+    <a href="kontakt.html" style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:var(--accent-ink);">Jetzt anfragen →</a>
   </div>
   <div class="sidebar-user">
     <div class="user-avatar" id="sidebar-avatar">?</div>
-    <div class="user-info"><div class="user-name" id="sidebar-name">Laden...</div><div class="user-role" id="sidebar-role">Konto</div></div>
+    <div class="user-info">
+      <div class="user-name" id="sidebar-name">Laden…</div>
+      <div class="user-role" id="sidebar-role">Konto</div>
+    </div>
   </div>
 </aside>
 
 <div class="main">
   <div class="topbar">
-    <div class="topbar-title">Dashboard</div>
+    <button class="icon-btn" id="nav-toggle" type="button" title="Navigation ein-/ausklappen" aria-label="Navigation ein-/ausklappen">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="15" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <form class="topbar-search" id="dash-search" action="suche.html" method="get">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" name="q" placeholder="Anzeige, Hersteller oder Teilenummer suchen…" aria-label="Suchen" />
+    </form>
     <div class="topbar-right">
-      <div class="topbar-bell">🔔<div class="topbar-bell-dot" id="bell-dot" style="display:none;"></div></div>
-      <div class="topbar-user">
+      <button class="icon-btn" id="theme-toggle" type="button" title="Hell / Dunkel umschalten" aria-label="Hell / Dunkel umschalten">
+        <svg viewBox="0 0 24 24" id="theme-icon-sun" style="display:none;"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"></path></svg>
+        <svg viewBox="0 0 24 24" id="theme-icon-moon"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a7 7 0 1 0 9.8 9.8z"></path></svg>
+      </button>
+      <a href="anfragen.html" class="icon-btn" title="Benachrichtigungen">
+        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+        <span class="bell-dot" id="bell-dot" style="display:none;"></span>
+      </a>
+      <a href="profil.html" class="topbar-user">
         <div class="topbar-avatar" id="topbar-avatar">?</div>
-        <span class="topbar-username" id="topbar-name">Laden...</span>
-        <span style="font-size:10px;color:#9ca3af;">▾</span>
-      </div>
-      <a href="anzeige-erstellen.html" class="new-listing-btn">+ Anzeige erstellen</a>
+        <span class="topbar-username" id="topbar-name">Laden…</span>
+      </a>
+      <a href="anzeige-erstellen.html" class="btn-primary">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Anzeige erstellen
+      </a>
     </div>
   </div>
 
   <div class="page">
-    <div class="page-head"><h1>Dashboard</h1><p>Willkommen zurück! Hier ist deine Übersicht.</p></div>
-
-    <div class="stats-grid">
-      <a href="meine-anzeigen.html" class="stat-card"><div class="stat-icon si-blue">🚗</div><div class="stat-body"><div class="stat-label">Aktive Inserate</div><div class="stat-value" id="s-active">–</div><div class="stat-note" id="s-active-n">–</div></div></a>
-      <a href="meine-anzeigen.html" class="stat-card"><div class="stat-icon si-green">📦</div><div class="stat-body"><div class="stat-label">Anzeigen gesamt</div><div class="stat-value" id="s-total">–</div><div class="stat-note" id="s-total-n">–</div></div></a>
-      <a href="anfragen.html" class="stat-card"><div class="stat-icon si-orange">💬</div><div class="stat-body"><div class="stat-label">Anfragen</div><div class="stat-value" id="s-inq">–</div><div class="stat-note" id="s-inq-n">–</div></div></a>
-      <div class="stat-card"><div class="stat-icon si-purple">💶</div><div class="stat-body"><div class="stat-label">Gesamtwert</div><div class="stat-value" id="s-val">–</div><div class="stat-note" id="s-val-n">–</div></div></div>
-      <a href="meine-anzeigen.html" class="stat-card"><div class="stat-icon si-teal">📝</div><div class="stat-body"><div class="stat-label">Entwürfe</div><div class="stat-value" id="s-drf">–</div><div class="stat-note" id="s-drf-n">–</div></div></a>
-      <a href="favoriten.html" class="stat-card"><div class="stat-icon si-red">❤️</div><div class="stat-body"><div class="stat-label">Merkliste</div><div class="stat-value" id="s-fav" data-fav-count>0</div><div class="stat-note" id="s-fav-n">gemerkte Inserate</div></div></a>
+    <div class="page-head">
+      <div>
+        <h1 id="greeting">Dashboard</h1>
+        <p id="greeting-sub">Übersicht wird geladen…</p>
+      </div>
+      <div class="seg" id="range-seg">
+        <button type="button" class="active" data-days="7">7 Tage</button>
+        <button type="button" data-days="30">30 Tage</button>
+        <button type="button" data-days="90">90 Tage</button>
+      </div>
     </div>
 
-    <div class="charts-row">
-      <div class="panel">
-        <div class="panel-head"><h2>Anfragen im Verlauf</h2><span style="font-size:12px;color:#9ca3af;">Letzte 7 Tage</span></div>
-        <div class="chart-area"><svg width="100%" height="100%" viewBox="0 0 600 150" preserveAspectRatio="none" id="chart-svg"><text x="300" y="80" text-anchor="middle" fill="#d1d5db" font-size="13" font-family="Inter">Wird geladen…</text></svg></div>
+    <div class="onb" id="onboarding" style="display:none;">
+      <div class="onb-head">
+        <div class="onb-title">Konto einrichten</div>
+        <div class="onb-bar"><span id="ob-bar" style="width:0%"></span></div>
+        <div class="onb-count" id="ob-count">–</div>
       </div>
-      <div class="panel">
-        <div class="panel-head"><h2>Anfragen-Übersicht</h2></div>
-        <div class="donut-wrap">
-          <div style="position:relative;width:130px;height:130px;flex-shrink:0;">
-            <svg width="130" height="130" viewBox="0 0 130 130" id="donut-svg">
-              <circle cx="65" cy="65" r="48" fill="none" stroke="#f1f5f9" stroke-width="15"/>
-              <text x="65" y="61" text-anchor="middle" font-size="20" font-weight="700" fill="#111827" font-family="Inter" id="d-total">0</text>
-              <text x="65" y="76" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Gesamt</text>
-            </svg>
-          </div>
-          <div class="donut-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div><div class="legend-text">Offen</div><div class="legend-pct" id="d-neu">–</div></div>
-            <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div><div class="legend-text">In Bearbeitung</div><div class="legend-pct" id="d-gel">–</div></div>
-            <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div><div class="legend-text">Beantwortet</div><div class="legend-pct" id="d-erl">–</div></div>
-            <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;"></div><div class="legend-text">Abgeschlossen</div><div class="legend-pct" id="d-rest">–</div></div>
-          </div>
+      <div class="onb-steps" id="ob-steps"></div>
+    </div>
+
+    <div class="kpis">
+      <a href="anfragen.html" class="kpi">
+        <div class="kpi-label">Anfragen</div>
+        <div class="kpi-row">
+          <div><div class="kpi-value" id="s-inq">–</div><div class="kpi-note" id="s-inq-n">–</div></div>
+          <div class="kpi-ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        </div>
+      </a>
+      <a href="meine-anzeigen.html" class="kpi">
+        <div class="kpi-label">Aktive Inserate</div>
+        <div class="kpi-row">
+          <div><div class="kpi-value" id="s-active">–</div><div class="kpi-note" id="s-active-n">–</div></div>
+          <div class="kpi-ic"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"></rect><line x1="8" y1="9" x2="16" y2="9"></line><line x1="8" y1="14" x2="13" y2="14"></line></svg></div>
+        </div>
+      </a>
+      <a href="meine-anzeigen.html" class="kpi">
+        <div class="kpi-label">Entwürfe</div>
+        <div class="kpi-row">
+          <div><div class="kpi-value" id="s-drf">–</div><div class="kpi-note" id="s-drf-n">–</div></div>
+          <div class="kpi-ic"><svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></div>
+        </div>
+      </a>
+      <div class="kpi">
+        <div class="kpi-label">Gesamtwert</div>
+        <div class="kpi-row">
+          <div><div class="kpi-value" id="s-val">–</div><div class="kpi-note" id="s-val-n">–</div></div>
+          <div class="kpi-ic"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.5"></circle></svg></div>
         </div>
       </div>
+      <a href="favoriten.html" class="kpi">
+        <div class="kpi-label">Merkliste</div>
+        <div class="kpi-row">
+          <div><div class="kpi-value" id="s-fav" data-fav-count>0</div><div class="kpi-note" id="s-fav-n">gemerkte Inserate</div></div>
+          <div class="kpi-ic"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg></div>
+        </div>
+      </a>
     </div>
 
-    <div class="bottom-grid">
-      <div class="panel">
-        <div class="panel-head"><h2>🏆 Top Motoren</h2><a class="panel-link" href="meine-anzeigen.html">Alle anzeigen</a></div>
-        <div id="top-motors"><div class="empty-state">Wird geladen...</div></div>
+    <div class="cols">
+      <div class="col">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="left"><h2>Anfragen</h2><span class="pill pill-open" id="inq-open-pill" style="display:none;"></span></div>
+            <a class="panel-link" href="anfragen.html">Alle anzeigen</a>
+          </div>
+          <div id="recent-inq"><div class="empty">Wird geladen…</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Anfragen im Verlauf</h2>
+            <span style="font-size:12.5px;color:var(--muted);" id="chart-range-label">Letzte 7 Tage</span>
+          </div>
+          <div class="chart-area">
+            <svg viewBox="0 0 600 170" preserveAspectRatio="none" id="chart-svg"><text x="300" y="85" text-anchor="middle" fill="#9fb6cd" font-size="13" font-family="Outfit">Wird geladen…</text></svg>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Anzeigen-Performance</h2>
+            <a class="panel-link" href="meine-anzeigen.html">Alle Anzeigen</a>
+          </div>
+          <div class="perf-head"><span>Inserat</span><span style="text-align:right;">Anfragen</span><span class="perf-rate" style="text-align:right;">Anteil</span></div>
+          <div id="top-motors"><div class="empty">Wird geladen…</div></div>
+        </div>
       </div>
-      <div class="panel">
-        <div class="panel-head"><h2>Letzte Anfragen</h2><a class="panel-link" href="anfragen.html">Alle anzeigen</a></div>
-        <div id="recent-inq"><div class="empty-state">Wird geladen...</div></div>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><h2>Meine Merkliste</h2><a class="panel-link" href="favoriten.html">Alle anzeigen</a></div>
-        <div id="fav-list"><div class="empty-state">Wird geladen…</div></div>
+
+      <div class="col">
+        <div class="panel">
+          <div class="panel-head"><h2>Anfragen-Status</h2></div>
+          <div class="donut-wrap">
+            <svg width="130" height="130" viewBox="0 0 130 130" id="donut-svg" style="flex-shrink:0;">
+              <circle cx="65" cy="65" r="48" fill="none" stroke="#eef3f8" stroke-width="15"></circle>
+              <text x="65" y="62" text-anchor="middle" font-size="21" font-weight="800" fill="currentColor" font-family="Outfit" id="d-total">0</text>
+              <text x="65" y="78" text-anchor="middle" font-size="10.5" fill="#7a93ae" font-family="Outfit">Anfragen</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div><div class="legend-text">Offen</div><div class="legend-pct" id="d-neu">–</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#f5a623;"></div><div class="legend-text">In Bearbeitung</div><div class="legend-pct" id="d-gel">–</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#2176c7;"></div><div class="legend-text">Beantwortet</div><div class="legend-pct" id="d-erl">–</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#94a3b8;"></div><div class="legend-text">Abgeschlossen</div><div class="legend-pct" id="d-rest">–</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="left"><h2>Entwürfe fertigstellen</h2><span class="pill pill-work" id="draft-pill" style="display:none;"></span></div>
+            <a class="panel-link" href="meine-anzeigen.html">Alle</a>
+          </div>
+          <div id="drafts"><div class="empty">Wird geladen…</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Meine Merkliste</h2>
+            <a class="panel-link" href="favoriten.html">Alle anzeigen</a>
+          </div>
+          <div id="fav-list"><div class="empty">Wird geladen…</div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -255,165 +474,415 @@ a{text-decoration:none;color:inherit;}
 <script src="auth-header.js"></script>
 <script src="favorites.js?v=2"></script>
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const {data:sd} = await supabaseClient.auth.getSession();
-  const user = sd?.session?.user;
-  if (!user) { window.location.href="login.html"; return; }
+/* ═══════════════════════════════════════════════════════════════
+   1A Motor – Dashboard
+   Datenlogik unverändert gegenüber der Vorversion (Supabase:
+   seller_profiles, listings, inquiries + favorites.js).
+   Neu: Theme-Umschalter, einklappbare Navigation, Onboarding-
+   Schritte statt leerer Kacheln, Performance-Liste, Entwurfsliste.
+   ═══════════════════════════════════════════════════════════════ */
 
-  const {data:seller} = await supabaseClient.from("seller_profiles").select("id,company_name").eq("user_id",user.id).maybeSingle();
+/* ── Theme ─────────────────────────────────────────────────────── */
+var THEME_KEY = "1am-theme";
+function currentTheme() { return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"; }
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+  var sun = document.getElementById("theme-icon-sun"), moon = document.getElementById("theme-icon-moon");
+  if (sun && moon) { sun.style.display = t === "dark" ? "block" : "none"; moon.style.display = t === "dark" ? "none" : "block"; }
+  renderCharts();
+}
+function themeColors() {
+  return currentTheme() === "dark"
+    ? { accent:"#4da6ff", grid:"#1a2c3f", label:"#8ba2ba", surface:"#12202f", ink:"#e9f1f8", fill:"rgba(77,166,255,0.16)" }
+    : { accent:"#1a5fa8", grid:"#eef3f8", label:"#93aac1", surface:"#ffffff", ink:"#0d1b2a", fill:"rgba(26,95,168,0.12)" };
+}
 
-  const name = (seller&&seller.company_name)||user.email||"Händler";
-  const ini  = name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()||"?";
-  ["sidebar-avatar","topbar-avatar"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=ini;});
-  ["sidebar-name","topbar-name"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=name;});
-  const roleEl=document.getElementById("sidebar-role");
-  if(roleEl) roleEl.textContent = seller ? "Händlerkonto" : "Käuferkonto";
-  document.getElementById("sidebar-logout")?.addEventListener("click",async e=>{e.preventDefault();await supabaseClient.auth.signOut();window.location.href="index.html";});
+/* ── State ─────────────────────────────────────────────────────── */
+var STATE = { listings: [], inqs: [], days: 7, seller: null };
 
-  let listings=[];
-  if(seller){
-    const r=await supabaseClient.from("listings").select("id,title,manufacturer,price,status,created_at,image_urls,categories(name)").eq("seller_id",seller.id).order("created_at",{ascending:false});
-    listings=r.data||[];
+document.addEventListener("DOMContentLoaded", async function () {
+  // Theme-Icons + Umschalter
+  applyTheme(currentTheme());
+  document.getElementById("theme-toggle").addEventListener("click", function () {
+    applyTheme(currentTheme() === "dark" ? "light" : "dark");
+  });
+
+  // Navigation einklappen (Zustand gemerkt)
+  try { if (localStorage.getItem("1am-nav") === "collapsed") document.body.classList.add("nav-collapsed"); } catch (e) {}
+  document.getElementById("nav-toggle").addEventListener("click", function () {
+    document.body.classList.toggle("nav-collapsed");
+    try { localStorage.setItem("1am-nav", document.body.classList.contains("nav-collapsed") ? "collapsed" : "open"); } catch (e) {}
+  });
+
+  // Zeitraum
+  Array.prototype.forEach.call(document.querySelectorAll("#range-seg button"), function (b) {
+    b.addEventListener("click", function () {
+      Array.prototype.forEach.call(document.querySelectorAll("#range-seg button"), function (x) { x.classList.remove("active"); });
+      b.classList.add("active");
+      STATE.days = parseInt(b.getAttribute("data-days"), 10) || 7;
+      setText("chart-range-label", "Letzte " + STATE.days + " Tage");
+      renderCharts();
+    });
+  });
+
+  var sd = (await supabaseClient.auth.getSession()).data;
+  var user = sd && sd.session && sd.session.user;
+  if (!user) { window.location.href = "login.html"; return; }
+
+  var sellerRes = await supabaseClient.from("seller_profiles").select("id,company_name").eq("user_id", user.id).maybeSingle();
+  var seller = sellerRes.data;
+  STATE.seller = seller;
+
+  var name = (seller && seller.company_name) || user.email || "Händler";
+  var ini = name.split(" ").filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join("").toUpperCase() || "?";
+  ["sidebar-avatar", "topbar-avatar"].forEach(function (id) { var e = document.getElementById(id); if (e) e.textContent = ini; });
+  ["sidebar-name", "topbar-name"].forEach(function (id) { var e = document.getElementById(id); if (e) e.textContent = name; });
+  setText("sidebar-role", seller ? "Händlerkonto" : "Käuferkonto");
+  setText("greeting", greetWord() + ", " + name);
+
+  var logout = document.getElementById("sidebar-logout");
+  if (logout) logout.addEventListener("click", async function (e) {
+    e.preventDefault(); await supabaseClient.auth.signOut(); window.location.href = "index.html";
+  });
+
+  // Anzeigen
+  var listings = [];
+  if (seller) {
+    var r = await supabaseClient.from("listings")
+      .select("id,title,manufacturer,price,status,created_at,image_urls,description,categories(name)")
+      .eq("seller_id", seller.id).order("created_at", { ascending: false });
+    listings = r.data || [];
   }
-  const all=listings||[], ids=all.map(l=>l.id);
-
-  let inqs=[];
-  if(ids.length){
-    const {data:iqd}=await supabaseClient.from("inquiries").select("id,listing_id,name,status,created_at,listings(title)").in("listing_id",ids).order("created_at",{ascending:false});
-    inqs=iqd||[];
-  }
-
-  const active=all.filter(l=>l.status==="Freigegeben").length;
-  const drafts=all.filter(l=>l.status==="Entwurf").length;
-  const val=all.reduce((s,l)=>s+Number(l.price||0),0);
-  const openI=inqs.filter(i=>i.status==="Neu").length;
-
-  setText("s-active",active); setText("s-active-n",`${all.length} Anzeigen gesamt`);
-  setText("s-total",all.length); setText("s-total-n",`${drafts} Entwürfe`);
-  setText("s-inq",inqs.length); setText("s-inq-n",`${openI} neue Anfragen`);
-  setText("s-val",val.toLocaleString("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0})); setText("s-val-n",`über ${active} Inserate`);
-  setText("s-drf",drafts); setText("s-drf-n","unveröffentlicht");
-
-  if(openI>0){const nb=document.getElementById("nav-badge");if(nb){nb.textContent=openI;nb.style.display="inline-block";}const bd=document.getElementById("bell-dot");if(bd)bd.style.display="block";}
-
-  // Donut
-  const neu=inqs.filter(i=>i.status==="Neu").length,gel=inqs.filter(i=>i.status==="Gelesen").length,erl=inqs.filter(i=>i.status==="Erledigt").length,rst=Math.max(0,inqs.length-neu-gel-erl),tot=inqs.length;
-  setText("d-total",tot);
-  const pct=n=>tot?Math.round(n/tot*100):0;
-  setText("d-neu",`${neu} (${pct(neu)}%)`); setText("d-gel",`${gel} (${pct(gel)}%)`); setText("d-erl",`${erl} (${pct(erl)}%)`); setText("d-rest",`${rst} (${pct(rst)}%)`);
-  if(tot>0){
-    const svg=document.getElementById("donut-svg"),R=48,CX=65,CY=65,circ=2*Math.PI*R;
-    [{v:neu,c:"#10b981"},{v:gel,c:"#f59e0b"},{v:erl,c:"#3b82f6"},{v:rst,c:"#d1d5db"}].reduce((off,s)=>{
-      if(!s.v) return off;
-      const len=(s.v/tot)*circ,c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-      c.setAttribute("cx",CX);c.setAttribute("cy",CY);c.setAttribute("r",R);c.setAttribute("fill","none");
-      c.setAttribute("stroke",s.c);c.setAttribute("stroke-width","15");
-      c.setAttribute("stroke-dasharray",`${len} ${circ-len}`);c.setAttribute("stroke-dashoffset",-off);
-      svg.insertBefore(c,svg.children[1]); return off+len;
-    },-circ/4);
-  }
-
-  // Chart
-  const days7={};for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*86400000);days7[d.toDateString()]=0;}
-  inqs.forEach(iq=>{const k=new Date(iq.created_at).toDateString();if(k in days7)days7[k]++;});
-  const vals=Object.values(days7),maxV=Math.max(...vals,1);
-  const W=600,H=140,pad=12;
-  const pts=vals.map((v,i)=>[pad+i*((W-pad*2)/(vals.length-1)),H-pad-(v/maxV)*(H-pad*2)]);
-  const pathD="M "+pts.map(p=>p.join(",")).join(" L ");
-  const areaD=pathD+` L ${pts[pts.length-1][0]},${H-pad} L ${pts[0][0]},${H-pad} Z`;
-  const lbls=Object.keys(days7).map(k=>new Date(k).toLocaleDateString("de-DE",{weekday:"short"}));
-  document.getElementById("chart-svg").innerHTML=`<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c6ea4" stop-opacity="0.2"/><stop offset="100%" stop-color="#1c6ea4" stop-opacity="0"/></linearGradient></defs>
-    <path d="${areaD}" fill="url(#cg)"/>
-    <path d="${pathD}" fill="none" stroke="#1c6ea4" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-    ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="#1c6ea4" stroke-width="2.5"/>`).join("")}
-    ${pts.map((p,i)=>`<text x="${p[0]}" y="${H+2}" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">${lbls[i]}</text>`).join("")}
-    ${vals.map((v,i)=>v>0?`<text x="${pts[i][0]}" y="${pts[i][1]-8}" text-anchor="middle" font-size="10" font-weight="600" fill="#1c6ea4" font-family="Inter">${v}</text>`:"").join("")}`;
-
-  // Top Motoren
-  const inqMap={};inqs.forEach(iq=>{inqMap[iq.listing_id]=(inqMap[iq.listing_id]||0)+1;});
-  const top=[...all].filter(l=>l.status==="Freigegeben").sort((a,b)=>(inqMap[b.id]||0)-(inqMap[a.id]||0)||Number(b.price||0)-Number(a.price||0)).slice(0,5);
-  const topEl=document.getElementById("top-motors");
-  if(!top.length){topEl.innerHTML=seller?`<div class="empty-state">Noch keine aktiven Anzeigen.<br/><a href="anzeige-erstellen.html" style="color:#1c6ea4;font-weight:600;">Erste Anzeige erstellen</a></div>`:`<div class="empty-state">Du hast noch kein Händlerprofil.<br/><a href="profil.html" style="color:#1c6ea4;font-weight:600;">Profil anlegen</a></div>`;}
-  else{
-    const mx=Math.max(...top.map(l=>inqMap[l.id]||0),1);
-    topEl.innerHTML=top.map((l,i)=>{
-      const rk=["rk1","rk2","rk3","rkn","rkn"][i],iq=inqMap[l.id]||0,bar=Math.max(Math.round(iq/mx*100),8);
-      const img=Array.isArray(l.image_urls)&&l.image_urls[0];
-      const th=img?`<img src="${img}" alt=""/>`:getIcon(l.categories?.name||"");
-      const pr=Number(l.price||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
-      return `<div class="motor-item" onclick="location.href='listing-detail.html?id=${l.id}'">
-        <div class="rank-badge ${rk}">${i+1}</div>
-        <div class="motor-thumb">${th}</div>
-        <div class="motor-info"><div class="motor-title">${esc(l.title||"Ohne Titel")}</div><div class="motor-sub">${iq} Anfragen · ${esc(l.manufacturer||"–")}</div><div class="motor-bar"><div class="motor-bar-fill" style="width:${bar}%"></div></div></div>
-        <div class="motor-price">${pr}</div>
-      </div>`;
-    }).join("");
-  }
+  STATE.listings = listings;
+  var ids = listings.map(function (l) { return l.id; });
 
   // Anfragen
-  const iqEl=document.getElementById("recent-inq");
-  if(!inqs.length){iqEl.innerHTML=`<div class="empty-state">Noch keine Anfragen vorhanden</div>`;}
-  else{iqEl.innerHTML=inqs.slice(0,5).map(iq=>{
-    const lt=Array.isArray(iq.listings)?iq.listings[0]?.title:iq.listings?.title||"Anzeige";
-    const ini2=(iq.name||"?").split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
-    const bc=iq.status==="Neu"?"b-new":iq.status==="Gelesen"?"b-read":"b-done";
-    return `<div class="inq-item"><div class="inq-avatar">${esc(ini2)}</div><div class="inq-body"><div class="inq-name">${esc(iq.name||"Unbekannt")}</div><div class="inq-listing">${esc(lt)}</div></div><div class="inq-right"><div class="inq-time">${relT(iq.created_at)}</div><div class="inq-badge ${bc}">${esc(iq.status||"Neu")}</div></div></div>`;
-  }).join("");}
+  var inqs = [];
+  if (ids.length) {
+    var iqd = await supabaseClient.from("inquiries")
+      .select("id,listing_id,name,message,status,created_at,listings(title)")
+      .in("listing_id", ids).order("created_at", { ascending: false });
+    inqs = iqd.data || [];
+  }
+  STATE.inqs = inqs;
 
-  // Merkliste
+  var active = listings.filter(function (l) { return l.status === "Freigegeben"; }).length;
+  var drafts = listings.filter(function (l) { return l.status === "Entwurf"; });
+  var val = listings.reduce(function (s, l) { return s + Number(l.price || 0); }, 0);
+  var openI = inqs.filter(function (i) { return i.status === "Neu"; }).length;
+
+  setText("s-inq", inqs.length);
+  setNote("s-inq-n", openI ? openI + (openI === 1 ? " offene Anfrage" : " offene Anfragen") : "alles beantwortet", openI ? "warn" : "ok");
+  setText("s-active", active);
+  setNote("s-active-n", listings.length + " Anzeigen gesamt", "");
+  setText("s-drf", drafts.length);
+  setNote("s-drf-n", drafts.length ? "unveröffentlicht" : "keine offenen Entwürfe", drafts.length ? "warn" : "");
+  setText("s-val", val.toLocaleString("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }));
+  setNote("s-val-n", "über " + active + (active === 1 ? " Inserat" : " Inserate"), "");
+
+  setText("nav-listings-count", listings.length ? String(listings.length) : "");
+  setText("greeting-sub", subline(openI, drafts.length, seller));
+
+  if (openI > 0) {
+    var nb = document.getElementById("nav-badge");
+    if (nb) { nb.textContent = openI; nb.style.display = "inline-block"; }
+    var bd = document.getElementById("bell-dot"); if (bd) bd.style.display = "block";
+    var pill = document.getElementById("inq-open-pill");
+    if (pill) { pill.textContent = openI + " offen"; pill.style.display = "inline-block"; }
+  }
+  if (drafts.length) {
+    var dp = document.getElementById("draft-pill");
+    if (dp) { dp.textContent = drafts.length; dp.style.display = "inline-block"; }
+  }
+
+  renderOnboarding(seller, active, inqs);
+  renderCharts();
+  renderInquiries(inqs);
+  renderPerformance(listings, inqs);
+  renderDrafts(drafts);
   renderFavs();
   document.addEventListener("favs:change", renderFavs);
 });
 
-// ── Merkliste im Dashboard ───────────────────────────────────────────────────
-let favRenderToken = 0;
-async function renderFavs(){
-  const el=document.getElementById("fav-list");
-  if(!el||!window.Favs) return;
-  const token=++favRenderToken;
+/* ── Onboarding: Schritte aus dem echten Kontostand ────────────── */
+function renderOnboarding(seller, active, inqs) {
+  var box = document.getElementById("onboarding");
+  if (!box) return;
+  var steps = [
+    { t: "Konto bestätigt", s: "E-Mail verifiziert", done: true, href: "profil.html" },
+    { t: "Händlerprofil anlegen", s: "Firma, Adresse, Logo", done: !!seller, href: "profil.html" },
+    { t: "Erste Anzeige veröffentlichen", s: "sichtbar in der Suche", done: active > 0, href: "anzeige-erstellen.html" },
+    { t: "Erste Anfrage beantworten", s: "Käufer erwarten Antwort", done: inqs.some(function (i) { return i.status !== "Neu"; }), href: "anfragen.html" }
+  ];
+  var done = steps.filter(function (s) { return s.done; }).length;
+  if (done === steps.length) { box.style.display = "none"; return; }
+  box.style.display = "block";
+  setText("ob-count", done + " von " + steps.length);
+  var bar = document.getElementById("ob-bar");
+  if (bar) bar.style.width = Math.round(done / steps.length * 100) + "%";
+  var nextIdx = steps.findIndex(function (s) { return !s.done; });
+  document.getElementById("ob-steps").innerHTML = steps.map(function (s, i) {
+    var cls = s.done ? "onb-step done" : (i === nextIdx ? "onb-step next" : "onb-step");
+    var lead = s.done
+      ? '<svg class="onb-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".45"></circle><path d="M8 12.5l2.6 2.5L16 9.5"></path></svg>'
+      : '<div class="onb-num">' + (i + 1) + "</div>";
+    return '<a class="' + cls + '" href="' + s.href + '">' + lead +
+      '<div style="min-width:0"><div class="onb-step-t">' + esc(s.t) + '</div><div class="onb-step-s">' + esc(s.s) + "</div></div></a>";
+  }).join("");
+}
 
-  updateFavBadge();
+/* ── Verlaufs-Chart + Donut (Theme-abhängig, daher separat) ────── */
+function renderCharts() {
+  var svg = document.getElementById("chart-svg");
+  if (!svg) return;
+  var c = themeColors(), inqs = STATE.inqs || [], n = STATE.days || 7;
 
-  if(Favs.count()===0){
-    el.innerHTML=`<div class="empty-state">Noch nichts gemerkt.<br/><a href="suche.html" style="color:#1c6ea4;font-weight:600;">Inserate durchsuchen</a></div>`;
+  var buckets = {}, keys = [];
+  for (var i = n - 1; i >= 0; i--) {
+    var d = new Date(Date.now() - i * 86400000), k = d.toDateString();
+    buckets[k] = 0; keys.push(k);
+  }
+  inqs.forEach(function (iq) { var k = new Date(iq.created_at).toDateString(); if (k in buckets) buckets[k]++; });
+  var vals = keys.map(function (k) { return buckets[k]; });
+  var maxV = Math.max.apply(null, vals.concat([1]));
+  var W = 600, H = 140, pad = 14;
+  var pts = vals.map(function (v, i) {
+    var x = vals.length > 1 ? pad + i * ((W - pad * 2) / (vals.length - 1)) : W / 2;
+    return [x, H - pad - (v / maxV) * (H - pad * 2)];
+  });
+  var pathD = "M " + pts.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" L ");
+  var areaD = pathD + " L " + pts[pts.length - 1][0].toFixed(1) + "," + (H - pad) + " L " + pts[0][0].toFixed(1) + "," + (H - pad) + " Z";
+  var every = n > 14 ? Math.ceil(n / 7) : 1;
+  var labels = keys.map(function (k, i) {
+    if (i % every !== 0 && i !== keys.length - 1) return "";
+    var dt = new Date(k);
+    return n <= 7 ? dt.toLocaleDateString("de-DE", { weekday: "short" }) : dt.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
+  });
+
+  svg.innerHTML =
+    '<line x1="0" y1="' + (H - pad) + '" x2="' + W + '" y2="' + (H - pad) + '" stroke="' + c.grid + '" stroke-width="1"/>' +
+    '<line x1="0" y1="' + (H / 2) + '" x2="' + W + '" y2="' + (H / 2) + '" stroke="' + c.grid + '" stroke-width="1"/>' +
+    '<path d="' + areaD + '" fill="' + c.fill + '"/>' +
+    '<path d="' + pathD + '" fill="none" stroke="' + c.accent + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+    (n <= 14 ? pts.map(function (p) {
+      return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4" fill="' + c.surface + '" stroke="' + c.accent + '" stroke-width="2.5"/>';
+    }).join("") : "") +
+    pts.map(function (p, i) {
+      return labels[i] ? '<text x="' + p[0].toFixed(1) + '" y="' + (H + 20) + '" text-anchor="middle" font-size="11" fill="' + c.label + '" font-family="Outfit">' + labels[i] + "</text>" : "";
+    }).join("") +
+    vals.map(function (v, i) {
+      return v > 0 ? '<text x="' + pts[i][0].toFixed(1) + '" y="' + (pts[i][1] - 9).toFixed(1) + '" text-anchor="middle" font-size="11" font-weight="700" fill="' + c.accent + '" font-family="Outfit">' + v + "</text>" : "";
+    }).join("");
+
+  renderDonut();
+}
+
+function renderDonut() {
+  var svg = document.getElementById("donut-svg");
+  if (!svg) return;
+  var inqs = STATE.inqs || [], c = themeColors();
+  var neu = inqs.filter(function (i) { return i.status === "Neu"; }).length;
+  var gel = inqs.filter(function (i) { return i.status === "Gelesen"; }).length;
+  var erl = inqs.filter(function (i) { return i.status === "Erledigt"; }).length;
+  var tot = inqs.length, rst = Math.max(0, tot - neu - gel - erl);
+  var pct = function (x) { return tot ? Math.round(x / tot * 100) : 0; };
+  var R = 48, CX = 65, CY = 65, circ = 2 * Math.PI * R;
+
+  var html = '<circle cx="65" cy="65" r="48" fill="none" stroke="' + c.grid + '" stroke-width="15"></circle>';
+  var off = -circ / 4;
+  [{ v: neu, c: "#10b981" }, { v: gel, c: "#f5a623" }, { v: erl, c: c.accent }, { v: rst, c: "#94a3b8" }].forEach(function (s) {
+    if (!s.v || !tot) return;
+    var len = (s.v / tot) * circ;
+    html += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="none" stroke="' + s.c + '" stroke-width="15" stroke-dasharray="' + len + " " + (circ - len) + '" stroke-dashoffset="' + (-off) + '"></circle>';
+    off += len;
+  });
+  html += '<text x="65" y="62" text-anchor="middle" font-size="21" font-weight="800" fill="' + c.ink + '" font-family="Outfit">' + tot + "</text>";
+  html += '<text x="65" y="78" text-anchor="middle" font-size="10.5" fill="' + c.label + '" font-family="Outfit">Anfragen</text>';
+  svg.innerHTML = html;
+
+  setText("d-neu", neu + " (" + pct(neu) + "%)");
+  setText("d-gel", gel + " (" + pct(gel) + "%)");
+  setText("d-erl", erl + " (" + pct(erl) + "%)");
+  setText("d-rest", rst + " (" + pct(rst) + "%)");
+}
+
+/* ── Anfragen-Liste ────────────────────────────────────────────── */
+function renderInquiries(inqs) {
+  var el = document.getElementById("recent-inq");
+  if (!el) return;
+  if (!inqs.length) {
+    el.innerHTML = '<div class="empty">Noch keine Anfragen.<br/>Sobald ein Käufer anfragt, erscheint sie hier.</div>';
     return;
   }
-
-  const rows=await Favs.listings(5);
-  if(token!==favRenderToken) return;
-
-  const gone=Favs.count()-rows.length;
-  const note=gone>0?`<div class="panel-note">${gone} gemerkte${gone===1?"s Inserat ist":" Inserate sind"} nicht mehr verfügbar.</div>`:"";
-
-  if(!rows.length){ el.innerHTML=`<div class="empty-state">Die gemerkten Inserate sind nicht mehr online.</div>${note}`; return; }
-
-  el.innerHTML=rows.map(l=>{
-    const img=Array.isArray(l.image_urls)&&l.image_urls[0];
-    const th=img?`<img src="${esc(img)}" alt=""/>`:getIcon(l.categories?.name||"");
-    const pr=Number(l.price||0)>0?Number(l.price).toLocaleString("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}):"auf Anfrage";
-    const sub=[l.manufacturer,l.location].filter(Boolean).join(" · ")||(l.categories?.name||"");
-    return `<div class="fav-row">
-      <a class="fav-link" href="listing-detail.html?id=${encodeURIComponent(l.id)}">
-        <div class="fav-thumb">${th}</div>
-        <div class="fav-info"><div class="fav-title">${esc(l.title||"Ohne Titel")}</div><div class="fav-sub">${esc(sub)}</div></div>
-      </a>
-      <span class="fav-price">${pr}</span>
-      <button type="button" class="fav-btn on" data-fav="${esc(l.id)}" aria-pressed="true" title="Aus der Merkliste entfernen">${Favs.heartSvg}</button>
-    </div>`;
-  }).join("")+note;
+  el.innerHTML = inqs.slice(0, 5).map(function (iq) {
+    var lt = Array.isArray(iq.listings) ? (iq.listings[0] && iq.listings[0].title) : (iq.listings && iq.listings.title);
+    var ini = (iq.name || "?").split(" ").filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join("").toUpperCase();
+    var st = iq.status || "Neu";
+    var pc = st === "Neu" ? "pill-new" : st === "Gelesen" ? "pill-work" : "pill-done";
+    var label = st === "Neu" ? "Neu" : st === "Gelesen" ? "In Bearbeitung" : "Beantwortet";
+    var msg = (iq.message || "").replace(/\s+/g, " ").trim();
+    var sub = [lt || "Anzeige", msg ? "„" + (msg.length > 60 ? msg.slice(0, 60) + "…" : msg) + "“" : ""].filter(Boolean).join(" · ");
+    var btn = st === "Neu"
+      ? '<a class="btn-sm" href="anfragen.html">Antworten</a>'
+      : '<a class="btn-sm ghost" href="anfragen.html">Öffnen</a>';
+    return '<div class="inq"><div class="inq-avatar">' + esc(ini) + '</div>' +
+      '<div class="inq-body"><div class="inq-name">' + esc(iq.name || "Unbekannt") + '</div>' +
+      '<div class="inq-sub">' + esc(sub) + "</div></div>" +
+      '<span class="inq-time">' + relT(iq.created_at) + "</span>" +
+      '<span class="pill ' + pc + '">' + label + "</span>" + btn + "</div>";
+  }).join("");
 }
 
-function updateFavBadge(){
-  const b=document.getElementById("fav-nav-badge");
-  if(!b||!window.Favs) return;
-  const n=Favs.count();
-  b.textContent=n;
-  b.style.display=n>0?"inline-block":"none";
+/* ── Performance: Anfragen pro Inserat (echte Daten) ───────────── */
+function renderPerformance(listings, inqs) {
+  var el = document.getElementById("top-motors");
+  if (!el) return;
+  var map = {};
+  inqs.forEach(function (iq) { map[iq.listing_id] = (map[iq.listing_id] || 0) + 1; });
+  var active = listings.filter(function (l) { return l.status === "Freigegeben"; });
+  if (!active.length) {
+    el.innerHTML = STATE.seller
+      ? '<div class="empty">Noch keine aktiven Anzeigen.<br/><a href="anzeige-erstellen.html">Erste Anzeige erstellen</a></div>'
+      : '<div class="empty">Du hast noch kein Händlerprofil.<br/><a href="profil.html">Profil anlegen</a></div>';
+    return;
+  }
+  var rows = active.slice().sort(function (a, b) {
+    return (map[b.id] || 0) - (map[a.id] || 0) || Number(b.price || 0) - Number(a.price || 0);
+  }).slice(0, 5);
+  var mx = Math.max.apply(null, rows.map(function (l) { return map[l.id] || 0; }).concat([1]));
+  var totalInq = rows.reduce(function (s, l) { return s + (map[l.id] || 0); }, 0);
+
+  el.innerHTML = rows.map(function (l) {
+    var iq = map[l.id] || 0;
+    var img = Array.isArray(l.image_urls) && l.image_urls[0];
+    var th = img ? '<img src="' + esc(img) + '" alt="" />' : iconSvg((l.categories && l.categories.name) || "");
+    var pr = Number(l.price || 0) > 0
+      ? Number(l.price).toLocaleString("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })
+      : "auf Anfrage";
+    var share = totalInq ? Math.round(iq / totalInq * 100) : 0;
+    return '<a class="perf-row" href="listing-detail.html?id=' + encodeURIComponent(l.id) + '">' +
+      '<div class="perf-main"><div class="thumb">' + th + "</div>" +
+      '<div style="min-width:0"><div class="perf-title">' + esc(l.title || "Ohne Titel") + "</div>" +
+      '<div class="perf-sub">' + esc([(l.categories && l.categories.name) || "", pr].filter(Boolean).join(" · ")) + "</div></div></div>" +
+      '<span class="perf-num">' + iq + "</span>" +
+      '<div class="perf-rate" style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--ink2)">' + share + ' %</div>' +
+      '<div class="perf-bar"><span style="width:' + Math.max(Math.round(iq / mx * 100), 4) + '%"></span></div></div></a>';
+  }).join("");
 }
-function setText(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
-function esc(v){return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-function getIcon(c){return({"Automotor":"🚗","Dieselmotor Auto":"🚗","Benzinmotor Auto":"🚗","LKW Motor":"🚛","Bootsmotor":"🚤","Außenbordmotor":"🚤","Innenbordmotor":"🚤","Flugzeugmotor":"✈️","Elektromotor Industrie":"⚙️","Drehstrommotor":"⚙️","Servomotor":"🤖","Getriebemotor":"🔩","Baumaschinenmotor":"🚧","Traktormotor":"🚜","Motorradmotor":"🏍️","Hydraulikmotor":"🛠️","Aufzugmotor":"🏢"}[c]||"⚙️");}
-function relT(d){if(!d)return"–";const diff=Date.now()-new Date(d).getTime(),m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);if(m<2)return"gerade eben";if(m<60)return`vor ${m} Min.`;if(h<24)return`vor ${h} Std.`;if(dy===1)return"gestern";if(dy<7)return`vor ${dy} Tagen`;return new Date(d).toLocaleDateString("de-DE");}
+
+/* ── Entwürfe: was noch fehlt ──────────────────────────────────── */
+function renderDrafts(drafts) {
+  var el = document.getElementById("drafts");
+  if (!el) return;
+  if (!drafts.length) {
+    el.innerHTML = '<div class="empty">Keine offenen Entwürfe.<br/><a href="anzeige-erstellen.html">Neue Anzeige beginnen</a></div>';
+    return;
+  }
+  el.innerHTML = drafts.slice(0, 4).map(function (l) {
+    var missing = [];
+    if (!(Array.isArray(l.image_urls) && l.image_urls.length)) missing.push("Bilder");
+    if (!(Number(l.price) > 0)) missing.push("Preis");
+    if (!l.description || String(l.description).trim().length < 30) missing.push("Beschreibung");
+    if (!l.manufacturer) missing.push("Hersteller");
+    var total = 4, filled = total - missing.length;
+    return '<div class="draft"><div class="draft-top">' +
+      '<div class="draft-title">' + esc(l.title || "Ohne Titel") + "</div>" +
+      '<a class="btn-sm ghost" href="anzeige-erstellen.html?id=' + encodeURIComponent(l.id) + '">Weiter</a></div>' +
+      '<div class="draft-missing">' + (missing.length ? "Fehlt: " + esc(missing.join(", ")) : "Bereit zur Veröffentlichung") + "</div>" +
+      '<div class="draft-bar"><span style="width:' + Math.round(filled / total * 100) + '%"></span></div></div>';
+  }).join("");
+}
+
+/* ── Merkliste (favorites.js) ──────────────────────────────────── */
+var favRenderToken = 0;
+async function renderFavs() {
+  var el = document.getElementById("fav-list");
+  if (!el || !window.Favs) return;
+  var token = ++favRenderToken;
+  updateFavBadge();
+
+  if (Favs.count() === 0) {
+    el.innerHTML = '<div class="empty">Noch nichts gemerkt.<br/><a href="suche.html">Inserate durchsuchen</a></div>';
+    return;
+  }
+  var rows = await Favs.listings(5);
+  if (token !== favRenderToken) return;
+
+  var gone = Favs.count() - rows.length;
+  var note = gone > 0 ? '<div class="panel-note">' + gone + (gone === 1 ? " gemerktes Inserat ist" : " gemerkte Inserate sind") + " nicht mehr verfügbar.</div>" : "";
+  if (!rows.length) { el.innerHTML = '<div class="empty">Die gemerkten Inserate sind nicht mehr online.</div>' + note; return; }
+
+  el.innerHTML = rows.map(function (l) {
+    var img = Array.isArray(l.image_urls) && l.image_urls[0];
+    var th = img ? '<img src="' + esc(img) + '" alt="" />' : iconSvg((l.categories && l.categories.name) || "");
+    var pr = Number(l.price || 0) > 0
+      ? Number(l.price).toLocaleString("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })
+      : "auf Anfrage";
+    var sub = [l.manufacturer, l.location].filter(Boolean).join(" · ") || ((l.categories && l.categories.name) || "");
+    return '<div class="fav-row">' +
+      '<a class="fav-link" href="listing-detail.html?id=' + encodeURIComponent(l.id) + '">' +
+      '<div class="fav-thumb">' + th + '</div>' +
+      '<div style="min-width:0"><div class="fav-title">' + esc(l.title || "Ohne Titel") + '</div><div class="fav-sub">' + esc(sub) + "</div></div></a>" +
+      '<span class="fav-price">' + pr + "</span>" +
+      '<button type="button" class="fav-btn on" data-fav="' + esc(l.id) + '" aria-pressed="true" title="Aus der Merkliste entfernen">' + Favs.heartSvg + "</button></div>";
+  }).join("") + note;
+}
+function updateFavBadge() {
+  var b = document.getElementById("fav-nav-badge");
+  if (!b || !window.Favs) return;
+  var n = Favs.count();
+  b.textContent = n;
+  b.style.display = n > 0 ? "inline-block" : "none";
+}
+
+/* ── Helfer ────────────────────────────────────────────────────── */
+function setText(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
+function setNote(id, v, cls) {
+  var e = document.getElementById(id);
+  if (!e) return;
+  e.textContent = v;
+  e.className = "kpi-note" + (cls ? " " + cls : "");
+}
+function greetWord() {
+  var h = new Date().getHours();
+  if (h < 5) return "Gute Nacht";
+  if (h < 11) return "Guten Morgen";
+  if (h < 18) return "Hallo";
+  return "Guten Abend";
+}
+function subline(openI, drafts, seller) {
+  if (!seller) return "Lege ein Händlerprofil an, um Anzeigen zu veröffentlichen.";
+  var parts = [];
+  if (openI) parts.push(openI + (openI === 1 ? " Anfrage wartet" : " Anfragen warten") + " auf Antwort");
+  if (drafts) parts.push(drafts + (drafts === 1 ? " Entwurf ist" : " Entwürfe sind") + " unveröffentlicht");
+  return parts.length ? parts.join(", ") + "." : "Alles erledigt – keine offenen Aufgaben.";
+}
+function esc(v) { return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+function relT(d) {
+  if (!d) return "–";
+  var diff = Date.now() - new Date(d).getTime();
+  var m = Math.floor(diff / 60000), h = Math.floor(diff / 3600000), dy = Math.floor(diff / 86400000);
+  if (m < 2) return "gerade eben";
+  if (m < 60) return "vor " + m + " Min.";
+  if (h < 24) return "vor " + h + " Std.";
+  if (dy === 1) return "gestern";
+  if (dy < 7) return "vor " + dy + " Tagen";
+  return new Date(d).toLocaleDateString("de-DE");
+}
+/* Kategorie-Icon (Lucide-Stil) statt Emoji */
+function iconSvg(cat) {
+  var n = String(cat || "").toLowerCase(), p;
+  if (/lkw|bus|truck/.test(n)) p = '<path d="M1 6h11v9H1z"/><path d="M12 9h5l3 3v3h-8z"/><circle cx="5" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/>';
+  else if (/roller|motorrad|bike|kart/.test(n)) p = '<circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M9 17h6"/><path d="M15 17l1-8h2"/><path d="M16 9l-2-3H9"/>';
+  else if (/traktor|landmaschine|bagger|baumaschine|radlader/.test(n)) p = '<circle cx="7" cy="16" r="4"/><circle cx="18" cy="17" r="2.5"/><path d="M7 12V7h4l2 5"/><path d="M11 8h5v4"/>';
+  else if (/boot|schiff|bord|jetski|marine/.test(n)) p = '<path d="M3 14h18l-2 5H5z"/><path d="M6 14V7h6l4 7"/><path d="M12 4v3"/>';
+  else if (/flug|jet|turbine|propeller|hubschrauber/.test(n)) p = '<path d="M22 12l-9 2-4 6H7l2-6-5-1v-2l5-1-2-6h2l4 6 9 2z"/>';
+  else if (/elektro|servo|schritt|synchron|asynchron|dreh|gleichstrom|wechselstrom/.test(n)) p = '<polygon points="13 2 4 14 11 14 10 22 20 9 13 9 13 2"/>';
+  else if (/auto|pkw|benzin|diesel|hybrid/.test(n)) p = '<path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13"/><path d="M3 13h18v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><circle cx="7" cy="16" r="1"/><circle cx="17" cy="16" r="1"/>';
+  else p = '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>';
+  return '<svg viewBox="0 0 24 24">' + p + "</svg>";
+}
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8f88d0e4191643fdb462b58820299297"}'></script>
     <script src="mobile.js" defer></script>
