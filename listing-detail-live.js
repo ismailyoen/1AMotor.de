@@ -185,6 +185,9 @@ function fillListingData(listing) {
 
   if (logoEl) logoEl.textContent = initials(seller.company_name || "HP");
   if (nameEl) nameEl.textContent = seller.company_name || "Händler auf 1A Motor";
+
+  /* Verkäufername + Logo führen zum öffentlichen Anbieterprofil */
+  linkSellerProfile(seller, logoEl, nameEl);
   if (locEl)  locEl.textContent  = [seller.city, seller.country].filter(Boolean).join(", ") || "–";
   if (statEl) statEl.textContent = listing.status || "Live";
   if (dateEl) dateEl.textContent = dateFormatted;
@@ -209,6 +212,46 @@ function fillListingData(listing) {
   }
   renderShipping(listing);
   window._setSellerIdFromListing(listing);
+}
+
+/* ─────────────────────────────────────────────────────────
+   ANBIETERPROFIL VERLINKEN
+───────────────────────────────────────────────────────── */
+function linkSellerProfile(seller, logoEl, nameEl) {
+  if (!seller || !seller.id) return;
+  const href = "haendler.html?id=" + encodeURIComponent(seller.id);
+
+  if (nameEl && !nameEl.querySelector("a")) {
+    const label = nameEl.textContent;
+    nameEl.innerHTML = "";
+    const a = document.createElement("a");
+    a.href = href;
+    a.textContent = label;
+    a.style.cssText = "color:inherit;text-decoration:none;";
+    a.addEventListener("mouseenter", () => { a.style.textDecoration = "underline"; });
+    a.addEventListener("mouseleave", () => { a.style.textDecoration = "none"; });
+    nameEl.appendChild(a);
+
+    const cta = document.createElement("a");
+    cta.href = href;
+    cta.id = "seller-profile-link";
+    cta.textContent = "Alle Anzeigen dieses Anbieters ansehen";
+    cta.style.cssText = "display:inline-block;margin-top:6px;font-size:12.5px;font-weight:700;color:#2176c7;text-decoration:none;";
+    if (nameEl.parentNode && !document.getElementById("seller-profile-link")) {
+      nameEl.parentNode.appendChild(cta);
+    }
+  }
+
+  if (logoEl) {
+    logoEl.style.cursor = "pointer";
+    logoEl.setAttribute("role", "link");
+    logoEl.setAttribute("tabindex", "0");
+    logoEl.setAttribute("title", "Profil des Anbieters öffnen");
+    logoEl.addEventListener("click", () => { window.location.href = href; });
+    logoEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); window.location.href = href; }
+    });
+  }
 }
 
 /* ─────────────────────────────────────────────────────────
