@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bild-Verwaltung – 1A Motor</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    :root {
+      --dark: #0d1b2a; --navy: #1b2d42; --blue: #1a5fa8; --sky: #4da6ff;
+      --bg: #f4f7fb; --white: #fff; --border: #e0e9f2; --muted: #7a93ae;
+      --red: #dc2626; --red-light: #fef2f2; --green: #16a34a; --green-light: #f0fdf4;
+      --amber: #c2410c; --amber-light: #fff7ed;
+      --shadow: 0 2px 16px rgba(13,27,42,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+    body { background: var(--bg); color: var(--dark); line-height: 1.5; }
+    a { text-decoration: none; color: inherit; }
+
+    /* Header */
+    .header { background: var(--dark); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .header-logo { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 18px; font-weight: 800; }
+    .logo-mark { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--blue), var(--sky)); display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff; }
+    .admin-badge { background: rgba(220,38,38,0.2); border: 1px solid rgba(220,38,38,0.4); color: #fca5a5; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+    .header-nav { display: flex; gap: 16px; align-items: center; }
+    .header-nav a { color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600; transition: color .15s; cursor: pointer; }
+    .header-nav a:hover { color: #fff; }
+
+    /* Login Gate */
+    .login-gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .login-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 36px; width: 100%; max-width: 400px; box-shadow: var(--shadow); }
+    .login-card h2 { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+    .login-card p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 5px; }
+    .form-group input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color .2s; }
+    .form-group input:focus { border-color: var(--blue); }
+    .btn-login { width: 100%; background: var(--dark); color: #fff; border: none; border-radius: 8px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .15s; margin-top: 6px; }
+    .btn-login:hover { background: var(--navy); }
+    .btn-login:disabled { opacity: .6; cursor: not-allowed; }
+    .login-error { background: var(--red-light); border: 1px solid #fecaca; color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-top: 12px; display: none; }
+
+    /* Main */
+    .main { max-width: 1240px; margin: 0 auto; padding: 28px 24px 60px; display: none; }
+
+    /* Stats */
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow); }
+    .stat-card strong { display: block; font-size: 28px; font-weight: 900; color: var(--dark); margin-bottom: 3px; }
+    .stat-card span { font-size: 12px; color: var(--muted); }
+    .stat-card.warn strong { color: var(--amber); }
+    .stat-card.danger strong { color: var(--red); }
+    @media (max-width: 780px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab { background: var(--white); border: 1.5px solid var(--border); border-radius: 999px; padding: 9px 18px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .15s; }
+    .tab:hover { border-color: var(--sky); color: var(--blue); }
+    .tab.active { background: var(--dark); border-color: var(--dark); color: #fff; }
+
+    /* Toolbar */
+    .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .search-input { flex: 1; min-width: 180px; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; transition: border-color .2s; }
+    .search-input:focus { border-color: var(--blue); }
+    .btn { border: none; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s; white-space: nowrap; }
+    .btn-dark { background: var(--navy); color: #fff; }
+    .btn-dark:hover { background: var(--blue); }
+    .btn-ghost { background: var(--white); color: var(--dark); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--sky); color: var(--blue); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Panel */
+    .panel { background: var(--white); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+    .panel-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .panel-head h2 { font-size: 16px; font-weight: 700; color: var(--dark); }
+    .panel-head p { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+    .panel-body { padding: 18px 20px; }
+
+    /* Grid */
+    .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .img-card { border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; background: #f8fbff; position: relative; transition: border-color .15s, box-shadow .15s; }
+    .img-card:hover { border-color: var(--sky); box-shadow: 0 4px 14px rgba(26,95,168,.12); }
+    .img-card.selected { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(26,95,168,.18); }
+    .img-thumb-lg { width: 100%; aspect-ratio: 4 / 3; background: linear-gradient(135deg, #dce8f5, #f0f6fd); background-size: cover; background-position: center; display: block; }
+    .img-meta { padding: 9px 11px; }
+    .img-name { font-size: 11px; color: var(--dark); font-weight: 600; word-break: break-all; line-height: 1.35; }
+    .img-sub { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
+    .img-actions { display: flex; gap: 5px; padding: 0 11px 11px; }
+    .mini-btn { flex: 1; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 5px 6px; font-size: 11px; font-weight: 700; cursor: pointer; text-align: center; }
+    .mini-btn:hover { background: #dbeafe; }
+    .pick { position: absolute; top: 8px; left: 8px; width: 22px; height: 22px; cursor: pointer; accent-color: var(--blue); }
+    .tag { position: absolute; top: 8px; right: 8px; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .04em; }
+    .tag-linked { background: var(--green-light); color: var(--green); border: 1px solid #bbf7d0; }
+    .tag-orphan { background: var(--amber-light); color: var(--amber); border: 1px solid #fed7aa; }
+
+    /* Listing rows */
+    table { width: 100%; border-collapse: collapse; }
+    thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; background: #f8fbff; border-bottom: 1px solid var(--border); }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8fbff; }
+    tbody td { padding: 12px 16px; font-size: 13px; vertical-align: middle; }
+    .status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+    .status-freigegeben { background: var(--green-light); color: var(--green); border: 1px solid #bbf7d0; }
+    .status-entwurf { background: var(--amber-light); color: var(--amber); border: 1px solid #fed7aa; }
+    .status-gesperrt { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+
+    /* Assign bar */
+    .assign-bar { position: sticky; bottom: 0; background: var(--dark); color: #fff; border-radius: 12px; padding: 14px 18px; display: none; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; box-shadow: 0 -4px 20px rgba(13,27,42,.18); }
+    .assign-bar b { font-size: 14px; }
+    .assign-bar select { padding: 9px 12px; border-radius: 8px; border: none; font-size: 13px; min-width: 240px; flex: 1; }
+    .btn-assign { background: var(--sky); color: var(--dark); }
+    .btn-assign:hover { background: #7cc0ff; }
+
+    .empty-box { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 13.5px; }
+    .notice { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 600; margin-bottom: 16px; display: none; }
+    .notice-ok { background: var(--green-light); color: var(--green); border: 1px solid #bbf7d0; }
+    .notice-err { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+    .hint { background: #f8fbff; border: 1px dashed var(--border); border-radius: 10px; padding: 12px 16px; font-size: 12.5px; color: var(--muted); margin-bottom: 18px; }
+    .loading { padding: 40px; text-align: center; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div class="login-gate" id="login-gate">
+  <div class="login-card">
+    <h2>Bild-Verwaltung</h2>
+    <p>Interner Bereich – bitte mit deinem Admin-Konto anmelden.</p>
+    <div class="form-group">
+      <label for="admin-email">E-Mail</label>
+      <input type="email" id="admin-email" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label for="admin-password">Passwort</label>
+      <input type="password" id="admin-password" autocomplete="current-password" />
+    </div>
+    <button class="btn-login" id="admin-login-btn">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+  <div class="header">
+    <div class="header-logo">
+      <div class="logo-mark">1A</div>
+      <span>Bild-Verwaltung</span>
+      <span class="admin-badge">Intern</span>
+    </div>
+    <div class="header-nav">
+      <a href="admin.html">Inserate</a>
+      <a href="index.html">Zur Seite</a>
+      <a id="admin-logout">Abmelden</a>
+    </div>
+  </div>
+
+  <div class="main" id="main">
+
+    <div class="hint">
+      Liest den Storage-Bucket <strong>listing-images</strong> aus und gleicht jede Datei mit den
+      <code>image_urls</code> der Inserate ab. „Verwaist" heißt: Die Datei liegt im Storage, ist aber in keinem
+      Inserat eingetragen. Solche Bilder kannst du unten direkt an das passende, bereits existierende Inserat anhängen.
+    </div>
+
+    <div class="notice" id="notice"></div>
+
+    <div class="stats-bar">
+      <div class="stat-card"><strong id="s-files">–</strong><span>Dateien im Bucket</span></div>
+      <div class="stat-card"><strong id="s-size">–</strong><span>Speicher belegt</span></div>
+      <div class="stat-card warn"><strong id="s-orphan">–</strong><span>Verwaiste Bilder</span></div>
+      <div class="stat-card danger"><strong id="s-nopic">–</strong><span>Inserate ohne Bild</span></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="orphan">Verwaiste Bilder</div>
+      <div class="tab" data-tab="all">Alle Bilder</div>
+      <div class="tab" data-tab="nopic">Inserate ohne Bild</div>
+    </div>
+
+    <div class="toolbar">
+      <input class="search-input" id="q" placeholder="Suchen nach Dateiname, Ordner (User-ID) oder Inserat-Titel…" />
+      <button class="btn btn-dark" id="btn-reload">Neu laden</button>
+      <button class="btn btn-ghost" id="btn-copy-all">URLs kopieren</button>
+      <button class="btn btn-ghost" id="btn-export">Als CSV exportieren</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 id="panel-title">Verwaiste Bilder</h2>
+          <p id="panel-sub">Wird geladen…</p>
+        </div>
+        <div>
+          <button class="btn btn-ghost" id="btn-select-all">Alle auswählen</button>
+        </div>
+      </div>
+      <div class="panel-body" id="panel-body">
+        <div class="loading">Bucket wird gelesen…</div>
+      </div>
+    </div>
+
+    <div class="assign-bar" id="assign-bar">
+      <b><span id="sel-count">0</span> ausgewählt</b>
+      <select id="assign-target"><option value="">Inserat wählen…</option></select>
+      <button class="btn btn-assign" id="btn-assign">An Inserat anhängen</button>
+      <button class="btn btn-ghost" id="btn-clear-sel">Auswahl aufheben</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var BUCKET = "listing-images";
+  var PAGE = 100;
+
+  var files = [];        // { path, name, folder, size, updated, url, listingId, listingTitle }
+  var listings = [];     // { id, title, status, image_urls }
+  var selected = {};     // path -> true
+  var currentTab = "orphan";
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function $(id) { return document.getElementById(id); }
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  function fmtSize(bytes) {
+    if (!bytes && bytes !== 0) return "–";
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + " KB";
+    return (bytes / 1048576).toFixed(1) + " MB";
+  }
+
+  function fmtDate(s) {
+    if (!s) return "–";
+    var d = new Date(s);
+    if (isNaN(d.getTime())) return "–";
+    return d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+  }
+
+  function showNotice(msg, ok) {
+    var n = $("notice");
+    n.textContent = msg;
+    n.className = "notice " + (ok ? "notice-ok" : "notice-err");
+    n.style.display = "block";
+    if (ok) setTimeout(function () { n.style.display = "none"; }, 5000);
+  }
+
+  function publicUrl(path) {
+    var res = supabaseClient.storage.from(BUCKET).getPublicUrl(path);
+    return (res && res.data && res.data.publicUrl) || "";
+  }
+
+  // ── Login ──────────────────────────────────────────────────────────────────
+  async function doLogin() {
+    var email = $("admin-email").value.trim();
+    var pw = $("admin-password").value;
+    var btn = $("admin-login-btn");
+    var err = $("login-error");
+
+    btn.disabled = true; btn.textContent = "Einloggen…";
+    err.style.display = "none";
+
+    var res = await supabaseClient.auth.signInWithPassword({ email: email, password: pw });
+    if (res.error) {
+      err.textContent = "Login fehlgeschlagen: " + res.error.message;
+      err.style.display = "block";
+      btn.disabled = false; btn.textContent = "Einloggen";
+      return;
+    }
+    showApp();
+    loadAll();
+  }
+
+  function showApp() {
+    $("login-gate").style.display = "none";
+    $("app").style.display = "block";
+    $("main").style.display = "block";
+  }
+
+  // ── Storage einlesen (rekursiv über User-Ordner) ────────────────────────────
+  async function listFolder(prefix) {
+    var out = [];
+    var offset = 0;
+    for (;;) {
+      var res = await supabaseClient.storage.from(BUCKET).list(prefix, {
+        limit: PAGE,
+        offset: offset,
+        sortBy: { column: "name", order: "asc" }
+      });
+      if (res.error) throw res.error;
+      var batch = res.data || [];
+      out = out.concat(batch);
+      if (batch.length < PAGE) break;
+      offset += PAGE;
+    }
+    return out;
+  }
+
+  function isFolder(entry) {
+    // Supabase liefert für Ordner keine id/metadata
+    return !entry.id && !entry.metadata;
+  }
+
+  async function readBucket() {
+    var root = await listFolder("");
+    var result = [];
+
+    for (var i = 0; i < root.length; i++) {
+      var entry = root[i];
+      if (isFolder(entry)) {
+        var inner = await listFolder(entry.name);
+        for (var j = 0; j < inner.length; j++) {
+          var f = inner[j];
+          if (isFolder(f)) continue;
+          if (f.name === ".emptyFolderPlaceholder") continue;
+          result.push({
+            path: entry.name + "/" + f.name,
+            name: f.name,
+            folder: entry.name,
+            size: (f.metadata && f.metadata.size) || 0,
+            updated: f.updated_at || f.created_at || null
+          });
+        }
+      } else {
+        if (entry.name === ".emptyFolderPlaceholder") continue;
+        result.push({
+          path: entry.name,
+          name: entry.name,
+          folder: "(Root)",
+          size: (entry.metadata && entry.metadata.size) || 0,
+          updated: entry.updated_at || entry.created_at || null
+        });
+      }
+    }
+    return result;
+  }
+
+  // ── Inserate laden ─────────────────────────────────────────────────────────
+  async function readListings() {
+    var res = await supabaseClient
+      .from("listings")
+      .select("id, title, status, image_urls, created_at")
+      .order("created_at", { ascending: false });
+    if (res.error) throw res.error;
+    return res.data || [];
+  }
+
+  // ── Abgleich ───────────────────────────────────────────────────────────────
+  function matchFiles() {
+    var index = {}; // pfad -> { id, title }
+    listings.forEach(function (l) {
+      var urls = Array.isArray(l.image_urls) ? l.image_urls : [];
+      urls.forEach(function (u) {
+        if (!u) return;
+        var clean = String(u).split("?")[0];
+        try { clean = decodeURIComponent(clean); } catch (e) { /* egal */ }
+        var marker = "/" + BUCKET + "/";
+        var pos = clean.indexOf(marker);
+        var key = pos >= 0 ? clean.slice(pos + marker.length) : clean;
+        index[key] = { id: l.id, title: l.title };
+      });
+    });
+
+    files.forEach(function (f) {
+      f.url = publicUrl(f.path);
+      var hit = index[f.path];
+      f.listingId = hit ? hit.id : null;
+      f.listingTitle = hit ? hit.title : null;
+    });
+  }
+
+  // ── Laden ──────────────────────────────────────────────────────────────────
+  async function loadAll() {
+    $("panel-body").innerHTML = '<div class="loading">Bucket wird gelesen…</div>';
+    selected = {};
+    try {
+      var pair = await Promise.all([readBucket(), readListings()]);
+      files = pair[0];
+      listings = pair[1];
+      matchFiles();
+      renderStats();
+      fillAssignSelect();
+      render();
+    } catch (e) {
+      $("panel-body").innerHTML = '<div class="empty-box">Konnte nicht laden: ' + esc(e.message || e) + '</div>';
+      showNotice("Fehler beim Laden: " + (e.message || e), false);
+    }
+  }
+
+  function renderStats() {
+    var totalSize = files.reduce(function (a, f) { return a + (f.size || 0); }, 0);
+    var orphans = files.filter(function (f) { return !f.listingId; }).length;
+    var nopic = listings.filter(function (l) {
+      return !Array.isArray(l.image_urls) || l.image_urls.length === 0;
+    }).length;
+
+    $("s-files").textContent = files.length;
+    $("s-size").textContent = fmtSize(totalSize);
+    $("s-orphan").textContent = orphans;
+    $("s-nopic").textContent = nopic;
+  }
+
+  function fillAssignSelect() {
+    var sel = $("assign-target");
+    var html = '<option value="">Inserat wählen…</option>';
+    listings.forEach(function (l) {
+      var count = Array.isArray(l.image_urls) ? l.image_urls.length : 0;
+      html += '<option value="' + esc(l.id) + '">' + esc(l.title || "(ohne Titel)") +
+              " — " + count + " Bild(er)</option>";
+    });
+    sel.innerHTML = html;
+  }
+
+  // ── Rendern ────────────────────────────────────────────────────────────────
+  function currentQuery() {
+    return $("q").value.trim().toLowerCase();
+  }
+
+  function visibleFiles() {
+    var q = currentQuery();
+    return files.filter(function (f) {
+      if (currentTab === "orphan" && f.listingId) return false;
+      if (!q) return true;
+      return (f.name + " " + f.folder + " " + (f.listingTitle || "")).toLowerCase().indexOf(q) >= 0;
+    });
+  }
+
+  function render() {
+    var body = $("panel-body");
+
+    if (currentTab === "nopic") {
+      $("panel-title").textContent = "Inserate ohne Bild";
+      renderNoPic(body);
+      updateAssignBar();
+      return;
+    }
+
+    $("panel-title").textContent = currentTab === "orphan" ? "Verwaiste Bilder" : "Alle Bilder";
+    var list = visibleFiles();
+    $("panel-sub").textContent = list.length + " von " + files.length + " Dateien";
+
+    if (!list.length) {
+      body.innerHTML = '<div class="empty-box">' +
+        (currentTab === "orphan"
+          ? "Keine verwaisten Bilder – jede Datei im Bucket hängt an einem Inserat."
+          : "Keine Dateien gefunden.") + "</div>";
+      updateAssignBar();
+      return;
+    }
+
+    var html = '<div class="img-grid">';
+    list.forEach(function (f) {
+      var isSel = !!selected[f.path];
+      html += '<div class="img-card' + (isSel ? " selected" : "") + '" data-path="' + esc(f.path) + '">' +
+        '<input type="checkbox" class="pick" data-path="' + esc(f.path) + '"' + (isSel ? " checked" : "") + ' />' +
+        '<span class="tag ' + (f.listingId ? "tag-linked" : "tag-orphan") + '">' +
+          (f.listingId ? "verknüpft" : "verwaist") + '</span>' +
+        '<a class="img-thumb-lg" href="' + esc(f.url) + '" target="_blank" rel="noopener" ' +
+          'style="background-image:url(\'' + esc(f.url) + '\')"></a>' +
+        '<div class="img-meta">' +
+          '<div class="img-name">' + esc(f.name) + '</div>' +
+          '<div class="img-sub">' + fmtSize(f.size) + " · " + fmtDate(f.updated) + '</div>' +
+          '<div class="img-sub">' + (f.listingTitle ? esc(f.listingTitle) : "Ordner: " + esc(f.folder)) + '</div>' +
+        '</div>' +
+        '<div class="img-actions">' +
+          '<button class="mini-btn" data-copy="' + esc(f.url) + '">URL kopieren</button>' +
+          '<a class="mini-btn" href="' + esc(f.url) + '" target="_blank" rel="noopener">Öffnen</a>' +
+        '</div>' +
+      '</div>';
+    });
+    html += "</div>";
+    body.innerHTML = html;
+    updateAssignBar();
+  }
+
+  function renderNoPic(body) {
+    var q = currentQuery();
+    var rows = listings.filter(function (l) {
+      var empty = !Array.isArray(l.image_urls) || l.image_urls.length === 0;
+      if (!empty) return false;
+      if (!q) return true;
+      return String(l.title || "").toLowerCase().indexOf(q) >= 0;
+    });
+
+    $("panel-sub").textContent = rows.length + " Inserate ohne Bild";
+
+    if (!rows.length) {
+      body.innerHTML = '<div class="empty-box">Alle Inserate haben mindestens ein Bild.</div>';
+      return;
+    }
+
+    var html = '<table><thead><tr><th>Titel</th><th>Status</th><th>Erstellt</th><th>ID</th></tr></thead><tbody>';
+    rows.forEach(function (l) {
+      var st = String(l.status || "").toLowerCase();
+      var cls = st.indexOf("freigeg") === 0 ? "status-freigegeben"
+              : st.indexOf("gesperrt") === 0 ? "status-gesperrt" : "status-entwurf";
+      html += "<tr>" +
+        "<td><strong>" + esc(l.title || "(ohne Titel)") + "</strong></td>" +
+        '<td><span class="status-badge ' + cls + '">' + esc(l.status || "–") + "</span></td>" +
+        "<td>" + fmtDate(l.created_at) + "</td>" +
+        '<td style="font-size:11px;color:var(--muted);">' + esc(l.id) + "</td>" +
+      "</tr>";
+    });
+    html += "</tbody></table>";
+    body.innerHTML = html;
+  }
+
+  function updateAssignBar() {
+    var n = Object.keys(selected).length;
+    $("sel-count").textContent = n;
+    $("assign-bar").style.display = n > 0 ? "flex" : "none";
+  }
+
+  // ── Bilder an Inserat anhängen ─────────────────────────────────────────────
+  async function assignSelected() {
+    var targetId = $("assign-target").value;
+    var paths = Object.keys(selected);
+    if (!targetId) { showNotice("Bitte zuerst ein Inserat auswählen.", false); return; }
+    if (!paths.length) { showNotice("Keine Bilder ausgewählt.", false); return; }
+
+    var listing = listings.filter(function (l) { return String(l.id) === String(targetId); })[0];
+    if (!listing) { showNotice("Inserat nicht gefunden.", false); return; }
+
+    var existing = Array.isArray(listing.image_urls) ? listing.image_urls.slice() : [];
+    var added = 0;
+    paths.forEach(function (p) {
+      var u = publicUrl(p);
+      if (u && existing.indexOf(u) === -1) { existing.push(u); added++; }
+    });
+
+    if (!added) { showNotice("Diese Bilder hängen bereits an dem Inserat.", false); return; }
+
+    var btn = $("btn-assign");
+    btn.disabled = true; btn.textContent = "Speichere…";
+
+    var res = await supabaseClient
+      .from("listings")
+      .update({ image_urls: existing })
+      .eq("id", targetId);
+
+    btn.disabled = false; btn.textContent = "An Inserat anhängen";
+
+    if (res.error) {
+      showNotice("Speichern fehlgeschlagen: " + res.error.message +
+                 " (meist eine fehlende UPDATE-Policy in Supabase)", false);
+      return;
+    }
+
+    listing.image_urls = existing;
+    selected = {};
+    matchFiles();
+    renderStats();
+    fillAssignSelect();
+    render();
+    showNotice(added + " Bild(er) an „" + (listing.title || "Inserat") + "\u201c angehängt.", true);
+  }
+
+  // ── Export / Kopieren ──────────────────────────────────────────────────────
+  function copyText(text, label) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        showNotice(label + " in die Zwischenablage kopiert.", true);
+      }, function () { fallbackCopy(text, label); });
+    } else {
+      fallbackCopy(text, label);
+    }
+  }
+
+  function fallbackCopy(text, label) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); showNotice(label + " kopiert.", true); }
+    catch (e) { showNotice("Kopieren nicht möglich – bitte manuell markieren.", false); }
+    document.body.removeChild(ta);
+  }
+
+  function exportCsv() {
+    var list = currentTab === "nopic" ? [] : visibleFiles();
+    if (!list.length) { showNotice("Nichts zu exportieren.", false); return; }
+    var rows = [["pfad", "dateiname", "ordner_user_id", "groesse_bytes", "geaendert", "inserat_id", "inserat_titel", "url"]];
+    list.forEach(function (f) {
+      rows.push([f.path, f.name, f.folder, f.size, f.updated || "",
+                 f.listingId || "", f.listingTitle || "", f.url]);
+    });
+    var csv = rows.map(function (r) {
+      return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(";");
+    }).join("\n");
+
+    var blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "1amotor-bilder-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ── Events ─────────────────────────────────────────────────────────────────
+  document.addEventListener("DOMContentLoaded", async function () {
+    var session = await supabaseClient.auth.getUser();
+    if (session && session.data && session.data.user) {
+      showApp();
+      loadAll();
+    }
+
+    $("admin-login-btn").addEventListener("click", doLogin);
+    $("admin-email").addEventListener("keydown", function (e) { if (e.key === "Enter") doLogin(); });
+    $("admin-password").addEventListener("keydown", function (e) { if (e.key === "Enter") doLogin(); });
+
+    $("admin-logout").addEventListener("click", async function (e) {
+      e.preventDefault();
+      await supabaseClient.auth.signOut();
+      location.reload();
+    });
+
+    $("btn-reload").addEventListener("click", loadAll);
+    $("q").addEventListener("input", render);
+
+    var tabs = document.querySelectorAll(".tab");
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].addEventListener("click", function () {
+        for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove("active");
+        this.classList.add("active");
+        currentTab = this.getAttribute("data-tab");
+        render();
+      });
+    }
+
+    $("panel-body").addEventListener("click", function (e) {
+      var copyBtn = e.target.closest("[data-copy]");
+      if (copyBtn) { copyText(copyBtn.getAttribute("data-copy"), "URL"); return; }
+
+      var box = e.target.closest(".pick");
+      if (box) {
+        var p = box.getAttribute("data-path");
+        if (box.checked) selected[p] = true; else delete selected[p];
+        var card = box.closest(".img-card");
+        if (card) card.classList.toggle("selected", box.checked);
+        updateAssignBar();
+      }
+    });
+
+    $("btn-select-all").addEventListener("click", function () {
+      if (currentTab === "nopic") return;
+      var list = visibleFiles();
+      var allSel = list.every(function (f) { return selected[f.path]; });
+      list.forEach(function (f) {
+        if (allSel) delete selected[f.path]; else selected[f.path] = true;
+      });
+      render();
+    });
+
+    $("btn-clear-sel").addEventListener("click", function () {
+      selected = {};
+      render();
+    });
+
+    $("btn-assign").addEventListener("click", assignSelected);
+
+    $("btn-copy-all").addEventListener("click", function () {
+      var paths = Object.keys(selected);
+      var urls = paths.length
+        ? paths.map(publicUrl)
+        : visibleFiles().map(function (f) { return f.url; });
+      if (!urls.length) { showNotice("Keine URLs vorhanden.", false); return; }
+      copyText(urls.join("\n"), urls.length + " URLs");
+    });
+
+    $("btn-export").addEventListener("click", exportCsv);
+  });
+})();
+</script>
+</body>
+</html>
