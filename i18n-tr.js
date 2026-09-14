@@ -1,222 +1,630 @@
 // ══════════════════════════════════════════════════════════════════
-//  1A Motor – Türkisch-Layer (TR)
-//  Additiv: NACH i18n.js einbinden.
-//    <script src="i18n.js?v=7"></script>
+//  1A Motor – Türkisch-Layer (TR)   ·   v1
+//  Additiv. NACH i18n.js einbinden:
+//    <script src="i18n.js?v=2"></script>
 //    <script src="i18n-tr.js?v=1"></script>
-//  Verändert i18n.js nicht. Wenn i18n.js aktualisiert wird,
-//  bleibt diese Datei unverändert lauffähig.
+//
+//  Diese Datei verändert i18n.js NICHT. Wird i18n.js aktualisiert,
+//  bleibt der TR-Layer lauffähig; nur neue Keys müssen ergänzt werden.
+//  Fehlt ein Key, greift automatisch der deutsche Text.
 // ══════════════════════════════════════════════════════════════════
 
 (function () {
   "use strict";
 
-  // Auf false setzen, wenn Besucher NICHT automatisch auf TR
+  // Auf false setzen, wenn Besucher NICHT automatisch auf Türkisch
   // gestellt werden sollen (dann nur über den Sprachumschalter).
-  const AUTO_DETECT = true;
+  var AUTO_DETECT = true;
 
-  const TR = {
-    // Navigation
-    "nav.search":           "Motor ara",
-    "nav.sell":             "İlan oluştur",
-    "nav.login":            "Giriş yap",
-    "nav.register":         "Kayıt ol",
-    "nav.account":          "Hesabım",
-    "nav.inquiries":        "Mesajlar",
-    "nav.listings":         "İlanlarım",
-    "nav.logout":           "Çıkış yap",
-    "nav.contact":          "Yardım & İletişim",
-    "nav.dealer":           "Satıcı alanı",
-    "nav.dashboard":        "Kontrol paneli",
-    "nav.back":             "← Ana sayfaya dön",
-
-    // Hero
-    "hero.title":           "Motor alın & satın.",
-    "hero.subtitle":        "Araç motorları, endüstriyel tahrik sistemleri, tekne motorları ve özel motorlar. Doğrulanmış satıcılar, doğrudan talepler, komisyon yok.",
-    "hero.cta.search":      "🔍 Hemen ara",
-    "hero.cta.dealer":      "Satıcı olarak başla",
-    "hero.pill":            "⚙️ Almanya'nın motor pazar yeri",
-
-    // Suche / Search bar
-    "search.placeholder":   "Motor, üretici, model veya parça numarası ara…",
-    "search.btn":           "Ara",
-    "search.allcats":       "Tüm kategoriler",
-
-    // Listings
-    "listings.title":       "Güncel ilanlar",
-    "listings.all":         "Tümünü gör →",
-    "listings.newest":      "Önce en yeni",
-    "listings.cheapest":    "Fiyat ↑",
-    "listings.dearest":     "Fiyat ↓",
-    "listings.empty":       "Henüz ilan bulunmuyor.",
-    "listings.loading":     "İlanlar yükleniyor…",
-    "listings.count":       "güncel ilan",
-
-    // Sidebar Filter
-    "filter.categories":    "Kategoriler",
-    "filter.condition":     "Durum",
-    "filter.price":         "Fiyat",
-    "filter.dealers":       "Satıcılar",
-    "filter.all":           "Tümü",
-    "filter.new":           "Sıfır",
-    "filter.used":          "İkinci el",
-    "filter.refurb":        "Yenilenmiş",
-    "filter.verified":      "Doğrulanmış satıcılar",
-    "filter.toprated":      "En yüksek puan",
-    "filter.commercial":    "Kurumsal",
-    "filter.tosearch":      "→ Aramaya git",
-    "filter.show":          "☰ Filtreleri göster",
-
-    // Features
-    "feature.verified.title":   "Doğrulanmış satıcılar",
-    "feature.verified.text":    "Daha fazla güven için doğrulanmış satıcı profilleri ve şeffaf değerlendirmeler.",
-    "feature.cats.title":       "101+ kategori",
-    "feature.cats.text":        "Araç, endüstriyel, tekne ve özel motorlar tek platformda.",
-    "feature.shipping.title":   "Nakliye seçenekleri",
-    "feature.shipping.text":    "Avrupa geneli. Ağır motorlar, makineler ve komple gruplar için ideal.",
-    "feature.nofee.title":      "Komisyon yok",
-    "feature.nofee.text":       "Alıcı ile satıcı arasında doğrudan iletişim. Gizli ücret yok.",
-
-    // Newsletter
-    "newsletter.title":     "Yeni ilanları doğrudan alın",
-    "newsletter.subtitle":  "Fiyat güncellemelerine, yeni ilanlara ve özel kampanyalara abone olun.",
-    "newsletter.placeholder":"E-posta adresiniz",
-    "newsletter.btn":       "Abone ol",
-
-    // Footer
-    "footer.desc":          "Almanya ve Avrupa'da motorlar, tahrik sistemleri ve makine teknolojisi için uzmanlaşmış pazar yeri.",
-    "footer.buy":           "Alış",
-    "footer.sell":          "Satış",
-    "footer.company":       "Şirket",
-    "footer.legal":         "Yasal",
-    "footer.rights":        "© 2026 1A Motor – Motor & Tahrik Teknolojisi Pazar Yeri",
-    "footer.search":        "Motor ara",
-    "footer.create":        "İlan oluştur",
-    "footer.dealer":        "Satıcı hesabı",
-    "footer.messages":      "Mesajlar",
-
-    // Listing Detail
-    "detail.contact":       "Satıcıyla iletişime geçin",
-    "detail.send":          "📨 Mesaj gönder",
-    "detail.name":          "Adınız",
-    "detail.email":         "E-posta adresiniz",
-    "detail.message":       "Mesajınız…",
-    "detail.success":       "✅ Talebiniz gönderildi! Satıcı kısa süre içinde size dönecek.",
-    "detail.similar":       "🔍 Benzer ilanlar",
-    "detail.specs":         "Teknik özellikler",
-    "detail.description":   "Açıklama",
-    "detail.seller":        "Satıcı hakkında",
-    "detail.location":      "Konum:",
-    "detail.published":     "Yayınlandı",
-    "detail.back":          "← Aramaya dön",
-
-    // Suche Page
-    "suche.title":          "Motor ara",
-    "suche.results":        "Arama sonuçları",
-    "suche.noresults":      "İlan bulunamadı.",
-    "suche.loading":        "Aranıyor…",
-    "suche.filter.title":   "Aramayı daralt",
-
-    // Login / Register
-    "login.title":          "Tekrar hoş geldiniz",
-    "login.subtitle":       "1A Motor hesabınıza giriş yapın.",
-    "login.email":          "E-posta adresi",
-    "login.password":       "Şifre",
-    "login.forgot":         "Şifrenizi mi unuttunuz?",
-    "login.btn":            "Giriş yap",
-    "login.noreg":          "Henüz hesabınız yok mu?",
-    "login.register":       "Hemen kayıt olun",
-    "register.title":       "Hesap oluştur",
-    "register.subtitle":    "1A Motor'a ücretsiz kayıt olun.",
-    "register.name":        "Ad ve soyad",
-    "register.btn":         "Hemen kayıt ol",
-    "register.hasaccount":  "Zaten hesabınız var mı?",
-    "register.login":       "Giriş yap",
-    "register.buyer":       "Alıcı",
-    "register.seller":      "Satıcı",
-
-    // Dashboard
-    "dashboard.title":      "Kontrol paneli",
-    "dashboard.welcome":    "Tekrar hoş geldiniz",
-    "dashboard.listings":   "İlanlar",
-    "dashboard.inquiries":  "Talepler",
-    "dashboard.new":        "+ Yeni ilan",
-    "dashboard.active":     "Aktif ilanlar",
-    "dashboard.drafts":     "Taslaklar",
-    "dashboard.value":      "Toplam değer",
-    "dashboard.activity":   "Son hareketler",
-
-    // Meine Anzeigen
-    "mylistings.title":     "İlanlarım",
-    "mylistings.subtitle":  "İlanlarınızı yönetin ve düzenleyin.",
-    "mylistings.new":       "＋ Yeni ilan",
-    "mylistings.search":    "🔍 Başlık veya üretici ara…",
+  // ── Oberflächentexte ──────────────────────────────────────────────
+  var TR = {
+    "nav.search": "Motor ara",
+    "nav.sell": "İlan oluştur",
+    "nav.login": "Giriş yap",
+    "nav.register": "Kayıt ol",
+    "nav.account": "Hesabım",
+    "nav.inquiries": "Mesajlar",
+    "nav.listings": "İlanlarım",
+    "nav.logout": "Çıkış yap",
+    "nav.contact": "Yardım & İletişim",
+    "nav.dealer": "Satıcı alanı",
+    "nav.dashboard": "Kontrol paneli",
+    "nav.back": "← Ana sayfaya dön",
+    "hero.title": "Motor alın & satın.",
+    "hero.subtitle": "Araç motorları, endüstriyel tahrik sistemleri, tekne motorları ve özel motorlar. Doğrulanmış satıcılar, doğrudan talepler, komisyon yok.",
+    "hero.cta.search": "🔍 Hemen ara",
+    "hero.cta.dealer": "Satıcı olarak başla",
+    "hero.pill": "⚙️ Uluslararası motor pazar yeri",
+    "search.placeholder": "Motor, üretici, model veya parça numarası ara…",
+    "search.btn": "Ara",
+    "search.allcats": "Tüm kategoriler",
+    "listings.title": "Güncel ilanlar",
+    "listings.all": "Tümünü gör →",
+    "listings.newest": "Önce en yeni",
+    "listings.cheapest": "Fiyat ↑",
+    "listings.dearest": "Fiyat ↓",
+    "listings.empty": "Henüz ilan bulunmuyor.",
+    "listings.loading": "İlanlar yükleniyor…",
+    "listings.count": "güncel ilan",
+    "filter.categories": "Kategoriler",
+    "filter.condition": "Durum",
+    "filter.price": "Fiyat",
+    "filter.dealers": "Satıcılar",
+    "filter.all": "Tümü",
+    "filter.new": "Sıfır",
+    "filter.used": "İkinci el",
+    "filter.refurb": "Yenilenmiş",
+    "filter.verified": "Doğrulanmış satıcılar",
+    "filter.toprated": "En yüksek puan",
+    "filter.commercial": "Kurumsal",
+    "filter.tosearch": "→ Aramaya git",
+    "filter.show": "☰ Filtreleri göster",
+    "feature.verified.title": "Doğrulanmış satıcılar",
+    "feature.verified.text": "Daha fazla güven için doğrulanmış satıcı profilleri ve şeffaf değerlendirmeler.",
+    "feature.cats.title": "101+ kategori",
+    "feature.cats.text": "Araç, endüstriyel, tekne ve özel motorlar tek platformda.",
+    "feature.shipping.title": "Nakliye seçenekleri",
+    "feature.shipping.text": "Avrupa geneli. Ağır motorlar, makineler ve komple gruplar için ideal.",
+    "feature.nofee.title": "Komisyon yok",
+    "feature.nofee.text": "Alıcı ile satıcı arasında doğrudan iletişim. Gizli ücret yok.",
+    "newsletter.title": "Yeni ilanları doğrudan alın",
+    "newsletter.subtitle": "Fiyat güncellemelerine, yeni ilanlara ve özel kampanyalara abone olun.",
+    "newsletter.placeholder": "E-posta adresiniz",
+    "newsletter.btn": "Abone ol",
+    "footer.desc": "Avrupa'da ve ötesinde motorlar, tahrik sistemleri ve makine teknolojisi için uzmanlaşmış pazar yeri.",
+    "footer.buy": "Alış",
+    "footer.sell": "Satış",
+    "footer.company": "Şirket",
+    "footer.legal": "Yasal",
+    "footer.rights": "© 2026 1A Motor – Motor & Tahrik Teknolojisi Pazar Yeri",
+    "footer.search": "Motor ara",
+    "footer.create": "İlan oluştur",
+    "footer.dealer": "Satıcı hesabı",
+    "footer.messages": "Mesajlar",
+    "detail.contact": "Satıcıyla iletişime geçin",
+    "detail.send": "📨 Mesaj gönder",
+    "detail.name": "Adınız",
+    "detail.email": "E-posta adresiniz",
+    "detail.message": "Mesajınız…",
+    "detail.success": "✅ Talebiniz gönderildi! Satıcı kısa süre içinde size dönecek.",
+    "detail.similar": "🔍 Benzer ilanlar",
+    "detail.specs": "Teknik özellikler",
+    "detail.description": "Açıklama",
+    "detail.seller": "Satıcı hakkında",
+    "detail.location": "Konum:",
+    "detail.published": "Yayınlandı",
+    "detail.back": "← Aramaya dön",
+    "suche.title": "Motor ara",
+    "suche.results": "Arama sonuçları",
+    "suche.noresults": "İlan bulunamadı.",
+    "suche.loading": "Aranıyor…",
+    "suche.filter.title": "Aramayı daralt",
+    "login.title": "Tekrar hoş geldiniz",
+    "login.subtitle": "1A Motor hesabınıza giriş yapın.",
+    "login.email": "E-posta adresi",
+    "login.password": "Şifre",
+    "login.forgot": "Şifrenizi mi unuttunuz?",
+    "login.btn": "Giriş yap",
+    "login.noreg": "Henüz hesabınız yok mu?",
+    "login.register": "Hemen kayıt olun",
+    "register.title": "Hesap oluştur",
+    "register.subtitle": "1A Motor'a ücretsiz kayıt olun.",
+    "register.name": "Ad ve soyad",
+    "register.btn": "Hemen kayıt ol",
+    "register.hasaccount": "Zaten hesabınız var mı?",
+    "register.login": "Giriş yap",
+    "register.buyer": "Alıcı",
+    "register.seller": "Satıcı",
+    "dashboard.title": "Kontrol paneli",
+    "dashboard.welcome": "Tekrar hoş geldiniz",
+    "dashboard.listings": "İlanlar",
+    "dashboard.inquiries": "Talepler",
+    "dashboard.new": "+ Yeni ilan",
+    "dashboard.active": "Aktif ilanlar",
+    "dashboard.drafts": "Taslaklar",
+    "dashboard.value": "Toplam değer",
+    "dashboard.activity": "Son hareketler",
+    "mylistings.title": "İlanlarım",
+    "mylistings.subtitle": "İlanlarınızı yönetin ve düzenleyin.",
+    "mylistings.new": "＋ Yeni ilan",
+    "mylistings.search": "🔍 Başlık veya üretici ara…",
     "mylistings.allstatus": "Tüm durumlar",
-    "mylistings.approved":  "Yayında",
-    "mylistings.draft":     "Taslak",
-    "mylistings.view":      "Görüntüle",
-    "mylistings.edit":      "Düzenle",
-    "mylistings.delete":    "Sil",
-    "mylistings.empty":     "İlan bulunamadı.",
-    "mylistings.createfirst":"İlk ilanınızı oluşturun",
-
-    // Anfragen / Messages
-    "inquiries.title":      "Talepler",
-    "inquiries.subtitle":   "İlanlarınıza gelen alıcı mesajları.",
-    "inquiries.all":        "Tümü",
-    "inquiries.new":        "Yeni",
-    "inquiries.read":       "Okundu",
-    "inquiries.done":       "Tamamlandı",
-    "inquiries.reply":      "Yanıt gönder",
-    "inquiries.placeholder":"Yanıt yazın…",
-    "inquiries.empty":      "Henüz talep bulunmuyor.",
-    "inquiries.re":         "İlgili ilan:",
-
-    // Nachrichten (Käufer)
-    "messages.title":       "Mesajlar",
-    "messages.subtitle":    "Burada taleplerinizi ve satıcıların yanıtlarını görebilirsiniz.",
-    "messages.empty":       "Henüz mesajınız yok.",
-    "messages.send":        "Mesaj gönder",
+    "mylistings.approved": "Yayında",
+    "mylistings.draft": "Taslak",
+    "mylistings.view": "Görüntüle",
+    "mylistings.edit": "Düzenle",
+    "mylistings.delete": "Sil",
+    "mylistings.empty": "İlan bulunamadı.",
+    "mylistings.createfirst": "İlk ilanınızı oluşturun",
+    "inquiries.title": "Talepler",
+    "inquiries.subtitle": "İlanlarınıza gelen alıcı mesajları.",
+    "inquiries.all": "Tümü",
+    "inquiries.new": "Yeni",
+    "inquiries.read": "Okundu",
+    "inquiries.done": "Tamamlandı",
+    "inquiries.reply": "Yanıt gönder",
+    "inquiries.placeholder": "Yanıt yazın…",
+    "inquiries.empty": "Henüz talep bulunmuyor.",
+    "inquiries.re": "İlgili ilan:",
+    "messages.title": "Mesajlar",
+    "messages.subtitle": "Burada taleplerinizi ve satıcıların yanıtlarını görebilirsiniz.",
+    "messages.empty": "Henüz mesajınız yok.",
+    "messages.send": "Mesaj gönder",
     "messages.placeholder": "Mesaj yazın…",
-
-    // Anzeige erstellen
-    "create.title":         "İlan oluştur",
-    "create.edit":          "İlanı düzenle",
-    "create.step1":         "Temel bilgiler",
-    "create.step2":         "Fiyat & Konum",
-    "create.step3":         "Teknik",
-    "create.step4":         "Açıklama",
-    "create.step5":         "Fotoğraflar",
-    "create.publish":       "İlanı yayınla",
-    "create.draft":         "Taslak olarak kaydet",
-    "create.type.sale":     "🏷️ Satılık",
-    "create.type.wanted":   "🔍 Aranıyor",
+    "create.title": "İlan oluştur",
+    "create.edit": "İlanı düzenle",
+    "create.step1": "Temel bilgiler",
+    "create.step2": "Fiyat & Konum",
+    "create.step3": "Teknik",
+    "create.step4": "Açıklama",
+    "create.step5": "Fotoğraflar",
+    "create.publish": "İlanı yayınla",
+    "create.draft": "Taslak olarak kaydet",
+    "create.type.sale": "🏷️ Satılık",
+    "create.type.wanted": "🔍 Aranıyor",
     "create.type.sale.sub": "Bir motor satıyorum",
-    "create.type.wanted.sub":"Bir motor arıyorum",
+    "create.type.wanted.sub": "Bir motor arıyorum",
+    "profil.title": "Profil",
+    "profil.save": "Profili kaydet",
+    "profil.delete": "Hesabı sil",
+    "profil.company": "Firma adı",
+    "profil.contact": "Yetkili kişi",
+    "condition.new": "Sıfır",
+    "condition.used": "İkinci el",
+    "condition.rebuilt": "Yenilenmiş",
+    "status.live": "Yayında",
+    "status.draft": "Taslak",
+    "btn.back": "Geri",
+    "btn.save": "Kaydet",
+    "btn.cancel": "İptal",
+    "btn.delete": "Sil",
+    "loading": "Yükleniyor…",
+    "error.notfound": "İlan bulunamadı.",
+    "topbar.contact": "Yardım & İletişim",
+    "topbar.dealer": "Satıcı alanı",
+    "topbar.imprint": "Künye (Impressum)",
+    "topbar.privacy": "Gizlilik",
+    "topbar.agb": "Şartlar (AGB)",
+    "idx.top.about": "Hakkımızda",
+    "idx.top.contact": "Yardım & İletişim",
+    "idx.top.dealer": "Satıcı alanı",
+    "idx.top.imprint": "Künye (Impressum)",
+    "idx.top.privacy": "Gizlilik",
+    "idx.top.terms": "Şartlar (AGB)",
+    "idx.hdr.search": "Ara",
+    "idx.hdr.create": "＋ İlan oluştur",
+    "idx.hdr.menu": "Menü",
+    "idx.mob.search": "🔍 Motor ara",
+    "idx.mob.create": "＋ İlan oluştur",
+    "idx.mob.account": "👤 Hesabım",
+    "idx.mob.messages": "💬 Mesajlar",
+    "idx.mob.listings": "📋 İlanlarım",
+    "idx.mob.logout": "🚪 Çıkış yap",
+    "idx.catbar.top": "Öne çıkan ilanlar",
+    "idx.side.filter": "Filtreler",
+    "idx.side.reset": "Sıfırla",
+    "idx.side.cats": "Kategoriler",
+    "idx.side.catsearch": "Kategori ara...",
+    "idx.side.fuel": "Yakıt / Tahrik",
+    "idx.side.cond": "Durum",
+    "idx.side.price": "Fiyat (€)",
+    "idx.side.seller": "Satıcı türü",
+    "idx.side.apply": "Filtreleri uygula →",
+    "idx.side.min": "Min €",
+    "idx.side.max": "Maks €",
+    "idx.grp.fz": "Araç motorları",
+    "idx.grp.boot": "Tekne motorları",
+    "idx.grp.ind": "Endüstriyel motorlar",
+    "idx.grp.agr": "Tarım & tarım makineleri",
+    "idx.grp.sond": "Özel & spesiyal motorlar",
+    "idx.grp.moto": "Motosiklet & iki tekerlekli",
+    "idx.grp.aus": "Değişim & yenilenmiş",
+    "idx.cat.pkw": "Otomobil motoru",
+    "idx.cat.lkw": "Kamyon motoru",
+    "idx.cat.bus": "Otobüs motoru",
+    "idx.cat.transporter": "Panelvan motoru",
+    "idx.cat.suv": "SUV motoru",
+    "idx.cat.aussenbord": "Dıştan takma motor",
+    "idx.cat.innenbord": "İçten takma motor",
+    "idx.cat.jetboot": "Jet bot motoru",
+    "idx.cat.segel": "Yardımcı motor (yelkenli)",
+    "idx.cat.elektro": "Elektrik motoru",
+    "idx.cat.hydraulik": "Hidrolik motor",
+    "idx.cat.kompressor": "Kompresör motoru",
+    "idx.cat.pumpe": "Pompa motoru",
+    "idx.cat.generator": "Jeneratör motoru",
+    "idx.cat.asynchron": "Asenkron motor",
+    "idx.cat.traktor": "Traktör motoru",
+    "idx.cat.maehdrescher": "Biçerdöver motoru",
+    "idx.cat.aufsitz": "Binicili çim biçme motoru",
+    "idx.cat.schlepper": "Çekici traktör motoru",
+    "idx.cat.aufzug": "Asansör motoru",
+    "idx.cat.achterbahn": "Hız treni motoru",
+    "idx.cat.arcade": "Oyun makinesi motoru",
+    "idx.cat.rollstuhl": "Tekerlekli sandalye motoru",
+    "idx.cat.windturbine": "Rüzgar türbini motoru",
+    "idx.cat.bagger": "Ekskavatör motoru",
+    "idx.cat.kran": "Vinç motoru",
+    "idx.cat.lok": "Lokomotif motoru",
+    "idx.cat.motorrad": "Motosiklet motoru",
+    "idx.cat.roller": "Scooter motoru",
+    "idx.cat.quad": "ATV motoru",
+    "idx.cat.austausch": "Değişim motoru",
+    "idx.cat.reman": "Yenilenmiş (Reman)",
+    "idx.cat.kurz": "Kısa blok motor",
+    "idx.fuel.diesel": "Dizel",
+    "idx.fuel.benzin": "Benzin",
+    "idx.fuel.elektro": "Elektrikli",
+    "idx.fuel.gas": "Gaz (LPG/CNG)",
+    "idx.fuel.hybrid": "Hibrit",
+    "idx.fuel.h2": "Hidrojen",
+    "idx.cond.all": "Tüm durumlar",
+    "idx.cond.new": "Sıfır",
+    "idx.cond.used": "İkinci el",
+    "idx.cond.reman": "Yenilenmiş",
+    "idx.cond.defect": "Arızalı / parça",
+    "idx.sel.verified": "Doğrulanmış satıcılar",
+    "idx.sel.top": "En yüksek puan",
+    "idx.sel.commercial": "Kurumsal",
+    "idx.sel.private": "Bireysel",
+    "idx.ad.label": "Reklam",
+    "idx.ad.badge": "Reklam",
+    "idx.ad.pending": "Google AdSense<br>onaydan sonra görünecek",
+    "idx.ad.cta": "Burada reklam verin →",
+    "idx.ad.space": "Reklam alanı",
+    "idx.ad.spacesub": "Reklamınız burada yer alabilir",
+    "idx.ad.spacecta": "Hemen reklam verin →",
+    "idx.mobfilter": "Filtreler & kategoriler",
+    "idx.mobfilter.close": "Filtreleri kapat",
+    "idx.list.loading": "İlanlar yükleniyor…",
+    "idx.list.empty": "Henüz onaylanmış ilan bulunmuyor.",
+    "idx.list.error": "Yükleme hatası.",
+    "idx.list.errorbox": "İlanlar yüklenemedi.",
+    "idx.list.errorpage": "Ana sayfa yüklenirken hata oluştu.",
+    "idx.list.errorpagebox": "Ana sayfa tam olarak yüklenemedi.",
+    "idx.list.count": "{n} güncel ilan",
+    "idx.list.count.one": "1 güncel ilan",
+    "idx.card.untitled": "Başlıksız",
+    "idx.card.unknown": "Bilinmiyor",
+    "idx.card.dealer": "Satıcı",
+    "idx.card.live": "Yayında",
+    "idx.faq.label": "Sık sorulan sorular",
+    "idx.faq.h2": "<span>İkinci el &amp;<br>yenilenmiş</span> motorlar hakkında her şey",
+    "idx.faq.sub": "Satın alma, montaj ve kullanım hakkındaki en önemli soruların yanıtları.",
+    "idx.faq.q1": "İkinci el bir motor ne kadar tutar?",
+    "idx.faq.a1": "Maliyet; tip, güç, durum, çalışma süresi ve kullanım alanına bağlıdır. İkinci el ve yenilenmiş motorlar, sıfır parçalara ekonomik bir alternatif olabilir.",
+    "idx.faq.q2": "Değişim motoru mantıklı mı?",
+    "idx.faq.a2": "Mevcut makine veya araç genel olarak iyi durumdaysa ve onarım ekonomik açıdan anlamlı kalıyorsa, değişim motoru çoğu zaman mantıklıdır.",
+    "idx.faq.q3": "İkinci el bir motor güvenli mi?",
+    "idx.faq.a3": "Güvenilir bir kaynaktan gelen, kontrol edilmiş bir motor güvenle kullanılabilir. Durum, geçmiş ve teknik kontrol belirleyicidir.",
+    "idx.faq.q4": "Güvenilir bir satıcıyı nasıl anlarım?",
+    "idx.faq.a4": "Şeffaf bilgiler, izlenebilir menşe, gerçek fotoğraflar, yapılan kontroller ve durum ile garanti hakkında net açıklamalar önemlidir.",
+    "idx.faq.q5": "İkinci el bir motorda hangi garanti olmalı?",
+    "idx.faq.a5": "Kategoriye ve satıcıya göre garanti veya yasal sorumluluk mümkündür. Yenilenmiş motorlar genellikle ek güvence sunar.",
+    "idx.faq.q6": "Bu motor benim uygulamama uyar mı?",
+    "idx.faq.a6": "Teknik veriler, ölçüler, bağlantılar, güç ve mevcut sistemle uyumluluk belirleyicidir.",
+    "idx.faq.q7": "Önemli teknik işaretleri nerede bulurum?",
+    "idx.faq.a7": "İşaretler genellikle tip etiketlerinde, gövde üzerinde, belgelerde veya üretici veri sayfalarında bulunur.",
+    "idx.faq.q8": "Farklı parça numaralı bir motoru kullanabilir miyim?",
+    "idx.faq.a8": "Teknik eşdeğerlik varsa bazı durumlarda evet. Farklılıklar kullanımdan önce uzmanca kontrol edilmelidir.",
+    "idx.faq.q9": "Model yılı veya versiyonu farklı bir motor uyar mı?",
+    "idx.faq.a9": "Model yılı, revizyon veya donanım farkları önemli olabilir. Satın almadan önce teknik kontrol önerilir.",
+    "idx.faq.q10": "Uyarlama veya ek bileşen gerekir mi?",
+    "idx.faq.a10": "Uygulamaya göre kumanda üniteleri, bağlantılar veya diğer bileşenlerin uyarlanması gerekebilir.",
+    "idx.faq.q11": "Ne kadar kilometre veya çalışma saati kabul edilebilir?",
+    "idx.faq.a11": "Sadece çalışma saati veya kilometre değil, özellikle bakım, ilgi ve genel durum belirleyicidir.",
+    "idx.faq.q12": "Bakım, kilometreden daha mı önemli?",
+    "idx.faq.a12": "Düzenli bakım ve belgelenmiş servis geçmişi çoğu zaman salt çalışma saatinden daha önemlidir.",
+    "idx.faq.q13": "Hangisi daha iyi: ikinci el mi, yenilenmiş mi?",
+    "idx.faq.a13": "Yenilenmiş motorlar genellikle daha fazla güvence sunar; ikinci el üniteler ise daha ekonomik olabilir.",
+    "idx.faq.q14": "Satın almadan önce olası hasarları nasıl anlarım?",
+    "idx.faq.a14": "Gözle muayene, test protokolleri, sesler, aşınma izleri ve geçmiş önemli ipuçları verir.",
+    "idx.faq.q15": "Bir motorda hangi belgeler bulunmalı?",
+    "idx.faq.a15": "Teknik veri sayfaları, test belgeleri, bakım kayıtları ve menşe belgeleri faydalıdır.",
+    "idx.faq.q16": "Montaj ne kadar tutar?",
+    "idx.faq.a16": "Montaj maliyeti; karmaşıklığa, uygulamaya ve gereken ek işlere göre büyük ölçüde değişir.",
+    "idx.faq.q17": "Aşınma parçaları da birlikte yenilenmeli mi?",
+    "idx.faq.a17": "Birçok uygulamada, değişim sırasında ilgili aşınma parçalarının da yenilenmesi mantıklıdır.",
+    "idx.faq.q18": "İkinci el bir motor ne kadar dayanır?",
+    "idx.faq.a18": "İyi bakım ve uygun kullanımla ikinci el bir motor uzun süre güvenilir şekilde çalışabilir.",
+    "idx.faq.q19": "Motoru kendim takabilir miyim?",
+    "idx.faq.a19": "Bu, deneyime ve karmaşıklığa bağlıdır. Zorlu uygulamalarda uzman personel önerilir.",
+    "idx.faq.q20": "Değişimden sonra nelere dikkat edilmeli?",
+    "idx.faq.a20": "Montajdan sonra fonksiyonlar, bağlantılar, işletme sıvıları ve ayarlar kontrol edilmelidir.",
+    "idx.nl.title": "Yeni ilanları doğrudan alın",
+    "idx.nl.sub": "Fiyat güncellemelerine, yeni ilanlara ve özel kampanyalara abone olun.",
+    "idx.nl.placeholder": "E-posta adresiniz",
+    "idx.nl.btn": "Abone ol",
+    "idx.nl.thanks": "Teşekkürler! Yakında 1A Motor'dan güncellemeler alacaksınız.",
+    "idx.ft.desc": "Sürdürülebilir döngüsel ekonomi için motor pazar yeri. Komisyonsuz motor alın & satın.",
+    "idx.ft.more": "Hakkımızda daha fazlası →",
+    "idx.ft.buy": "Alış",
+    "idx.ft.sell": "Satış",
+    "idx.ft.company": "Şirket",
+    "idx.ft.searchmotor": "Motor ara",
+    "idx.ft.car": "Otomobil motorları",
+    "idx.ft.truck": "Kamyon motorları",
+    "idx.ft.marine": "Tekne motorları",
+    "idx.ft.exchange": "Değişim motorları",
+    "idx.ft.create": "İlan oluştur",
+    "idx.ft.dealeracc": "Satıcı hesabı",
+    "idx.ft.dashboard": "Kontrol paneli",
+    "idx.ft.mylistings": "İlanlarım",
+    "idx.ft.imprint": "Künye (Impressum)",
+    "idx.ft.privacy": "Gizlilik",
+    "idx.ft.terms": "Şartlar (AGB)",
+    "idx.ft.contact": "İletişim",
+    "idx.ft.career": "Kariyer",
+    "idx.ft.messages": "Mesajlar",
+    "idx.ft.cookies": "Çerez ayarları",
+    "idx.ft.rights": "© 2026 1A Motor – Motor & Tahrik Teknolojisi Pazar Yeri",
+    "idx.hm.title": "Satıcı kaydı",
+    "idx.hm.sub": "1A Motor — Doğrulama & uyumluluk süreci",
+    "idx.hm.close": "Kapat",
+    "idx.hm.step1": "Temel bilgiler",
+    "idx.hm.step2": "Ticaret belgesi",
+    "idx.hm.step3": "Posta adresi",
+    "idx.hm.step4": "İletişim & vergi",
+    "idx.hm.step5": "Sonuç",
+    "idx.hm.s1.title": "Kişisel bilgiler & şirket detayları",
+    "idx.hm.s1.sub": "Tüm bilgiler süreç boyunca kontrol edilir ve ticaret belgenizle (Gewerbeschein) karşılaştırılır.",
+    "idx.hm.fname": "Ad *",
+    "idx.hm.lname": "Soyad *",
+    "idx.hm.company": "Firma adı *",
+    "idx.hm.legal": "Şirket türü",
+    "idx.hm.legal.sole": "Şahıs şirketi",
+    "idx.hm.email": "E-posta adresi *",
+    "idx.hm.phone": "Telefon numarası *",
+    "idx.hm.pw1": "Şifre *",
+    "idx.hm.pwhint": "En az 8 karakter, büyük/küçük harf ve bir rakam",
+    "idx.hm.pw2": "Şifreyi tekrarlayın *",
+    "idx.hm.bio": "Şirket açıklaması",
+    "idx.hm.bio.ph": "Uzmanlık alanı, motor türleri, teslimat bölgesi, hizmetler...",
+    "idx.hm.agb": "1A Motor'un <a href=\"agb.html\" target=\"_blank\" style=\"color:var(--blue2);\">Şartlarını (AGB)</a> ve <a href=\"datenschutz.html\" target=\"_blank\" style=\"color:var(--blue2);\">Gizlilik Politikasını</a> kabul ediyorum. *",
+    "idx.hm.s2.title": "Ticaret belgesini yükleyin",
+    "idx.hm.s2.sub": "Ticaret belgenizi (Gewerbeschein) veya eşdeğer bir işletme kaydını yükleyin. Kabul edilen formatlar: PDF, JPG, PNG — maks. 10 MB.",
+    "idx.hm.upload.title": "Ticaret belgesi seçin",
+    "idx.hm.upload.sub": "PDF, JPG veya PNG — maks. 10 MB. Tıklayın veya dosyayı buraya sürükleyin.",
+    "idx.hm.upload.load": "Belge yükleniyor...",
+    "idx.hm.upload.send": "Belge aktarılıyor...",
+    "idx.hm.upload.wait": "Yükleniyor...",
+    "idx.hm.upload.ok": "Belge başarıyla yüklendi",
+    "idx.hm.upload.fail": "Yükleme başarısız",
+    "idx.hm.ai.title": "Belge yüklendi — ekibimiz tarafından kontrol edilecek",
+    "idx.hm.ai.filename": "Dosya adı",
+    "idx.hm.ai.filesize": "Dosya boyutu",
+    "idx.hm.ai.filetype": "Format",
+    "idx.hm.ai.status": "Durum",
+    "idx.hm.ai.ok": "✓ Başarıyla yüklendi",
+    "idx.hm.ai.note": "ℹ Uyumluluk ekibimiz belgeyi 1–2 iş günü içinde manuel olarak kontrol eder ve bilgilerinizle karşılaştırır.",
+    "idx.hm.s3.title": "İşletme posta adresi",
+    "idx.hm.s3.sub": "Lütfen resmi işletme adresinizi girin. Ticaret belgenizle karşılaştırılacaktır. Kayıttan sonra bir onay mektubu gönderilir.",
+    "idx.hm.street": "Sokak & kapı numarası *",
+    "idx.hm.plz": "Posta kodu *",
+    "idx.hm.city": "Şehir *",
+    "idx.hm.country": "Ülke",
+    "idx.hm.country.de": "Almanya",
+    "idx.hm.country.at": "Avusturya",
+    "idx.hm.country.ch": "İsviçre",
+    "idx.hm.addr.ok": "✓ Posta kodu ve şehir tutarlı — adres kayıttan sonra mektupla doğrulanacak.",
+    "idx.hm.s4.title": "İletişim & vergi bilgileri",
+    "idx.hm.s4.sub": "Bu bilgiler satıcı onayı ve vergisel işlemler için gereklidir. Ekibimiz doğrulama görüşmesi için sizinle iletişime geçecektir.",
+    "idx.hm.tel": "İş telefonu *",
+    "idx.hm.avail": "Ulaşılabilirlik",
+    "idx.hm.avail.1": "Pzt–Cum 9–18",
+    "idx.hm.avail.2": "Pzt–Cum 8–20",
+    "idx.hm.avail.3": "Pzt–Cmt 9–18",
+    "idx.hm.avail.4": "Esnek saatler (lütfen e-posta gönderin)",
+    "idx.hm.tax": "Vergi numarası / KDV kimlik no *",
+    "idx.hm.tax.ph": "örn. DE 291 234 567",
+    "idx.hm.hrb": "Ticaret sicil numarası",
+    "idx.hm.hrb.ph": "HRB 12345 (varsa)",
+    "idx.hm.web": "Web sitesi / online mağaza",
+    "idx.hm.web.ph": "https://firmaniz.de",
+    "idx.hm.callnote": "📞 Uyumluluk ekibimiz, kimliğinizi doğrulamak için kayıttan sonra verdiğiniz numaradan sizi arayacaktır. Lütfen ulaşılabilir olduğunuzdan emin olun.",
+    "idx.hm.credit": "1A Motor tarafından kredi ve ticaret sicili sorgusu yapılmasını kabul ediyorum (isteğe bağlı, onayı hızlandırır). *",
+    "idx.hm.done.title": "Başvurunuz başarıyla gönderildi!",
+    "idx.hm.done.sub": "Satıcı başvurunuz iletildi. Uyumluluk ekibimiz belgelerinizi inceler ve 1–2 iş günü içinde size dönüş yapar.",
+    "idx.hm.chk1": "Hesap oluşturuldu",
+    "idx.hm.chk1.d": "Giriş bilgileri <strong id=\"hm-result-email\">e-posta adresinize</strong> gönderildi",
+    "idx.hm.chk2": "Ticaret belgesi yüklendi",
+    "idx.hm.chk2.d": "Ekibimizin manuel kontrolü bekleniyor",
+    "idx.hm.chk3": "Adres kaydedildi",
+    "idx.hm.chk3.d": "Onay mektubu gönderilecek",
+    "idx.hm.chk4": "Telefon doğrulaması",
+    "idx.hm.chk4.d": "Ekibimiz sizi verdiğiniz numaradan arayacak",
+    "idx.hm.badge.done": "Tamamlandı",
+    "idx.hm.badge.sent": "Gönderildi",
+    "idx.hm.badge.open": "Beklemede",
+    "idx.hm.mailnote": "📧 Sonraki tüm adımları içeren bir onay e-postası <strong id=\"hm-result-email2\"></strong> adresine gönderildi. Lütfen spam klasörünüzü de kontrol edin.",
+    "idx.hm.hint": "Adım {n} / {t} — * işaretli tüm alanlar zorunludur.",
+    "idx.hm.hint.done": "Kayıt tamamlandı.",
+    "idx.hm.back": "← Geri",
+    "idx.hm.next": "Devam →",
+    "idx.hm.finish": "✓ Kapat",
+    "idx.hm.submitting": "Gönderiliyor...",
+    "idx.hm.err.required": "Lütfen tüm zorunlu alanları doldurun.",
+    "idx.hm.err.email": "Lütfen geçerli bir e-posta adresi girin.",
+    "idx.hm.err.pwlen": "Şifre en az 8 karakter olmalıdır.",
+    "idx.hm.err.pwcomp": "Şifre büyük/küçük harf ve bir rakam içermelidir.",
+    "idx.hm.err.pwmatch": "Şifreler eşleşmiyor.",
+    "idx.hm.err.agb": "Lütfen Şartları (AGB) ve Gizlilik Politikasını kabul edin.",
+    "idx.hm.err.upload": "Devam etmeden önce lütfen ticaret belgenizi yükleyin.",
+    "idx.hm.err.addr": "Lütfen sokak, posta kodu ve şehri eksiksiz girin.",
+    "idx.hm.err.plz": "Lütfen geçerli bir posta kodu girin (4–5 rakam).",
+    "idx.hm.err.tel": "Lütfen bir telefon numarası girin.",
+    "idx.hm.err.telvalid": "Lütfen geçerli bir telefon numarası girin.",
+    "idx.hm.err.tax": "Satıcı onayı için vergi numarası veya KDV kimlik numarası zorunludur.",
+    "idx.hm.err.filesize": "Dosya çok büyük. Lütfen 10 MB'tan küçük bir dosya yükleyin.",
+    "idx.hm.err.filetype": "Lütfen yalnızca PDF, JPG veya PNG yükleyin.",
+    "idx.hm.err.uploadfail": "Yükleme başarısız: ",
+    "idx.hm.err.retry": "Lütfen tekrar deneyin.",
+    "idx.hm.err.signup": "Kayıt başarısız. Lütfen tekrar deneyin.",
+    "idx.hm.err.exists": "Bu e-posta adresi zaten kayıtlı. Lütfen giriş yapın.",
+    "idx.hm.err.pwreq": "Şifre gereksinimleri karşılamıyor.",
+    "idx.ch.sub": "Hesap oluştur — hesap türünü seçin",
+    "idx.ch.h2": "1A Motor'u nasıl kullanmak istersiniz?",
+    "idx.ch.p": "Hesap türünüzü seçin — ücretsiz, taahhütsüz, istediğiniz zaman değiştirilebilir.",
+    "idx.ch.badge.pop": "Popüler",
+    "idx.ch.badge.pro": "Profesyonel",
+    "idx.ch.priv.title": "Bireysel & alıcı",
+    "idx.ch.priv.desc": "Ticaret belgesi olmadan motor satın alın, talep gönderin ve ara sıra bireysel olarak satış yapın.",
+    "idx.ch.priv.f1": "Motor ara & satın al",
+    "idx.ch.priv.f2": "Doğrudan satıcıya sor",
+    "idx.ch.priv.f3": "Bireysel olarak motor ilanı ver",
+    "idx.ch.priv.f4": "Ücretsiz & hızlı",
+    "idx.ch.priv.btn": "Ücretsiz kayıt ol",
+    "idx.ch.priv.trust": "%100 ücretsiz – taahhütsüz & güvenli",
+    "idx.ch.priv.alt": "1A Motor'da bireysel motor satın alma",
+    "idx.ch.deal.title": "Kurumsal satıcı",
+    "idx.ch.deal.desc": "Motorlarla ticari olarak ilgileniyorsunuz ve ürün yelpazenizi 1A Motor'da listelemek istiyorsunuz.",
+    "idx.ch.deal.f1": "Sınırsız ilan yayınlayın",
+    "idx.ch.deal.f2": "Doğrulanmış satıcı profili",
+    "idx.ch.deal.f3": "Alıcılardan doğrudan talepler",
+    "idx.ch.deal.f4": "Kontrol paneli & istatistikler",
+    "idx.ch.deal.btn": "Satıcı olarak başla",
+    "idx.ch.deal.trust": "Ücretsiz kayıt · Taahhütsüz · İstediğiniz zaman iptal",
+    "idx.ch.deal.alt": "1A Motor'da satıcı kontrol paneli",
+    "idx.ch.foot": "Zaten kayıtlı mısınız? <a href=\"login.html\">Giriş yapın →</a>",
+    "idx.meta.title": "1A Motor – Motor alın & satın | Motor pazar yeri",
+    "idx.meta.desc": "1A Motor – motor ve tahrik teknolojisi pazar yeri. Araç motorları, endüstriyel motorlar, tekne motorları alın ve satın. Doğrulanmış satıcılar, doğrudan talepler, komisyon yok.",
+  };
 
-    // Profil
-    "profil.title":         "Profil",
-    "profil.save":          "Profili kaydet",
-    "profil.delete":        "Hesabı sil",
-    "profil.company":       "Firma adı",
-    "profil.contact":       "Yetkili kişi",
-
-    // Allgemein
-    "condition.new":        "Sıfır",
-    "condition.used":       "İkinci el",
-    "condition.rebuilt":    "Yenilenmiş",
-    "status.live":          "Yayında",
-    "status.draft":         "Taslak",
-    "btn.back":             "Geri",
-    "btn.save":             "Kaydet",
-    "btn.cancel":           "İptal",
-    "btn.delete":           "Sil",
-    "loading":              "Yükleniyor…",
-    "error.notfound":       "İlan bulunamadı.",
-    "topbar.contact":       "Yardım & İletişim",
-    "topbar.dealer":        "Satıcı alanı",
-    "topbar.imprint":       "Künye (Impressum)",
-    "topbar.privacy":       "Gizlilik",
-    "topbar.agb":           "Şartlar (AGB)",
+  // ── Kategorie-/Zustandsnamen aus der Datenbank (immer deutsch) ─────
+  var TR_DB = {
+    "Automotor": "Otomobil motoru",
+    "Dieselmotor Auto": "Otomobil dizel motoru",
+    "Benzinmotor Auto": "Otomobil benzinli motoru",
+    "Hybridmotor": "Hibrit motor",
+    "Elektromotor Auto": "Otomobil elektrik motoru",
+    "Motorradmotor": "Motosiklet motoru",
+    "Roller Motor": "Scooter motoru",
+    "LKW Motor": "Kamyon motoru",
+    "Busmotor": "Otobüs motoru",
+    "Traktormotor": "Traktör motoru",
+    "Landmaschinenmotor": "Tarım makinesi motoru",
+    "Baumaschinenmotor": "İş makinesi motoru",
+    "Baggermotor": "Ekskavatör motoru",
+    "Radlader Motor": "Lastikli yükleyici motoru",
+    "Gabelstapler Motor": "Forklift motoru",
+    "Bootsmotor": "Tekne motoru",
+    "Außenbordmotor": "Dıştan takma motor",
+    "Innenbordmotor": "İçten takma motor",
+    "Schiffsdieselmotor": "Gemi dizel motoru",
+    "Jetski Motor": "Jet ski motoru",
+    "Flugzeugmotor": "Uçak motoru",
+    "Turbinenmotor": "Türbin motoru",
+    "Jetmotor": "Jet motoru",
+    "Propellermotor Flugzeug": "Uçak pervane motoru",
+    "Hubschraubermotor": "Helikopter motoru",
+    "Elektromotor Industrie": "Endüstriyel elektrik motoru",
+    "Drehstrommotor": "Trifaze motor",
+    "Wechselstrommotor": "Alternatif akım motoru",
+    "Gleichstrommotor": "Doğru akım motoru",
+    "Servomotor": "Servo motor",
+    "Schrittmotor": "Step motor",
+    "Getriebemotor": "Redüktörlü motor",
+    "Linearmotor": "Lineer motor",
+    "Synchronmotor": "Senkron motor",
+    "Asynchronmotor": "Asenkron motor",
+    "Hochspannungsmotor": "Yüksek gerilim motoru",
+    "Niederspannungsmotor": "Alçak gerilim motoru",
+    "Großmotor Industrie": "Endüstriyel büyük motor",
+    "Spezialmotor Industrie": "Endüstriyel özel motor",
+    "Generator Motor": "Jeneratör motoru",
+    "Pumpenmotor": "Pompa motoru",
+    "Kompressormotor": "Kompresör motoru",
+    "Lüftermotor": "Fan motoru",
+    "Ventilatormotor": "Vantilatör motoru",
+    "Förderbandmotor": "Konveyör motoru",
+    "Kranmotor": "Vinç motoru",
+    "Aufzugmotor": "Asansör motoru",
+    "Rolltreppenmotor": "Yürüyen merdiven motoru",
+    "Mischermotor": "Karıştırıcı motoru",
+    "Schneckenmotor": "Helezon motoru",
+    "Karussellmotor": "Atlıkarınca motoru",
+    "Achterbahnmotor": "Hız treni motoru",
+    "Fahrgeschäft Motor": "Lunapark makinesi motoru",
+    "Schausteller Motor": "Lunapark işletmecisi motoru",
+    "Spielautomaten Motor": "Oyun makinesi motoru",
+    "Arcade Motor": "Arcade motoru",
+    "Drohnenmotor": "Drone motoru",
+    "Modellbau Motor": "Maket motoru",
+    "RC Motor": "RC motoru",
+    "Kartmotor": "Kart motoru",
+    "Rasenmähermotor": "Çim biçme makinesi motoru",
+    "Aufsitzmäher Motor": "Binicili çim biçme motoru",
+    "Kettensägenmotor": "Motorlu testere motoru",
+    "Heckenscherenmotor": "Çit budama motoru",
+    "Laubbläser Motor": "Yaprak üfleyici motoru",
+    "Schneefräsenmotor": "Kar küreme makinesi motoru",
+    "Generator Kleinmotor": "Küçük jeneratör motoru",
+    "Stromaggregat Motor": "Jeneratör grubu motoru",
+    "Wasserpumpenmotor": "Su pompası motoru",
+    "Gartenmaschinenmotor": "Bahçe makinesi motoru",
+    "Hydraulikmotor": "Hidrolik motor",
+    "Pneumatikmotor": "Pnömatik motor",
+    "Vibrationsmotor": "Vibrasyon motoru",
+    "Spindelmotor": "Spindle motoru",
+    "Hochleistungsmotor": "Yüksek performanslı motor",
+    "Präzisionsmotor": "Hassas motor",
+    "CNC Motor": "CNC motoru",
+    "Robotermotor": "Robot motoru",
+    "Industrieroboter Motor": "Endüstriyel robot motoru",
+    "Werkzeugmaschinenmotor": "Takım tezgahı motoru",
+    "E-Bike Motor": "E-bisiklet motoru",
+    "Elektro Roller Motor": "Elektrikli scooter motoru",
+    "Elektro Motorrad Motor": "Elektrikli motosiklet motoru",
+    "Elektro Bootsmotor": "Elektrikli tekne motoru",
+    "Elektro Außenbordmotor": "Elektrikli dıştan takma motor",
+    "Elektro Flugmotor": "Elektrikli uçuş motoru",
+    "Smart Motor": "Akıllı motor",
+    "IoT Motor": "IoT motoru",
+    "Energiesparmotor": "Enerji tasarruflu motor",
+    "Permanentmagnet Motor": "Sabit mıknatıslı motor",
+    "Gasturbinenmotor": "Gaz türbini motoru",
+    "Dampfturbinenmotor": "Buhar türbini motoru",
+    "Dieselaggregat Motor": "Dizel jeneratör motoru",
+    "Notstromaggregat Motor": "Acil durum jeneratörü motoru",
+    "Industrie Diesel Motor": "Endüstriyel dizel motor",
+    "Schiffsturbinenmotor": "Gemi türbini motoru",
+    "Hochdrehzahlmotor": "Yüksek devirli motor",
+    "Schwerlastmotor": "Ağır hizmet motoru",
+    "Spezialanfertigung Motor": "Özel üretim motor",
+    "Austauschmotor": "Değişim motoru",
+    "Sonstiges": "Diğer",
+    "PKW Motor": "Otomobil motoru",
+    "Bus Motor": "Otobüs motoru",
+    "Transporter Motor": "Panelvan motoru",
+    "SUV Motor": "SUV motoru",
+    "Jetboot Motor": "Jet bot motoru",
+    "Segelboot Hilfsmotor": "Yelkenli yardımcı motoru",
+    "Elektromotor": "Elektrik motoru",
+    "Kompressor Motor": "Kompresör motoru",
+    "Generatormotor": "Jeneratör motoru",
+    "Traktor Motor": "Traktör motoru",
+    "Mähdrescher Motor": "Biçerdöver motoru",
+    "Schlepper Motor": "Çekici traktör motoru",
+    "Rollstuhlmotor": "Tekerlekli sandalye motoru",
+    "Windturbinenmotor": "Rüzgar türbini motoru",
+    "Lok Motor": "Lokomotif motoru",
+    "Motorrad Motor": "Motosiklet motoru",
+    "Quad Motor": "ATV motoru",
+    "Generalüberholt": "Yenilenmiş",
+    "Kurzmotor": "Kısa blok motor",
+    "Autobatterie": "Otomobil aküsü",
+    "LKW Batterie": "Kamyon aküsü",
+    "Motorradbatterie": "Motosiklet aküsü",
+    "Bootsbatterie": "Tekne aküsü",
+    "Industriebatterie": "Endüstriyel akü",
+    "Solarbatterie": "Solar akü",
+    "Traktionsbatterie": "Traksiyon aküsü",
+    "E-Auto Batterie": "Elektrikli araç bataryası",
+    "Batterie": "Akü",
+    "Neu": "Sıfır",
+    "Gebraucht": "İkinci el",
+    "Defekt": "Arızalı",
+    "Überholt": "Revizyonlu",
   };
 
   if (typeof I18n === "undefined" || !I18n) {
@@ -224,24 +632,34 @@
     return;
   }
 
-  // ── 1. In das translations-Objekt eintragen (falls erreichbar) ──────
-  try {
-    if (typeof translations === "object" && translations) {
-      translations.tr = TR;
-    }
-  } catch (e) { /* nicht erreichbar – Fallback unten greift */ }
+  // ── 1. In translations / dbTerms eintragen (falls erreichbar) ──────
+  try { if (typeof translations === "object" && translations) translations.tr = TR; } catch (e) {}
+  try { if (typeof dbTerms === "object" && dbTerms) dbTerms.tr = TR_DB; } catch (e) {}
 
-  // ── 2. Harter Fallback: I18n.t umhüllen ─────────────────────────────
-  const _t = I18n.t;
-  I18n.t = function (key) {
-    if (this.lang === "tr" && TR[key]) return TR[key];
-    return _t.call(this, key);
+  // ── 2. Locale für price() und num() ────────────────────────────────
+  if (I18n.locales) I18n.locales.tr = "tr-TR";
+
+  // ── 3. Harte Fallbacks, falls die Objekte nicht erreichbar waren ───
+  var _t = I18n.t;
+  I18n.t = function (key, vars) {
+    if (this.lang === "tr" && TR[key] !== undefined) {
+      var s = TR[key];
+      if (vars) for (var k in vars) s = s.split("{" + k + "}").join(vars[k]);
+      return s;
+    }
+    return _t.call(this, key, vars);
   };
 
-  // ── 3. Toggle-Button: 🇹🇷 TR anzeigen ────────────────────────────────
-  const _updateToggle = I18n.updateToggle;
+  var _term = I18n.term;
+  I18n.term = function (name) {
+    if (this.lang === "tr" && name && TR_DB[name]) return TR_DB[name];
+    return _term.call(this, name);
+  };
+
+  // ── 4. Umschalter-Button: 🇹🇷 TR ────────────────────────────────────
+  var _updateToggle = I18n.updateToggle;
   I18n.updateToggle = function () {
-    const btn = document.getElementById("lang-toggle");
+    var btn = document.getElementById("lang-toggle");
     if (!btn) return;
     if (this.lang === "tr") {
       btn.innerHTML = '🇹🇷 TR <span style="font-size:9px;opacity:.7;">▾</span>';
@@ -250,15 +668,15 @@
     _updateToggle.call(this);
   };
 
-  // ── 4. TR ins Dropdown einhängen (idempotent) ───────────────────────
+  // ── 5. Türkçe ins Dropdown einhängen (idempotent) ──────────────────
   function ensureTrOption() {
-    const dropdown = document.getElementById("lang-dropdown");
+    var dropdown = document.getElementById("lang-dropdown");
     if (!dropdown) return false;
     if (dropdown.querySelector("[data-lang-tr]")) return true;
 
-    const item = document.createElement("button");
-    item.setAttribute("data-lang-tr", "1");
+    var item = document.createElement("button");
     item.type = "button";
+    item.setAttribute("data-lang-tr", "1");
     item.style.cssText =
       "display:flex;align-items:center;gap:9px;width:100%;" +
       "padding:11px 14px;border:none;background:none;" +
@@ -266,9 +684,9 @@
       "cursor:pointer;text-align:left;font-family:inherit;" +
       "transition:background .12s;";
     item.innerHTML = "🇹🇷 Türkçe";
-    item.addEventListener("mouseenter", () => { item.style.background = "#f0f4f8"; });
-    item.addEventListener("mouseleave", () => { item.style.background = "none"; });
-    item.addEventListener("click", (e) => {
+    item.addEventListener("mouseenter", function () { item.style.background = "#f0f4f8"; });
+    item.addEventListener("mouseleave", function () { item.style.background = "none"; });
+    item.addEventListener("click", function (e) {
       e.stopPropagation();
       I18n.setLang("tr");
       dropdown.style.display = "none";
@@ -277,23 +695,26 @@
     return true;
   }
 
-  // Mehrere Versuche – der Header wird teils von auth-header.js
-  // nachträglich aufgebaut.
-  [0, 150, 500, 1200, 2500].forEach(ms => setTimeout(ensureTrOption, ms));
+  // injectToggle() läuft bei DOMContentLoaded und nochmal bei load+120ms.
+  [0, 150, 400, 900, 1800, 3000].forEach(function (ms) {
+    setTimeout(ensureTrOption, ms);
+  });
   document.addEventListener("DOMContentLoaded", ensureTrOption);
-  window.addEventListener("load", () => {
-    ensureTrOption();
-    I18n.updateToggle();
+  window.addEventListener("load", function () {
+    setTimeout(function () { ensureTrOption(); I18n.updateToggle(); }, 200);
   });
 
-  // ── 5. Auto-Erkennung für Besucher aus der Türkei ────────────────────
-  // Greift nur beim ersten Besuch. Sobald der Nutzer selbst eine
-  // Sprache wählt, gewinnt immer seine Wahl (localStorage).
+  // ── 6. Auto-Erkennung für Besucher aus der Türkei ───────────────────
+  // Greift nur beim ersten Besuch. Wählt der Nutzer selbst eine
+  // Sprache, gewinnt ab dann immer seine Wahl (localStorage).
   if (AUTO_DETECT && !localStorage.getItem("1amotor_lang")) {
-    const langs = [navigator.language].concat(navigator.languages || []);
-    const wantsTr = langs.some(l => (l || "").toLowerCase().indexOf("tr") === 0);
+    var list = [navigator.language].concat(navigator.languages || []);
+    var wantsTr = list.some(function (l) {
+      return (l || "").toLowerCase().indexOf("tr") === 0;
+    });
     if (wantsTr) {
       I18n.lang = "tr";
+      document.documentElement.lang = "tr";
       if (document.readyState !== "loading") {
         I18n.apply();
         I18n.updateToggle();
@@ -302,4 +723,5 @@
   }
 
   window.I18N_TR = TR;
+  window.I18N_TR_DB = TR_DB;
 })();
