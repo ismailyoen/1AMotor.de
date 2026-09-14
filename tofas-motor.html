@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Tofaş Motor Alım Satım – Şahin, Doğan, Kartal Motorları | 1AMotor</title>
+<meta name="description" content="Tofaş Şahin, Doğan ve Kartal motorları ve yedek parçaları için ilan platformu. 1.4 ve 1.6 motorlar, karbüratörlü ve enjeksiyonlu versiyonlar. Komisyonsuz ilan ver." />
+<link rel="canonical" href="https://1amotor.de/tofas-motor.html" />
+<link rel="alternate" hreflang="tr" href="https://1amotor.de/tofas-motor.html" />
+<link rel="alternate" hreflang="de" href="https://1amotor.de/tofas-motoren.html" />
+<link rel="alternate" hreflang="x-default" href="https://1amotor.de/tofas-motoren.html" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Tofaş Motor Alım Satım – Şahin, Doğan, Kartal | 1AMotor" />
+<meta property="og:description" content="Tofaş motorları ve yedek parçaları için ilan platformu. Komisyonsuz." />
+<meta property="og:url" content="https://1amotor.de/tofas-motor.html" />
+<meta property="og:image" content="https://1amotor.de/images/tofas/09_dogan_silber_sonnenuntergang.jpg" />
+<meta property="og:locale" content="tr_TR" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --dark:    #0d1b2a;
+    --navy:    #1b2d42;
+    --blue:    #1a5fa8;
+    --blue2:   #2176c7;
+    --sky:     #4da6ff;
+    --light:   #e8f2fc;
+    --white:   #ffffff;
+    --muted:   #7a93ae;
+    --border:  #e0e9f2;
+    --bg:      #f4f7fb;
+    --success: #10b981;
+    --shadow:  0 2px 16px rgba(13,27,42,0.08);
+    --shadow2: 0 8px 40px rgba(13,27,42,0.14);
+    --r:       12px;
+    --max:     1360px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', Arial, sans-serif; background: var(--bg); color: var(--dark); line-height: 1.5; }
+  a { text-decoration: none; color: inherit; }
+  img { max-width: 100%; display: block; }
+  .container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+  /* ── Topbar / Header ── */
+  .topbar { background: var(--navy); font-size: 12.5px; color: rgba(255,255,255,0.55); }
+  .topbar-inner { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; gap: 12px; flex-wrap: wrap; }
+  .topbar a { color: rgba(255,255,255,0.55); transition: color .15s; }
+  .topbar a:hover { color: var(--sky); }
+  .top-left { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+
+  .header { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+  .header-inner { display: flex; align-items: center; gap: 24px; padding: 14px 0; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 38px; height: 38px; border-radius: 9px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center; font-weight: 900; font-size: 15px; color: #fff;
+  }
+  .logo-name { font-size: 21px; font-weight: 800; letter-spacing: -.3px; color: var(--dark); }
+  .header-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .hdr-btn { font-family: inherit; font-size: 13.5px; font-weight: 700; padding: 10px 16px; border-radius: 9px; cursor: pointer; border: 1px solid transparent; transition: all .15s; }
+  .hdr-btn-outline { background: #fff; border-color: var(--border); color: var(--dark); }
+  .hdr-btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+  .hdr-btn-primary { background: var(--blue); color: #fff; }
+  .hdr-btn-primary:hover { background: var(--blue2); }
+
+  /* ── Breadcrumb ── */
+  .crumb { font-size: 13px; color: var(--muted); padding: 16px 0 0; }
+  .crumb a:hover { color: var(--blue); }
+  .crumb span { margin: 0 7px; opacity: .5; }
+
+  /* ── Hero ── */
+  .hero { position: relative; border-radius: 16px; overflow: hidden; margin-top: 14px; box-shadow: var(--shadow2); }
+  .hero img { width: 100%; height: 380px; object-fit: cover; }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(13,27,42,.92) 0%, rgba(13,27,42,.72) 45%, rgba(13,27,42,.15) 100%);
+    display: flex; align-items: center; padding: 0 clamp(24px, 5vw, 64px);
+  }
+  .hero-text { max-width: 620px; color: #fff; }
+  .hero-kicker { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sky); margin-bottom: 12px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 44px); font-weight: 900; letter-spacing: -.8px; line-height: 1.12; margin-bottom: 14px; }
+  .hero p { font-size: clamp(14px, 1.5vw, 16.5px); color: rgba(255,255,255,.78); line-height: 1.65; margin-bottom: 24px; }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { font-family: inherit; font-size: 14.5px; font-weight: 700; padding: 13px 24px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; display: inline-block; transition: all .15s; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue2); }
+  .btn-ghost { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.25); }
+  .btn-ghost:hover { background: rgba(255,255,255,.18); }
+
+  .img-note { font-size: 11.5px; color: var(--muted); text-align: right; padding: 6px 2px 0; font-style: italic; }
+
+  /* ── Sections ── */
+  section { padding: 52px 0; }
+  .sec-head { max-width: 760px; margin-bottom: 32px; }
+  .sec-head h2 { font-size: clamp(22px, 2.6vw, 30px); font-weight: 800; letter-spacing: -.5px; margin-bottom: 10px; }
+  .sec-head p { font-size: 15px; color: var(--muted); line-height: 1.7; }
+
+  .intro-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 36px; align-items: center; }
+  .intro-grid p { font-size: 15px; line-height: 1.8; color: #3a5169; margin-bottom: 14px; }
+  .intro-img { border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
+
+  /* ── Model cards ── */
+  .models { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
+  .model-card {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--r);
+    overflow: hidden; box-shadow: var(--shadow); transition: transform .15s, box-shadow .15s;
+  }
+  .model-card:hover { transform: translateY(-3px); box-shadow: var(--shadow2); }
+  .model-card img { width: 100%; height: 180px; object-fit: cover; }
+  .model-body { padding: 18px 20px 20px; }
+  .model-body h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .model-years { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin-bottom: 10px; }
+  .model-body p { font-size: 13.8px; color: #55708c; line-height: 1.7; margin-bottom: 14px; }
+  .model-link { font-size: 13.5px; font-weight: 700; color: var(--blue); }
+  .model-link:hover { color: var(--blue2); }
+
+  /* ── Table ── */
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r); background: #fff; box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th { background: var(--navy); color: rgba(255,255,255,.85); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; text-align: left; padding: 13px 18px; }
+  td { padding: 13px 18px; font-size: 14px; border-top: 1px solid var(--border); color: #3a5169; }
+  tbody tr:hover { background: var(--bg); }
+  td strong { color: var(--dark); font-weight: 700; }
+
+  /* ── Gallery ── */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .gallery figure { border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); background: #fff; }
+  .gallery img { width: 100%; height: 165px; object-fit: cover; }
+  .gallery figcaption { font-size: 12.5px; font-weight: 600; color: var(--muted); padding: 9px 12px; }
+
+  /* ── FAQ ── */
+  .faq { max-width: 860px; }
+  details {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 10px; overflow: hidden;
+  }
+  summary { padding: 16px 20px; font-size: 15px; font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; color: var(--blue); font-size: 20px; font-weight: 400; line-height: 1; }
+  details[open] summary::after { content: '−'; }
+  details p { padding: 0 20px 18px; font-size: 14.2px; color: #55708c; line-height: 1.75; }
+
+  /* ── CTA ── */
+  .cta {
+    background: linear-gradient(135deg, var(--navy), #2a4a6b);
+    border-radius: 16px; padding: clamp(30px, 5vw, 52px); text-align: center; color: #fff;
+  }
+  .cta h2 { font-size: clamp(21px, 2.6vw, 30px); font-weight: 800; margin-bottom: 12px; letter-spacing: -.4px; }
+  .cta p { font-size: 15px; color: rgba(255,255,255,.72); max-width: 560px; margin: 0 auto 26px; line-height: 1.7; }
+  .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── Footer ── */
+  .footer { background: var(--dark); padding: 52px 0 28px; border-top: 3px solid var(--blue); margin-top: 60px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 36px; }
+  .footer-desc { font-size: 13px; color: rgba(255,255,255,.4); line-height: 1.7; max-width: 260px; }
+  .footer h4 { font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .09em; margin-bottom: 16px; }
+  .footer ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer ul li a { font-size: 13.5px; color: rgba(255,255,255,.5); transition: color .12s; }
+  .footer ul li a:hover { color: var(--sky); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,.08); padding-top: 22px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    font-size: 12px; color: rgba(255,255,255,.28);
+  }
+  .footer-bottom-links { display: flex; gap: 20px; }
+  .footer-bottom-links a { color: rgba(255,255,255,.35); }
+  .footer-bottom-links a:hover { color: var(--sky); }
+
+  @media (max-width: 900px) {
+    .intro-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .hero img { height: 300px; }
+    .hero-overlay { background: linear-gradient(180deg, rgba(13,27,42,.55) 0%, rgba(13,27,42,.92) 100%); }
+    .header-right { display: none; }
+  }
+  @media (max-width: 560px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    section { padding: 38px 0; }
+  }
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://1amotor.de/tofas-motor.html#page",
+      "url": "https://1amotor.de/tofas-motor.html",
+      "name": "Tofaş Motor Alım Satım – Şahin, Doğan, Kartal Motorları",
+      "description": "Tofaş Şahin, Doğan ve Kartal motorları ve yedek parçaları için ilan platformu.",
+      "inLanguage": "tr",
+      "isPartOf": { "@type": "WebSite", "name": "1AMotor", "url": "https://1amotor.de/" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "1AMotor", "item": "https://1amotor.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Otomobil Motorları", "item": "https://1amotor.de/suche.html?category=Automotor" },
+        { "@type": "ListItem", "position": 3, "name": "Tofaş Motor", "item": "https://1amotor.de/tofas-motor.html" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Tofaş Şahin ve Doğan motorları birbirinin yerine kullanılabilir mi?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Şahin, Doğan ve Kartal aynı Tofaş gövde ailesini paylaşır ve motor grubu büyük ölçüde ortaktır. Yine de karbüratörlü ve enjeksiyonlu versiyonlar arasında yakıt sistemi, kablo tesisatı ve manifold farkları bulunur. Satın almadan önce motor kodunu ve üretim yılını satıcıyla teyit edin." }
+        },
+        {
+          "@type": "Question",
+          "name": "Tofaş motor yedek parçaları hâlâ bulunabiliyor mu?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Evet. Üretim 2002'de sona ermiş olsa da Tofaş motor grubu Fiat kökenlidir ve birçok aşınma parçası hâlâ tedarik edilebilmektedir. Çıkma ve revizyonlu motorlar ise ikinci el pazarında düzenli olarak yer bulur." }
+        },
+        {
+          "@type": "Question",
+          "name": "1AMotor üzerinden ilan vermek ücretli mi?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Hayır. 1AMotor'da ilan vermek komisyonsuzdur. Alıcı ve satıcı doğrudan iletişime geçer, platform satıştan pay almaz." }
+        },
+        {
+          "@type": "Question",
+          "name": "Almanya'dan Türkiye'ye motor gönderimi mümkün mü?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Gönderim koşulları tamamen satıcıya bağlıdır ve ilan detayında belirtilir. Nakliye, gümrük ve teslimat şartlarını doğrudan satıcıyla netleştirmenizi öneririz." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="top-left">
+      <a href="ueber-uns.html">Hakkımızda</a>
+      <a href="kontakt.html">Yardım &amp; İletişim</a>
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Gizlilik</a>
+      <a href="agb.html">Şartlar</a>
+      <a href="tofas-motoren.html" style="color:var(--sky);font-weight:600;">Deutsch</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">1A</div>
+      <div class="logo-name">Motor</div>
+    </a>
+    <div class="header-right">
+      <a href="suche.html?q=Tofa%C5%9F"><button class="hdr-btn hdr-btn-outline">Motor ara</button></a>
+      <a href="anzeige-erstellen.html"><button class="hdr-btn hdr-btn-primary">＋ İlan ver</button></a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="crumb">
+    <a href="index.html">1AMotor</a><span>/</span>
+    <a href="suche.html?category=Automotor">Otomobil Motorları</a><span>/</span>
+    Tofaş
+  </div>
+
+  <!-- ══ HERO ══ -->
+  <div class="hero">
+    <img src="images/tofas/09_dogan_silber_sonnenuntergang.jpg" alt="Tofaş Doğan sedan, gün batımında Boğaz manzarası" width="1310" height="456" />
+    <div class="hero-overlay">
+      <div class="hero-text">
+        <div class="hero-kicker">Tofaş · Şahin · Doğan · Kartal</div>
+        <h1>Tofaş motorları ve yedek parçaları</h1>
+        <p>
+          Şahin, Doğan ve Kartal için çıkma motor, revizyonlu motor ve motor parçaları.
+          Komisyonsuz ilan verin, doğrudan alıcıyla iletişime geçin — Almanya ve Türkiye arasında.
+        </p>
+        <div class="hero-btns">
+          <a class="btn btn-primary" href="suche.html?q=Tofa%C5%9F">Tofaş motorlarını gör</a>
+          <a class="btn btn-ghost" href="anzeige-erstellen.html">Ücretsiz ilan ver</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="img-note">Görseller temsilidir · Symbolbilder</div>
+</div>
+
+<!-- ══ INTRO ══ -->
+<section>
+  <div class="container">
+    <div class="intro-grid">
+      <div>
+        <h2 style="font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-.5px;margin-bottom:16px;">
+          Türkiye'nin en yaygın motor ailelerinden biri
+        </h2>
+        <p>
+          Tofaş, Fiat lisansıyla üretilen ve on yıllar boyunca Türkiye yollarının karakterini belirleyen
+          bir otomobil ailesidir. Şahin, Doğan ve Kartal aynı gövde platformunu ve büyük ölçüde aynı
+          motor grubunu paylaşır — bu da yedek parça bulmayı ve motor değişimini görece kolaylaştırır.
+        </p>
+        <p>
+          Üretim 2002'de sona erdi, ancak araçlar hâlâ trafikte. Bu da çıkma motor, revizyonlu blok,
+          silindir kapağı, karbüratör ve enjeksiyon parçaları için sürekli bir talep anlamına geliyor.
+          1AMotor bu talebi Almanya ve Türkiye arasında bir araya getiriyor.
+        </p>
+        <p>
+          İlan vermek ücretsiz ve komisyonsuz. Satıcı ve alıcı doğrudan iletişime geçer; platform
+          satıştan pay almaz.
+        </p>
+      </div>
+      <div class="intro-img">
+        <img src="images/tofas/08_tofas_motorraum.jpg" alt="Tofaş motor bölmesi, motor kapağı ve ateşleme sistemi" width="654" height="220" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MODELLER ══ -->
+<section style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="sec-head">
+      <h2>Model ailesi</h2>
+      <p>Üç gövde tipi, ortak motor grubu. Aradığınız parçanın hangi modele ait olduğunu bilmek, doğru ilanı bulmanın en hızlı yolu.</p>
+    </div>
+    <div class="models">
+
+      <div class="model-card">
+        <img src="images/tofas/01_sahin_front.jpg" alt="Tofaş Şahin sedan, önden görünüm" loading="lazy" />
+        <div class="model-body">
+          <h3>Tofaş Şahin</h3>
+          <div class="model-years">SEDAN</div>
+          <p>Ailenin en yaygın sedan üyesi. Karbüratörlü ve daha geç dönemde enjeksiyonlu versiyonlarıyla bilinir. Motor ve şanzıman parçalarında en geniş ikinci el arzına sahip model.</p>
+          <a class="model-link" href="suche.html?q=%C5%9Eahin">Şahin ilanlarını gör →</a>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <img src="images/tofas/03_dogan_blau_front.jpg" alt="Tofaş Doğan sedan, önden görünüm" loading="lazy" />
+        <div class="model-body">
+          <h3>Tofaş Doğan</h3>
+          <div class="model-years">SEDAN</div>
+          <p>Şahin ile aynı platformu paylaşan, daha üst donanımlı sedan. SLX versiyonları dönemin daha zengin donanım paketini taşır. Motor grubu büyük ölçüde Şahin ile ortaktır.</p>
+          <a class="model-link" href="suche.html?q=Do%C4%9Fan">Doğan ilanlarını gör →</a>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <img src="images/tofas/05_kartal_kombi_front.jpg" alt="Tofaş Kartal station wagon, önden görünüm" loading="lazy" />
+        <div class="model-body">
+          <h3>Tofaş Kartal</h3>
+          <div class="model-years">STATION WAGON</div>
+          <p>Ailenin station wagon üyesi. Yük hacmi nedeniyle uzun yıllar ticari kullanımda kaldı — bu da yüksek kilometreli motorlarda revizyon ve blok talebini artırır.</p>
+          <a class="model-link" href="suche.html?q=Kartal">Kartal ilanlarını gör →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ MOTOR VERSİYONLARI ══ -->
+<section>
+  <div class="container">
+    <div class="sec-head">
+      <h2>Motor versiyonları</h2>
+      <p>
+        Aşağıdaki tablo genel bir yön göstergesidir. Üretim yılına ve pazara göre farklılıklar
+        bulunabildiğinden, satın almadan önce motor kodunu ve şasi numarasını satıcıyla mutlaka teyit edin.
+      </p>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Motor</th>
+            <th>Yakıt sistemi</th>
+            <th>Tipik kullanım</th>
+            <th>Dikkat edilecek noktalar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1.4 benzinli</strong></td>
+            <td>Karbüratörlü</td>
+            <td>Erken dönem Şahin / Doğan</td>
+            <td>Karbüratör ayarı ve ateşleme sistemi en sık bakım kalemi</td>
+          </tr>
+          <tr>
+            <td><strong>1.6 benzinli</strong></td>
+            <td>Karbüratörlü</td>
+            <td>Şahin, Doğan, Kartal</td>
+            <td>En yaygın versiyon; yedek parça arzı en geniş olan motor</td>
+          </tr>
+          <tr>
+            <td><strong>1.6 benzinli</strong></td>
+            <td>Enjeksiyonlu</td>
+            <td>Geç dönem S / SLX versiyonları</td>
+            <td>Kablo tesisatı ve manifold karbüratörlü versiyondan farklıdır</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px;line-height:1.7;">
+      Motor bloğu Fiat kökenlidir; bu nedenle bazı aşınma parçalarında Fiat muadilleri kullanılabilir.
+      Uyumluluğu her zaman parça numarası üzerinden kontrol edin.
+    </p>
+  </div>
+</section>
+
+<!-- ══ GALERİ ══ -->
+<section style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="sec-head">
+      <h2>Model galerisi</h2>
+      <p>Gövde tipini ve detayları tanımak için temsili görseller.</p>
+    </div>
+    <div class="gallery">
+      <figure><img src="images/tofas/02_sahin_heck.jpg" alt="Tofaş Şahin arkadan görünüm" loading="lazy"><figcaption>Şahin — arka</figcaption></figure>
+      <figure><img src="images/tofas/04_dogan_blau_heck.jpg" alt="Tofaş Doğan arkadan görünüm" loading="lazy"><figcaption>Doğan — arka</figcaption></figure>
+      <figure><img src="images/tofas/06_kartal_kombi_heck.jpg" alt="Tofaş Kartal station wagon arkadan görünüm" loading="lazy"><figcaption>Kartal — arka</figcaption></figure>
+      <figure><img src="images/tofas/07_tofas_schwarz_front.jpg" alt="Siyah Tofaş sedan önden görünüm" loading="lazy"><figcaption>Tofaş — ön</figcaption></figure>
+      <figure><img src="images/tofas/10_tofas_emblem_detail.jpg" alt="Tofaş arka yazı ve amblem detayı" loading="lazy"><figcaption>Amblem detayı</figcaption></figure>
+    </div>
+    <div class="img-note">Görseller temsilidir ve belirli bir satılık ürünü göstermez.</div>
+  </div>
+</section>
+
+<!-- ══ SSS ══ -->
+<section>
+  <div class="container">
+    <div class="sec-head">
+      <h2>Sıkça sorulan sorular</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Tofaş Şahin ve Doğan motorları birbirinin yerine kullanılabilir mi?</summary>
+        <p>Şahin, Doğan ve Kartal aynı Tofaş gövde ailesini paylaşır ve motor grubu büyük ölçüde ortaktır. Yine de karbüratörlü ve enjeksiyonlu versiyonlar arasında yakıt sistemi, kablo tesisatı ve manifold farkları bulunur. Satın almadan önce motor kodunu ve üretim yılını satıcıyla teyit edin.</p>
+      </details>
+      <details>
+        <summary>Tofaş motor yedek parçaları hâlâ bulunabiliyor mu?</summary>
+        <p>Evet. Üretim 2002'de sona ermiş olsa da Tofaş motor grubu Fiat kökenlidir ve birçok aşınma parçası hâlâ tedarik edilebilmektedir. Çıkma ve revizyonlu motorlar ise ikinci el pazarında düzenli olarak yer bulur.</p>
+      </details>
+      <details>
+        <summary>1AMotor üzerinden ilan vermek ücretli mi?</summary>
+        <p>Hayır. 1AMotor'da ilan vermek komisyonsuzdur. Alıcı ve satıcı doğrudan iletişime geçer, platform satıştan pay almaz.</p>
+      </details>
+      <details>
+        <summary>Almanya'dan Türkiye'ye motor gönderimi mümkün mü?</summary>
+        <p>Gönderim koşulları tamamen satıcıya bağlıdır ve ilan detayında belirtilir. Nakliye, gümrük ve teslimat şartlarını doğrudan satıcıyla netleştirmenizi öneririz.</p>
+      </details>
+      <details>
+        <summary>Aradığım motoru bulamazsam ne yapmalıyım?</summary>
+        <p>Arama sayfasından bildirim oluşturabilir veya doğrudan ilan vererek aradığınız parçayı belirtebilirsiniz. Yeni ilanlar düzenli olarak eklenmektedir.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="cta">
+      <h2>Tofaş motorunuzu satın veya arayın</h2>
+      <p>İlan vermek ücretsiz ve komisyonsuz. Fotoğraf yükleyin, fiyatı belirleyin, alıcıyla doğrudan iletişime geçin.</p>
+      <div class="cta-btns">
+        <a class="btn btn-primary" href="anzeige-erstellen.html">＋ Ücretsiz ilan ver</a>
+        <a class="btn btn-ghost" href="suche.html?q=Tofa%C5%9F">Mevcut ilanları gör</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:14px;color:#fff;flex-shrink:0;">1A</div>
+          <span style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px;">Motor</span>
+        </a>
+        <p class="footer-desc">Motor alım satımı için ilan platformu. Komisyonsuz — alıcı ve satıcı doğrudan iletişimde.</p>
+      </div>
+      <div>
+        <h4>Tofaş</h4>
+        <ul>
+          <li><a href="suche.html?q=%C5%9Eahin">Şahin motor</a></li>
+          <li><a href="suche.html?q=Do%C4%9Fan">Doğan motor</a></li>
+          <li><a href="suche.html?q=Kartal">Kartal motor</a></li>
+          <li><a href="suche.html?q=Tofa%C5%9F">Tüm Tofaş ilanları</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="suche.html">Motor ara</a></li>
+          <li><a href="anzeige-erstellen.html">İlan ver</a></li>
+          <li><a href="ueber-uns.html">Hakkımızda</a></li>
+          <li><a href="kontakt.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="impressum.html">Impressum</a></li>
+          <li><a href="datenschutz.html">Gizlilik</a></li>
+          <li><a href="agb.html">Şartlar</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 1AMotor · Tüm hakları saklıdır</div>
+      <div class="footer-bottom-links">
+        <a href="tofas-motoren.html">Deutsch</a>
+        <a href="index.html">Ana sayfa</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="cookie-consent.js?v=1"></script>
+</body>
+</html>
