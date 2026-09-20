@@ -1,11 +1,21 @@
 /**
- * 1A Motor — mobile.js
+ * 1A Motor — mobile.js  (v2 · iOS/Android-Angleichung)
  * Läuft auf allen Seiten. Kümmert sich um:
  * 1. Bottom Navigation Bar injizieren
  * 2. Hamburger-Menü (Close-Button + Overlay)
  * 3. Filter-Drawer (Suche)
  * 4. Sidebar-Overlay (index.html)
  * 5. Scroll-to-top bei Navigation
+ *
+ * v2:
+ *  - Menü wird an <body> gehängt → öffnet auch nach dem Scrollen im Vollbild
+ *    (vorher im per transform verschobenen Header „gefangen“)
+ *  - iOS-sichere Scroll-Sperre für Menü & Filter (overflow:hidden reicht
+ *    in iOS Safari nicht – die Seite scrollte im Hintergrund weiter)
+ *  - Pull-to-Refresh nicht mehr blockiert (war nur auf Android wirksam)
+ *  - Safe-Area jetzt in mobile.css statt per JS (kein Springen beim Laden)
+ *  - Seiten-Erkennung auch für URLs ohne .html (z. B. /suche)
+ *  - kein doppeltes Event-Binding beim Drehen/Resize
  */
 
 (function () {
@@ -13,10 +23,41 @@
 
   /* ─── Helfer ─────────────────────────────────────────────── */
   function isMobile() { return window.innerWidth <= 768; }
+  function norm(n) { return String(n || '').replace(/\.html?$/i, '') || 'index'; }
   function currentPage() {
-    return (window.location.pathname.split('/').pop() || 'index.html').replace(/\?.*$/, '');
+    return norm((window.location.pathname.split('/').pop() || 'index.html').replace(/\?.*$/, ''));
   }
-  function isPage(...names) { return names.includes(currentPage()); }
+  function isPage(...names) { return names.map(norm).includes(currentPage()); }
+
+  /* ─── iOS-sichere Scroll-Sperre ─────────────────────────── */
+  let lockedY = null;
+  function lockScroll() {
+    if (lockedY !== null) return;
+    lockedY = window.scrollY || window.pageYOffset || 0;
+    const b = document.body.style;
+    b.position = 'fixed'; b.top = (-lockedY) + 'px';
+    b.left = '0'; b.right = '0'; b.width = '100%';
+  }
+  function unlockScroll() {
+    if (lockedY === null) return;
+    const y = lockedY; lockedY = null;
+    const b = document.body.style;
+    b.position = ''; b.top = ''; b.left = ''; b.right = ''; b.width = '';
+    window.scrollTo(0, y);
+  }
+  /* Beobachtet alle Drawer/Menüs – egal welches Skript sie öffnet */
+  function setupScrollLockWatcher() {
+    const sel = '#mob-nav, #mobile-nav, #sidebar, .filter-sidebar, #se-filter, .se-filter';
+    const els = Array.from(new Set(Array.from(document.querySelectorAll(sel))));
+    if (!els.length) return;
+    const check = function () {
+      if (!isMobile()) { unlockScroll(); return; }
+      const anyOpen = els.some(function (el) { return el.classList.contains('open'); });
+      anyOpen ? lockScroll() : unlockScroll();
+    };
+    const mo = new MutationObserver(check);
+    els.forEach(function (el) { mo.observe(el, { attributes: true, attributeFilter: ['class'] }); });
+  }
 
   /* ─── 1. BOTTOM NAVIGATION BAR ──────────────────────────── */
   function injectBottomNav() {
@@ -81,6 +122,13 @@
     const toggle = document.getElementById('mob-toggle');
     const nav    = document.getElementById('mob-nav') || document.getElementById('mobile-nav');
     if (!toggle || !nav) return;
+    if (toggle.dataset.mobBound === '1') return;   // nie doppelt binden
+    toggle.dataset.mobBound = '1';
+
+    // Menü direkt an <body> hängen: Ein position:fixed-Element in einem
+    // Eltern-Element mit transform (Header beim Scrollen) würde sonst nur
+    // die Header-Fläche statt den ganzen Bildschirm bedecken.
+    if (nav.parentElement !== document.body) document.body.appendChild(nav);
 
     // Close-Button in Nav einfügen (falls noch nicht da)
     if (!nav.querySelector('.mob-nav-close')) {
@@ -103,10 +151,12 @@
     }
 
     // Hamburger → 3 Balken animated (X beim Öffnen)
-    toggle.addEventListener('click', function () {
+    // Capture + stopImmediatePropagation: index.html hat einen eigenen
+    // Klick-Handler, der ebenfalls umschaltet → Menü ging auf und sofort zu.
+    toggle.addEventListener('click', function (e) {
+      e.stopImmediatePropagation();
       const isOpen = nav.classList.toggle('open');
       overlay.classList.toggle('open', isOpen);
-      document.body.style.overflow = isOpen ? 'hidden' : '';
       toggle.setAttribute('aria-expanded', isOpen);
       // Balken animieren
       const spans = toggle.querySelectorAll('span');
@@ -121,12 +171,11 @@
           spans[2].style.transform = '';
         }
       }
-    });
+    }, true);
 
     function closeNav() {
       nav.classList.remove('open');
       overlay.classList.remove('open');
-      document.body.style.overflow = '';
       toggle.setAttribute('aria-expanded', 'false');
       const spans = toggle.querySelectorAll('span');
       spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
@@ -234,16 +283,16 @@
     const header = document.querySelector('.header');
     if (!header) return;
     let lastScroll = 0;
+    header.style.transition = 'transform .25s ease';
 
     window.addEventListener('scroll', function () {
-      const current = window.scrollY;
+      if (lockedY !== null) return;                 // Menü/Filter offen
+      const current = Math.max(0, window.scrollY);  // iOS: negativer Wert beim Gummiband
+      if (Math.abs(current - lastScroll) < 6) return; // kein Flackern
       if (current > 60 && current > lastScroll) {
-        // Scrolling down — Header kleiner
         header.style.transform = 'translateY(-100%)';
-        header.style.transition = 'transform .25s ease';
       } else {
-        // Scrolling up — Header wieder sichtbar
-        header.style.transform = 'translateY(0)';
+        header.style.transform = '';                // kein Rest-transform stehen lassen
       }
       lastScroll = current;
     }, { passive: true });
@@ -257,25 +306,9 @@
       meta.content = meta.content + ', viewport-fit=cover';
     }
 
-    // Bottom Nav safe area
-    const style = document.createElement('style');
-    style.textContent = `
-      @supports (padding-bottom: env(safe-area-inset-bottom)) {
-        .bottom-nav-bar {
-          padding-bottom: env(safe-area-inset-bottom) !important;
-          height: calc(62px + env(safe-area-inset-bottom)) !important;
-        }
-        body { padding-bottom: calc(70px + env(safe-area-inset-bottom)) !important; }
-      }
-    `;
-    document.head.appendChild(style);
+    // Die Abstände selbst (Bottom-Nav, Body) stehen jetzt in mobile.css
   }
 
-  /* ─── 8. PULL-TO-REFRESH VERHINDERN (verhindert Fehler) ─── */
-  function preventPullToRefresh() {
-    // Nur wenn Body am Anfang — verhindert accidentelle Refreshes
-    document.body.style.overscrollBehaviorY = 'contain';
-  }
 
   /* ─── INIT ───────────────────────────────────────────────── */
   function init() {
@@ -287,7 +320,7 @@
     setupMobileSearch();
     setupSwipeGallery();
     setupSafeArea();
-    preventPullToRefresh();
+    setupScrollLockWatcher();
 
     // Sticky Header nur auf Seiten wo viel gescrollt wird
     if (isPage('suche.html', 'index.html', 'listing-detail.html')) {
@@ -307,10 +340,11 @@
     const existing = document.getElementById('1am-bottom-nav');
     if (isMobile() && !existing) {
       injectBottomNav();
-      setupHamburger();
+      setupHamburger();              // durch mobBound-Flag abgesichert
     } else if (!isMobile() && existing) {
       existing.remove();
       document.body.style.paddingBottom = '';
+      unlockScroll();
     }
   });
 

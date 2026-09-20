@@ -1,8 +1,35 @@
 /*
- * 1A Motor — mobile.css
+ * 1A Motor — mobile.css  (v2 · Geräte-Angleichung iOS/Android)
  * Eingebunden in alle Seiten per <link rel="stylesheet" href="mobile.css">
- * Greift nur bei ≤ 768px — überschreibt keine Desktop-Styles
+ *
+ * v2: Ziel ist ein identisches Erscheinungsbild auf iPhone (375–430px)
+ * und Android (360–412px). Die wichtigsten Ursachen für Unterschiede waren:
+ *   – Layout-Umschaltung bei 380px (Android 360px → 1 Spalte, iPhone → 2)
+ *   – Buttons/Inputs erben die Schrift nicht (iOS: SF Pro, Android: Roboto)
+ *   – Eingabefelder < 16px → iOS zoomt beim Antippen hinein, Android nicht
+ *   – Header-Padding 0 → Logo klebte am Rand
+ *   – globales a,button{min-height:44px} → Breadcrumbs/Chips verzogen
+ *   – 100vh ≠ sichtbare Höhe in iOS Safari
  */
+
+/* ══════════════════════════════════════════════════════
+   0. GLOBAL — gilt auf allen Breiten, ändert Desktop optisch nicht
+══════════════════════════════════════════════════════ */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* Formular-Elemente übernehmen überall die Seitenschrift (Outfit).
+   Ohne das rendert iOS Buttons in SF Pro und Android in Roboto. */
+button, input, select, textarea, optgroup { font-family: inherit; }
+
+/* Einheitliches Logo auf allen Seiten (suche.html war noch blau) */
+.logo-mark {
+  background: linear-gradient(145deg, #1b2d42, #2a4a6b) !important;
+  box-shadow: 0 4px 12px rgba(13,27,42,0.35) !important;
+}
+
+/* Cookie-Banner in Seitenschrift statt Arial */
+#amcc-banner { font-family: 'Outfit', Arial, sans-serif !important; }
+
 
 /* ══════════════════════════════════════════════════════
    1. CSS RESET & BASICS
@@ -12,9 +39,17 @@
   /* Scroll-Verhalten */
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body { overflow-x: hidden; }
+  @supports (overflow: clip) {
+    /* clip statt hidden: verhindert Querscrollen, ohne position:sticky
+       (Header) auf iOS Safari kaputt zu machen */
+    html, body { overflow-x: clip !important; }
+  }
 
-  /* Touch-freundliche Tap-Targets */
-  a, button { min-height: 44px; }
+  /* Touch-freundliche Tap-Targets — nur echte Bedienelemente.
+     (Früher: a, button { min-height:44px } → hat Breadcrumbs, Chips,
+     Footer-Links und Inline-Links auf Android/iOS unterschiedlich verzogen.) */
+  .mob-toggle, .mob-filter-btn, .se-mobfilter, .hdr-btn,
+  .mob-nav a, .mobile-nav a, .bnb-item { min-height: 44px; }
 
   /* Container padding anpassen */
   .container { padding: 0 16px !important; }
@@ -27,7 +62,10 @@
 /* ══════════════════════════════════════════════════════
    3. HEADER — vereinfacht, Hamburger sichtbar
 ══════════════════════════════════════════════════════ */
-  .header-inner { padding: 10px 0 !important; gap: 12px !important; }
+  /* WICHTIG: .header-inner ist gleichzeitig .container → horizontales
+     Padding MUSS bleiben, sonst klebt das Logo am Bildschirmrand */
+  .header-inner { padding: 10px 16px !important; gap: 10px !important; }
+  .header-right { margin-left: auto !important; gap: 8px !important; }
 
   /* Suche auf Mobile ausblenden (eigene Mobile-Suche vorhanden) */
   .search-bar { display: none !important; }
@@ -41,7 +79,7 @@
   /* Nur Hamburger + Avatar sichtbar lassen */
   .mob-toggle { display: flex !important; }
   .header-right .auth-avatar-wrapper { display: block !important; }
-  .header-right a:last-of-type { display: inline-flex !important; }
+  /* „Anzeige erstellen“ liegt auf Mobile in der Bottom-Nav (Inserieren) */
 
   /* Logo kleiner */
   .logo-name { font-size: 18px !important; }
@@ -97,14 +135,15 @@
    5. BOTTOM NAVIGATION BAR (global)
 ══════════════════════════════════════════════════════ */
   /* Verhindert, dass Inhalt hinter der Bottom-Nav verschwindet */
-  body { padding-bottom: 70px !important; }
+  body { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important; }
 
   /* Bottom Nav */
   .bottom-nav-bar {
     display: flex !important;
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    height: 62px;
+    height: calc(62px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     background: #fff;
     border-top: 1px solid #e2e8f0;
     box-shadow: 0 -4px 20px rgba(13,27,42,0.10);
@@ -212,7 +251,8 @@
     box-shadow: 4px 0 30px rgba(0,0,0,0.2) !important;
     border-radius: 0 !important;
     max-height: 100vh !important;
-    padding-bottom: 80px !important;
+    max-height: 100dvh !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   }
   .filter-sidebar.open,
   .sidebar.open {
@@ -436,6 +476,7 @@
   .modal {
     border-radius: 20px 20px 0 0 !important;
     max-height: 92vh !important;
+    max-height: 92dvh !important;
     overflow-y: auto !important;
     margin: 0 !important;
     width: 100% !important;
@@ -491,15 +532,267 @@
 } /* end @media 768px */
 
 /* ══════════════════════════════════════════════════════
-   Extra small: 380px (iPhone SE etc.)
+   Extra small (iPhone SE, kleine Androids)
+   Früher wurde hier bei ≤380px auf 1 Spalte umgeschaltet und die
+   Bottom-Nav-Beschriftung ausgeblendet. Genau das war der Grund, warum
+   Android (meist 360px) anders aussah als iPhone (390px). Jetzt nur noch
+   kleine Größenkorrekturen – das Layout bleibt identisch.
 ══════════════════════════════════════════════════════ */
 @media (max-width: 380px) {
-  .listing-grid { grid-template-columns: 1fr !important; }
   .quick-grid,
   .quick-specs { grid-template-columns: 1fr 1fr !important; }
   .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .hero h1, .hero-title { font-size: 22px !important; }
+  .hero h1, .hero-title { font-size: 24px !important; }
   .pb-price { font-size: 24px !important; }
-  .bottom-nav-bar .bnb-item span { display: none; }
-  .bottom-nav-bar .bnb-item { gap: 0; }
+}
+@media (max-width: 340px) {
+  .bottom-nav-bar .bnb-item { font-size: 9.5px !important; padding: 8px 2px !important; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   21. GERÄTE-ANGLEICHUNG iOS ↔ Android (≤ 768px)
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Kein grauer/blauer Tap-Blitz (Android) bzw. grauer Kasten (iOS) */
+  a, button, [role="button"], label, summary { -webkit-tap-highlight-color: transparent; }
+
+  /* iOS-Zoom beim Antippen verhindern: Safari zoomt bei < 16px hinein */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  select, textarea { font-size: 16px !important; }
+
+  /* Native Browser-Optik entfernen → Felder sehen überall gleich aus */
+  input[type="text"], input[type="search"], input[type="email"],
+  input[type="number"], input[type="tel"], input[type="url"],
+  input[type="password"], textarea {
+    -webkit-appearance: none; appearance: none; border-radius: 10px;
+  }
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"] { -moz-appearance: textfield; }
+  button { -webkit-appearance: none; appearance: none; }
+
+  /* Hover-Effekte bleiben auf Touch-Geräten nach dem Tippen "hängen" */
+}
+@media (hover: none) {
+  .listing-card:hover, .se-card:hover { transform: none !important; }
+}
+
+/* iOS Safari < 18 kennt backdrop-filter nur mit Präfix */
+.badge { -webkit-backdrop-filter: blur(4px); }
+
+/* ══════════════════════════════════════════════════════════════════
+   22. STARTSEITE (index.html) — Mobile-Layout
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  html body .main-wrap {
+    padding: 0 12px !important;
+    margin: 16px auto 28px !important;
+    gap: 14px !important;
+  }
+  html body .content-area { gap: 14px !important; min-width: 0; }
+  /* minmax(0,1fr): breite Inhalte (Werbefläche, FAQ) dürfen die Spalte
+     nicht über den Bildschirm hinaus aufdrücken (war bei 320px der Fall) */
+  html body .main-wrap { grid-template-columns: minmax(0, 1fr) !important; }
+
+  /* FAQ-Kopf */
+  html body .faq-hero { min-height: 0 !important; }
+  html body .faq-hero-content { padding: 26px 18px 22px !important; min-width: 0; }
+  html body .faq-hero-content h2 { font-size: 21px !important; line-height: 1.25 !important; }
+  html body .faq-ad-slot { max-width: 100% !important; padding: 14px 14px 12px !important; }
+  html body .faq-ad-placeholder { flex-wrap: wrap; gap: 10px !important; }
+  html body .faq-ad-placeholder-text { flex: 1 1 140px !important; }
+  html body .mob-filter-btn { width: 100% !important; justify-content: flex-start; }
+
+  /* Panel „Aktuelle Angebote“ — .panel bekommt oben in Abschnitt 16
+     pauschal 18px Innenabstand; auf der Startseite verschenkt das Platz */
+  html body .main-wrap .panel { padding: 0 !important; }
+  html body .view-all-link { white-space: nowrap; }
+  html body .panel-head {
+    padding: 14px 14px 12px !important;
+    flex-direction: row !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+  }
+  html body .panel-head h2 { font-size: 17px !important; }
+  html body .panel-head p { font-size: 12.5px !important; }
+  html body .panel-head-right { width: 100%; justify-content: space-between; gap: 10px !important; }
+  html body .panel-head-right .sort-sel {
+    -webkit-appearance: none; appearance: none;
+    flex: 1 1 auto; min-width: 0; height: 40px; padding: 0 34px 0 12px !important;
+    background: #f8fbff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a93ae' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center / 15px !important;
+  }
+  html body .panel-body { padding: 10px !important; }
+
+  /* Angebots-Karten: immer 2 Spalten, egal ob 320, 360, 390 oder 430px */
+  html body .listing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+  html body .listing-card {
+    display: flex !important; flex-direction: column;
+    border-radius: 12px !important; min-width: 0;
+  }
+  html body .listing-image {
+    height: auto !important;               /* feste Höhe → Proportion */
+    aspect-ratio: 4 / 3;
+    font-size: 32px !important;
+  }
+  html body .listing-body {
+    padding: 10px 10px 11px !important;
+    display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0;
+  }
+  html body .listing-title {
+    font-size: 13.5px !important; line-height: 1.3 !important;
+    min-height: 2.6em !important; margin-bottom: 6px !important;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  html body .listing-card .meta {
+    flex-wrap: nowrap !important; overflow: hidden; gap: 4px !important;
+    margin-bottom: 6px !important; font-size: 11px !important;
+  }
+  html body .listing-card .meta span {
+    padding: 2px 6px !important; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 0;
+  }
+  html body .listing-card .meta span:nth-child(2) { display: none; } /* Modell → Detailseite */
+  html body .listing-card .price { font-size: 16px !important; margin-bottom: 1px !important; }
+  html body .listing-card .shipping { font-size: 11.5px !important; margin-bottom: 8px !important; }
+  html body .listing-card .seller {
+    font-size: 11px !important; margin-top: auto !important; padding-top: 8px !important; gap: 6px;
+  }
+  html body .listing-card .seller > :first-child {
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  html body .listing-card .badge {
+    top: 7px !important; left: 7px !important; font-size: 10px !important;
+    padding: 3px 7px !important; max-width: calc(100% - 50px);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  html body .listing-card .fav {
+    width: 30px !important; height: 30px !important; top: 6px !important; right: 6px !important;
+    font-size: 13px !important;
+  }
+
+  /* Newsletter */
+  html body .newsletter-inner { padding: 20px 16px !important; }
+  html body .newsletter-form { flex-direction: column !important; }
+  html body .newsletter-form input { min-width: 0 !important; width: 100% !important; height: 46px; }
+  html body .newsletter-form button { height: 46px; }
+}
+
+/* Fallback für iOS < 15 (kein aspect-ratio) */
+@supports not (aspect-ratio: 1 / 1) {
+  @media (max-width: 768px) {
+    html body .listing-image,
+    html body .se-grid:not(.list) .se-card-img { height: 0 !important; padding-top: 75%; }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   23. SUCHE (suche.html) — Mobile-Layout
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  html body .se-inner { padding: 0 12px !important; }
+  html body .se-hero { padding: 16px 0 4px !important; }
+
+  /* Suchbox kompakt: Suchbegriff oben, Kategorie + Standort nebeneinander */
+  html body .se-searchbar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 10px !important; padding: 12px !important; border-radius: 14px !important;
+  }
+  html body .se-field.se-field-q,
+  html body .se-searchbtn { grid-column: 1 / -1 !important; }
+  html body .se-searchbtn { justify-content: center; height: 48px !important; }
+  html body .se-field { gap: 4px !important; }
+  html body .se-field label { font-size: 11.5px !important; }
+  html body .se-input, html body .se-select { height: 46px !important; }
+  html body .se-select { padding-right: 30px !important; text-overflow: ellipsis; }
+
+  /* Kategorie-Kacheln: randlos scrollbar statt abgeschnitten */
+  html body .se-tiles {
+    margin: 14px -12px 4px !important; padding: 0 12px 4px !important;
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+    scroll-padding-left: 12px;
+  }
+  html body .se-tile { flex-shrink: 0 !important; scroll-snap-align: start; }
+
+  /* Filter-Button, Breadcrumb, Ergebnis-Kopf */
+  html body .se-mobfilter { margin-bottom: 12px !important; }
+  html body .se-breadcrumb { font-size: 12.5px !important; margin-bottom: 6px !important; }
+  html body .se-results-head { gap: 10px !important; margin-bottom: 14px !important; }
+  html body .se-title { font-size: 20px !important; line-height: 1.25; }
+  html body .se-tools { width: 100%; gap: 8px !important; }
+  html body .se-sortwrap { flex: 1 1 auto; min-width: 0; }
+  html body .se-sortwrap > span { display: none; }
+  html body .se-sort { width: 100%; height: 42px !important; }
+
+  /* Karten: 2 Spalten wie auf der Startseite */
+  html body .se-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+  html body .se-card { border-radius: 12px !important; min-width: 0; }
+  html body .se-grid:not(.list) .se-card-img { height: auto !important; aspect-ratio: 4 / 3; }
+  html body .se-card-body { padding: 10px 10px 11px !important; gap: 5px !important; min-width: 0; }
+  html body .se-card-title {
+    font-size: 13.5px !important; line-height: 1.3 !important; min-height: 2.6em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  html body .se-card-sub,
+  html body .se-loc-row span {
+    font-size: 11.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  html body .se-card-sub { margin-top: -2px !important; }
+  html body .se-loc-row { font-size: 11.5px !important; gap: 4px !important; min-width: 0; }
+  html body .se-specs { font-size: 11px !important; gap: 3px 8px !important; }
+  html body .se-spec:nth-child(n+3) { display: none !important; }
+  html body .se-spec svg, html body .se-loc-row svg { width: 12px !important; height: 12px !important; }
+  html body .se-card-foot {
+    flex-direction: column !important; align-items: flex-start !important; gap: 1px; padding-top: 2px !important;
+  }
+  html body .se-card-price { font-size: 16px !important; }
+  html body .se-card-date { font-size: 11px !important; }
+  html body .se-fav { width: 30px !important; height: 30px !important; top: 7px !important; right: 7px !important; }
+  html body .se-fav svg { width: 15px !important; height: 15px !important; }
+
+  /* Listenansicht: kompakte Zeilen (Bild links, Text rechts) */
+  html body .se-grid.list { grid-template-columns: 1fr !important; gap: 10px !important; }
+  html body .se-grid.list .se-card { flex-direction: row !important; }
+  html body .se-grid.list .se-card-img {
+    width: 128px !important; min-height: 0 !important; height: auto !important;
+    flex-shrink: 0; align-self: stretch;
+  }
+  html body .se-grid.list .se-card-body { padding: 10px 12px !important; }
+  html body .se-grid.list .se-spec:nth-child(n+3) { display: inline-flex !important; }
+
+  /* Pagination */
+  html body .se-pg { min-width: 38px !important; height: 38px !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   24. COOKIE-BANNER auf Mobile
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* flex:1 1 320px wurde in der Spalten-Ansicht zu 320px HÖHE → großes Loch */
+  html body #amcc-text { flex: 0 0 auto !important; font-size: 13px !important; }
+  html body #amcc-inner {
+    gap: 12px !important;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  html body #amcc-banner { max-height: 88vh; max-height: 88dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  html body .amcc-btn { min-height: 44px; }
+}
+@media (max-width: 768px) {
+  /* Zahnrad nicht hinter der Bottom-Nav verstecken */
+  html body #amcc-gear {
+    left: 12px !important; width: 38px !important; height: 38px !important;
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
