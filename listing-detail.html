@@ -2,1128 +2,423 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<link rel="icon" type="image/x-icon" href="favicon.ico" />
-<link rel="apple-touch-icon" href="favicon-192x192.png" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Motor kaufen – Geprüfte Angebote | 1A Motor</title>
-<meta name="description" content="Motor kaufen auf 1A Motor – geprüfte Händler, direkte Anfragen, faire Preise." />
-<meta name="robots" content="index, follow" />
-<meta name="author" content="1A Motor" />
-<meta property="og:type" content="product" />
-<meta property="og:site_name" content="1A Motor" />
-<meta property="og:image" content="https://1amotor.de/hero-bg.png" />
-<meta property="og:title" content="" id="og-title" />
-<meta property="og:description" content="" id="og-description" />
-<meta property="og:url" content="" id="og-url" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="" id="tw-title" />
-<meta name="twitter:description" content="" id="tw-description" />
-<script type="application/ld+json" id="schema-product">{"@context":"https://schema.org","@type":"Product","name":"Motor auf 1A Motor","description":"Motor kaufen auf 1A Motor.","brand":{"@type":"Brand","name":"1A Motor"},"offers":{"@type":"Offer","priceCurrency":"EUR","availability":"https://schema.org/InStock","seller":{"@type":"Organization","name":"1A Motor"}}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="favicon-192x192.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motor kaufen – Geprüfte Angebote | 1A Motor</title>
+  <meta name="description" content="Motor kaufen auf 1A Motor – geprüfte Händler, direkte Anfragen, faire Preise. Jetzt Angebot ansehen und direkt beim Händler anfragen." />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="1A Motor" />
+  <!-- Open Graph – dynamisch via listing-detail-live.js befüllt -->
+  <meta property="og:type" content="product" />
+  <meta property="og:site_name" content="1A Motor" />
+  <meta property="og:image" content="https://1amotor.de/hero-bg.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="" id="og-title" />
+  <meta property="og:description" content="" id="og-description" />
+  <meta property="og:url" content="" id="og-url" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@1amotor" />
+  <meta name="twitter:title" content="" id="tw-title" />
+  <meta name="twitter:description" content="" id="tw-description" />
+  <meta name="twitter:image" content="https://1amotor.de/hero-bg.png" />
+  <!-- Schema.org Product – dynamisch via listing-detail-live.js befüllt -->
+  <script type="application/ld+json" id="schema-product">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Motor auf 1A Motor",
+    "description": "Motor kaufen auf 1A Motor – geprüfte Händler, direkte Anfragen.",
+    "brand": {"@type": "Brand", "name": "1A Motor"},
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+      "seller": {"@type": "Organization", "name": "1A Motor"}
+    }
+  }
+  </script>
 <style>
-:root {
-  --dark:    #071524;
-  --navy:    #0d1f35;
-  --blue:    #1252a3;
-  --blue2:   #1868c0;
-  --sky:     #3a96f5;
-  --light:   #dceeff;
-  --white:   #ffffff;
-  --muted:   #64788e;
-  --border:  #e4edf7;
-  --bg:      #f3f7fb;
-  --card:    #ffffff;
-  --success: #0ea371;
-  --warn:    #f59e0b;
-  --shadow:  0 1px 12px rgba(7,21,36,.07);
-  --shadow2: 0 8px 32px rgba(7,21,36,.14);
-  --r:       16px;
-  --max:     1340px;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Outfit',Arial,sans-serif;background:var(--bg);color:var(--dark);line-height:1.55;}
-a{text-decoration:none;color:inherit;}
-img{max-width:100%;display:block;}
-button{font-family:inherit;cursor:pointer;}
-.container{max-width:var(--max);margin:0 auto;padding:0 28px;}
+  :root{ --bg:#edf0f4; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#dbe3ea; --dark-blue:#1a3a52; --blue:#2b6cb0; --light-blue:#72b6ff; --success:#059669; --shadow:0 4px 20px rgba(18,58,99,0.08); --shadow-lg:0 12px 40px rgba(18,58,99,0.13); --radius:14px; }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; }
+  body{ background:var(--bg); color:var(--text); line-height:1.5; }
+  a{ text-decoration:none; color:inherit; }
+  .container{ max-width:1300px; margin:0 auto; padding:0 20px; }
 
-/* ─── TOPBAR ─── */
-.topbar{background:#060f1b;font-size:12px;color:rgba(255,255,255,.45);border-bottom:1px solid rgba(255,255,255,.04);}
-.topbar-inner{display:flex;justify-content:space-between;align-items:center;padding:6px 0;gap:12px;flex-wrap:wrap;}
-.topbar a{color:rgba(255,255,255,.45);transition:color .15s;}
-.topbar a:hover{color:var(--sky);}
-.top-left,.top-right{display:flex;gap:18px;align-items:center;}
+  /* Header */
+  .header{ background:#fff; border-bottom:2px solid var(--border); position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(18,58,99,0.06); }
+  .header-inner{ display:flex; justify-content:space-between; align-items:center; gap:18px; padding:13px 0; }
+  .logo{ display:flex; align-items:center; gap:10px; font-size:22px; font-weight:800; color:var(--dark-blue); }
+  
+  .header-actions{ display:flex; align-items:center; gap:12px; font-size:13px; }
+  .header-actions a{ color:#334155; font-weight:600; }
+  .sell-btn{ background:var(--dark-blue); color:#fff !important; padding:9px 16px; border-radius:999px; font-weight:700; }
 
-/* ─── HEADER ─── */
-.header{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:200;box-shadow:0 4px 24px rgba(7,21,36,.35);}
-.header-inner{display:flex;align-items:center;gap:18px;padding:11px 0;}
-.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.logo-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(145deg,#1464c0,#3a96f5);display:grid;place-items:center;font-weight:900;font-size:16px;color:#fff;letter-spacing:-.5px;flex-shrink:0;}
-.logo-name{font-size:21px;font-weight:800;color:#fff;letter-spacing:-.3px;}
-.search-bar{flex:1;display:flex;align-items:stretch;border:1.5px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.07);height:44px;transition:border-color .2s;}
-.search-bar:focus-within{border-color:var(--sky);box-shadow:0 0 0 3px rgba(58,150,245,.2);}
-.search-bar input{flex:1;border:none;outline:none;padding:0 14px;font-size:13.5px;font-family:inherit;color:#fff;background:transparent;min-width:0;}
-.search-bar input::placeholder{color:rgba(255,255,255,.32);}
-.search-submit{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:0 20px;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;transition:opacity .15s;white-space:nowrap;flex-shrink:0;}
-.search-submit:hover{opacity:.9;}
-.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.hdr-btn{font-size:13px;font-weight:600;padding:8px 15px;border-radius:8px;transition:all .15s;white-space:nowrap;border:none;background:none;}
-.hdr-ghost{color:rgba(255,255,255,.8);}
-.hdr-ghost:hover{background:rgba(255,255,255,.09);color:#fff;}
-.hdr-outline{border:1.5px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8);background:transparent;}
-.hdr-outline:hover{border-color:var(--sky);color:#fff;}
-.hdr-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;box-shadow:0 3px 10px rgba(18,82,163,.45);}
-.hdr-primary:hover{opacity:.9;}
-.mob-toggle{display:none;background:none;border:none;padding:6px;flex-direction:column;gap:5px;}
-.mob-toggle span{display:block;width:22px;height:2px;background:rgba(255,255,255,.8);border-radius:2px;}
-.mob-nav{display:none;background:var(--navy);border-top:1px solid rgba(255,255,255,.08);padding:12px 24px 16px;}
-.mob-nav.open{display:block;}
-.mob-nav a{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;font-weight:600;color:rgba(255,255,255,.8);}
-.mob-nav a:last-child{border-bottom:none;}
-.mob-nav a:hover{color:var(--sky);}
+  .page{ padding:20px 0 48px; }
 
-/* ─── PAGE ─── */
-.page{padding:24px 0 80px;}
+  /* Breadcrumb */
+  .breadcrumbs{ display:flex; flex-wrap:wrap; gap:7px; color:var(--muted); font-size:13px; margin-bottom:18px; align-items:center; }
+  .breadcrumbs a{ color:var(--muted); transition:color .12s; }
+  .breadcrumbs a:hover{ color:var(--dark-blue); }
+  .breadcrumbs span{ color:#9ca3af; }
 
-/* ─── BREADCRUMBS ─── */
-.breadcrumbs{display:flex;flex-wrap:wrap;gap:5px;color:var(--muted);font-size:12.5px;margin-bottom:20px;align-items:center;font-weight:500;}
-.breadcrumbs a{color:var(--muted);transition:color .12s;}
-.breadcrumbs a:hover{color:var(--blue2);}
-.breadcrumbs .sep{color:#c0cfe0;}
+  /* Hero Layout */
+  .hero-layout{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:22px; align-items:start; margin-bottom:22px; }
 
-/* ─── HERO LAYOUT ─── */
-.hero-layout{display:grid;grid-template-columns:1fr 400px;gap:22px;align-items:start;margin-bottom:22px;}
+  /* Gallery */
+  .gallery-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .main-image{ height:420px; background:linear-gradient(135deg,#dfe7ef,#f2f7fb); display:grid; place-items:center; font-size:80px; color:var(--dark-blue); position:relative; background-size:cover; background-position:center; background-repeat:no-repeat; }
+  .top-badge{ position:absolute; top:14px; left:14px; background:#fff; border:1px solid var(--border); padding:5px 12px; border-radius:999px; font-size:12px; font-weight:700; color:var(--dark-blue); }
+  .favorite-btn{ position:absolute; top:14px; right:14px; width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.95); border:1px solid var(--border); display:grid; place-items:center; font-size:18px; cursor:pointer; transition:transform .15s; }
+  .favorite-btn:hover{ transform:scale(1.1); }
+  .img-count{ position:absolute; bottom:12px; right:14px; background:rgba(0,0,0,0.55); color:#fff; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; }
+  .thumb-row{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; padding:12px; }
+  .thumb{ height:72px; border-radius:10px; border:2px solid transparent; background:linear-gradient(135deg,#dfe7ef,#f2f7fb); display:grid; place-items:center; font-size:22px; cursor:pointer; background-size:cover; background-position:center; transition:border-color .15s; }
+  .thumb.active{ border-color:var(--dark-blue); }
+  .thumb:hover{ border-color:#c5d9f0; }
 
-/* ─── GALLERY ─── */
-.gallery-wrap{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
+  /* Side Card */
+  .side-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; }
+  .category-tag{ display:inline-flex; align-items:center; padding:5px 12px; background:#e8f0f8; color:var(--dark-blue); border-radius:999px; font-size:12px; font-weight:700; margin-bottom:12px; }
+  .listing-title{ font-size:28px; font-weight:800; line-height:1.15; color:var(--dark-blue); margin-bottom:8px; }
+  .listing-sub{ color:var(--muted); font-size:13px; margin-bottom:18px; }
+  .price-block{ background:linear-gradient(135deg,#f0f6ff,#fff); border:1px solid #d0e4f7; border-radius:12px; padding:16px 18px; margin-bottom:16px; }
+  .price{ font-size:34px; font-weight:800; color:var(--dark-blue); margin-bottom:3px; }
+  .price-note{ font-size:13px; color:var(--success); font-weight:600; }
 
-.main-img-area{
-  position:relative;
-  height:460px;
-  background:linear-gradient(145deg,#ccddef,#deeaf7);
-  background-size:cover;background-position:center;background-repeat:no-repeat;
-  display:flex;align-items:center;justify-content:center;
-  font-size:72px;
-  overflow:hidden;
-}
-.main-img-area::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(5,15,28,.5) 0%,rgba(5,15,28,.05) 45%,transparent 70%);
-  pointer-events:none;
-}
-.gallery-top-badges{position:absolute;top:14px;left:14px;display:flex;gap:7px;z-index:3;}
-.g-badge{padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:700;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
-.g-badge-status{background:rgba(255,255,255,.9);color:var(--dark);}
-.g-badge-ok{background:rgba(220,253,235,.95);color:#065f46;}
-.g-badge-cat{background:rgba(18,82,163,.85);color:#fff;}
-.gallery-actions{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:3;}
-.g-action{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);border:none;display:flex;align-items:center;justify-content:center;font-size:16px;backdrop-filter:blur(8px);transition:transform .15s,box-shadow .15s;}
-.g-action:hover{transform:scale(1.1);box-shadow:0 4px 14px rgba(0,0,0,.2);}
-.g-action.fav-on{color:#ef4444;}
+  /* Quick Specs */
+  .quick-specs{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+  .quick-item{ background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+  .quick-item strong{ display:block; font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
+  .quick-item span{ font-size:14px; font-weight:700; color:#1e293b; }
 
-.gallery-bottom{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:14px 18px 16px;}
-.listing-title-overlay{font-size:21px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-.2px;text-shadow:0 2px 8px rgba(0,0,0,.4);margin-bottom:5px;}
-.listing-price-overlay{font-size:28px;font-weight:900;color:#fff;letter-spacing:-.5px;text-shadow:0 2px 8px rgba(0,0,0,.4);}
-.img-count-pill{position:absolute;bottom:14px;right:18px;background:rgba(5,15,28,.65);color:#fff;font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:999px;backdrop-filter:blur(6px);z-index:3;display:none;}
+  /* CTA Buttons */
+  .cta-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+  .btn-primary{ display:inline-block; background:var(--dark-blue); color:#fff; padding:13px 20px; border-radius:999px; font-weight:700; font-size:14px; cursor:pointer; border:none; transition:background .15s; }
+  .btn-primary:hover{ background:var(--blue); }
+  .btn-secondary{ display:inline-block; background:#fff; color:var(--dark-blue); border:1px solid var(--border); padding:13px 20px; border-radius:999px; font-weight:700; font-size:14px; }
+  .btn-secondary:hover{ background:#f0f4f8; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:14px; font-size:13px; color:#475569; }
 
-.thumb-strip{display:flex;gap:7px;padding:10px 12px;overflow-x:auto;scrollbar-width:none;background:var(--bg);border-top:1px solid var(--border);}
-.thumb-strip::-webkit-scrollbar{display:none;}
-.thumb{
-  width:74px;height:62px;flex-shrink:0;border-radius:9px;
-  border:2.5px solid transparent;cursor:pointer;
-  background:linear-gradient(135deg,#d8e8f4,#e8f2fb);
-  background-size:cover;background-position:center;
-  display:flex;align-items:center;justify-content:center;font-size:20px;
-  transition:border-color .15s,transform .12s;overflow:hidden;
-}
-.thumb.active{border-color:var(--blue2);box-shadow:0 0 0 2px rgba(24,104,192,.2);}
-.thumb:hover:not(.active){border-color:#a8c8ee;transform:translateY(-2px);}
+  /* Lower Layout */
+  .lower-layout{ display:grid; grid-template-columns:1fr 360px; gap:22px; align-items:start; }
+  .stack{ display:flex; flex-direction:column; gap:18px; }
+  .panel{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+  .panel-head{ padding:16px 20px; border-bottom:1px solid var(--border); }
+  .panel-head h2{ font-size:17px; font-weight:700; color:var(--dark-blue); }
+  .panel-body{ padding:20px; }
+  .description p{ color:#475569; font-size:15px; line-height:1.7; }
 
-/* ─── SIDE INFO CARD ─── */
-.info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
+  /* Specs Table */
+  .specs-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .spec-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:11px 14px; border:1px solid var(--border); border-radius:10px; background:#fafbfc; }
+  .spec-row span{ color:var(--muted); font-size:13px; }
+  .spec-row strong{ color:#1e293b; font-size:13px; font-weight:700; text-align:right; }
 
-.info-card-top{padding:22px 22px 0;}
-.cat-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;background:var(--light);color:var(--blue);border-radius:999px;font-size:11.5px;font-weight:700;margin-bottom:12px;letter-spacing:.02em;}
-.info-title{font-size:20px;font-weight:800;color:var(--dark);line-height:1.25;letter-spacing:-.2px;margin-bottom:6px;}
-.info-sub{font-size:12px;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.info-sub-dot{width:3px;height:3px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+  /* Seller Card */
+  .seller-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); position:sticky; top:80px; overflow:hidden; }
+  .seller-header{ background:linear-gradient(135deg,#1e3a52,#2a5278); padding:20px; display:flex; align-items:center; gap:14px; }
+  .seller-logo{ width:54px; height:54px; border-radius:14px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.25); display:grid; place-items:center; font-size:20px; font-weight:800; color:#fff; overflow:hidden; flex-shrink:0; }
+  .seller-logo img{ width:100%; height:100%; object-fit:cover; }
+  .seller-info h3{ font-size:17px; font-weight:700; color:#fff; margin-bottom:3px; }
+  .seller-info p{ font-size:12px; color:rgba(255,255,255,0.7); }
+  .seller-stats{ display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:14px 18px; border-bottom:1px solid var(--border); }
+  .seller-stat{ background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+  .seller-stat strong{ display:block; font-size:16px; font-weight:800; color:var(--dark-blue); margin-bottom:2px; }
+  .seller-stat span{ font-size:11px; color:var(--muted); }
 
-/* Price box */
-.price-box{
-  margin:0 22px 18px;
-  background:linear-gradient(135deg,#0d1f35 0%,#15355e 100%);
-  border-radius:13px;padding:18px 20px;position:relative;overflow:hidden;
-}
-.price-box::before{content:'';position:absolute;top:-35px;right:-35px;width:130px;height:130px;border-radius:50%;background:rgba(58,150,245,.1);}
-.price-box::after{content:'';position:absolute;bottom:-25px;left:-15px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.03);}
-.pb-label{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;}
-.pb-price{font-size:32px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1;position:relative;z-index:1;}
-.pb-location{margin-top:8px;font-size:12px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:5px;position:relative;z-index:1;}
-.pb-dot{width:7px;height:7px;border-radius:50%;background:#0ea371;flex-shrink:0;box-shadow:0 0 0 2px rgba(14,163,113,.3);}
-
-/* Quick specs */
-.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 22px 18px;}
-.q-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;transition:border-color .15s,background .15s;}
-.q-item:hover{border-color:#aacce8;background:#edf5ff;}
-.q-label{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
-.q-val{font-size:13px;font-weight:700;color:var(--dark);}
-
-/* Trust pills */
-.trust-strip{display:flex;flex-wrap:wrap;gap:6px;padding:0 22px 18px;}
-.t-pill{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:7px;font-size:11.5px;font-weight:600;}
-.t-green{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
-.t-blue{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
-.t-amber{background:#fffbeb;color:#92400e;border:1px solid #fde68a;}
-
-/* CTA */
-.cta-area{padding:0 22px 18px;display:flex;flex-direction:column;gap:9px;}
-.btn-contact{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  background:linear-gradient(135deg,#1252a3,#1d7bdd);
-  color:#fff;border:none;padding:14px 20px;border-radius:11px;
-  font-size:15px;font-weight:800;
-  box-shadow:0 6px 20px rgba(18,82,163,.35);
-  transition:opacity .15s,transform .12s;
-}
-.btn-contact:hover{opacity:.93;transform:translateY(-1px);}
-.btn-back{
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  background:var(--bg);color:var(--dark);border:1.5px solid var(--border);
-  padding:11px 20px;border-radius:11px;font-size:13.5px;font-weight:700;
-  transition:border-color .15s,background .15s;
-}
-.btn-back:hover{border-color:var(--blue2);background:#edf5ff;color:var(--blue2);}
-
-.btn-phone{
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;
-  padding:11px 20px;border-radius:11px;font-size:13.5px;font-weight:700;
-  transition:background .15s;
-}
-.btn-phone:hover{background:#dcfce7;}
-
-.info-meta{padding:14px 22px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--muted);}
-.info-meta span{display:flex;align-items:center;gap:4px;}
-
-/* ─── LOWER LAYOUT ─── */
-.lower-layout{display:grid;grid-template-columns:1fr 380px;gap:22px;align-items:start;}
-.main-stack{display:flex;flex-direction:column;gap:18px;}
-
-/* ─── PANELS ─── */
-.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
-.panel-hd{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
-.panel-hd h2{font-size:15px;font-weight:800;color:var(--dark);}
-.panel-hd-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.icon-blue{background:#dbeafe;}
-.icon-gray{background:#f1f5f9;}
-.icon-green{background:#dcfce7;}
-.panel-bd{padding:22px;}
-
-.description{font-size:14.5px;color:#3d5570;line-height:1.82;}
-.description p{margin-bottom:10px;}
-.description p:last-child{margin-bottom:0;}
-
-/* Specs grid */
-.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
-.spec-item{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);gap:10px;transition:border-color .15s,background .15s;}
-.spec-item:hover{border-color:#aacce8;background:#edf5ff;}
-.spec-key{font-size:12.5px;color:var(--muted);font-weight:500;}
-.spec-val{font-size:12.5px;font-weight:700;color:var(--dark);text-align:right;}
-
-/* Similar */
-.similar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.sim-card{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;transition:box-shadow .2s,transform .15s;display:block;}
-.sim-card:hover{box-shadow:var(--shadow2);transform:translateY(-3px);}
-.sim-img{height:130px;background:linear-gradient(135deg,#d8e8f4,#e8f2fb);display:flex;align-items:center;justify-content:center;font-size:36px;background-size:cover;background-position:center;position:relative;}
-.sim-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(5,15,28,.22),transparent 60%);}
-.sim-bd{padding:11px 13px;}
-.sim-title{font-size:12.5px;font-weight:700;color:var(--dark);margin-bottom:4px;line-height:1.3;}
-.sim-price{font-size:15px;font-weight:900;color:var(--blue);}
-.sim-meta{font-size:11px;color:var(--muted);margin-top:2px;}
-
-/* ─── CONTACT CARD ─── */
-.contact-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);position:sticky;top:78px;overflow:hidden;}
-
-.seller-hd{
-  background:linear-gradient(135deg,#071524 0%,#122840 100%);
-  padding:20px 22px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;
-}
-.seller-hd::before{content:'';position:absolute;top:-40px;right:-20px;width:150px;height:150px;border-radius:50%;background:rgba(58,150,245,.07);}
-.seller-av{
-  width:54px;height:54px;border-radius:13px;
-  background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.07));
-  border:2px solid rgba(255,255,255,.2);
-  display:grid;place-items:center;font-size:18px;font-weight:800;color:#fff;
-  overflow:hidden;flex-shrink:0;position:relative;z-index:1;
-}
-.seller-av img{width:100%;height:100%;object-fit:cover;}
-.seller-txt{position:relative;z-index:1;}
-.seller-name{font-size:16px;font-weight:800;color:#fff;margin-bottom:2px;}
-.seller-loc{font-size:12px;color:rgba(255,255,255,.52);}
-.verified-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(14,163,113,.2);color:#6ee7b7;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:5px;}
-
-.seller-stats{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border);}
-.stat-cell{padding:13px 8px;text-align:center;border-right:1px solid var(--border);}
-.stat-cell:last-child{border-right:none;}
-.stat-val{display:block;font-size:15px;font-weight:900;color:var(--blue);margin-bottom:1px;}
-.stat-lbl{font-size:10.5px;color:var(--muted);font-weight:500;}
-
-/* Form */
-.cf-wrap{padding:20px;display:flex;flex-direction:column;gap:10px;}
-.cf-hd{font-size:15px;font-weight:800;color:var(--dark);}
-.cf-sub{font-size:12px;color:var(--muted);line-height:1.5;}
-.cf-field{display:flex;flex-direction:column;gap:4px;}
-.cf-field label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
-.cf-field input,.cf-field textarea{
-  width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;
-  outline:none;font-size:13.5px;font-family:inherit;
-  transition:border-color .15s,box-shadow .15s;background:var(--bg);color:var(--dark);
-}
-.cf-field input:focus,.cf-field textarea:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(24,104,192,.1);background:#fff;}
-.cf-field input::placeholder,.cf-field textarea::placeholder{color:#b0c0d4;}
-.cf-field textarea{min-height:100px;resize:vertical;line-height:1.55;}
-.cf-submit{
-  background:linear-gradient(135deg,var(--blue),var(--blue2));
-  color:#fff;border:none;padding:13px;border-radius:11px;
-  font-size:14px;font-weight:800;font-family:inherit;
-  box-shadow:0 5px 16px rgba(18,82,163,.3);
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  transition:opacity .15s,transform .12s;
-}
-.cf-submit:hover{opacity:.93;transform:translateY(-1px);}
-.cf-submit:disabled{opacity:.55;cursor:not-allowed;transform:none;}
-.cf-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;padding:11px 14px;border-radius:10px;font-size:13px;font-weight:600;display:none;text-align:center;}
-.cf-note{font-size:11px;color:#94a3b8;text-align:center;line-height:1.5;}
-.cf-note a{color:var(--blue2);}
-
-.trust-bar{display:flex;border-top:1px solid var(--border);}
-.tb-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 6px;font-size:10.5px;color:var(--muted);font-weight:600;text-align:center;border-right:1px solid var(--border);}
-.tb-item:last-child{border-right:none;}
-.tb-icon{font-size:17px;}
-
-/* Workshop */
-.workshop-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
-.wk-hd{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-.wk-hd h2{font-size:15px;font-weight:800;color:var(--dark);}
-.wk-hd p{font-size:12px;color:var(--muted);margin-top:2px;}
-.wk-chip{display:inline-flex;align-items:center;gap:4px;background:#ecfdf5;color:#065f46;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;flex-shrink:0;}
-.wk-list{padding:12px 16px;display:flex;flex-direction:column;gap:9px;}
-.wk-item{display:flex;align-items:flex-start;gap:12px;padding:12px 13px;border:1px solid var(--border);border-radius:11px;background:var(--bg);transition:all .15s;cursor:pointer;}
-.wk-item:hover{border-color:#aacce8;background:#edf5ff;transform:translateX(3px);}
-.wk-icon{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#0d1f35,#1b3a5a);display:grid;place-items:center;font-size:17px;flex-shrink:0;color:#fff;}
-.wk-info{flex:1;min-width:0;}
-.wk-name{font-size:13.5px;font-weight:700;color:var(--dark);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.wk-meta{display:flex;flex-wrap:wrap;gap:7px;font-size:11.5px;color:var(--muted);}
-.stars{color:#f59e0b;font-size:11.5px;}
-.open-badge{color:var(--success);font-weight:700;}
-.closed-badge{color:#ef4444;font-weight:700;}
-.wk-dist{font-size:11.5px;font-weight:700;color:var(--blue);background:var(--light);padding:3px 9px;border-radius:999px;white-space:nowrap;flex-shrink:0;align-self:center;}
-.wk-footer{padding:11px 16px;border-top:1px solid var(--border);background:var(--bg);}
-.wk-hint{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:5px;}
-.wk-hint a{color:var(--blue2);font-weight:600;}
-.wk-powered{font-size:10.5px;color:#a0b3c4;margin-top:3px;}
-
-/* ─── FOOTER ─── */
-.footer{background:var(--dark);color:rgba(255,255,255,.65);padding:52px 0 0;margin-top:60px;}
-.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:36px;margin-bottom:44px;}
-.footer h4{color:#fff;font-size:13.5px;font-weight:700;margin-bottom:14px;letter-spacing:.02em;}
-.footer ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
-.footer ul li a{font-size:13px;color:rgba(255,255,255,.5);transition:color .15s;}
-.footer ul li a:hover{color:var(--sky);}
-.footer-desc{font-size:13px;color:rgba(255,255,255,.45);line-height:1.65;}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:18px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:12.5px;color:rgba(255,255,255,.35);}
-.footer-links{display:flex;gap:18px;}
-.footer-links a{color:rgba(255,255,255,.35);transition:color .15s;}
-.footer-links a:hover{color:var(--sky);}
-
-/* ─── RESPONSIVE ─── */
-@media(max-width:1100px){
-  .hero-layout,.lower-layout{grid-template-columns:1fr;}
-  .contact-card{position:static;}
-  .footer-grid{grid-template-columns:1fr 1fr;}
-}
-@media(max-width:720px){
-  .main-img-area{height:290px;}
-  .listing-title-overlay{font-size:17px;}
-  .listing-price-overlay{font-size:22px;}
-  .specs-grid{grid-template-columns:1fr;}
-  .similar-grid{grid-template-columns:1fr 1fr;}
-  .header-right{display:none;}
-  .mob-toggle{display:flex;}
-  .footer-grid{grid-template-columns:1fr;gap:22px;}
-  .search-bar{display:none;}
-  .quick-grid{grid-template-columns:1fr 1fr;}
-}
-
-/* ── BEWERTUNGEN ── */
-.reviews-section { margin-top: 22px; }
-.reviews-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; }
-
-/* Summary header */
-.reviews-summary {
-  padding: 20px 22px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 20px;
-  background: linear-gradient(135deg, rgba(220,238,255,.3), var(--card));
-}
-.rs-score {
-  display: flex; flex-direction: column; align-items: center;
-  flex-shrink: 0; gap: 4px;
-}
-.rs-number {
-  font-size: 42px; font-weight: 900; color: var(--dark);
-  letter-spacing: -1px; line-height: 1;
-}
-.rs-stars { font-size: 18px; color: #f59e0b; letter-spacing: 1px; }
-.rs-count { font-size: 12px; color: var(--muted); font-weight: 600; }
-.rs-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-.rs-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.rs-bar-label { color: var(--muted); font-weight: 600; width: 12px; text-align: right; flex-shrink: 0; }
-.rs-bar-track { flex: 1; height: 7px; background: var(--border); border-radius: 999px; overflow: hidden; }
-.rs-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #fbbf24); transition: width .6s ease; }
-.rs-bar-n { color: var(--muted); font-weight: 600; width: 20px; text-align: right; flex-shrink: 0; font-size: 11.5px; }
-
-/* Write review button */
-.write-review-btn {
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  width: 100%; padding: 12px;
-  background: none; border: none; border-bottom: 1px solid var(--border);
-  font-size: 13.5px; font-weight: 700; color: var(--blue2);
-  cursor: pointer; font-family: inherit;
-  transition: background .15s;
-}
-.write-review-btn:hover { background: #eff6ff; }
-.write-review-btn svg { width: 15px; height: 15px; stroke: var(--blue2); }
-
-/* Review form */
-.review-form-wrap {
-  padding: 18px 22px; border-bottom: 1px solid var(--border);
-  background: #f8fbff;
-  display: none;
-}
-.review-form-wrap.open { display: block; }
-.review-form-title { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 14px; }
-
-/* Star picker */
-.star-picker { display: flex; gap: 4px; margin-bottom: 14px; }
-.star-picker button {
-  background: none; border: none; font-size: 28px; cursor: pointer;
-  color: #d1d5db; transition: color .1s, transform .1s;
-  padding: 2px; line-height: 1;
-}
-.star-picker button.active,
-.star-picker button:hover { color: #f59e0b; transform: scale(1.15); }
-.star-error { font-size: 12px; color: #ef4444; margin-top: -10px; margin-bottom: 10px; display: none; }
-
-.review-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
-.review-field label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-.review-field input,
-.review-field textarea {
-  padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 10px;
-  font-size: 13.5px; font-family: inherit; color: var(--dark);
-  outline: none; background: #fff;
-  transition: border-color .15s, box-shadow .15s;
-}
-.review-field input:focus,
-.review-field textarea:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px rgba(24,104,192,.1); }
-.review-field textarea { min-height: 90px; resize: vertical; line-height: 1.55; }
-.review-field input::placeholder,
-.review-field textarea::placeholder { color: #b0bfcc; }
-
-.review-submit-row { display: flex; gap: 9px; }
-.rf-submit {
-  flex: 1; padding: 11px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--blue), var(--blue2));
-  color: #fff; border: none; font-size: 13.5px; font-weight: 800;
-  font-family: inherit; cursor: pointer;
-  box-shadow: 0 4px 12px rgba(18,82,163,.28);
-  transition: opacity .15s; display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.rf-submit:hover { opacity: .92; }
-.rf-submit:disabled { opacity: .55; cursor: not-allowed; }
-.rf-cancel {
-  padding: 11px 16px; border-radius: 10px;
-  background: none; border: 1.5px solid var(--border);
-  font-size: 13.5px; font-weight: 700; color: var(--muted);
-  font-family: inherit; cursor: pointer; transition: border-color .15s;
-}
-.rf-cancel:hover { border-color: #94a3b8; }
-.rf-success {
-  background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;
-  padding: 10px 13px; border-radius: 9px; font-size: 13px; font-weight: 600;
-  margin-top: 10px; display: none; text-align: center;
-}
-
-/* Review list */
-.reviews-list { display: flex; flex-direction: column; gap: 0; }
-.review-item {
-  padding: 16px 22px; border-bottom: 1px solid var(--border);
-  transition: background .12s;
-}
-.review-item:last-child { border-bottom: none; }
-.review-item:hover { background: #fafcff; }
-.review-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-.review-author { display: flex; align-items: center; gap: 9px; }
-.review-av {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--blue), var(--blue2));
-  display: grid; place-items: center;
-  font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0;
-}
-.review-name { font-size: 13.5px; font-weight: 700; color: var(--dark); }
-.review-date { font-size: 11.5px; color: var(--muted); }
-.review-stars { font-size: 14px; color: #f59e0b; letter-spacing: 1px; }
-.review-text { font-size: 13.5px; color: #3d5570; line-height: 1.65; }
-.review-empty {
-  padding: 28px 22px; text-align: center; color: var(--muted);
-  font-size: 13.5px;
-}
-.review-empty svg { width: 32px; height: 32px; stroke: #c8d9ea; margin: 0 auto 10px; display: block; }
-
-.reviews-load-more {
-  padding: 13px; text-align: center; border-top: 1px solid var(--border);
-  font-size: 13px; font-weight: 700; color: var(--blue2);
-  cursor: pointer; background: none; border-left: none; border-right: none; border-bottom: none;
-  width: 100%; font-family: inherit; transition: background .12s;
-}
-.reviews-load-more:hover { background: #eff6ff; }
-
-/* Seller stat update */
-.stat-val.rating-live { color: #f59e0b; }
-
-@media(max-width:600px){
-  .reviews-summary { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .rs-number { font-size: 34px; }
-}
+  /* Contact Form */
+  .contact-form{ padding:18px; display:flex; flex-direction:column; gap:10px; }
+  .contact-form h3{ font-size:15px; font-weight:700; color:var(--dark-blue); margin-bottom:4px; }
+  .contact-form input,
+  .contact-form textarea{ width:100%; padding:11px 13px; border:1px solid var(--border); border-radius:10px; outline:none; font-size:14px; transition:border-color .15s; }
+  .contact-form input:focus,
+  .contact-form textarea:focus{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(43,108,176,0.1); }
+  .contact-form textarea{ min-height:100px; resize:vertical; }
+  .contact-form button{ background:var(--dark-blue); color:#fff; border:none; padding:13px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s; }
+  .contact-form button:hover{ background:var(--blue); }
+  .contact-form button:disabled{ opacity:.6; cursor:not-allowed; }
+  .send-success{ display:none; background:#ecfdf5; border:1px solid #a7f3d0; color:var(--success); padding:12px; border-radius:10px; font-size:14px; font-weight:600; text-align:center; }
 
 
-/* ── VERSAND ── */
-.shipping-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-top:0;}
-.shipping-hd{padding:15px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
-.shipping-hd h2{font-size:15px;font-weight:800;color:var(--dark);}
-.shipping-hd svg{width:16px;height:16px;stroke:var(--blue2);}
-.shipping-options{padding:14px 22px;display:flex;flex-direction:column;gap:8px;}
-.ship-opt{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:11px 14px;background:var(--bg);border:1px solid var(--border);
-  border-radius:11px;transition:border-color .15s,background .15s;
-  gap:10px;
-}
-.ship-opt:hover{border-color:#a8c8f0;background:#edf5ff;}
-.ship-opt-left{display:flex;align-items:center;gap:10px;}
-.ship-logo{
-  width:36px;height:36px;border-radius:9px;
-  display:grid;place-items:center;font-size:18px;
-  flex-shrink:0;background:#fff;border:1px solid var(--border);
-}
-.ship-name{font-size:13.5px;font-weight:700;color:var(--dark);}
-.ship-note{font-size:11.5px;color:var(--muted);margin-top:1px;}
-.ship-price{font-size:14px;font-weight:800;color:var(--blue);}
-.ship-price.free{color:var(--success);}
-.shipping-note{padding:10px 22px 14px;font-size:12px;color:var(--muted);display:flex;align-items:flex-start;gap:6px;line-height:1.55;}
-.shipping-note svg{width:13px;height:13px;stroke:var(--muted);flex-shrink:0;margin-top:1px;}
-.ship-empty{padding:20px 22px;font-size:13.5px;color:var(--muted);text-align:center;}
+  /* ── Werkstätten in der Nähe ── */
+  .workshop-panel{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+  .workshop-head{ padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .workshop-head h2{ font-size:17px; font-weight:700; color:var(--dark-blue); }
+  .workshop-head p{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .workshop-kicker{ display:inline-flex; align-items:center; gap:5px; background:#e8f5e9; color:#2e7d32; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; }
+  .workshop-list{ padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+  .workshop-item{ display:flex; align-items:flex-start; gap:12px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:#fafbfc; transition:border-color .15s, background .15s; cursor:pointer; }
+  .workshop-item:hover{ border-color:#b8d9ff; background:#f0f6ff; }
+  .workshop-icon{ width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg,#1e3a52,#2a5278); display:grid; place-items:center; font-size:18px; flex-shrink:0; color:#fff; }
+  .workshop-info{ flex:1; min-width:0; }
+  .workshop-name{ font-size:14px; font-weight:700; color:#1e293b; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .workshop-meta{ display:flex; flex-wrap:wrap; gap:8px; font-size:12px; color:var(--muted); }
+  .workshop-badge{ display:inline-flex; align-items:center; gap:4px; }
+  .stars{ color:#f59e0b; font-size:12px; }
+  .open-badge{ color:#16a34a; font-weight:700; }
+  .closed-badge{ color:#dc2626; font-weight:700; }
+  .workshop-dist{ font-size:12px; font-weight:700; color:var(--dark-blue); background:#e8f0f8; padding:4px 10px; border-radius:999px; white-space:nowrap; flex-shrink:0; align-self:center; }
+  .workshop-footer{ padding:12px 16px; border-top:1px solid var(--border); background:#f8fafc; border-radius:0 0 var(--radius) var(--radius); }
+  .workshop-hint{ font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .workshop-hint a{ color:var(--blue); font-weight:600; }
+  .workshop-powered{ font-size:11px; color:#9ca3af; margin-top:4px; }
 
-/* Adresse im CF */
-.cf-address-wrap{
-  border:1.5px dashed #a8c8f0;border-radius:11px;
-  padding:14px;background:#f0f7ff;
-  margin-top:4px;display:none;
-}
-.cf-address-wrap.show{display:block;}
-.cf-address-title{font-size:12px;font-weight:700;color:var(--blue2);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
-.cf-addr-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
-.cf-addr-row.full{grid-template-columns:1fr;}
-.cf-addr-field{display:flex;flex-direction:column;gap:3px;}
-.cf-addr-field label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
-.cf-addr-field input{
-  padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;
-  font-size:13px;font-family:inherit;color:var(--dark);outline:none;
-  background:#fff;transition:border-color .15s;
-}
-.cf-addr-field input:focus{border-color:var(--blue2);}
-.cf-addr-note{font-size:11px;color:#64788e;margin-top:4px;line-height:1.5;}
+  /* Similar listings */
+  .similar-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .sim-card{ background:#fff; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:box-shadow .2s; display:block; }
+  .sim-card:hover{ box-shadow:var(--shadow-lg); }
+  .sim-img{ height:130px; background:linear-gradient(135deg,#dfe7ef,#f2f7fb); display:grid; place-items:center; font-size:36px; background-size:cover; background-position:center; }
+  .sim-body{ padding:12px; }
+  .sim-title{ font-size:13px; font-weight:700; color:#1e293b; margin-bottom:4px; line-height:1.3; }
+  .sim-price{ font-size:16px; font-weight:800; color:var(--dark-blue); }
+
+  @media(max-width:1100px){ .hero-layout,.lower-layout{ grid-template-columns:1fr; } .seller-card{ position:static; } }
+  @media(max-width:760px){ .main-image{ height:280px; } .thumb-row{ grid-template-columns:repeat(4,1fr); } .quick-specs,.specs-grid{ grid-template-columns:1fr; } .listing-title{ font-size:22px; } .similar-grid{ grid-template-columns:1fr 1fr; } }
+
+  /* ═══════════════════════════════════════
+     MOBILE RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .container { padding: 0 14px; }
+    .header-inner { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
+    .logo { font-size: 18px; }
+    .logo-badge, .logo-mark { width: 34px; height: 34px; font-size: 14px; }
+    .header-actions { display: none; }
+    .layout { grid-template-columns: 1fr !important; }
+    .sidebar { position: static !important; top: auto !important; }
+    .page-head h1 { font-size: 22px !important; }
+    .page-head p { font-size: 13px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .stat-value { font-size: 22px !important; }
+    .panel { padding: 14px !important; }
+    .table-wrap { overflow-x: auto; }
+    .table { min-width: 600px; }
+    .bottom-grid { grid-template-columns: 1fr !important; }
+    .listing-grid { grid-template-columns: 1fr !important; }
+    .listing-card { grid-template-columns: 1fr !important; }
+    .card-image { min-height: 180px !important; }
+    .filter-bar { flex-direction: column; }
+    .filter-bar input, .filter-bar select { width: 100%; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr !important; }
+    .plan-grid { grid-template-columns: 1fr !important; }
+    .info-grid, .bottom-grid { grid-template-columns: 1fr !important; }
+    .plan-card.featured { transform: none; }
+    .nav-item { padding: 9px 10px; font-size: 13px; }
+    .profile-name { font-size: 14px; }
+    .tab-bar { flex-wrap: wrap; }
+    .tab { font-size: 12px; padding: 6px 10px; }
+    .msg { max-width: 90% !important; }
+    .reply-box { flex-direction: column; }
+    .reply-input { width: 100%; }
+    .chat-messages { max-height: 250px; }
+    .page { padding: 16px 0 32px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .logo-name { font-size: 18px; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .page-head { flex-direction: column; align-items: flex-start !important; }
+    .page-head .new-btn, .page-head a { width: 100%; text-align: center; }
+    .action-links { flex-wrap: wrap; }
+    .inq-header { flex-direction: column; }
+    .inq-meta { flex-direction: column; gap: 4px; }
+    .sidebar-profile { padding: 16px 14px; }
+  }
 
 
-/* ── PAYPAL BUTTON ── */
-.btn-paypal {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 14px 20px;
-  background: linear-gradient(135deg, #003087, #009cde);
-  color: #fff; border: none; border-radius: 11px;
-  font-size: 15px; font-weight: 800; font-family: inherit;
-  cursor: pointer; text-decoration: none;
-  box-shadow: 0 6px 20px rgba(0,48,135,.3);
-  transition: opacity .15s, transform .12s;
-  position: relative; overflow: hidden;
-}
-.btn-paypal:hover { opacity: .93; transform: translateY(-1px); }
-.btn-paypal:active { transform: translateY(0); }
-.btn-paypal-logo {
-  display: flex; align-items: center; gap: 3px;
-  background: rgba(255,255,255,.15); border-radius: 6px;
-  padding: 3px 8px;
-}
-.btn-paypal-logo svg { width: 14px; height: 14px; }
-
-/* PayPal info box */
-.paypal-info-box {
-  background: #f0f7ff; border: 1px solid #bfdbfe;
-  border-radius: 10px; padding: 11px 14px;
-  display: none; gap: 8px; align-items: flex-start;
-  font-size: 12px; color: #1e40af; line-height: 1.55;
-}
-.paypal-info-box.show { display: flex; }
-.paypal-info-box svg { width: 14px; height: 14px; stroke: #3b82f6; flex-shrink: 0; margin-top: 1px; }
-
-/* Divider between contact and pay */
-.cta-divider {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 11.5px; color: var(--muted); font-weight: 600;
-}
-.cta-divider::before, .cta-divider::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
+  /* ── Einheitliches Logo ── */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #1b2d42, #2a4a6b);
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px rgba(13,27,42,0.35);
+    flex-shrink: 0; letter-spacing: -0.5px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
+  .logo-name {
+    font-size: 22px; font-weight: 800;
+    color: #0d1b2a; letter-spacing: -.3px;
+    font-family: 'Outfit', Arial, sans-serif;
+  }
 
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="container topbar-inner">
-    <div class="top-left">
-      <span>🇩🇪 Deutschlands Motorenmarktplatz</span>
-      <a href="suche.html">Alle Anzeigen</a>
-    </div>
-    <div class="top-right">
-      <a href="login.html" data-guest-only>Einloggen</a>
-      <a href="registrieren.html" data-guest-only>Registrieren</a>
-      <a href="kontakt.html">Hilfe</a>
-    </div>
-  </div>
-</div>
-
-<!-- HEADER -->
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
       <div class="logo-mark">1A</div>
       <div class="logo-name">Motor</div>
     </a>
-    <div class="search-bar">
-      <input type="text" placeholder="Motor, Hersteller, Modell suchen…"
-        onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='suche.html?q='+encodeURIComponent(this.value.trim())" />
-      <button class="search-submit" onclick="const v=this.previousElementSibling.value.trim();if(v)window.location.href='suche.html?q='+encodeURIComponent(v);else window.location.href='suche.html';">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Suchen
-      </button>
+    <div class="header-actions">
+      <a href="suche.html">← Suche</a>
+      <a href="anzeige-erstellen.html" class="sell-btn">＋ Anzeige erstellen</a>
     </div>
-    <div class="header-right">
-      <a href="login.html" data-guest-only><button class="hdr-btn hdr-ghost">Einloggen</button></a>
-      <a href="registrieren.html" data-guest-only><button class="hdr-btn hdr-outline">Registrieren</button></a>
-      <a href="anzeige-erstellen.html"><button class="hdr-btn hdr-primary">＋ Anzeige erstellen</button></a>
-    </div>
-    <button class="mob-toggle" id="mob-toggle" aria-label="Menü">
-      <span></span><span></span><span></span>
-    </button>
   </div>
-  <nav class="mob-nav" id="mob-nav">
-    <a href="suche.html">🔍 Motor suchen</a>
-    <a href="anzeige-erstellen.html">＋ Anzeige erstellen</a>
-    <a href="dashboard.html" data-auth-only style="display:none;">👤 Mein Konto</a>
-    <a href="meine-anfragen.html" data-auth-only style="display:none;">💬 Nachrichten</a>
-    <a href="meine-anzeigen.html" data-auth-only style="display:none;">📋 Meine Anzeigen</a>
-    <a href="login.html" data-guest-only>Einloggen</a>
-    <a href="registrieren.html" data-guest-only>Registrieren</a>
-    <a href="kontakt.html">Hilfe &amp; Kontakt</a>
-    <a href="#" id="logout-btn" data-auth-only style="display:none;color:#ef4444;">🚪 Abmelden</a>
-  </nav>
 </header>
 
-<!-- MAIN -->
 <main class="page">
   <div class="container">
 
-    <!-- BREADCRUMBS -->
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumbs">
       <a href="index.html">Startseite</a>
-      <span class="sep">›</span>
+      <span>›</span>
       <a href="suche.html" id="breadcrumb-category">Suche</a>
-      <span class="sep">›</span>
+      <span>›</span>
       <a href="#" id="breadcrumb-brand">Hersteller</a>
-      <span class="sep">›</span>
+      <span>›</span>
       <span id="breadcrumb-model">Anzeige</span>
     </nav>
 
-    <!-- ═══ HERO ROW ═══ -->
+    <!-- Hero: Galerie + Preisbox -->
     <div class="hero-layout">
 
-      <!-- GALERIE -->
-      <div class="gallery-wrap">
-        <div class="main-img-area" id="main-image">
-          <!-- Badges oben links -->
-          <div class="gallery-top-badges">
-            <span class="g-badge g-badge-status" id="status-badge">Live</span>
-            <span class="g-badge g-badge-cat" id="cat-badge">Kategorie</span>
-          </div>
-          <!-- Aktionen oben rechts -->
-          <div class="gallery-actions">
-            <button class="g-action" id="fav-btn" title="Merken" onclick="toggleFav(this)">♡</button>
-            <button class="g-action" title="Teilen" onclick="shareIt()">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="12" cy="3" r="1.8" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="13" r="1.8" stroke="currentColor" stroke-width="1.5"/><circle cx="3" cy="8" r="1.8" stroke="currentColor" stroke-width="1.5"/><path d="M10.3 4.1L4.7 7M10.3 11.9L4.7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </button>
-          </div>
-          <!-- Emoji-Icon wenn kein Bild -->
-          <span id="main-icon" style="position:relative;z-index:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.25));">📦</span>
-          <!-- Titel + Preis overlay unten -->
-          <div class="gallery-bottom" style="position:absolute;bottom:0;left:0;right:0;z-index:3;padding:16px 20px 18px;background:linear-gradient(to top,rgba(5,15,28,.75) 0%,transparent 100%);">
-            <div class="listing-title-overlay" id="title-overlay">Wird geladen…</div>
-            <div class="listing-price-overlay" id="price-overlay">–</div>
-          </div>
-          <span class="img-count-pill" id="img-counter">1 / 1</span>
+      <!-- Galerie -->
+      <div class="gallery-card">
+        <div class="main-image" id="main-image">
+          <span class="top-badge" id="status-badge">Live</span>
+          <span class="favorite-btn">♡</span>
+          <span id="main-icon">📦</span>
         </div>
-        <!-- Thumbnails -->
-        <div class="thumb-strip" id="thumb-row">
+        <div class="thumb-row" id="thumb-row">
           <div class="thumb active">📷</div>
         </div>
       </div>
 
-      <!-- INFO KARTE -->
-      <aside class="info-card">
-        <div class="info-card-top">
-          <span class="cat-chip" id="category-tag">⚙️ Kategorie</span>
-          <h1 class="info-title" id="listing-title">Wird geladen…</h1>
-          <div class="info-sub" id="listing-sub">
-            <span id="meta-date">📅 –</span>
-            <span class="info-sub-dot"></span>
-            <span id="meta-status">🔵 –</span>
-          </div>
+      <!-- Preis & Info -->
+      <aside class="side-card">
+        <span class="category-tag" id="category-tag">Kategorie</span>
+        <h1 class="listing-title" id="listing-title">Wird geladen...</h1>
+        <div class="listing-sub" id="listing-sub">Inserat wird geladen</div>
+
+        <div class="price-block">
+          <div class="price" id="listing-price">–</div>
+          <div class="price-note" id="listing-location">📍 Standort wird geladen</div>
         </div>
 
-        <!-- Preis -->
-        <div class="price-box">
-          <div class="pb-label">Verkaufspreis</div>
-          <div class="pb-price" id="listing-price">–</div>
-          <div class="pb-location">
-            <span class="pb-dot"></span>
-            <span id="listing-location">Standort wird geladen…</span>
-          </div>
+        <div class="quick-specs" id="quick-specs">
+          <div class="quick-item"><strong>Baujahr</strong><span>–</span></div>
+          <div class="quick-item"><strong>Zustand</strong><span>–</span></div>
+          <div class="quick-item"><strong>Hersteller</strong><span>–</span></div>
+          <div class="quick-item"><strong>Standort</strong><span>–</span></div>
         </div>
 
-        <!-- Quick Specs -->
-        <div class="quick-grid" id="quick-specs">
-          <div class="q-item"><div class="q-label">Baujahr</div><div class="q-val">–</div></div>
-          <div class="q-item"><div class="q-label">Zustand</div><div class="q-val">–</div></div>
-          <div class="q-item"><div class="q-label">Hersteller</div><div class="q-val">–</div></div>
-          <div class="q-item"><div class="q-label">Standort</div><div class="q-val">–</div></div>
+        <div class="cta-row">
+          <a href="#kontakt" class="btn-primary">💬 Verkäufer kontaktieren</a>
+          <a href="suche.html" class="btn-secondary">← Zurück</a>
         </div>
 
-        <!-- Trust -->
-        <div class="trust-strip">
-          <span class="t-pill t-green">✅ Geprüfter Händler</span>
-          <span class="t-pill t-blue">🔒 Sichere Anfrage</span>
-          <span class="t-pill t-amber">📦 Versand möglich</span>
-        </div>
-
-        <!-- CTAs -->
-        <div class="cta-area">
-          <a href="#kontakt" class="btn-contact">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2h12v9.5H9.5l-3 2.5v-2.5H2V2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-            Verkäufer kontaktieren
-          </a>
-          <button class="btn-phone" id="phone-btn" onclick="showPhone(this)">
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 2.5h4l1 3-2.5 1.5c1.5 3 2 3.5 5 5l1.5-2.5 3 1v4C5.5 14.5 1.5 10.5 2 2.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-            Telefonnummer anzeigen
-          </button>
-
-          <!-- PayPal Bezahlung -->
-          <div id="paypal-cta-wrap" style="display:none;">
-            <div class="cta-divider">oder direkt bezahlen</div>
-            <a id="paypal-btn" href="#" target="_blank" rel="noopener" class="btn-paypal">
-              <span class="btn-paypal-logo">
-                <!-- PayPal P logo -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 4h8c3 0 5 2 4.5 5-.4 2.5-2.5 4-5 4H12l-1 5H8l1-5H7L6 4h1z" fill="white" opacity=".9"/>
-                </svg>
-                <span style="font-size:14px;font-weight:900;letter-spacing:-.3px;">PayPal</span>
-              </span>
-              Jetzt mit PayPal bezahlen
-            </a>
-            <div class="paypal-info-box show" id="paypal-info">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span>Du wirst direkt zu PayPal weitergeleitet. 1A Motor ist nicht an der Zahlung beteiligt. Einige auf den Käuferschutz von PayPal.</span>
-            </div>
-          </div>
-
-          <a href="suche.html" class="btn-back">← Zurück zur Suche</a>
-        </div>
-
-        <!-- Meta -->
-        <div class="info-meta">
-          <span>🆔 <span id="meta-id">–</span></span>
-          <span>📅 <span id="meta-date2">–</span></span>
+        <div class="meta-row">
+          <span id="meta-status">Status: –</span>
+          <span id="meta-date">Datum: –</span>
         </div>
       </aside>
     </div>
 
-    <!-- ═══ LOWER ROW ═══ -->
+    <!-- Unterer Bereich -->
     <div class="lower-layout">
 
-      <div class="main-stack">
+      <!-- Links: Beschreibung + Specs + Ähnliche -->
+      <div class="stack">
 
-        <!-- BESCHREIBUNG -->
+        <!-- Beschreibung -->
         <div class="panel">
-          <div class="panel-hd">
-            <div class="panel-hd-icon icon-blue">📝</div>
-            <h2>Beschreibung</h2>
-          </div>
-          <div class="panel-bd description" id="description-box">
-            <p style="color:#94a3b8;">Wird geladen…</p>
+          <div class="panel-head"><h2>📝 Beschreibung</h2></div>
+          <div class="panel-body description" id="description-box">
+            <p>Beschreibung wird geladen...</p>
           </div>
         </div>
 
-
-        <!-- VERSAND -->
-        <div class="shipping-panel" id="shipping-panel" style="display:none;">
-          <div class="shipping-hd">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-            </svg>
-            <h2>Versand &amp; Abholung</h2>
-          </div>
-          <div class="shipping-options" id="shipping-options-list">
-          </div>
-          <div class="shipping-note">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Nach dem Kauf erhältst du die Trackingnummer direkt vom Verkäufer über den Chat.
-          </div>
-        </div>
-
-        <!-- TECHNISCHE DATEN -->
+        <!-- Technische Daten -->
         <div class="panel">
-          <div class="panel-hd">
-            <div class="panel-hd-icon icon-gray">⚙️</div>
-            <h2>Technische Daten</h2>
-          </div>
-          <div class="panel-bd">
+          <div class="panel-head"><h2>🔧 Technische Daten</h2></div>
+          <div class="panel-body">
             <div class="specs-grid" id="specs-grid">
-              <div class="spec-item"><span class="spec-key">Hersteller</span><strong class="spec-val">–</strong></div>
-              <div class="spec-item"><span class="spec-key">Modell</span><strong class="spec-val">–</strong></div>
+              <div class="spec-row"><span>Hersteller</span><strong>–</strong></div>
+              <div class="spec-row"><span>Modell</span><strong>–</strong></div>
             </div>
           </div>
         </div>
 
-        <!-- ÄHNLICHE ANZEIGEN -->
+        <!-- Ähnliche Anzeigen -->
         <div class="panel" id="similar-panel" style="display:none;">
-          <div class="panel-hd">
-            <div class="panel-hd-icon icon-blue">🔍</div>
-            <h2>Ähnliche Anzeigen</h2>
-          </div>
-          <div class="panel-bd">
+          <div class="panel-head"><h2>🔍 Ähnliche Anzeigen</h2></div>
+          <div class="panel-body">
             <div class="similar-grid" id="similar-grid"></div>
           </div>
         </div>
 
-        <!-- WERKSTÄTTEN -->
+
+        <!-- Werkstätten in der Nähe -->
         <div class="workshop-panel" id="workshop-panel" style="display:none;">
-          <div class="wk-hd">
+          <div class="workshop-head">
             <div>
               <h2>🔧 Werkstätten in der Nähe</h2>
-              <p id="workshop-subtitle">Fachbetriebe für den Motorausbau in Ihrer Region</p>
+              <p id="workshop-subtitle">Fachbetriebe für den Motorausbau in deiner Region</p>
             </div>
-            <span class="wk-chip">📍 Standortbasiert</span>
+            <span class="workshop-kicker">📍 Standortbasiert</span>
           </div>
-          <div class="wk-list" id="workshop-list"></div>
-          <div class="wk-footer">
-            <div class="wk-hint">
-              ℹ️ Werkstätten nahe dem Anzeigen-Standort.
-              <a href="#" id="workshop-maps-link" target="_blank">Alle auf Google Maps →</a>
+          <div class="workshop-list" id="workshop-list"></div>
+          <div class="workshop-footer">
+            <div class="workshop-hint">
+              ℹ️ Diese Werkstätten befinden sich in der Nähe des Anzeigen-Standorts.
+              <a href="#" id="workshop-maps-link" target="_blank">Alle auf Google Maps anzeigen →</a>
             </div>
-            <div class="wk-powered">Powered by Google Places API</div>
+            <div class="workshop-powered">Powered by Google Places API</div>
           </div>
         </div>
 
       </div>
 
-      <!-- ═══ KONTAKT KARTE ═══ -->
-      <aside class="contact-card" id="kontakt">
+      <!-- Rechts: Verkäufer + Kontakt -->
+      <aside class="seller-card" id="kontakt">
 
-        <!-- Händler Header -->
-        <div class="seller-hd">
-          <div class="seller-av" id="seller-logo">?</div>
-          <div class="seller-txt">
-            <div class="seller-name" id="seller-name">Händler</div>
-            <div class="seller-loc" id="seller-location">Standort</div>
-            <div class="verified-chip">✓ Verifizierter Händler</div>
+        <div class="seller-header">
+          <div class="seller-logo" id="seller-logo">?</div>
+          <div class="seller-info">
+            <h3 id="seller-name">Händler</h3>
+            <p id="seller-location">Standort</p>
           </div>
         </div>
 
-        <!-- Stats -->
         <div class="seller-stats">
-          <div class="stat-cell">
-            <strong class="stat-val" id="seller-status">Live</strong>
-            <span class="stat-lbl">Status</span>
+          <div class="seller-stat">
+            <strong id="seller-status">Live</strong>
+            <span>Status</span>
           </div>
-          <div class="stat-cell">
-            <strong class="stat-val" id="seller-date">–</strong>
-            <span class="stat-lbl">Online seit</span>
-          </div>
-          <div class="stat-cell">
-            <strong class="stat-val">⭐ 4.8</strong>
-            <span class="stat-lbl">Bewertung</span>
+          <div class="seller-stat">
+            <strong id="seller-date">–</strong>
+            <span>Veröffentlicht</span>
           </div>
         </div>
 
-        <!-- Formular -->
-        <form class="cf-wrap" id="contact-form">
-          <div class="cf-hd">📨 Anfrage senden</div>
-          <div class="cf-sub">Kostenlos &amp; unverbindlich — der Händler antwortet meist innerhalb von 24 h.</div>
-
-          <div class="cf-field">
-            <label>Ihr Name</label>
-            <input type="text" id="cf-name" placeholder="Max Mustermann" required autocomplete="name" />
-          </div>
-          <div class="cf-field">
-            <label>E-Mail-Adresse</label>
-            <input type="email" id="cf-email" placeholder="ihre@email.de" required autocomplete="email" />
-          </div>
-          <div class="cf-field">
-            <label>Ihre Nachricht</label>
-            <textarea id="cf-message" placeholder="Ich interessiere mich für diesen Motor. Ist er noch verfügbar? …" required></textarea>
-          </div>
-
-          <button type="submit" id="cf-submit" class="cf-submit">
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M14 2L2 7l4.5 2.5L9 14l5-12z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-            Nachricht senden
-          </button>
-          <div class="cf-success" id="send-success">✅ Anfrage gesendet! Der Händler meldet sich bald bei Ihnen.</div>
-          <!-- Versand-Adresse anfordern -->
-          <div id="cf-want-shipping" style="display:none;">
-            <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--dark);cursor:pointer;padding:10px 0;">
-              <input type="checkbox" id="cf-needs-shipping" style="width:16px;height:16px;accent-color:var(--blue2);" onchange="toggleAddressForm(this.checked)" />
-              📦 Ich möchte den Motor per Versand erhalten
-            </label>
-            <div class="cf-address-wrap" id="cf-address-wrap">
-              <div class="cf-address-title">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                Lieferadresse (wird dem Verkäufer übermittelt)
-              </div>
-              <div class="cf-addr-row">
-                <div class="cf-addr-field">
-                  <label>Vorname</label>
-                  <input type="text" id="addr-firstname" placeholder="Max" autocomplete="given-name" />
-                </div>
-                <div class="cf-addr-field">
-                  <label>Nachname</label>
-                  <input type="text" id="addr-lastname" placeholder="Mustermann" autocomplete="family-name" />
-                </div>
-              </div>
-              <div class="cf-addr-row">
-                <div class="cf-addr-field" style="grid-column:1/-1;">
-                  <label>Straße &amp; Hausnummer</label>
-                  <input type="text" id="addr-street" placeholder="Musterstraße 12" autocomplete="street-address" />
-                </div>
-              </div>
-              <div class="cf-addr-row">
-                <div class="cf-addr-field">
-                  <label>PLZ</label>
-                  <input type="text" id="addr-zip" placeholder="12345" maxlength="5" autocomplete="postal-code" />
-                </div>
-                <div class="cf-addr-field">
-                  <label>Stadt</label>
-                  <input type="text" id="addr-city" placeholder="Berlin" autocomplete="address-level2" />
-                </div>
-              </div>
-              <div class="cf-addr-note">🔒 Deine Adresse wird nur dem Verkäufer zur Versandabwicklung angezeigt.</div>
-            </div>
-          </div>
-
-          <div class="cf-note">🔒 Ihre Daten werden nur zur Bearbeitung Ihrer Anfrage verwendet. <a href="datenschutz.html">Datenschutz</a></div>
+        <!-- Kontaktformular -->
+        <form class="contact-form" id="contact-form">
+          <h3>Anfrage senden</h3>
+          <input type="text" id="cf-name" placeholder="Ihr Name" required />
+          <input type="email" id="cf-email" placeholder="Ihre E-Mail-Adresse" required />
+          <textarea id="cf-message" placeholder="Ihre Nachricht zu dieser Anzeige..." required></textarea>
+          <button type="submit" id="cf-submit">📨 Nachricht senden</button>
+          <div class="send-success" id="send-success">✅ Anfrage wurde gesendet! Der Händler meldet sich bald.</div>
         </form>
-
-        <div class="trust-bar">
-          <div class="tb-item"><span class="tb-icon">🔒</span>Sichere Anfrage</div>
-          <div class="tb-item"><span class="tb-icon">⚡</span>Schnelle Antwort</div>
-          <div class="tb-item"><span class="tb-icon">✅</span>Geprüft</div>
-        </div>
 
       </aside>
     </div>
 
   </div>
-      <!-- ══ BEWERTUNGEN ══ -->
-      <div class="reviews-section" id="reviews-section">
-        <div class="reviews-panel">
-
-          <!-- Zusammenfassung -->
-          <div class="reviews-summary">
-            <div class="rs-score">
-              <span class="rs-number" id="rv-avg">–</span>
-              <span class="rs-stars" id="rv-stars">☆☆☆☆☆</span>
-              <span class="rs-count" id="rv-count">0 Bewertungen</span>
-            </div>
-            <div class="rs-bars" id="rv-bars">
-              <div class="rs-bar-row"><span class="rs-bar-label">5</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-5" style="width:0%"></div></div><span class="rs-bar-n" id="n-5">0</span></div>
-              <div class="rs-bar-row"><span class="rs-bar-label">4</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-4" style="width:0%"></div></div><span class="rs-bar-n" id="n-4">0</span></div>
-              <div class="rs-bar-row"><span class="rs-bar-label">3</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-3" style="width:0%"></div></div><span class="rs-bar-n" id="n-3">0</span></div>
-              <div class="rs-bar-row"><span class="rs-bar-label">2</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-2" style="width:0%"></div></div><span class="rs-bar-n" id="n-2">0</span></div>
-              <div class="rs-bar-row"><span class="rs-bar-label">1</span><div class="rs-bar-track"><div class="rs-bar-fill" id="bar-1" style="width:0%"></div></div><span class="rs-bar-n" id="n-1">0</span></div>
-            </div>
-          </div>
-
-          <!-- Bewertung schreiben Button -->
-          <button class="write-review-btn" id="write-review-btn" onclick="toggleReviewForm()">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
-            Verkäufer bewerten
-          </button>
-
-          <!-- Bewertungsformular -->
-          <div class="review-form-wrap" id="review-form-wrap">
-            <div class="review-form-title">✍️ Deine Bewertung</div>
-
-            <!-- Sterne-Auswahl -->
-            <div class="star-picker" id="star-picker">
-              <button type="button" data-val="1" onclick="setStars(1)" title="1 Stern">★</button>
-              <button type="button" data-val="2" onclick="setStars(2)" title="2 Sterne">★</button>
-              <button type="button" data-val="3" onclick="setStars(3)" title="3 Sterne">★</button>
-              <button type="button" data-val="4" onclick="setStars(4)" title="4 Sterne">★</button>
-              <button type="button" data-val="5" onclick="setStars(5)" title="5 Sterne">★</button>
-            </div>
-            <div class="star-error" id="star-error">Bitte wähle eine Sterne-Bewertung.</div>
-
-            <div class="review-field">
-              <label>Dein Name (oder anonym)</label>
-              <input type="text" id="rv-name" placeholder="Max M." maxlength="60" />
-            </div>
-            <div class="review-field">
-              <label>Deine Erfahrung</label>
-              <textarea id="rv-text" placeholder="Wie war deine Erfahrung mit diesem Verkäufer? War der Motor wie beschrieben?…" maxlength="500"></textarea>
-            </div>
-
-            <div class="review-submit-row">
-              <button class="rf-submit" id="rf-submit" onclick="submitReview()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Bewertung absenden
-              </button>
-              <button class="rf-cancel" onclick="toggleReviewForm()">Abbrechen</button>
-            </div>
-            <div class="rf-success" id="rf-success">✅ Danke für deine Bewertung!</div>
-          </div>
-
-          <!-- Bewertungsliste -->
-          <div class="reviews-list" id="reviews-list">
-            <div class="review-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              Noch keine Bewertungen — sei der Erste!
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-
 </main>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <a href="index.html" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(145deg,#1b2d42,#2a4a6b);display:grid;place-items:center;font-weight:900;font-size:14px;color:#fff;font-family:'Outfit',Arial,sans-serif;">1A</div>
-          <span style="font-size:19px;font-weight:800;color:#fff;letter-spacing:-.3px;font-family:'Outfit',Arial,sans-serif;">Motor</span>
-        </a>
-        <p class="footer-desc" style="max-width:240px;">Deutschlands Motorenmarktplatz. Motoren kaufen &amp; verkaufen – ohne Provision.</p>
-        <a href="ueber-uns.html" style="display:inline-flex;align-items:center;gap:5px;margin-top:14px;font-size:12.5px;font-weight:700;color:#4da6ff;">Mehr über uns →</a>
-      </div>
-      <div>
-        <h4>Kaufen</h4>
-        <ul>
-          <li><a href="suche.html">Motor suchen</a></li>
-          <li><a href="suche.html?category=Automotor">Automotoren</a></li>
-          <li><a href="suche.html?category=LKW Motor">LKW Motoren</a></li>
-          <li><a href="suche.html?category=Bootsmotor">Bootsmotoren</a></li>
-          <li><a href="suche.html?category=Austauschmotor">Austauschmotoren</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Verkaufen</h4>
-        <ul>
-          <li><a href="anzeige-erstellen.html">Anzeige erstellen</a></li>
-          <li><a href="registrieren.html">Händlerkonto</a></li>
-          <li><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="meine-anzeigen.html">Meine Anzeigen</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Unternehmen</h4>
-        <ul>
-          <li><a href="impressum.html">Impressum</a></li>
-          <li><a href="datenschutz.html">Datenschutz</a></li>
-          <li><a href="agb.html">AGB</a></li>
-          <li><a href="kontakt.html">Kontakt</a></li>
-          <li><a href="karriere.html">Karriere</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 1A Motor – Marktplatz für Motoren &amp; Antriebstechnik</span>
-      <div class="footer-links">
-        <a href="impressum.html">Impressum</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        <a href="agb.html">AGB</a>
-        <a href="kontakt.html">Kontakt</a>
-      </div>
-    </div>
-  </div>
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="listing-detail-live.js"></script>
 <script src="auth-header.js"></script>
-<script src="reviews.js"></script>
-<script>
-  document.getElementById("mob-toggle")?.addEventListener("click",()=>{
-    document.getElementById("mob-nav")?.classList.toggle("open");
-  });
-  document.getElementById("logout-btn")?.addEventListener("click",async(e)=>{
-    e.preventDefault();
-    await supabaseClient.auth.signOut();
-    window.location.href="index.html";
-  });
-
-  function toggleFav(btn){
-    btn.classList.toggle("fav-on");
-    btn.textContent = btn.classList.contains("fav-on") ? "♥" : "♡";
-  }
-
-  function shareIt(){
-    if(navigator.share){
-      navigator.share({title:document.title,url:window.location.href});
-    } else {
-      navigator.clipboard.writeText(window.location.href).then(()=>{
-        const t=document.createElement("div");
-        t.textContent="✓ Link kopiert!";
-        t.style.cssText="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#071524;color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);";
-        document.body.appendChild(t);
-        setTimeout(()=>t.remove(),2000);
-      });
-    }
-  }
-
-  function showPhone(btn){
-    btn.innerHTML='📞 +49 (0) – auf Anfrage beim Händler';
-    btn.style.pointerEvents='none';
-    btn.style.opacity='.7';
-  }
-</script>
 </body>
 </html>
