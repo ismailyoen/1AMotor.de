@@ -30,7 +30,7 @@
     imgBase: "https://cdn.machineseeker.com/data/listing/img/nds/ms/"
   };
 
-  /* ── Inserate (aus dem Maschinensucher-Newsletter vom 24.09.2026) ──
+  /* ── Inserate (Maschinensucher-Newsletter vom 24.09. + 26.09.2026) ──
      q   = Suchbegriff, den Maschinensucher selbst für den Link nutzt
      img = Pfad-Segment unter imgBase (ohne -01.jpg)                    */
   var LISTINGS = [
@@ -57,7 +57,20 @@
     { id: "21288317", type: "Spulenwickelmaschine", name: "Frieseke und Höpfner FW 100", cat: "Montagemaschinen", year: null, cc: "DE", loc: "Dingelstädt", img: "02/74/21288317", q: "Spulenwickelmaschine Frieseke und Höpfner FW 100" },
     { id: "22006528", type: "Gehrungssäge für Glasleisten", name: "Elumatec GLS 192/06", cat: "Fräsen für Alu-Fensterbau", year: null, cc: "IT", loc: "Silvi", img: "87/33/22006528", video: true, q: "Gehrungssäge für Glasleisten (Fermavetri) Elumatec GLS 192/06" },
     { id: "16393237", type: "Vertikales Bearbeitungszentrum", name: "Hardinge Bridgeport 450P3", cat: "Bearbeitungszentren vertikal", year: 2005, cc: "GB", loc: "Erith", img: "10/66/16393237", video: true, q: "Vertikales Bearbeitungszentrum **USED HARDINGE BRIDGEPORT** 450P3" },
-    { id: "21288272", type: "Spulenwickelmaschine", name: "Micafil", cat: "Montagemaschinen", year: null, cc: "DE", loc: "Dingelstädt", img: "02/74/21288272", q: "Spulenwickelmaschine Micafil" }
+    { id: "21288272", type: "Spulenwickelmaschine", name: "Micafil", cat: "Montagemaschinen", year: null, cc: "DE", loc: "Dingelstädt", img: "02/74/21288272", q: "Spulenwickelmaschine Micafil" },
+    /* ── Newsletter vom 26.09.2026 ── */
+    { id: "22820450", type: "4-Achs-Profilbearbeitungszentrum", name: "Elumatec SBZ 140", cat: "Fräsen für Alu-Fensterbau", year: 2013, cc: "NL", loc: "Zevenaar", img: "70/01/22820450", q: "4-Achs-Profilbearbeitungszentrum Elumatec SBZ  140" },
+    { id: "21446282", type: "Clipsetzer für Holz-Alu-Fenster", name: "RUCHSER Clipsetzen Holz-Alu", cat: "Montagemaschinen", year: null, cc: "DE", loc: "Aalen", img: "19/87/21446282", q: "Clipsetzer fuer Holz-Alufenster RUCHSER Clipsetzen Holz-Alu" },
+    { id: "22820235", type: "4-Achs-Profilbearbeitungszentrum", name: "Elumatec SBZ 140", cat: "Fräsen für Alu-Fensterbau", year: 2018, cc: "NL", loc: "Veghel", img: "68/01/22820235", q: "4-Achs-Profilbearbeitungszentrum Elumatec SBZ  140" },
+    { id: "22819605", type: "4-Kopf-Schweiß-/Putzlinie", name: "Stürtz TurboLine", cat: "Fräsen für Alu-Fensterbau", year: 2018, cc: "DE", loc: "Sankt Egidien", img: "63/01/22819605", video: true, q: "4 Kopf Schweiß Puitzlinie Stürtz TurboLine" },
+    { id: "22811925", type: "Kopierfräsmaschine", name: "RITIM IIS", cat: "Fräsen für Alu-Fensterbau", year: null, cc: "NL", loc: "Enschede", img: "99/00/22811925", q: "Kopierfräsmaschine RITIM IIS" },
+    { id: "7779086", type: "Bandsäge – vertikal", name: "Mössner SSF 1050", cat: "Bandsägen halbautomatisch", year: 1968, cc: "DE", loc: "Niederlangen", img: "25/48/7779086", q: "Bandsäge - Vertikal Mössner SSF 1050" },
+    { id: "21808538", type: "CNC-Drehzentrum", name: "Haas SL-30THE", cat: "Drehmaschinen", year: 2007, cc: "DE", loc: "Deutschland", img: "37/17/21808538", q: "CNC Drehzentrum Haas SL-30THE" },
+    { id: "21054477", type: "CNC-Dreh- und Fräszentrum", name: "EMCO Turn 365", cat: "CNC Dreh-Fräszentren", year: 1999, cc: "AT", loc: "Einöden", img: "53/54/21054477", video: true, q: "CNC-Dreh- und Fräszentrum EMCO Emco Turn 365" },
+    { id: "21288102", type: "Spulenwickelmaschine", name: "Blume und Redecker AM 100", cat: "Montagemaschinen", year: null, cc: "DE", loc: "Dingelstädt", img: "00/74/21288102", q: "Spulenwickelmaschine Blume und Redecker AM 100" },
+    { id: "22004873", type: "Ausklinkfräse", name: "Graule AKF 6/300", cat: "Fräsen für Alu-Fensterbau", year: 1994, cc: "DE", loc: "Dinkelsbühl", img: "73/33/22004873", q: "Ausklinkfräse Graule AKF 6/300" },
+    { id: "19651006", type: "Gewinderollmaschine", name: "SENY D.44. EH", cat: "Gewinderollmaschinen", year: 1988, cc: "DE", loc: "Deutschland", img: "58/37/19651006", q: "Gewinderollmaschine SENY D.44. EH" },
+    { id: "21285187", type: "Spulenwickelmaschine", name: "Bobifil", cat: "Montagemaschinen", year: null, cc: "DE", loc: "Dingelstädt", img: "76/73/21285187", q: "Spulenwickelmaschine Bobifil " }
   ];
 
   /* ── Texte (DE/EN/FR/TR) ───────────────────────────────────────── */
@@ -74,7 +87,7 @@
   function t(k) { return TXT[lang()][k]; }
   function safeLS(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 
-  var FLAGS = { DE: "🇩🇪", IT: "🇮🇹", NL: "🇳🇱", CZ: "🇨🇿", EE: "🇪🇪", TR: "🇹🇷", LT: "🇱🇹", GB: "🇬🇧" };
+  var FLAGS = { DE: "🇩🇪", IT: "🇮🇹", NL: "🇳🇱", CZ: "🇨🇿", EE: "🇪🇪", TR: "🇹🇷", LT: "🇱🇹", GB: "🇬🇧", AT: "🇦🇹" };
 
   /* ── Helfer ────────────────────────────────────────────────────── */
   function esc(s) {
