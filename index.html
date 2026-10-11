@@ -1406,7 +1406,7 @@
         .aa-advent-side .aa-s{font-size:11.5px;color:rgba(255,255,255,.65);line-height:1.3;margin-top:2px}
         .aa-advent-side .aa-arr{margin-left:auto;color:var(--sky);font-size:18px;font-weight:700}
       </style>
-      <a href="1AAdvent.html" class="aa-advent-side" aria-label="1AAdvent – 24 Motortipps bis Weihnachten">
+      <a href="1AAdvent.html" class="aa-advent-side" onclick="openAdvent(event)" aria-label="1AAdvent – 24 Motortipps bis Weihnachten">
         <span class="aa-ico" aria-hidden="true">★</span>
         <span><span class="aa-t" style="display:block">1AAdvent</span><span class="aa-s" style="display:block">24 Motortipps bis Weihnachten</span></span>
         <span class="aa-arr" aria-hidden="true">›</span>
@@ -3157,6 +3157,24 @@ window.addEventListener('i18n:changed', function() {
   var sb  = document.getElementById('sidebar');
   if (lbl && sb) lbl.textContent = sb.classList.contains('open') ? T('idx.mobfilter.close') : T('idx.mobfilter');
 });
+</script>
+<!-- 1AAdvent 3D-Popup -->
+<div id="aa-advent-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:10000;display:none;background:rgba(13,27,42,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;transition:opacity .3s"></div>
+<script>
+  function openAdvent(e){
+    if(e)e.preventDefault();
+    var o=document.getElementById('aa-advent-overlay');
+    if(!o.firstChild){var f=document.createElement('iframe');f.src='1AAdvent.html?embed=1';f.title='1AAdvent Adventskalender';f.setAttribute('allowtransparency','true');f.style.cssText='width:100%;height:100%;border:0;background:transparent;display:block';o.appendChild(f);}
+    o.style.display='block';o.setAttribute('aria-hidden','false');document.documentElement.style.overflow='hidden';
+    requestAnimationFrame(function(){o.style.opacity='1';});
+    if(typeof closeSidebar==='function'&&window.innerWidth<=1100){try{closeSidebar();}catch(_){}}
+  }
+  function closeAdvent(){
+    var o=document.getElementById('aa-advent-overlay');o.style.opacity='0';o.setAttribute('aria-hidden','true');
+    document.documentElement.style.overflow='';setTimeout(function(){o.style.display='none';},300);
+  }
+  window.addEventListener('message',function(e){if(e.data==='aa-advent-close')closeAdvent();});
+  document.getElementById('aa-advent-overlay').addEventListener('click',function(e){if(e.target===this)closeAdvent();});
 </script>
 </body>
 </html>

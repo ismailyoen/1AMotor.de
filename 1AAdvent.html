@@ -14,8 +14,16 @@
   "three/addons/": "https://unpkg.com/three@0.184.0/examples/jsm/"
 } }
 </script>
+<script>if(new URLSearchParams(location.search).has('embed'))document.documentElement.classList.add('embed');</script>
 <style>
   *{box-sizing:border-box}
+  html.embed,html.embed body{background:transparent}
+  html.embed #bg,html.embed #bgShade{display:none}
+  html.embed .top,html.embed .hint{text-shadow:0 1px 8px rgba(0,0,0,.6)}
+  #closeEmbed{display:none;pointer-events:auto;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(13,27,42,.6);color:#fff;font-size:22px;line-height:1;cursor:pointer}
+  #closeEmbed:hover{background:rgba(13,27,42,.85)}
+  html.embed #closeEmbed{display:grid;place-items:center}
+  .top-right{display:flex;gap:12px;align-items:center}
   html,body{margin:0;height:100%;overflow:hidden;background:#15110d;color:#f1ebe1;font-family:Lora,Georgia,serif}
   a{color:#d7ad6a}a:hover{color:#ecc98f}
   #bg{position:fixed;inset:-20px;background:url('hintergrund-lager.png') center 60%/cover no-repeat;filter:blur(5px) brightness(.78) saturate(.9)}
@@ -55,7 +63,7 @@
 <div id="loading">Kalender wird aufgebaut …</div>
 <header class="top">
   <div class="brand"><h1>1AAdvent</h1><p>24 Motortipps bis Weihnachten · 1AMotor.de</p></div>
-  <div class="progress" id="progress">0 / 24 geöffnet</div>
+  <div class="top-right"><div class="progress" id="progress">0 / 24 geöffnet</div><button id="closeEmbed" aria-label="Adventskalender schließen">×</button></div>
 </header>
 <div class="hint">Türchen anklicken · Ziehen zum Drehen · Scrollen zum Zoomen</div>
 <div class="toast" id="toast"></div>
@@ -267,7 +275,9 @@ function showTip(n){
 const closeTip=()=>modal.classList.remove('open');
 document.getElementById('closeBtn').onclick=closeTip;document.getElementById('closeX').onclick=closeTip;
 modal.addEventListener('click',e=>{if(e.target===modal)closeTip();});
-addEventListener('keydown',e=>{if(e.key==='Escape')closeTip();});
+const closeEmbed=()=>{try{parent.postMessage('aa-advent-close','*');}catch(e){}};
+document.getElementById('closeEmbed').onclick=closeEmbed;
+addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(modal.classList.contains('open'))closeTip();else closeEmbed();});
 const toastEl=document.getElementById('toast');let toastT;
 function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('show'),2600);}
 
