@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1AAdvent – 24 Motortipps bis Weihnachten | 1AMotor.de</title>
+<meta name="description" content="Der 1AAdvent-Kalender von 1AMotor.de: Jeden Tag ein neues Türchen mit einem Motortipp für den Winter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.184.0/examples/jsm/"
+} }
+</script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#15110d;color:#f1ebe1;font-family:Lora,Georgia,serif}
+  a{color:#d7ad6a}a:hover{color:#ecc98f}
+  #scene{position:fixed;inset:0;background:radial-gradient(120% 90% at 50% 35%,#2a2018 0%,#15110d 70%)}
+  #scene canvas{display:block;outline:none}
+  .top{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:22px 28px;pointer-events:none}
+  .brand h1{margin:0;font:500 clamp(28px,4vw,40px)/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.01em}
+  .brand p{margin:6px 0 0;font-size:14px;color:#c9bca9}
+  .progress{font:500 15px/1.2 "Cormorant Garamond",serif;letter-spacing:.06em;color:#d9cbb6;border:1px solid rgba(215,173,106,.45);padding:7px 12px;border-radius:4px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hint{position:fixed;left:0;right:0;bottom:20px;text-align:center;font-size:13px;color:#a99a86;pointer-events:none;padding:0 16px}
+  #loading{position:fixed;inset:0;display:grid;place-items:center;font:500 22px "Cormorant Garamond",serif;color:#c9bca9;letter-spacing:.08em;transition:opacity .6s}
+  .toast{position:fixed;left:50%;bottom:56px;transform:translate(-50%,10px);background:#f4efe6;color:#201f1d;padding:10px 16px;border-radius:4px;font-size:14px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:calc(100% - 32px);text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .backdrop{position:fixed;inset:0;background:rgba(10,7,5,.55);display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+  .backdrop.open{opacity:1;pointer-events:auto}
+  .card{position:relative;width:min(460px,100%);background:#f4efe6;color:#201f1d;border-radius:4px;padding:34px 34px 28px;box-shadow:0 24px 70px rgba(0,0,0,.5);transform:translateY(14px) scale(.98);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  .backdrop.open .card{transform:none}
+  .card::before{content:"";position:absolute;inset:8px;border:1px solid rgba(182,130,53,.5);border-radius:2px;pointer-events:none}
+  .kicker{font:600 13px/1 "Cormorant Garamond",serif;letter-spacing:.16em;text-transform:uppercase;color:#7f5a24;font-variant-numeric:tabular-nums}
+  .card h2{margin:12px 0 14px;font:500 32px/1.1 "Cormorant Garamond",Georgia,serif;text-wrap:balance}
+  .card p{margin:0;font-size:16px;line-height:1.6;text-wrap:pretty}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:4px;font:500 15px Lora,serif;cursor:pointer;text-decoration:none;border:1px solid #b68235;background:transparent;color:#201f1d;transition:background .15s}
+  .btn:hover{background:rgba(182,130,53,.12);color:#201f1d}
+  .btn:active{background:rgba(182,130,53,.22)}
+  .btn.ghost{border-color:transparent;color:#5b5348}
+  .btn:focus-visible,.close:focus-visible{outline:2px solid #b68235;outline-offset:2px}
+  .close{position:absolute;top:14px;right:14px;width:40px;height:40px;border:0;background:transparent;font-size:24px;line-height:1;color:#5b5348;cursor:pointer;border-radius:4px}
+  .close:hover{background:rgba(182,130,53,.12)}
+  @media (max-width:600px){.top{padding:16px}.card{padding:28px 22px 22px}.card h2{font-size:27px}}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="loading">Kalender wird aufgebaut …</div>
+<header class="top">
+  <div class="brand"><h1>1AAdvent</h1><p>24 Motortipps bis Weihnachten · 1AMotor.de</p></div>
+  <div class="progress" id="progress">0 / 24 geöffnet</div>
+</header>
+<div class="hint">Türchen anklicken · Ziehen zum Drehen · Scrollen zum Zoomen</div>
+<div class="toast" id="toast"></div>
+<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="tipTitle">
+  <div class="card">
+    <button class="close" id="closeX" aria-label="Schließen">×</button>
+    <div class="kicker" id="tipKicker">Türchen 1 · Motortipp</div>
+    <h2 id="tipTitle"></h2>
+    <p id="tipText"></p>
+    <div class="actions">
+      <a class="btn" id="tipCta" href="https://1amotor.de" target="_top">Mehr auf 1AMotor.de →</a>
+      <button class="btn ghost" id="closeBtn">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ===== Einstellungen ===== */
+const CONFIG = {
+  lockByDate: true,       // Türchen n öffnet sich ab dem n. Dezember (Ortszeit des Besuchers)
+  year: 2026,
+  ctaUrl: 'https://1amotor.de',
+  storageKey: '1aadvent-geoeffnet'
+};
+
+const TIPS = {
+  1:{t:'Winterreifen mit Alpine-Symbol',x:'Seit dem 1. Oktober 2024 gelten in Deutschland nur noch Reifen mit Alpine-Symbol (Bergpiktogramm mit Schneeflocke) als wintertauglich. Reine M+S-Reifen reichen nicht mehr. Wer bei Glätte ohne passende Reifen fährt, riskiert Bußgeld und einen Punkt in Flensburg.'},
+  2:{t:'Profiltiefe prüfen',x:'Gesetzlich sind 1,6 mm Mindestprofil vorgeschrieben, für den Winter empfehlen Experten mindestens 4 mm. Schnelltest: eine 1-Euro-Münze ins Profil stecken. Verschwindet der goldene Rand, sind es etwa 3 mm.'},
+  3:{t:'Reifendruck bei Kälte',x:'Kälte senkt den Reifendruck, grob um 0,1 bar pro 10 °C. Prüfe den Druck im Winter alle zwei Wochen an kalten Reifen. Die richtigen Werte stehen meist im Tankdeckel oder an der B-Säule.'},
+  4:{t:'Batterie testen lassen',x:'Bei Minusgraden sinkt die Leistung der Batterie deutlich. Ist sie älter als fünf Jahre oder springt der Motor zögerlich an, lass sie in der Werkstatt testen, bevor sie an einem kalten Morgen streikt.'},
+  5:{t:'Frostschutz ins Wischwasser',x:'Mische rechtzeitig Winter-Scheibenreiniger bei, damit Düsen und Leitungen nicht einfrieren. Halte dich an das Mischverhältnis auf der Flasche.'},
+  6:{t:'Kühlmittel kontrollieren',x:'Das Kühlmittel sollte bis mindestens −25 °C frostsicher sein. Mit einem Frostschutzprüfer aus dem Zubehörhandel kannst du das selbst messen. Den Behälter nur bei kaltem Motor öffnen.'},
+  7:{t:'Türdichtungen pflegen',x:'Damit Türen nicht festfrieren, die Gummidichtungen mit Glyzerin, Silikonspray oder einem Pflegestift behandeln. Das hält sie außerdem geschmeidig.'},
+  8:{t:'Kein heißes Wasser auf die Scheibe',x:'Heißes Wasser kann die Frontscheibe durch die Spannung springen lassen. Besser sind ein Eiskratzer aus Kunststoff, Enteiserspray und über Nacht eine Abdeckfolie.'},
+  9:{t:'Rundum freie Sicht',x:'Vor der Fahrt müssen alle Scheiben, Spiegel, Lichter und das Kennzeichen frei von Eis und Schnee sein. Ein kleines Guckloch reicht nicht und kann ein Verwarnungsgeld kosten.'},
+  10:{t:'Schnee vom Dach räumen',x:'Auch das Dach gehört freigeräumt. Rutscht der Schnee beim Bremsen auf die Frontscheibe oder fliegt auf das Auto dahinter, gefährdet das dich und andere.'},
+  11:{t:'Motor nicht warmlaufen lassen',x:'Unnötiges Laufenlassen des Motors im Stand ist laut StVO verboten. Der Motor wird am schnellsten warm, wenn du direkt losfährst und anfangs niedrige Drehzahlen fährst.'},
+  12:{t:'Licht-Check',x:'Kontrolliere in der dunklen Jahreszeit regelmäßig Abblendlicht, Bremsleuchten, Blinker und Nebelschlussleuchte. Am einfachsten geht das zu zweit oder mit der Spiegelung in einer Schaufensterscheibe.'},
+  13:{t:'Wischerblätter tauschen',x:'Schmieren oder rattern die Scheibenwischer, ist es Zeit für neue Blätter. Bei Frost die Wischer nicht an der festgefrorenen Scheibe einschalten, das beschädigt Gummi und Motor.'},
+  14:{t:'Beschlagene Scheiben',x:'Die Klimaanlage entfeuchtet die Luft auch im Winter. Gebläse auf die Frontscheibe richten, Umluft ausschalten und nasse Fußmatten regelmäßig trocknen.'},
+  15:{t:'Abstand verdoppeln',x:'Auf glatter Fahrbahn wird der Bremsweg um ein Vielfaches länger. Verdopple den Abstand zum Vordermann und vermeide abrupte Lenk- und Bremsmanöver.'},
+  16:{t:'Notbremsung mit ABS',x:'Bei einer Notbremsung mit ABS: voll aufs Bremspedal treten, gedrückt halten und gleichzeitig um das Hindernis lenken. Das Pulsieren im Pedal ist normal.'},
+  17:{t:'Brücken frieren zuerst',x:'Brücken, Waldstücke und schattige Kurven vereisen als Erstes. Bei Temperaturen um den Gefrierpunkt dort besonders vorsichtig fahren, Glatteis ist oft kaum zu sehen.'},
+  18:{t:'Handbremse bei strengem Frost',x:'Bei strengem Frost kann eine mechanische Handbremse festfrieren. Auf ebener Fläche stattdessen einen Gang einlegen, bei Automatik auf „P“ stellen.'},
+  19:{t:'Starthilfe in der richtigen Reihenfolge',x:'Rotes Kabel zuerst an Plus der leeren Batterie, dann an Plus der Spenderbatterie. Schwarzes Kabel an Minus der Spenderbatterie, dann an blankes Metall im Motorraum des Pannenautos, nicht an dessen Minuspol.'},
+  20:{t:'Streusalz abwaschen',x:'Streusalz greift Lack und Unterboden an. Gönne deinem Auto im Winter regelmäßig eine Wäsche mit Unterbodenwäsche, am besten bei Plusgraden.'},
+  21:{t:'Notfallausrüstung',x:'Warnweste, Warndreieck und Verbandkasten nach DIN 13164 sind Pflicht. Für den Winter zusätzlich sinnvoll: Decke, Handschuhe, Taschenlampe und Starthilfekabel.'},
+  22:{t:'Weihnachtsbaum sicher transportieren',x:'Den Baum im Kofferraum oder mit Spanngurten auf dem Dachträger sichern, Spitze nach hinten. Ragt er mehr als einen Meter über das Heck hinaus, ist eine hellrote Kennzeichnung Pflicht.'},
+  23:{t:'Check vor der Feiertagsfahrt',x:'Vor der langen Fahrt zur Familie Ölstand, Reifendruck, Licht und Wischwasser prüfen. Route mit Verkehrsmeldungen planen und etwa alle zwei Stunden eine Pause machen.'},
+  24:{t:'Frohe Weihnachten',x:'Das Team von 1AMotor.de wünscht dir frohe Weihnachten und eine sichere Fahrt durch die Feiertage. Danke, dass du vorbeigeschaut hast.'}
+};
+const ORDER = [17,3,22,9,11,24, 6,14,1,19,13,7, 20,8,15,2,5,12, 23,10,18,4,21,16];
+
+/* ===== Holz-Texturen (prozedural) ===== */
+const hash=(x,y,s)=>{const h=Math.sin(x*127.1+y*311.7+s*74.7)*43758.5453;return h-Math.floor(h);};
+function vnoise(x,y,s){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);
+  const a=hash(xi,yi,s),b=hash(xi+1,yi,s),c=hash(xi,yi+1,s),d=hash(xi+1,yi+1,s);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;}
+function fbm(x,y,s,o){let f=0,a=.5;for(let i=0;i<o;i++){f+=a*vnoise(x,y,s+i*13);x*=2;y*=2;a*=.5;}return f;}
+function wood(w,h,{seed,base,dark,rings,vertical}){
+  const col=document.createElement('canvas'),bmp=document.createElement('canvas');
+  col.width=bmp.width=w;col.height=bmp.height=h;
+  const c1=col.getContext('2d'),c2=bmp.getContext('2d'),i1=c1.createImageData(w,h),i2=c2.createImageData(w,h);
+  const L=vertical?h:w, S=vertical?w:h;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const along=(vertical?y:x)/L, across=(vertical?x:y)/S;
+    const warp=fbm(along*2.2,across*4,seed,3);
+    let g=.5+.5*Math.sin((across*rings+warp*2.6)*6.2832);g=g*g*g;
+    const fine=vnoise(along*35,across*S*.45,seed+5);
+    const blot=vnoise(along*3,across*3,seed+9);
+    const k=Math.min(1,g*.5+fine*.2+blot*.22);
+    const p=(y*w+x)*4;
+    for(let j=0;j<3;j++)i1.data[p+j]=base[j]+(dark[j]-base[j])*k;
+    const b=255*(.85-g*.35-fine*.3);i2.data[p]=i2.data[p+1]=i2.data[p+2]=b;
+    i1.data[p+3]=i2.data[p+3]=255;
+  }
+  c1.putImageData(i1,0,0);c2.putImageData(i2,0,0);
+  return {col,bmp};
+}
+
+/* ===== Renderer & Szene ===== */
+const host=document.getElementById('scene');
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
+host.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0x15110d,3,7);
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
+scene.environmentIntensity=.35;
+
+const camera=new THREE.PerspectiveCamera(30,1,.05,30);
+const target=new THREE.Vector3(0,.37,0);
+const controls=new OrbitControls(camera,renderer.domElement);
+Object.assign(controls,{enableDamping:true,dampingFactor:.08,enablePan:false,minAzimuthAngle:-.65,maxAzimuthAngle:.65,minPolarAngle:.95,maxPolarAngle:1.62,rotateSpeed:.6});
+controls.target.copy(target);
+
+const key=new THREE.DirectionalLight(0xffe0bd,2.8);
+key.position.set(-1.3,2.3,2.2);key.castShadow=true;
+key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-1,right:1,top:1,bottom:-1,near:.5,far:6});
+key.shadow.bias=-.0004;key.shadow.normalBias=.012;key.shadow.radius=3;
+scene.add(key);
+const fill=new THREE.DirectionalLight(0xc9d6ff,.35);fill.position.set(2,1,1.5);scene.add(fill);
+const rim=new THREE.DirectionalLight(0xffc98a,.6);rim.position.set(.5,1.5,-2);scene.add(rim);
+
+try{await Promise.race([document.fonts.load('600 120px "Cormorant Garamond"'),new Promise(r=>setTimeout(r,2000))]);}catch(e){}
+
+const oakH=wood(1024,512,{seed:3,base:[156,108,64],dark:[96,60,32],rings:22,vertical:false});
+const oakV=wood(512,1024,{seed:7,base:[162,114,68],dark:[100,63,34],rings:18,vertical:true});
+const doorW_=wood(768,768,{seed:11,base:[168,120,72],dark:[104,66,36],rings:14,vertical:true});
+const table=wood(1024,512,{seed:21,base:[70,44,26],dark:[38,23,13],rings:16,vertical:false});
+
+const canvasTex=(c,srgb)=>{const t=new THREE.CanvasTexture(c);if(srgb)t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;t.wrapS=t.wrapT=THREE.MirroredRepeatWrapping;return t;};
+const base={H:{c:canvasTex(oakH.col,1),b:canvasTex(oakH.bmp)},V:{c:canvasTex(oakV.col,1),b:canvasTex(oakV.bmp)}};
+function woodMat(kind,rx,ry,opts={}){
+  const m=(t)=>{const c=t.clone();c.repeat.set(rx,ry);c.offset.set(Math.random(),Math.random());c.needsUpdate=true;return c;};
+  return new THREE.MeshStandardMaterial({map:m(base[kind].c),bumpMap:m(base[kind].b),bumpScale:1.2,roughness:.6,...opts});
+}
+
+/* ===== Kalender-Box ===== */
+const cols=6,rows=4,W=.92,s=.022,gridH=.62,hh=.085,H=gridH+hh,D=.22,backT=.012;
+const openW=(W-(cols+1)*s)/cols,openH=(gridH-(rows+1)*s)/rows;
+const box=new THREE.Group();box.position.y=.012;scene.add(box);
+const part=(geo,mat,x,y,z,parent=box)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;parent.add(m);return m;};
+
+part(new THREE.BoxGeometry(s,H,D),woodMat('V',.25,1),-W/2+s/2,H/2,0);
+part(new THREE.BoxGeometry(s,H,D),woodMat('V',.25,1),W/2-s/2,H/2,0);
+part(new THREE.BoxGeometry(W-2*s,s,D),woodMat('H',1,.06),0,s/2,0);
+part(new THREE.BoxGeometry(W-2*s,s,D),woodMat('H',1,.25),0,H-s/2,0);
+part(new THREE.BoxGeometry(W-2*s,H-2*s,backT),woodMat('H',1,1,{color:0x7a6656,roughness:.8}),0,H/2,-D/2+backT/2);
+for(let c=1;c<cols;c++)part(new THREE.BoxGeometry(s,gridH-2*s,D-backT-.002),woodMat('V',.05,1,{color:0xd8cbbd}),-W/2+s/2+c*(openW+s),gridH/2,backT/2-.001);
+for(let r=1;r<=rows;r++)part(new THREE.BoxGeometry(W-2*s,s,D-backT),woodMat('H',1,.05),0,s/2+r*(openH+s),backT/2);
+// Füße
+[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>part(new THREE.BoxGeometry(.06,.012,.05),new THREE.MeshStandardMaterial({color:0x2a1a10,roughness:.7}),a*(W/2-.05),-.006,b*(D/2-.04)));
+
+// Schild oben mit eingebranntem Schriftzug
+{
+  const fh=H-s-gridH, cw=1536, ch=Math.round(cw*fh/(W-2*s));
+  const mk=(src,ink)=>{const c=document.createElement('canvas');c.width=cw;c.height=ch;const x=c.getContext('2d');
+    x.drawImage(src,0,140,1024,1024*ch/cw,0,0,cw,ch);
+    x.textAlign='center';x.textBaseline='middle';x.font=`600 ${Math.round(ch*.62)}px "Cormorant Garamond",Georgia,serif`;x.letterSpacing='8px';
+    x.shadowColor=ink?'rgba(70,35,12,.6)':'transparent';x.shadowBlur=ink?7:0;x.fillStyle=ink?'rgba(46,24,10,.9)':'#202020';
+    x.fillText('1AAdvent',cw/2,ch*.54);return c;};
+  const front=new THREE.MeshStandardMaterial({map:canvasTex(mk(oakH.col,1),1),bumpMap:canvasTex(mk(oakH.bmp,0)),bumpScale:2,roughness:.58});
+  const side=woodMat('H',1,.1);
+  part(new THREE.BoxGeometry(W-2*s,fh,.016),[side,side,side,side,front,side],0,gridH+fh/2,D/2-.008);
+}
+
+// Türchen
+const brass=new THREE.MeshStandardMaterial({color:0xb8894a,metalness:.85,roughness:.35});
+const paper=new THREE.MeshStandardMaterial({color:0xe6dac2,roughness:.92});
+const doorSide=woodMat('V',.1,1);
+const dW=openW-.003,dH=openH-.003,dT=.012;
+const doors=[];const pickables=[];
+function doorTextures(n){
+  const S=256,col=document.createElement('canvas'),bmp=document.createElement('canvas');col.width=col.height=bmp.width=bmp.height=S;
+  const sx=Math.random()*400,sy=Math.random()*400;
+  [[col,doorW_.col,1],[bmp,doorW_.bmp,0]].forEach(([cv,src,ink])=>{const x=cv.getContext('2d');x.drawImage(src,sx,sy,340,340,0,0,S,S);
+    x.strokeStyle=ink?'rgba(60,32,14,.45)':'#303030';x.lineWidth=ink?2:3;x.strokeRect(18,18,S-36,S-36);
+    x.textAlign='center';x.textBaseline='alphabetic';x.font='600 132px "Cormorant Garamond",Georgia,serif';
+    if(ink){x.shadowColor='rgba(80,38,12,.55)';x.shadowBlur=6;x.fillStyle='rgba(44,22,9,.92)';}else x.fillStyle='#1c1c1c';
+    x.fillText(String(n),S/2,S/2+44);});
+  return [canvasTex(col,1),canvasTex(bmp)];
+}
+ORDER.forEach((n,i)=>{
+  const r=Math.floor(i/cols),c=i%cols,rb=rows-1-r;
+  const cx=-W/2+s+openW/2+c*(openW+s), cy=s+openH/2+rb*(openH+s);
+  const pivot=new THREE.Group();pivot.position.set(cx-openW/2+.0015,cy,D/2-.002-dT/2);pivot.userData.day=n;box.add(pivot);
+  const [map,bump]=doorTextures(n);
+  const front=new THREE.MeshStandardMaterial({map,bumpMap:bump,bumpScale:2,roughness:.58,emissive:0x3a2410,emissiveIntensity:0});
+  part(new THREE.BoxGeometry(dW,dH,dT),[doorSide,doorSide,doorSide,doorSide,front,doorSide],dW/2,0,0,pivot);
+  part(new THREE.SphereGeometry(.0065,24,12),brass,dW-.017,0,dT/2+.005,pivot);
+  part(new THREE.CylinderGeometry(.0025,.0025,.006,12).rotateX(Math.PI/2),brass,dW-.017,0,dT/2+.002,pivot);
+  [-1,1].forEach(k=>part(new THREE.CylinderGeometry(.0028,.0028,.02,12),brass,.001,k*dH*.32,dT/2+.001,pivot));
+  const card=part(new THREE.BoxGeometry(openW*.58,openH*.42,.0015),paper,cx,cy-openH/2+openH*.24,-.01);card.rotation.x=-.2;
+  pivot.traverse(o=>o.userData.day=n);
+  doors.push({n,pivot,front,cur:0,target:0});pickables.push(pivot);
+});
+
+// Tisch
+const tm=new THREE.MeshStandardMaterial({map:canvasTex(table.col,1),bumpMap:canvasTex(table.bmp),bumpScale:1,roughness:.55});
+tm.map.repeat.set(2,4);tm.bumpMap.repeat.set(2,4);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(8,8),tm);floor.rotation.x=-Math.PI/2;floor.rotation.z=Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+
+/* ===== Status ===== */
+let opened=new Set();try{opened=new Set(JSON.parse(localStorage.getItem(CONFIG.storageKey)||'[]'));}catch(e){}
+const save=()=>{try{localStorage.setItem(CONFIG.storageKey,JSON.stringify([...opened]));}catch(e){}};
+const progressEl=document.getElementById('progress');
+const updateProgress=()=>progressEl.textContent=`${opened.size} / 24 geöffnet`;
+doors.forEach(d=>{if(opened.has(d.n)){d.cur=d.target=-1.8;d.pivot.rotation.y=d.cur;}});updateProgress();
+
+const isUnlocked=n=>{if(!CONFIG.lockByDate)return true;const now=new Date();return now>=new Date(CONFIG.year,11,n);};
+
+/* ===== Popup ===== */
+const modal=document.getElementById('modal');
+function showTip(n){
+  const tip=TIPS[n];
+  document.getElementById('tipKicker').textContent=`Türchen ${n} · Motortipp`;
+  document.getElementById('tipTitle').textContent=tip.t;
+  document.getElementById('tipText').textContent=tip.x;
+  document.getElementById('tipCta').href=tip.url||CONFIG.ctaUrl;
+  modal.classList.add('open');document.getElementById('closeBtn').focus({preventScroll:true});
+}
+const closeTip=()=>modal.classList.remove('open');
+document.getElementById('closeBtn').onclick=closeTip;document.getElementById('closeX').onclick=closeTip;
+modal.addEventListener('click',e=>{if(e.target===modal)closeTip();});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeTip();});
+const toastEl=document.getElementById('toast');let toastT;
+function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('show'),2600);}
+
+/* ===== Interaktion ===== */
+const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();let hover=null,down=null;
+function pick(e){const r=renderer.domElement.getBoundingClientRect();ptr.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(ptr,camera);
+  const hit=ray.intersectObjects(pickables,true)[0];return hit?doors.find(d=>d.n===hit.object.userData.day):null;}
+renderer.domElement.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const d=pick(e);if(d!==hover){if(hover)hover.front.emissiveIntensity=0;hover=d;if(d)d.front.emissiveIntensity=.35;renderer.domElement.style.cursor=d?'pointer':'grab';}});
+renderer.domElement.addEventListener('pointerdown',e=>down=[e.clientX,e.clientY]);
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;down=null;
+  const d=pick(e);if(!d)return;
+  if(!isUnlocked(d.n)){toast(`Türchen ${d.n} öffnet sich am ${d.n}. Dezember.`);d.shake=1;return;}
+  const first=!opened.has(d.n);d.target=-1.8;opened.add(d.n);save();updateProgress();
+  setTimeout(()=>showTip(d.n),first?520:80);
+});
+
+function resize(){
+  const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;
+  const tan=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+  const dist=Math.max(.6/(tan*camera.aspect),.52/tan);
+  camera.updateProjectionMatrix();
+  const dir=camera.position.clone().sub(target);if(dir.lengthSq()<1e-6)dir.set(.14,.16,1);
+  camera.position.copy(target).add(dir.normalize().multiplyScalar(dist));
+  controls.minDistance=dist*.55;controls.maxDistance=dist*1.25;
+  scene.fog.near=dist+.6;scene.fog.far=dist+4.5;
+}
+addEventListener('resize',resize);resize();
+
+const clock=new THREE.Clock();
+renderer.setAnimationLoop(()=>{
+  const dt=Math.min(clock.getDelta(),.05);
+  doors.forEach(d=>{
+    d.cur+=(d.target-d.cur)*Math.min(1,dt*5);
+    let wob=0;if(d.shake>0){d.shake=Math.max(0,d.shake-dt*2.5);wob=Math.sin(d.shake*40)*.03*d.shake;}
+    d.pivot.rotation.y=d.cur+wob;
+  });
+  controls.update();renderer.render(scene,camera);
+});
+if(CONFIG.lockByDate&&new Date()<new Date(CONFIG.year,11,1))setTimeout(()=>toast('Der 1AAdvent startet am 1. Dezember 2026. Schau dann wieder vorbei.'),900);
+const ld=document.getElementById('loading');ld.style.opacity=0;setTimeout(()=>ld.remove(),700);
+</script>
+</body>
+</html>

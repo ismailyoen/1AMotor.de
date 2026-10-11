@@ -1393,6 +1393,25 @@
 
     <div class="sidebar-inner">
 
+      <!-- 1AAdvent -->
+      <style>
+        .aa-advent-side{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:16px;
+          background:var(--dark);color:#fff;border-radius:12px;border:1.5px solid var(--blue2);
+          transition:background .15s,transform .15s}
+        .aa-advent-side:hover{background:var(--navy);color:#fff;transform:translateY(-1px)}
+        .aa-advent-side:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+        .aa-advent-side .aa-ico{width:36px;height:36px;flex-shrink:0;border-radius:9px;display:grid;place-items:center;
+          background:rgba(77,166,255,.15);color:var(--sky);font-size:17px}
+        .aa-advent-side .aa-t{font-size:14px;font-weight:800;line-height:1.2}
+        .aa-advent-side .aa-s{font-size:11.5px;color:rgba(255,255,255,.65);line-height:1.3;margin-top:2px}
+        .aa-advent-side .aa-arr{margin-left:auto;color:var(--sky);font-size:18px;font-weight:700}
+      </style>
+      <a href="1AAdvent.html" class="aa-advent-side" aria-label="1AAdvent – 24 Motortipps bis Weihnachten">
+        <span class="aa-ico" aria-hidden="true">★</span>
+        <span><span class="aa-t" style="display:block">1AAdvent</span><span class="aa-s" style="display:block">24 Motortipps bis Weihnachten</span></span>
+        <span class="aa-arr" aria-hidden="true">›</span>
+      </a>
+
       <!-- KATEGORIEN -->
       <div class="sidebar-section">
         <div class="sidebar-title" onclick="sidebarToggle(this)" data-i18n="idx.side.cats">Kategorien</div>
