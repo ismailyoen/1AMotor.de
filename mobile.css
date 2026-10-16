@@ -1,798 +1,329 @@
 /*
- * 1A Motor — mobile.css  (v2 · Geräte-Angleichung iOS/Android)
- * Eingebunden in alle Seiten per <link rel="stylesheet" href="mobile.css">
+ * 1A Motor — mobile.css  (v2 · App-Oberfläche)
+ * ----------------------------------------------------------------
+ * Ersetzt die alte mobile.css komplett. Greift NUR bis 900px Breite,
+ * die Desktop-/Browser-Version bleibt unverändert.
  *
- * v2: Ziel ist ein identisches Erscheinungsbild auf iPhone (375–430px)
- * und Android (360–412px). Die wichtigsten Ursachen für Unterschiede waren:
- *   – Layout-Umschaltung bei 380px (Android 360px → 1 Spalte, iPhone → 2)
- *   – Buttons/Inputs erben die Schrift nicht (iOS: SF Pro, Android: Roboto)
- *   – Eingabefelder < 16px → iOS zoomt beim Antippen hinein, Android nicht
- *   – Header-Padding 0 → Logo klebte am Rand
- *   – globales a,button{min-height:44px} → Breadcrumbs/Chips verzogen
- *   – 100vh ≠ sichtbare Höhe in iOS Safari
+ * Aufbau:
+ *   1  Basis (Safe-Area, Schrift, Inputs, kein Zoom-Sprung auf iOS)
+ *   2  App-Header (Logo · Suchfeld-Pille · Menü)
+ *   3  Kategorie-Chips
+ *   4  Hero
+ *   5  Inserate-Raster (2 Spalten auf allen Handys)
+ *   6  Werbung mobil (gleiches Raster, klar als "Anzeige" markiert)
+ *   7  Filter / Sidebar als Bottom-Sheet
+ *   8  Menü-Sheet, Such-Overlay, Bottom-Tabbar   (von mobile.js erzeugt)
+ *   9  Suche, Inseratsdetail, Formulare, Dashboard, Textseiten
+ *  10  Footer, Modals, Cookie-Banner
+ * Alle Klassen, die mobile.js neu einfügt, beginnen mit "ma-".
  */
 
-/* ══════════════════════════════════════════════════════
-   0. GLOBAL — gilt auf allen Breiten, ändert Desktop optisch nicht
-══════════════════════════════════════════════════════ */
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-
-/* Formular-Elemente übernehmen überall die Seitenschrift (Outfit).
-   Ohne das rendert iOS Buttons in SF Pro und Android in Roboto. */
-button, input, select, textarea, optgroup { font-family: inherit; }
-
-/* Einheitliches Logo auf allen Seiten (suche.html war noch blau) */
-.logo-mark {
-  background: linear-gradient(145deg, #1b2d42, #2a4a6b) !important;
-  box-shadow: 0 4px 12px rgba(13,27,42,0.35) !important;
+:root{
+  --ma-tab-h:64px;
+  --ma-safe-b:env(safe-area-inset-bottom,0px);
+  --ma-safe-t:env(safe-area-inset-top,0px);
+  --ma-navy:#1b2d42; --ma-dark:#0d1b2a; --ma-blue:#1a5fa8; --ma-blue2:#2176c7;
+  --ma-sky:#4da6ff; --ma-muted:#6b8299; --ma-line:#e3eaf2; --ma-bg:#f2f5f9;
+  --ma-ad:#f3d9a4; --ma-ad-bg:#fffaf0; --ma-ad-ink:#8a5a00;
 }
 
-/* Cookie-Banner in Seitenschrift statt Arial */
-#amcc-banner { font-family: 'Outfit', Arial, sans-serif !important; }
-
-
-/* ══════════════════════════════════════════════════════
-   1. CSS RESET & BASICS
-══════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-
-  /* Scroll-Verhalten */
-  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  body { overflow-x: hidden; }
-  @supports (overflow: clip) {
-    /* clip statt hidden: verhindert Querscrollen, ohne position:sticky
-       (Header) auf iOS Safari kaputt zu machen */
-    html, body { overflow-x: clip !important; }
-  }
-
-  /* Touch-freundliche Tap-Targets — nur echte Bedienelemente.
-     (Früher: a, button { min-height:44px } → hat Breadcrumbs, Chips,
-     Footer-Links und Inline-Links auf Android/iOS unterschiedlich verzogen.) */
-  .mob-toggle, .mob-filter-btn, .se-mobfilter, .hdr-btn,
-  .mob-nav a, .mobile-nav a, .bnb-item { min-height: 44px; }
-
-  /* Container padding anpassen */
-  .container { padding: 0 16px !important; }
-
-/* ══════════════════════════════════════════════════════
-   2. TOPBAR — auf Mobile ausblenden (zu klein)
-══════════════════════════════════════════════════════ */
-  .topbar { display: none !important; }
-
-/* ══════════════════════════════════════════════════════
-   3. HEADER — vereinfacht, Hamburger sichtbar
-══════════════════════════════════════════════════════ */
-  /* WICHTIG: .header-inner ist gleichzeitig .container → horizontales
-     Padding MUSS bleiben, sonst klebt das Logo am Bildschirmrand */
-  .header-inner { padding: 10px 16px !important; gap: 10px !important; }
-  .header-right { margin-left: auto !important; gap: 8px !important; }
-
-  /* Suche auf Mobile ausblenden (eigene Mobile-Suche vorhanden) */
-  .search-bar { display: none !important; }
-
-  /* Desktop-Buttons im Header ausblenden */
-  .header-right .hdr-btn-ghost,
-  .header-right .hdr-btn-outline,
-  .header-right .hdr-btn,
-  .header-right a { display: none !important; }
-
-  /* Nur Hamburger + Avatar sichtbar lassen */
-  .mob-toggle { display: flex !important; }
-  .header-right .auth-avatar-wrapper { display: block !important; }
-  /* „Anzeige erstellen“ liegt auf Mobile in der Bottom-Nav (Inserieren) */
-
-  /* Logo kleiner */
-  .logo-name { font-size: 18px !important; }
-  .logo-mark { width: 36px !important; height: 36px !important; font-size: 14px !important; }
-
-/* ══════════════════════════════════════════════════════
-   4. MOBILE NAV OVERLAY
-══════════════════════════════════════════════════════ */
-  .mob-nav,
-  .mobile-nav {
-    position: fixed !important;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(7,21,36,0.97) !important;
-    z-index: 9000 !important;
-    display: none;
-    flex-direction: column !important;
-    padding: 70px 24px 100px !important;
-    overflow-y: auto;
-  }
-  .mob-nav.open,
-  .mobile-nav.open { display: flex !important; }
-
-  .mob-nav a,
-  .mobile-nav a {
-    display: flex !important;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 0 !important;
-    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
-    font-size: 17px !important;
-    font-weight: 600;
-    color: rgba(255,255,255,0.88) !important;
-  }
-  .mob-nav a:hover,
-  .mobile-nav a:hover { color: #4da6ff !important; background: transparent !important; }
-
-  /* Close-Button im Nav */
-  .mob-nav-close {
-    position: absolute !important;
-    top: 16px; right: 20px;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    z-index: 9001;
-  }
-
-/* ══════════════════════════════════════════════════════
-   5. BOTTOM NAVIGATION BAR (global)
-══════════════════════════════════════════════════════ */
-  /* Verhindert, dass Inhalt hinter der Bottom-Nav verschwindet */
-  body { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important; }
-
-  /* Bottom Nav */
-  .bottom-nav-bar {
-    display: flex !important;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: calc(62px + env(safe-area-inset-bottom, 0px));
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: #fff;
-    border-top: 1px solid #e2e8f0;
-    box-shadow: 0 -4px 20px rgba(13,27,42,0.10);
-    z-index: 8000;
-    align-items: center;
-    justify-content: space-around;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-  }
-  .bnb-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    flex: 1;
-    font-size: 10px;
-    font-weight: 600;
-    color: #64748b;
-    text-decoration: none;
-    padding: 8px 4px;
-    border-radius: 10px;
-    transition: color .15s;
-    min-height: 44px;
-    justify-content: center;
-  }
-  .bnb-item.active { color: #1a5fa8; }
-  .bnb-item svg { width: 22px; height: 22px; }
-  .bnb-item-icon { font-size: 22px; line-height: 1; }
-  .bnb-center {
-    width: 52px; height: 52px;
-    background: linear-gradient(135deg, #1a5fa8, #2176c7);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 16px rgba(26,95,168,0.4);
-    margin-top: -14px;
-    color: #fff;
-    font-size: 24px;
-    flex-shrink: 0;
-  }
-
-/* ══════════════════════════════════════════════════════
-   6. HERO SECTION (index.html)
-══════════════════════════════════════════════════════ */
-  .hero { padding: 28px 0 24px !important; min-height: 0 !important; }
-  .hero h1, .hero-title { font-size: 26px !important; line-height: 1.2 !important; }
-  .hero-desc, .hero-sub { font-size: 14px !important; }
-
-  .hero-cta {
-    flex-direction: column !important;
-    gap: 10px !important;
-    width: 100%;
-  }
-  .hero-cta a,
-  .cta-primary, .cta-secondary, .cta-privat {
-    width: 100% !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 14px 20px !important;
-    font-size: 14px !important;
-    border-radius: 12px !important;
-  }
-
-  .hero-stats {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
-  }
-  .hero-stat { padding: 12px !important; }
-  .hero-stat-val { font-size: 22px !important; }
-
-/* ══════════════════════════════════════════════════════
-   7. LISTING CARDS (index + suche)
-══════════════════════════════════════════════════════ */
-  .listing-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
-  }
-  .listing-card { border-radius: 12px !important; }
-  .listing-image, .sim-img { height: 150px !important; }
-  .listing-title { font-size: 13px !important; }
-  .price { font-size: 15px !important; }
-
-/* ══════════════════════════════════════════════════════
-   8. SUCHE — Filter & Layout
-══════════════════════════════════════════════════════ */
-  .search-layout,
-  .results-layout {
-    grid-template-columns: 1fr !important;
-    gap: 0 !important;
-  }
-
-  /* Filter-Sidebar als Drawer */
-  .filter-sidebar,
-  .sidebar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    width: 85vw !important;
-    max-width: 320px !important;
-    background: #fff !important;
-    z-index: 7000 !important;
-    overflow-y: auto !important;
-    transform: translateX(-100%) !important;
-    transition: transform .3s ease !important;
-    box-shadow: 4px 0 30px rgba(0,0,0,0.2) !important;
-    border-radius: 0 !important;
-    max-height: 100vh !important;
-    max-height: 100dvh !important;
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-  .filter-sidebar.open,
-  .sidebar.open {
-    transform: translateX(0) !important;
-    display: block !important;
-  }
-
-  /* Filter-Button sichtbar */
-  .mob-filter-btn { display: flex !important; }
-
-  /* Mobile Suche anzeigen */
-  .mobile-search { display: flex !important; }
-
-  /* Header-Suche ausblenden auf Suchseite */
-  .header-search { display: none !important; }
-
-  /* Ergebnis-Header */
-  .results-head {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 10px !important;
-    padding: 12px 0 !important;
-  }
-  .results-head-right { width: 100% !important; }
-  .results-head-right select { width: 100% !important; }
-
-/* ══════════════════════════════════════════════════════
-   9. LISTING DETAIL
-══════════════════════════════════════════════════════ */
-  .hero-layout,
-  .lower-layout {
-    grid-template-columns: 1fr !important;
-    gap: 14px !important;
-  }
-
-  .main-img-area { height: 280px !important; }
-  .listing-title-overlay { font-size: 16px !important; }
-  .listing-price-overlay { font-size: 22px !important; }
-
-  .side-card,
-  .info-card { padding: 16px !important; }
-
-  .price-box { padding: 16px !important; }
-  .pb-price { font-size: 28px !important; }
-
-  .quick-grid,
-  .quick-specs { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
-
-  .cta-area { gap: 8px !important; }
-  .btn-contact, .btn-back, .btn-phone { padding: 13px !important; font-size: 14px !important; }
-
-  .contact-card, .seller-card { position: static !important; }
-
-  .specs-grid { grid-template-columns: 1fr !important; }
-  .similar-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-
-  .thumb-strip { padding: 8px 10px !important; }
-  .thumb { width: 60px !important; height: 52px !important; }
-
-/* ══════════════════════════════════════════════════════
-   10. LOGIN & REGISTRIEREN
-══════════════════════════════════════════════════════ */
-  .auth-page,
-  .login-wrap,
-  .register-wrap {
-    min-height: 100vh !important;
-    padding: 20px 0 80px !important;
-    align-items: flex-start !important;
-  }
-
-  .auth-card,
-  .login-card,
-  .register-card {
-    margin: 0 !important;
-    border-radius: 16px !important;
-    padding: 24px 20px !important;
-    box-shadow: none !important;
-    border: 1px solid #e2e8f0 !important;
-  }
-
-  .auth-card h1,
-  .login-card h1,
-  .register-card h1 { font-size: 22px !important; }
-
-/* ══════════════════════════════════════════════════════
-   11. DASHBOARD & INNEN-SEITEN (Sidebar-Layout)
-══════════════════════════════════════════════════════ */
-  .layout,
-  .page-layout,
-  .dash-layout {
-    grid-template-columns: 1fr !important;
-    gap: 14px !important;
-  }
-
-  /* Sidebar ausblenden auf Mobile — Bottom Nav übernimmt */
-  .sidebar-desktop,
-  .page-sidebar {
-    display: none !important;
-  }
-
-  /* Dashboard Stats */
-  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-  .stat-card { padding: 14px !important; }
-  .stat-value { font-size: 22px !important; }
-
-  /* Dashboard Tabelle scrollbar machen */
-  .table-wrap,
-  .listings-table-wrap {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    border-radius: 12px !important;
-  }
-  table { min-width: 600px !important; font-size: 13px !important; }
-
-  /* Activity */
-  .activity-list { gap: 10px !important; }
-  .activity-item { padding: 12px !important; }
-
-/* ══════════════════════════════════════════════════════
-   12. ANZEIGE ERSTELLEN
-══════════════════════════════════════════════════════ */
-  .create-layout,
-  .form-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  .form-sidebar,
-  .sidebar-nav-wrap { display: none !important; }
-
-  .form-grid-2,
-  .form-grid {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-
-  .image-upload-grid,
-  .preview-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px !important;
-  }
-
-  .form-section-title { font-size: 16px !important; }
-
-/* ══════════════════════════════════════════════════════
-   13. MEINE ANZEIGEN & ANFRAGEN
-══════════════════════════════════════════════════════ */
-  .my-listings-grid,
-  .listing-grid-3 {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-
-  .card-image { height: 180px !important; }
-  .card-body { padding: 14px !important; }
-  .card-title { font-size: 14px !important; }
-
-  .inquiry-card { padding: 16px !important; }
-  .chat-messages { max-height: 300px !important; }
-
-/* ══════════════════════════════════════════════════════
-   14. PROFIL SEITE
-══════════════════════════════════════════════════════ */
-  .profil-layout { grid-template-columns: 1fr !important; }
-  .profile-header { padding: 20px !important; }
-  .form-cols-2 { grid-template-columns: 1fr !important; }
-
-/* ══════════════════════════════════════════════════════
-   15. FOOTER
-══════════════════════════════════════════════════════ */
-  .footer { padding-top: 36px !important; }
-  .footer-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
-  .footer-bottom {
-    flex-direction: column !important;
-    gap: 8px !important;
-    text-align: center !important;
-  }
-  .footer-links,
-  .footer-bottom-links {
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 12px !important;
-  }
-  /* Footer komplett ausblenden wenn Bottom-Nav vorhanden */
-  .footer-has-bottom-nav { margin-bottom: 0 !important; }
-
-/* ══════════════════════════════════════════════════════
-   16. KONTAKT, KARRIERE, ÜBER UNS
-══════════════════════════════════════════════════════ */
-  .kontakt-grid,
-  .contact-grid { grid-template-columns: 1fr !important; }
-
-  .karriere-grid,
-  .jobs-grid { grid-template-columns: 1fr !important; }
-
-  .team-grid { grid-template-columns: 1fr 1fr !important; }
-
-  .card, .panel { padding: 18px !important; border-radius: 12px !important; }
-  h1 { font-size: 24px !important; }
-  h2 { font-size: 18px !important; }
-
-/* ══════════════════════════════════════════════════════
-   17. ALLGEMEINE TEXT-SEITEN (AGB, Impressum, Datenschutz)
-══════════════════════════════════════════════════════ */
-  .card { padding: 20px 16px !important; }
-  .card h1 { font-size: 22px !important; }
-  h2 { font-size: 16px !important; }
-  p, li { font-size: 14px !important; }
-
-/* ══════════════════════════════════════════════════════
-   18. MODALS & OVERLAYS (Händler-Registrierung etc.)
-══════════════════════════════════════════════════════ */
-  .hm-overlay,
-  .pm-overlay,
-  .overlay {
-    padding: 0 !important;
-    align-items: flex-end !important;
-  }
-
-  .hm-modal,
-  .pm-modal,
-  .modal {
-    border-radius: 20px 20px 0 0 !important;
-    max-height: 92vh !important;
-    max-height: 92dvh !important;
-    overflow-y: auto !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    animation: slideUpMob .32s cubic-bezier(.34,1.56,.64,1) !important;
-  }
-
-  @keyframes slideUpMob {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
-  }
-
-  .hm-body,
-  .pm-body { padding: 20px 18px !important; }
-
-  .hm-grid-2,
-  .pm-grid2 { grid-template-columns: 1fr !important; }
-
-  .hm-steps,
-  .pm-steps { padding: 14px 16px 0 !important; }
-
-  .hm-step > div:last-child,
-  .pm-step > div:last-child { font-size: 10px !important; }
-
-  .hm-footer,
-  .pm-footer { padding: 14px 18px 20px !important; flex-direction: column !important; gap: 10px !important; }
-
-  .hm-actions,
-  .pm-actions { justify-content: flex-end !important; }
-
-/* ══════════════════════════════════════════════════════
-   19. TRUST BADGES & PILLS — kompakter
-══════════════════════════════════════════════════════ */
-  .trust-strip,
-  .trust-row { gap: 6px !important; }
-  .t-pill,
-  .trust-badge { font-size: 11px !important; padding: 3px 8px !important; }
-
-/* ══════════════════════════════════════════════════════
-   20. SCROLLABLE OVERLAY (Sidebar-Schutz)
-══════════════════════════════════════════════════════ */
-  .sidebar-overlay,
-  .mob-overlay {
-    position: fixed !important;
-    inset: 0 !important;
-    background: rgba(7,21,36,0.5) !important;
-    z-index: 6999 !important;
-    display: none !important;
-  }
-  .sidebar-overlay.open,
-  .mob-overlay.open { display: block !important; }
-
-} /* end @media 768px */
-
-/* ══════════════════════════════════════════════════════
-   Extra small (iPhone SE, kleine Androids)
-   Früher wurde hier bei ≤380px auf 1 Spalte umgeschaltet und die
-   Bottom-Nav-Beschriftung ausgeblendet. Genau das war der Grund, warum
-   Android (meist 360px) anders aussah als iPhone (390px). Jetzt nur noch
-   kleine Größenkorrekturen – das Layout bleibt identisch.
-══════════════════════════════════════════════════════ */
-@media (max-width: 380px) {
-  .quick-grid,
-  .quick-specs { grid-template-columns: 1fr 1fr !important; }
-  .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .hero h1, .hero-title { font-size: 24px !important; }
-  .pb-price { font-size: 24px !important; }
+@media (max-width:900px){
+
+/* ═════════ 1. BASIS ═════════ */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:70px}
+body{
+  overflow-x:hidden;
+  background:var(--ma-bg);
+  padding-bottom:calc(var(--ma-tab-h) + var(--ma-safe-b) + 8px) !important;
+  -webkit-tap-highlight-color:transparent;
 }
-@media (max-width: 340px) {
-  .bottom-nav-bar .bnb-item { font-size: 9.5px !important; padding: 8px 2px !important; }
+body.ma-locked{overflow:hidden}
+input,select,textarea,button{font-family:inherit}
+input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px !important}
+.container{padding-left:16px !important;padding-right:16px !important;max-width:100% !important}
+img,video,iframe{max-width:100%}
+
+/* ═════════ 2. APP-HEADER ═════════ */
+.topbar{display:none !important}
+.header{
+  position:sticky !important;top:0;z-index:900 !important;
+  padding-top:var(--ma-safe-t);
+  background:rgba(255,255,255,.94) !important;
+  -webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);
+  box-shadow:0 1px 0 var(--ma-line) !important;border-bottom:0 !important;
+  transform:none !important;
+}
+.header-inner{display:flex !important;align-items:center !important;gap:10px !important;padding:9px 0 !important;min-height:56px}
+.header .logo{flex-shrink:0;gap:8px !important}
+.header .logo-mark{width:36px !important;height:36px !important;font-size:14px !important;border-radius:9px !important;
+  background:linear-gradient(145deg,#1b2d42,#2a4a6b) !important}
+.header .logo-name{font-size:18px !important}
+.header .search-bar,.header .header-search{display:none !important}
+.header .header-right{display:none !important}
+.mob-toggle{display:none !important}            /* ersetzt durch .ma-menu-btn */
+
+.ma-search-pill{
+  flex:1;min-width:0;height:40px;display:flex;align-items:center;gap:8px;
+  padding:0 14px;border:0;border-radius:999px;background:#eef2f7;
+  color:#7a8ea4;font-size:14px;text-align:left;cursor:pointer;
+}
+.ma-search-pill svg{width:17px;height:17px;flex-shrink:0;color:var(--ma-blue)}
+.ma-search-pill span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ma-icon-btn{
+  width:40px;height:40px;flex-shrink:0;border:0;border-radius:12px;background:transparent;
+  display:grid;place-items:center;color:var(--ma-dark);cursor:pointer;
+}
+.ma-icon-btn:active{background:#eef2f7}
+.ma-icon-btn svg{width:22px;height:22px}
+
+/* ═════════ 3. KATEGORIE-CHIPS ═════════ */
+.cat-bar{background:#fff !important;border-bottom:1px solid var(--ma-line) !important}
+.cat-bar-inner{gap:8px !important;padding:10px 16px !important;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.cat-bar-inner a{
+  scroll-snap-align:start;flex-shrink:0;padding:7px 14px !important;border-radius:999px !important;
+  border:1px solid var(--ma-line) !important;background:#fff;font-size:13px !important;color:#40556b !important;
+}
+.cat-bar-inner a.active,.cat-bar-inner a:hover{background:var(--ma-dark) !important;color:#fff !important;border-color:var(--ma-dark) !important}
+
+/* ═════════ 4. HERO ═════════ */
+.hero{padding:26px 0 22px !important;min-height:0 !important}
+.hero-inner{grid-template-columns:1fr !important;gap:14px !important}
+.hero-card{display:none !important}
+.hero h1,.hero-title{font-size:27px !important;line-height:1.15 !important;letter-spacing:-.02em}
+.hero-desc,.hero-sub{font-size:14.5px !important;line-height:1.5 !important}
+.hero-pill{font-size:11.5px !important}
+.hero-cta{display:grid !important;grid-template-columns:1fr 1fr;gap:8px !important;width:100%}
+.hero-cta>*:first-child:last-child{grid-column:1/-1}
+.hero-cta a,.cta-primary,.cta-secondary,.cta-privat{
+  justify-content:center !important;text-align:center !important;padding:13px 12px !important;
+  font-size:14px !important;border-radius:12px !important;width:auto !important;
+}
+.hero-stats{display:grid !important;grid-template-columns:repeat(3,1fr) !important;gap:8px !important}
+.hero-stat{padding:10px 8px !important;text-align:center}
+.hero-stat-val{font-size:20px !important}
+
+/* ═════════ 5. INSERATE-RASTER ═════════ */
+.main-wrap,.content-wrap{grid-template-columns:1fr !important;gap:0 !important;padding-top:12px !important}
+.panel{border-radius:16px !important;margin-bottom:14px !important}
+.panel-head{flex-wrap:wrap;gap:10px !important;padding:14px 14px 10px !important}
+.panel-head h2{font-size:18px !important}
+.panel-head-right{width:100%;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.panel-head-right select{flex:1;height:38px;border-radius:10px}
+.panel-body{padding:10px !important}
+
+.listing-grid,.similar-grid,.se-grid,#search-listing-grid{
+  display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:10px !important;
+}
+.listing-card{border-radius:14px !important;box-shadow:0 1px 3px rgba(13,27,42,.06) !important;min-width:0}
+.listing-card:hover{transform:none !important}
+.listing-card:active{transform:scale(.985) !important}
+.listing-image,.sim-img{height:auto !important;aspect-ratio:4/3;font-size:34px !important}
+.listing-body{padding:10px 11px 11px !important}
+.listing-title{font-size:13px !important;line-height:1.35 !important;min-height:0 !important;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:5px !important}
+.listing-card .meta{gap:4px !important;margin-bottom:6px !important;max-height:44px;overflow:hidden}
+.listing-card .meta span{font-size:10.5px !important;padding:2px 6px !important}
+.listing-card .price{font-size:16px !important;margin-bottom:2px !important}
+.listing-card .shipping{font-size:11px !important;margin-bottom:6px !important}
+.listing-card .seller{font-size:11px !important;padding-top:7px !important}
+.listing-card .seller span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.listing-card .badge{font-size:10px !important;padding:3px 7px !important;top:8px !important;left:8px !important;max-width:calc(100% - 52px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.listing-card .fav{width:30px !important;height:30px !important;top:8px !important;right:8px !important}
+.empty-box{padding:28px 12px !important}
+
+/* ═════════ 6. WERBUNG MOBIL ═════════
+   In-Feed-Werbung über die volle Breite als quer liegende Karte:
+   wirkt wie ein Inserat, bleibt durch Farbe + "Anzeige" klar erkennbar. */
+.listing-grid>[data-am-slot="infeed"]>.am-card,
+.listing-grid>.am-card,
+.listing-grid>.kress-ad,.listing-grid>.ms-ad{grid-column:1/-1 !important}
+.am-card.listing-card{flex-direction:row !important;min-height:112px;background:var(--ma-ad-bg) !important;border:1.5px solid var(--ma-ad) !important}
+.am-card .am-visual{height:auto !important;width:38%;min-height:112px;flex-shrink:0}
+.am-card .am-visual .am-icon{font-size:34px !important}
+.am-card .am-visual .am-brand{font-size:14px !important;bottom:8px !important;left:10px !important}
+.am-card .listing-body{padding:28px 12px 12px !important;justify-content:center}
+.am-card .am-claim{font-size:13.5px !important}
+.am-card .am-cta{font-size:12.5px !important}
+.am-card .am-badge{top:8px !important;left:auto !important;right:8px !important}
+.am-card.am-gads{display:block !important}
+.am-card.am-gads ins.adsbygoogle{min-height:120px !important}
+.am-banner{margin:14px 0 !important;border-radius:14px !important}
+.am-banner a.am-row{flex-wrap:wrap}
+.am-banner .am-go{width:100%;text-align:center}
+.am-strip{padding:0 16px !important;margin-top:16px !important}
+.am-tiles{grid-template-columns:1fr 1fr !important}
+.am-badge{font-size:10px !important}
+.faq-ad-slot,#adsense-placeholder{max-width:100%;overflow:hidden}
+
+/* ═════════ 7. FILTER / SIDEBAR → BOTTOM-SHEET ═════════ */
+.mob-filter-btn{
+  display:flex !important;align-items:center;justify-content:center;gap:8px;width:100%;
+  height:44px;margin:0 0 12px !important;border-radius:12px !important;border:1px solid var(--ma-line) !important;
+  background:#fff !important;font-weight:700;font-size:14px;color:var(--ma-dark);
+}
+.mob-filter-btn .burger-icon{display:none !important}
+.mob-filter-btn::before{content:"";width:18px;height:18px;
+  background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M4 6h16M7 12h10M10 18h4'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M4 6h16M7 12h10M10 18h4'/%3E%3C/svg%3E") center/contain no-repeat}
+
+.ma-sheeted:not(.ma-in-sheet){display:none !important}
+.ma-filter-sheet .sidebar,.ma-filter-sheet .filter-sidebar,.ma-filter-sheet .se-filters{
+  display:block !important;position:static !important;transform:none !important;width:auto !important;
+  max-width:none !important;max-height:none !important;box-shadow:none !important;border:0 !important;
+  border-radius:0 !important;padding:0 0 12px !important;top:auto !important;background:transparent !important;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════
-   21. GERÄTE-ANGLEICHUNG iOS ↔ Android (≤ 768px)
-══════════════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-
-  /* Kein grauer/blauer Tap-Blitz (Android) bzw. grauer Kasten (iOS) */
-  a, button, [role="button"], label, summary { -webkit-tap-highlight-color: transparent; }
-
-  /* iOS-Zoom beim Antippen verhindern: Safari zoomt bei < 16px hinein */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
-  select, textarea { font-size: 16px !important; }
-
-  /* Native Browser-Optik entfernen → Felder sehen überall gleich aus */
-  input[type="text"], input[type="search"], input[type="email"],
-  input[type="number"], input[type="tel"], input[type="url"],
-  input[type="password"], textarea {
-    -webkit-appearance: none; appearance: none; border-radius: 10px;
-  }
-  input[type="search"]::-webkit-search-decoration,
-  input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-  input[type="number"] { -moz-appearance: textfield; }
-  button { -webkit-appearance: none; appearance: none; }
-
-  /* Hover-Effekte bleiben auf Touch-Geräten nach dem Tippen "hängen" */
+/* ═════════ 8. SHEETS, SUCH-OVERLAY, TABBAR ═════════ */
+.ma-backdrop{position:fixed;inset:0;z-index:9500;background:rgba(7,21,36,.45);opacity:0;pointer-events:none;transition:opacity .25s}
+.ma-backdrop.open{opacity:1;pointer-events:auto}
+.ma-sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:9600;max-height:88dvh;display:flex;flex-direction:column;
+  background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -10px 40px rgba(7,21,36,.2);
+  transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1);
+  padding-bottom:var(--ma-safe-b);
 }
-@media (hover: none) {
-  .listing-card:hover, .se-card:hover { transform: none !important; }
+.ma-sheet.open{transform:translateY(0)}
+.ma-sheet-grip{width:40px;height:5px;border-radius:3px;background:#d3dce6;margin:9px auto 2px;flex-shrink:0}
+.ma-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:6px 18px 10px;flex-shrink:0}
+.ma-sheet-head b{font-size:17px;color:var(--ma-dark)}
+.ma-sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 18px 16px;flex:1}
+.ma-sheet-foot{padding:10px 18px 12px;border-top:1px solid var(--ma-line);display:flex;gap:10px;flex-shrink:0}
+.ma-btn{flex:1;height:46px;border-radius:12px;border:0;font-weight:700;font-size:15px;cursor:pointer}
+.ma-btn-primary{background:linear-gradient(135deg,var(--ma-blue),var(--ma-blue2));color:#fff}
+.ma-btn-ghost{background:#eef2f7;color:var(--ma-dark)}
+
+/* Menü-Sheet */
+.ma-menu-sheet .mob-nav{
+  display:grid !important;grid-template-columns:1fr 1fr;gap:8px;position:static !important;
+  background:transparent !important;padding:0 !important;border:0 !important;box-shadow:none !important;
+  max-height:none !important;overflow:visible !important;
 }
-
-/* iOS Safari < 18 kennt backdrop-filter nur mit Präfix */
-.badge { -webkit-backdrop-filter: blur(4px); }
-
-/* ══════════════════════════════════════════════════════════════════
-   22. STARTSEITE (index.html) — Mobile-Layout
-══════════════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-
-  html body .main-wrap {
-    padding: 0 12px !important;
-    margin: 16px auto 28px !important;
-    gap: 14px !important;
-  }
-  html body .content-area { gap: 14px !important; min-width: 0; }
-  /* minmax(0,1fr): breite Inhalte (Werbefläche, FAQ) dürfen die Spalte
-     nicht über den Bildschirm hinaus aufdrücken (war bei 320px der Fall) */
-  html body .main-wrap { grid-template-columns: minmax(0, 1fr) !important; }
-
-  /* FAQ-Kopf */
-  html body .faq-hero { min-height: 0 !important; }
-  html body .faq-hero-content { padding: 26px 18px 22px !important; min-width: 0; }
-  html body .faq-hero-content h2 { font-size: 21px !important; line-height: 1.25 !important; }
-  html body .faq-ad-slot { max-width: 100% !important; padding: 14px 14px 12px !important; }
-  html body .faq-ad-placeholder { flex-wrap: wrap; gap: 10px !important; }
-  html body .faq-ad-placeholder-text { flex: 1 1 140px !important; }
-  html body .mob-filter-btn { width: 100% !important; justify-content: flex-start; }
-
-  /* Panel „Aktuelle Angebote“ — .panel bekommt oben in Abschnitt 16
-     pauschal 18px Innenabstand; auf der Startseite verschenkt das Platz */
-  html body .main-wrap .panel { padding: 0 !important; }
-  html body .view-all-link { white-space: nowrap; }
-  html body .panel-head {
-    padding: 14px 14px 12px !important;
-    flex-direction: row !important;
-    align-items: flex-end !important;
-    justify-content: space-between !important;
-  }
-  html body .panel-head h2 { font-size: 17px !important; }
-  html body .panel-head p { font-size: 12.5px !important; }
-  html body .panel-head-right { width: 100%; justify-content: space-between; gap: 10px !important; }
-  html body .panel-head-right .sort-sel {
-    -webkit-appearance: none; appearance: none;
-    flex: 1 1 auto; min-width: 0; height: 40px; padding: 0 34px 0 12px !important;
-    background: #f8fbff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a93ae' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center / 15px !important;
-  }
-  html body .panel-body { padding: 10px !important; }
-
-  /* Angebots-Karten: immer 2 Spalten, egal ob 320, 360, 390 oder 430px */
-  html body .listing-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-  }
-  html body .listing-card {
-    display: flex !important; flex-direction: column;
-    border-radius: 12px !important; min-width: 0;
-  }
-  html body .listing-image {
-    height: auto !important;               /* feste Höhe → Proportion */
-    aspect-ratio: 4 / 3;
-    font-size: 32px !important;
-  }
-  html body .listing-body {
-    padding: 10px 10px 11px !important;
-    display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0;
-  }
-  html body .listing-title {
-    font-size: 13.5px !important; line-height: 1.3 !important;
-    min-height: 2.6em !important; margin-bottom: 6px !important;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  html body .listing-card .meta {
-    flex-wrap: nowrap !important; overflow: hidden; gap: 4px !important;
-    margin-bottom: 6px !important; font-size: 11px !important;
-  }
-  html body .listing-card .meta span {
-    padding: 2px 6px !important; white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 0;
-  }
-  html body .listing-card .meta span:nth-child(2) { display: none; } /* Modell → Detailseite */
-  html body .listing-card .price { font-size: 16px !important; margin-bottom: 1px !important; }
-  html body .listing-card .shipping { font-size: 11.5px !important; margin-bottom: 8px !important; }
-  html body .listing-card .seller {
-    font-size: 11px !important; margin-top: auto !important; padding-top: 8px !important; gap: 6px;
-  }
-  html body .listing-card .seller > :first-child {
-    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  html body .listing-card .badge {
-    top: 7px !important; left: 7px !important; font-size: 10px !important;
-    padding: 3px 7px !important; max-width: calc(100% - 50px);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  html body .listing-card .fav {
-    width: 30px !important; height: 30px !important; top: 6px !important; right: 6px !important;
-    font-size: 13px !important;
-  }
-
-  /* Newsletter */
-  html body .newsletter-inner { padding: 20px 16px !important; }
-  html body .newsletter-form { flex-direction: column !important; }
-  html body .newsletter-form input { min-width: 0 !important; width: 100% !important; height: 46px; }
-  html body .newsletter-form button { height: 46px; }
+.ma-menu-sheet .mob-nav a{
+  display:flex !important;align-items:center;gap:8px;min-height:50px;padding:10px 12px !important;
+  border:1px solid var(--ma-line) !important;border-radius:12px;background:#f8fafc;
+  font-size:14px !important;font-weight:600;color:var(--ma-dark) !important;line-height:1.25;
 }
+.ma-menu-sheet .mob-nav a[style*="display:none"],.ma-menu-sheet .mob-nav a[style*="display: none"]{display:none !important}
+.ma-menu-sheet .mob-nav-close{display:none !important}
+.ma-lang{display:flex;gap:6px;margin:14px 0 4px}
+.ma-lang button{flex:1;height:38px;border-radius:10px;border:1px solid var(--ma-line);background:#fff;font-weight:700;font-size:13px;color:#40556b}
+.ma-lang button.on{background:var(--ma-dark);border-color:var(--ma-dark);color:#fff}
+.ma-sec-label{font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ma-muted);margin:16px 0 8px}
 
-/* Fallback für iOS < 15 (kein aspect-ratio) */
-@supports not (aspect-ratio: 1 / 1) {
-  @media (max-width: 768px) {
-    html body .listing-image,
-    html body .se-grid:not(.list) .se-card-img { height: 0 !important; padding-top: 75%; }
-  }
+/* Such-Overlay */
+.ma-search{position:fixed;inset:0;z-index:9700;background:#fff;display:flex;flex-direction:column;
+  padding-top:var(--ma-safe-t);transform:translateY(12px);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.ma-search.open{opacity:1;transform:none;pointer-events:auto}
+.ma-search-top{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--ma-line)}
+.ma-search-field{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:999px;background:#eef2f7}
+.ma-search-field svg{width:18px;height:18px;color:var(--ma-blue);flex-shrink:0}
+.ma-search-field input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--ma-dark)}
+.ma-search-body{flex:1;overflow-y:auto;padding:4px 16px 24px}
+.ma-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ma-chip{padding:8px 13px;border-radius:999px;border:1px solid var(--ma-line);background:#fff;font-size:13px;font-weight:600;color:#40556b}
+.ma-recent a{display:flex;align-items:center;gap:10px;padding:12px 2px;border-bottom:1px solid var(--ma-line);color:var(--ma-dark);font-size:15px}
+.ma-recent a::before{content:"↺";color:var(--ma-muted)}
+
+/* Bottom-Tabbar */
+.ma-tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:9000;display:flex;align-items:stretch;
+  height:calc(var(--ma-tab-h) + var(--ma-safe-b));padding-bottom:var(--ma-safe-b);
+  background:rgba(255,255,255,.96);-webkit-backdrop-filter:saturate(180%) blur(16px);backdrop-filter:saturate(180%) blur(16px);
+  border-top:1px solid var(--ma-line);
 }
+.ma-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:10.5px;font-weight:600;color:#7a8ea4;text-decoration:none;position:relative;min-width:0}
+.ma-tab svg{width:23px;height:23px}
+.ma-tab.on{color:var(--ma-blue)}
+.ma-tab.on::after{content:"";position:absolute;top:0;width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--ma-blue)}
+.ma-tab-fab{width:50px;height:50px;margin-top:-20px;border-radius:16px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(145deg,#1b2d42,#2a4a6b);box-shadow:0 6px 18px rgba(13,27,42,.35);border:3px solid #fff}
+.ma-tab-fab svg{width:24px;height:24px}
+.ma-dot{position:absolute;top:8px;left:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;
+  background:#e53e3e;color:#fff;font-size:10px;font-weight:800;line-height:16px;text-align:center}
+.bottom-nav-bar{display:none !important}       /* alte Leiste, falls noch im HTML */
 
-/* ══════════════════════════════════════════════════════════════════
-   23. SUCHE (suche.html) — Mobile-Layout
-══════════════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
+/* Install-Hinweis */
+.ma-install{position:fixed;left:12px;right:12px;bottom:calc(var(--ma-tab-h) + var(--ma-safe-b) + 10px);z-index:8900;
+  display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:16px;background:var(--ma-dark);color:#fff;
+  box-shadow:0 10px 30px rgba(7,21,36,.35);transform:translateY(20px);opacity:0;transition:.3s}
+.ma-install.show{transform:none;opacity:1}
+.ma-install .ma-ico{width:42px;height:42px;border-radius:11px;background:linear-gradient(145deg,#2a4a6b,#1a5fa8);display:grid;place-items:center;font-weight:900;flex-shrink:0}
+.ma-install p{flex:1;font-size:13px;line-height:1.35;margin:0}
+.ma-install p b{display:block;font-size:14px}
+.ma-install button{border:0;border-radius:10px;font-weight:700;font-size:13px;padding:9px 12px;cursor:pointer}
+.ma-install .ma-yes{background:#fff;color:var(--ma-dark)}
+.ma-install .ma-no{background:transparent;color:rgba(255,255,255,.7);padding:9px 6px}
 
-  html body .se-inner { padding: 0 12px !important; }
-  html body .se-hero { padding: 16px 0 4px !important; }
+/* ═════════ 9. SEITEN ═════════ */
+/* Suche */
+.search-layout,.results-layout,.se-layout{grid-template-columns:1fr !important;gap:0 !important}
+.results-head{flex-wrap:wrap !important;gap:10px !important;padding:10px 0 !important}
+.results-head-right{width:100% !important;display:flex;gap:8px}
+.results-head-right select{flex:1}
+.se-hero{padding:18px 0 !important}
+.se-searchbar{grid-template-columns:1fr !important;display:grid !important;gap:8px !important;padding:12px !important;border-radius:16px !important}
+.se-cats{display:flex !important;overflow-x:auto;gap:8px;scrollbar-width:none;flex-wrap:nowrap !important}
+.se-cats::-webkit-scrollbar{display:none}
+.se-cats>*{flex:0 0 auto}
 
-  /* Suchbox kompakt: Suchbegriff oben, Kategorie + Standort nebeneinander */
-  html body .se-searchbar {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-    gap: 10px !important; padding: 12px !important; border-radius: 14px !important;
-  }
-  html body .se-field.se-field-q,
-  html body .se-searchbtn { grid-column: 1 / -1 !important; }
-  html body .se-searchbtn { justify-content: center; height: 48px !important; }
-  html body .se-field { gap: 4px !important; }
-  html body .se-field label { font-size: 11.5px !important; }
-  html body .se-input, html body .se-select { height: 46px !important; }
-  html body .se-select { padding-right: 30px !important; text-overflow: ellipsis; }
+/* Inseratsdetail */
+.hero-layout,.lower-layout,.ld-grid,.ld-hero,.ld-main{grid-template-columns:1fr !important;gap:14px !important}
+.main-img-area{height:auto !important;aspect-ratio:4/3}
+.contact-card,.seller-card,.ld-side,.ld-sticky{position:static !important;top:auto !important}
+.specs-grid{grid-template-columns:1fr !important}
+.quick-grid,.quick-specs{grid-template-columns:1fr 1fr !important;gap:8px !important}
+.thumb-strip,.ld-thumbs{overflow-x:auto;flex-wrap:nowrap !important;scrollbar-width:none}
+.pb-price{font-size:28px !important}
 
-  /* Kategorie-Kacheln: randlos scrollbar statt abgeschnitten */
-  html body .se-tiles {
-    margin: 14px -12px 4px !important; padding: 0 12px 4px !important;
-    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
-    scroll-padding-left: 12px;
-  }
-  html body .se-tile { flex-shrink: 0 !important; scroll-snap-align: start; }
+/* Formulare / Konto */
+.layout,.page-layout,.dash-layout,.create-layout,.form-layout,.profil-layout{grid-template-columns:1fr !important;gap:14px !important}
+.sidebar-desktop,.page-sidebar,.form-sidebar,.sidebar-nav-wrap{display:none !important}
+.form-grid,.form-grid-2,.form-cols-2,.hm-grid-2,.pm-grid2{grid-template-columns:1fr !important;gap:12px !important}
+.image-upload-grid,.preview-grid{grid-template-columns:repeat(3,1fr) !important;gap:8px !important}
+.stats-grid{grid-template-columns:1fr 1fr !important;gap:10px !important}
+.table-wrap,.listings-table-wrap{overflow-x:auto !important;-webkit-overflow-scrolling:touch}
+.table-wrap table,.listings-table-wrap table{min-width:560px}
+.auth-card,.login-card,.register-card{border-radius:18px !important;padding:22px 18px !important;box-shadow:none !important}
 
-  /* Filter-Button, Breadcrumb, Ergebnis-Kopf */
-  html body .se-mobfilter { margin-bottom: 12px !important; }
-  html body .se-breadcrumb { font-size: 12.5px !important; margin-bottom: 6px !important; }
-  html body .se-results-head { gap: 10px !important; margin-bottom: 14px !important; }
-  html body .se-title { font-size: 20px !important; line-height: 1.25; }
-  html body .se-tools { width: 100%; gap: 8px !important; }
-  html body .se-sortwrap { flex: 1 1 auto; min-width: 0; }
-  html body .se-sortwrap > span { display: none; }
-  html body .se-sort { width: 100%; height: 42px !important; }
+/* Feature-/Info-Raster */
+.features-grid{grid-template-columns:1fr 1fr !important;padding:14px !important;gap:10px !important}
+.kontakt-grid,.contact-grid,.karriere-grid,.jobs-grid{grid-template-columns:1fr !important}
+.faq-hero{grid-template-columns:1fr !important}
+.faq-hero-photo{display:none !important}
 
-  /* Karten: 2 Spalten wie auf der Startseite */
-  html body .se-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-  }
-  html body .se-card { border-radius: 12px !important; min-width: 0; }
-  html body .se-grid:not(.list) .se-card-img { height: auto !important; aspect-ratio: 4 / 3; }
-  html body .se-card-body { padding: 10px 10px 11px !important; gap: 5px !important; min-width: 0; }
-  html body .se-card-title {
-    font-size: 13.5px !important; line-height: 1.3 !important; min-height: 2.6em;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  html body .se-card-sub,
-  html body .se-loc-row span {
-    font-size: 11.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
-  }
-  html body .se-card-sub { margin-top: -2px !important; }
-  html body .se-loc-row { font-size: 11.5px !important; gap: 4px !important; min-width: 0; }
-  html body .se-specs { font-size: 11px !important; gap: 3px 8px !important; }
-  html body .se-spec:nth-child(n+3) { display: none !important; }
-  html body .se-spec svg, html body .se-loc-row svg { width: 12px !important; height: 12px !important; }
-  html body .se-card-foot {
-    flex-direction: column !important; align-items: flex-start !important; gap: 1px; padding-top: 2px !important;
-  }
-  html body .se-card-price { font-size: 16px !important; }
-  html body .se-card-date { font-size: 11px !important; }
-  html body .se-fav { width: 30px !important; height: 30px !important; top: 7px !important; right: 7px !important; }
-  html body .se-fav svg { width: 15px !important; height: 15px !important; }
+/* ═════════ 10. FOOTER, MODALS, COOKIES ═════════ */
+.footer{padding-top:28px !important}
+.footer-grid{grid-template-columns:1fr 1fr !important;gap:20px 14px !important}
+.footer-grid>*:first-child{grid-column:1/-1}
+.footer-bottom{flex-direction:column !important;gap:8px !important;text-align:center !important}
+.footer-links,.footer-bottom-links{flex-wrap:wrap !important;justify-content:center !important;gap:12px !important}
 
-  /* Listenansicht: kompakte Zeilen (Bild links, Text rechts) */
-  html body .se-grid.list { grid-template-columns: 1fr !important; gap: 10px !important; }
-  html body .se-grid.list .se-card { flex-direction: row !important; }
-  html body .se-grid.list .se-card-img {
-    width: 128px !important; min-height: 0 !important; height: auto !important;
-    flex-shrink: 0; align-self: stretch;
-  }
-  html body .se-grid.list .se-card-body { padding: 10px 12px !important; }
-  html body .se-grid.list .se-spec:nth-child(n+3) { display: inline-flex !important; }
+.hm-overlay,.pm-overlay,.overlay{padding:0 !important;align-items:flex-end !important}
+.hm-modal,.pm-modal,.modal{border-radius:22px 22px 0 0 !important;max-height:92dvh !important;overflow-y:auto !important;
+  width:100% !important;max-width:100% !important;margin:0 !important;padding-bottom:var(--ma-safe-b) !important}
 
-  /* Pagination */
-  html body .se-pg { min-width: 38px !important; height: 38px !important; }
+/* Cookie-Banner über der Tabbar halten */
+#cookie-banner,.cookie-banner,.cc-banner,[id*="cookie-consent"],[class*="cookie-consent"]{
+  bottom:calc(var(--ma-tab-h) + var(--ma-safe-b)) !important;max-height:70dvh;overflow-y:auto;z-index:9100 !important}
+} /* end @media 900px */
+
+/* Sehr schmale Geräte (iPhone SE 1. Gen, 320px): 2 Spalten bleiben, nur kompakter */
+@media (max-width:359px){
+  .listing-grid,.similar-grid,.se-grid,#search-listing-grid{gap:8px !important}
+  .listing-body{padding:9px !important}
+  .listing-card .meta{display:none !important}
+  .hero h1,.hero-title{font-size:23px !important}
+  .hero-stat-val{font-size:18px !important}
+  .hero-stat{font-size:11.5px}
+  .ma-tab{font-size:9.5px}
+  .am-card .am-visual{width:32%}
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   24. COOKIE-BANNER auf Mobile
-══════════════════════════════════════════════════════════════════ */
-@media (max-width: 640px) {
-  /* flex:1 1 320px wurde in der Spalten-Ansicht zu 320px HÖHE → großes Loch */
-  html body #amcc-text { flex: 0 0 auto !important; font-size: 13px !important; }
-  html body #amcc-inner {
-    gap: 12px !important;
-    padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-  html body #amcc-banner { max-height: 88vh; max-height: 88dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  html body .amcc-btn { min-height: 44px; }
+/* Als installierte App gestartet: keine Browser-Leiste → mehr Luft oben */
+@media (display-mode:standalone) and (max-width:900px){
+  .header{padding-top:max(var(--ma-safe-t),6px)}
 }
-@media (max-width: 768px) {
-  /* Zahnrad nicht hinter der Bottom-Nav verstecken */
-  html body #amcc-gear {
-    left: 12px !important; width: 38px !important; height: 38px !important;
-    bottom: calc(74px + env(safe-area-inset-bottom, 0px)) !important;
-  }
+@media (prefers-reduced-motion:reduce){
+  .ma-sheet,.ma-search,.ma-backdrop,.ma-install{transition:none !important}
 }

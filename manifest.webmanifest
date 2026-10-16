@@ -1,0 +1,24 @@
+{
+  "name": "1A Motor – Motoren kaufen & verkaufen",
+  "short_name": "1A Motor",
+  "description": "Marktplatz für Motoren und Antriebstechnik: Fahrzeug-, Industrie-, Boots- und Spezialmotoren.",
+  "lang": "de",
+  "start_url": "/index.html?source=app",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f5f9",
+  "theme_color": "#1b2d42",
+  "categories": ["shopping", "business"],
+  "icons": [
+    { "src": "app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "app-icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Motor suchen", "url": "/suche.html?source=app", "icons": [{ "src": "app-icon-192.png", "sizes": "192x192" }] },
+    { "name": "Anzeige erstellen", "url": "/anzeige-erstellen.html?source=app", "icons": [{ "src": "app-icon-192.png", "sizes": "192x192" }] },
+    { "name": "Nachrichten", "url": "/meine-anfragen.html?source=app", "icons": [{ "src": "app-icon-192.png", "sizes": "192x192" }] }
+  ]
+}

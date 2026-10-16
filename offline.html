@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1b2d42">
+<title>Offline – 1A Motor</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{min-height:100dvh;display:grid;place-items:center;padding:24px;background:#f2f5f9;
+       font-family:'Outfit',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#0d1b2a;text-align:center}
+  .box{max-width:340px}
+  .mark{width:64px;height:64px;margin:0 auto 18px;border-radius:16px;display:grid;place-items:center;
+        background:linear-gradient(145deg,#1b2d42,#2a4a6b);color:#fff;font-weight:900;font-size:24px}
+  h1{font-size:22px;margin-bottom:8px}
+  p{color:#6b8299;line-height:1.5;font-size:15px;margin-bottom:22px}
+  button{height:48px;padding:0 26px;border:0;border-radius:12px;font:inherit;font-weight:700;font-size:15px;
+         color:#fff;background:linear-gradient(135deg,#1a5fa8,#2176c7);cursor:pointer}
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="mark">1A</div>
+    <h1>Keine Verbindung</h1>
+    <p>Du bist gerade offline. Sobald das Netz wieder da ist, lädt 1A Motor die aktuellen Angebote.</p>
+    <button onclick="location.reload()">Erneut versuchen</button>
+  </div>
+  <script>addEventListener("online", function () { location.reload(); });</script>
+</body>
+</html>
