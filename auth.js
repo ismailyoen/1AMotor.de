@@ -1,3 +1,7 @@
+/* auth.js – Stand 21.10.2026
+   Änderung: Bei der Registrierung bekommt JEDER Nutzer direkt ein
+   Anbieterprofil (nicht nur Händler). Damit kann man sofort inserieren. */
+
 document.addEventListener("DOMContentLoaded", () => {
   setupRegisterForm();
   setupLoginForm();
@@ -63,8 +67,9 @@ function setupRegisterForm() {
 
     const user = loginData?.user;
 
-    // 3. Seller Profile anlegen wenn Händler
-    if (role === "seller" && user) {
+    // 3. Anbieterprofil für ALLE anlegen – jeder darf inserieren.
+    //    Fehlt es trotzdem mal, legt anzeige-erstellen es beim ersten Inserat an.
+    if (user) {
       const { error: profileError } = await supabaseClient
         .from("seller_profiles")
         .upsert([{
@@ -75,7 +80,7 @@ function setupRegisterForm() {
           country:      "DE"
         }], { onConflict: "user_id" });
 
-      if (profileError) console.warn("Seller profile error:", profileError);
+      if (profileError) console.warn("Profil wird beim ersten Inserat angelegt:", profileError);
     }
 
     showMsg(form, "Registrierung erfolgreich! Du wirst weitergeleitet...", "success");
@@ -148,7 +153,6 @@ function setupLogoutLinks() {
 
 // ── Hilfsfunktion: Nachricht anzeigen ─────────────────────────────────────────
 function showMsg(form, text, type, customEl) {
-  // Nutze existierendes Element (z.B. #login-msg) oder erstelle eines
   let el = customEl || document.getElementById("auth-msg");
   if (!el) {
     el = document.createElement("div");

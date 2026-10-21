@@ -1,3 +1,50 @@
+/* create-listing.js – Stand 21.10.2026
+   Änderung: Inserieren ohne Händlerkonto. Jeder eingeloggte Nutzer (privat
+   oder gewerblich) kann Anzeigen hochladen – das Anbieterprofil wird bei
+   Bedarf automatisch angelegt. "Als Entwurf speichern" speichert jetzt
+   wirklich als Entwurf statt sofort zu veröffentlichen. */
+
+// ── Anbieterprofil sicherstellen ─────────────────────────────────────────────
+// Jeder eingeloggte Nutzer darf inserieren – privat oder gewerblich.
+// Fehlt das Profil, wird es hier still angelegt (kein Händlerkonto nötig).
+// Gewerblich = company_type gesetzt (wie in suche.html), sonst Privatanbieter.
+window.ensureSellerProfile = window.ensureSellerProfile || async function (user) {
+  if (!user || !user.id) return { data: null, error: new Error("Nicht eingeloggt") };
+
+  const COLS = "id, company_name, company_type";
+  const load = () => supabaseClient
+    .from("seller_profiles").select(COLS).eq("user_id", user.id).maybeSingle();
+
+  let res = await load();
+  // Falls es die Spalte company_type nicht gibt: ohne sie erneut laden
+  if (res.error && /company_type/.test(res.error.message || "")) {
+    res = await supabaseClient.from("seller_profiles")
+      .select("id, company_name").eq("user_id", user.id).maybeSingle();
+  }
+  if (res.error) return { data: null, error: res.error };
+  if (res.data) return res;
+
+  const meta  = user.user_metadata || {};
+  const email = user.email || "";
+  const name  = (meta.company && String(meta.company).trim())
+             || (meta.full_name && String(meta.full_name).trim())
+             || [meta.first_name, meta.last_name].filter(Boolean).join(" ").trim()
+             || email.split("@")[0]
+             || "Privatanbieter";
+
+  const ins = await supabaseClient
+    .from("seller_profiles")
+    .insert([{ user_id: user.id, email: email, company_name: name, city: "", country: "DE" }])
+    .select("id, company_name")
+    .single();
+
+  // Doppelt angelegt (z. B. zwei Tabs gleichzeitig)? Dann einfach das vorhandene nehmen.
+  if (ins.error && (ins.error.code === "23505" || /duplicate/i.test(ins.error.message || ""))) {
+    return await load();
+  }
+  return ins;
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("create-listing.js wurde geladen");
 
@@ -10,6 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Kein Formular gefunden");
     return;
   }
+
+  // Profil schon beim Öffnen der Seite anlegen + Kontotyp in der Sidebar zeigen
+  setAccountLabel();
 
   const params = new URLSearchParams(window.location.search);
   const editListingId = params.get("edit");
@@ -29,14 +79,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const sessionResult = await supabaseClient.auth.getSession();
-      console.log("SESSION BEIM SUBMIT:", sessionResult);
-
       const user = sessionResult?.data?.session?.user;
 
       if (!user) {
-        alert("Du musst eingeloggt sein.");
+        fail("Bitte melde dich zuerst an – danach kannst du sofort inserieren.");
+        window.location.href = "login.html?redirect=anzeige-erstellen.html";
         return;
       }
+
+      const isDraft = !!document.getElementById("_draft_mode");
 
       const title = document.getElementById("titel")?.value?.trim() || "";
       const categorySlug = document.getElementById("kategorie")?.value?.trim() || "";
@@ -63,15 +114,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const cb = document.getElementById('ship-' + id);
         if (cb?.checked) {
           const priceEl = document.getElementById('ship-' + id + '-price');
-          const price   = priceEl ? parseFloat(priceEl.value) || null : null;
-          shippingOptions.push({ carrier: label, price });
+          const shipPrice = priceEl ? parseFloat(priceEl.value) || null : null;
+          shippingOptions.push({ carrier: label, price: shipPrice });
         }
       });
-      // Abholung
       if (document.getElementById('ship-pickup')?.checked) {
         shippingOptions.push({ carrier: 'Abholung', price: 0 });
       }
-      // Eigene
       const customCb   = document.getElementById('ship-custom');
       const customName = document.getElementById('ship-custom-name')?.value?.trim();
       if (customCb?.checked && customName) {
@@ -79,11 +128,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (!title || !categorySlug) {
-        alert("Bitte Titel und Kategorie ausfüllen.");
+        fail("Bitte Titel und Kategorie ausfüllen.");
         return;
       }
-      if (listingType === "Verkauf" && !price) {
-        alert("Bitte einen Preis eingeben.");
+      // Preis nur bei echter Verkaufsanzeige mit Festpreis/VB Pflicht
+      const priceOptional = ["Zu verschenken", "Auf Anfrage"].includes(priceType);
+      if (!isDraft && listingType === "Verkauf" && !price && !priceOptional) {
+        fail("Bitte einen Preis eingeben.");
         return;
       }
 
@@ -94,54 +145,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (categoryError || !categories || categories.length === 0) {
         console.error("CATEGORY ERROR:", categoryError);
-        alert("Kategorie nicht gefunden.");
+        fail("Kategorie nicht gefunden.");
         return;
       }
 
       const category = categories[0];
 
-      // ── Seller-Profil laden — oder automatisch anlegen für Käufer ──────────
-      let sellerResult = await supabaseClient
-        .from("seller_profiles")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
+      // ── Anbieterprofil: vorhanden nehmen oder automatisch anlegen ─────────
+      // Kein Händlerkonto nötig – privat und gewerblich gleich behandelt.
+      const sellerResult = await window.ensureSellerProfile(user);
       console.log("SELLER RESULT:", sellerResult);
 
-      if (sellerResult.error) {
-        console.error("SELLER RESULT ERROR:", sellerResult.error);
-        alert("Fehler beim Laden des Profils. Bitte Seite neu laden.");
+      if (sellerResult.error || !sellerResult.data) {
+        console.error("PROFILE ERROR:", sellerResult.error);
+        fail("Dein Konto konnte gerade nicht vorbereitet werden. Bitte Seite neu laden und nochmal versuchen. " +
+             "Bleibt der Fehler, melde dich bitte über kontakt.html.");
         return;
-      }
-
-      // Kein Profil? → Automatisch anlegen (für Käufer/Privat-Nutzer)
-      if (!sellerResult.data) {
-        console.log("Kein seller_profile gefunden – wird automatisch angelegt für Käufer");
-
-        const email = user.email || "";
-        const displayName = user.user_metadata?.full_name || email.split("@")[0] || "Privat";
-
-        const { data: newProfile, error: createError } = await supabaseClient
-          .from("seller_profiles")
-          .insert([{
-            user_id:      user.id,
-            email:        email,
-            company_name: displayName,
-            city:         "",
-            country:      "DE"
-          }])
-          .select("id")
-          .single();
-
-        if (createError || !newProfile) {
-          console.error("PROFILE CREATE ERROR:", createError);
-          alert("Profil konnte nicht erstellt werden. Bitte Support kontaktieren.");
-          return;
-        }
-
-        sellerResult = { data: newProfile, error: null };
-        console.log("Neues seller_profile angelegt:", newProfile.id);
       }
 
       const newUploadedImageUrls = await uploadListingImages(fileInput?.files || [], user.id);
@@ -158,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         year,
         location,
         description,
-        status: "Freigegeben",
+        status: isDraft ? "Entwurf" : "Freigegeben",
         listing_type: listingType,
         price_type: priceType,
         image_urls: finalImageUrls,
@@ -174,34 +193,52 @@ document.addEventListener("DOMContentLoaded", async () => {
           .eq("id", editListingId)
           .eq("seller_id", sellerResult.data.id)
           .select();
-
         console.log("UPDATE RESULT:", result);
       } else {
         result = await supabaseClient
           .from("listings")
           .insert([payload])
           .select();
-
         console.log("INSERT RESULT:", result);
       }
 
       if (result.error) {
         console.error("SAVE ERROR:", result.error);
-        alert("Fehler beim Speichern. Schau in die Konsole.");
+        fail("Speichern hat nicht geklappt. Bitte nochmal versuchen.");
         return;
       }
 
-      alert(editListingId ? "Anzeige wurde aktualisiert!" : "Anzeige wurde gespeichert!");
+      if (typeof window.onListingSuccess === "function") window.onListingSuccess();
+      else alert(editListingId ? "Anzeige wurde aktualisiert!" : isDraft ? "Entwurf gespeichert!" : "Anzeige wurde veröffentlicht!");
+
       form.reset();
       existingImageUrls = [];
       resetPreview(previewGrid);
 
-      window.location.href = "meine-anzeigen.html";
+      setTimeout(() => { window.location.href = "meine-anzeigen.html"; }, 1200);
     } catch (err) {
       console.error("UNCAUGHT ERROR IN CREATE-LISTING:", err);
-      alert("Es gab einen JavaScript-Fehler. Schau in die Konsole.");
+      fail("Es ist ein Fehler aufgetreten. Bitte Seite neu laden.");
     }
   });
+
+  // Fehler anzeigen und das Lade-Overlay schließen
+  function fail(msg) {
+    if (typeof window.onListingError === "function") window.onListingError();
+    alert(msg);
+  }
+
+  async function setAccountLabel() {
+    try {
+      const { data: sd } = await supabaseClient.auth.getSession();
+      const user = sd?.session?.user;
+      if (!user) return;
+      const { data: seller } = await window.ensureSellerProfile(user);
+      const label = seller && seller.company_type && String(seller.company_type).trim()
+        ? "Gewerblicher Anbieter" : "Privatanbieter";
+      document.querySelectorAll(".user-role").forEach(el => { el.textContent = label; });
+    } catch (e) { /* nur Anzeige – darf nie das Inserieren blockieren */ }
+  }
 
   async function loadListingForEdit(listingId) {
     const { data: listing, error } = await supabaseClient
@@ -217,6 +254,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         location,
         description,
         image_urls,
+        listing_type,
+        price_type,
         categories(slug)
       `)
       .eq("id", listingId)
@@ -241,7 +280,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("baujahr").value = listing.year || "";
     document.getElementById("standort").value = listing.location || "";
 
-    // Preisart & Typ laden
     const preisartEl = document.getElementById("preisart");
     if (preisartEl && listing.price_type) preisartEl.value = listing.price_type;
     if (listing.listing_type === "Gesuch") {
@@ -263,15 +301,12 @@ function setupImagePreview(fileInput, previewGrid) {
 
   fileInput.addEventListener("change", () => {
     const files = Array.from(fileInput.files || []);
-    console.log("AUSGEWÄHLTE DATEIEN:", files);
-
     if (!files.length) return;
 
     previewGrid.innerHTML = "";
 
     files.slice(0, 12).forEach((file) => {
       const reader = new FileReader();
-
       reader.onload = (event) => {
         const div = document.createElement("div");
         div.className = "preview-item";
@@ -281,7 +316,6 @@ function setupImagePreview(fileInput, previewGrid) {
         div.textContent = "";
         previewGrid.appendChild(div);
       };
-
       reader.readAsDataURL(file);
     });
   });

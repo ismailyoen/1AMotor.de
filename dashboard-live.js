@@ -1,3 +1,48 @@
+/* dashboard-live.js – Stand 21.10.2026
+   Änderung: Kein "Kein Händlerprofil gefunden" mehr. Fehlt das Profil,
+   wird es automatisch angelegt – privat und gewerblich gleich behandelt. */
+
+// ── Anbieterprofil sicherstellen ─────────────────────────────────────────────
+// Jeder eingeloggte Nutzer darf inserieren – privat oder gewerblich.
+// Fehlt das Profil, wird es hier still angelegt (kein Händlerkonto nötig).
+// Gewerblich = company_type gesetzt (wie in suche.html), sonst Privatanbieter.
+window.ensureSellerProfile = window.ensureSellerProfile || async function (user) {
+  if (!user || !user.id) return { data: null, error: new Error("Nicht eingeloggt") };
+
+  const COLS = "id, company_name, company_type";
+  const load = () => supabaseClient
+    .from("seller_profiles").select(COLS).eq("user_id", user.id).maybeSingle();
+
+  let res = await load();
+  // Falls es die Spalte company_type nicht gibt: ohne sie erneut laden
+  if (res.error && /company_type/.test(res.error.message || "")) {
+    res = await supabaseClient.from("seller_profiles")
+      .select("id, company_name").eq("user_id", user.id).maybeSingle();
+  }
+  if (res.error) return { data: null, error: res.error };
+  if (res.data) return res;
+
+  const meta  = user.user_metadata || {};
+  const email = user.email || "";
+  const name  = (meta.company && String(meta.company).trim())
+             || (meta.full_name && String(meta.full_name).trim())
+             || [meta.first_name, meta.last_name].filter(Boolean).join(" ").trim()
+             || email.split("@")[0]
+             || "Privatanbieter";
+
+  const ins = await supabaseClient
+    .from("seller_profiles")
+    .insert([{ user_id: user.id, email: email, company_name: name, city: "", country: "DE" }])
+    .select("id, company_name")
+    .single();
+
+  // Doppelt angelegt (z. B. zwei Tabs gleichzeitig)? Dann einfach das vorhandene nehmen.
+  if (ins.error && (ins.error.code === "23505" || /duplicate/i.test(ins.error.message || ""))) {
+    return await load();
+  }
+  return ins;
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
 
   // ── DOM Referenzen ────────────────────────────────────────────────────────
@@ -18,34 +63,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // ── Seller laden ──────────────────────────────────────────────────────────
-  const { data: seller, error: sellerError } = await supabaseClient
-    .from("seller_profiles")
-    .select("id, company_name")
-    .eq("user_id", user.id)
-    .single();
+  // Logout (auch ohne Profil verfügbar)
+  logoutBtn?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
+  });
 
-  if (sellerError || !seller) {
-    setTableMessage("Kein Händlerprofil gefunden.");
-    setActivityMessage("Kein Händlerprofil.");
-    return;
-  }
+  // ── Anbieterprofil (wird bei Bedarf automatisch angelegt) ─────────────────
+  const { data: seller, error: sellerError } = await window.ensureSellerProfile(user);
 
-  // Sidebar befüllen
-  const displayName = seller.company_name || user.email || "Händler";
+  const displayName = (seller && seller.company_name) || user.email || "Mein Konto";
   const initials = displayName.split(" ").filter(Boolean)
     .slice(0, 2).map(w => w[0]).join("").toUpperCase() || "?";
 
   if (sidebarAvatar) sidebarAvatar.textContent = initials;
   if (sidebarName)   sidebarName.textContent   = displayName;
   if (sidebarEmail)  sidebarEmail.textContent  = user.email || "";
-
-  // Logout
-  logoutBtn?.addEventListener("click", async (e) => {
-    e.preventDefault();
-    await supabaseClient.auth.signOut();
-    window.location.href = "index.html";
+  document.querySelectorAll(".user-role").forEach(el => {
+    el.textContent = seller && seller.company_type && String(seller.company_type).trim()
+      ? "Gewerblicher Anbieter" : "Privatanbieter";
   });
+
+  if (sellerError || !seller) {
+    console.error("PROFILE ERROR:", sellerError);
+    setStatCard("stat-active",    0, "0 Anzeigen gesamt");
+    setStatCard("stat-inquiries", 0, "0 neue seit heute");
+    setStatCard("stat-value",     "0 €", "über 0 Inserate");
+    setStatCard("stat-drafts",    0, "0 unveröffentlicht");
+    setTableMessage("Noch keine Anzeigen vorhanden. Erstelle dein erstes Inserat – kostenlos, privat oder gewerblich!");
+    setActivityMessage("Noch keine Anfragen.");
+    return;
+  }
 
   // ── Listings laden ────────────────────────────────────────────────────────
   const { data: listings, error: listingsError } = await supabaseClient
@@ -80,7 +129,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openInq      = inquiries.filter(i => i.status === "Neu" || i.status === "Gelesen").length;
   const newInq       = inquiries.filter(i => i.status === "Neu").length;
 
-  // Stats rendern
   setStatCard("stat-active",    active,     `${total} Anzeigen gesamt`);
   setStatCard("stat-inquiries", openInq,    `${newInq} neue seit heute`);
   setStatCard("stat-value",     totalValue.toLocaleString("de-DE", { style:"currency", currency:"EUR", maximumFractionDigits:0 }), `über ${total} Inserate`);
@@ -89,6 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ── Tabelle rendern ───────────────────────────────────────────────────────
   if (!listings || listings.length === 0) {
     setTableMessage("Noch keine Anzeigen vorhanden. Erstelle dein erstes Inserat!");
+    setActivityMessage("Noch keine Anfragen.");
     return;
   }
 
