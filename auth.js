@@ -1,12 +1,57 @@
-/* auth.js – Stand 21.10.2026
-   Änderung: Bei der Registrierung bekommt JEDER Nutzer direkt ein
-   Anbieterprofil (nicht nur Händler). Damit kann man sofort inserieren. */
+/* auth.js – Stand 22.10.2026
+   Änderung: Kontotypen heißen jetzt nur noch "Käufer" und "Verkäufer"
+   (kein "Händler" mehr). registrieren.html?typ=kaeufer|verkaeufer wählt
+   den Typ vor. Verkäufer landen nach der Registrierung direkt bei
+   "Anzeige erstellen". Jeder Nutzer bekommt weiterhin ein Anbieterprofil. */
 
 document.addEventListener("DOMContentLoaded", () => {
   setupRegisterForm();
   setupLoginForm();
   setupLogoutLinks();
 });
+
+// ── Kontotyp: nur Käufer / Verkäufer ─────────────────────────────────────────
+const KONTOTYP_TEXT = {
+  kaeufer:    { de: "Käufer",    en: "Buyer",  fr: "Acheteur", tr: "Alıcı"  },
+  verkaeufer: { de: "Verkäufer", en: "Seller", fr: "Vendeur",  tr: "Satıcı" }
+};
+
+function kontotypLang() {
+  const l = (window.I18n && window.I18n.lang) || "de";
+  return KONTOTYP_TEXT.kaeufer[l] ? l : "de";
+}
+
+// Macht aus einer alten "Händler"-Option eine "Verkäufer"-Option und
+// wählt den Typ aus der URL vor (?typ=kaeufer|verkaeufer, alt: ?type=dealer).
+function setupKontotypSelect(select) {
+  if (!select) return;
+  const lang = kontotypLang();
+
+  Array.from(select.options).forEach((opt) => {
+    const v = (opt.value || "").trim();
+    const t = (opt.textContent || "").trim();
+    const key = opt.getAttribute("data-i18n") || "";
+    if (v === "Händler" || t === "Händler" || key === "register.seller" || v === "Verkäufer") {
+      opt.value = "Verkäufer";
+      opt.textContent = KONTOTYP_TEXT.verkaeufer[lang];
+      opt.removeAttribute("data-i18n");          // sonst setzt i18n.js wieder "Händler"
+    } else if (v === "Käufer" || t === "Käufer" || key === "register.buyer") {
+      opt.value = "Käufer";
+      opt.textContent = KONTOTYP_TEXT.kaeufer[lang];
+      opt.removeAttribute("data-i18n");
+    }
+  });
+
+  const p = new URLSearchParams(window.location.search);
+  const typ = (p.get("typ") || p.get("type") || "").toLowerCase();
+  const wantSeller = ["verkaeufer", "verkäufer", "seller", "dealer", "haendler", "händler"].includes(typ);
+  const wantBuyer  = ["kaeufer", "käufer", "buyer"].includes(typ);
+  if (wantSeller || wantBuyer) {
+    const target = wantSeller ? "Verkäufer" : "Käufer";
+    const opt = Array.from(select.options).find((o) => o.value === target);
+    if (opt) select.value = target;
+  }
+}
 
 // ── Registrierung ─────────────────────────────────────────────────────────────
 function setupRegisterForm() {
@@ -16,6 +61,8 @@ function setupRegisterForm() {
   const form = document.querySelector("form");
   const submitBtn = form?.querySelector('button[type="submit"]');
   if (!form) return;
+
+  setupKontotypSelect(form.querySelector("select") || document.querySelector("select"));
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -39,7 +86,9 @@ function setupRegisterForm() {
 
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Wird registriert..."; }
 
-    const role = accountType === "Händler" ? "seller" : "buyer";
+    // "Händler" nur noch für alte Formulare – zählt als Verkäufer
+    const isSeller = accountType === "Verkäufer" || accountType === "Händler";
+    const role = isSeller ? "seller" : "buyer";
 
     // 1. Registrierung
     const { data, error } = await supabaseClient.auth.signUp({
@@ -84,7 +133,9 @@ function setupRegisterForm() {
     }
 
     showMsg(form, "Registrierung erfolgreich! Du wirst weitergeleitet...", "success");
-    setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+    // Verkäufer direkt zum ersten Inserat, Käufer ins Dashboard
+    const ziel = isSeller ? "anzeige-erstellen.html" : "dashboard.html";
+    setTimeout(() => { window.location.href = ziel; }, 1500);
   });
 }
 
