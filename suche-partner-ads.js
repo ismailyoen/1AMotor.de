@@ -90,6 +90,7 @@
     }
   ];
 
+  var PARTNER_CARDS_ON = false; // Maschinensucher-Karten im Raster: true = an
   var EVERY_N = 6;          // nach jeder 6. echten Anzeige
   var MAX_PER_PAGE = 4;     // höchstens 4 Partner-Karten pro Seite
   var LIFETIME_DAYS = 60;   // Auto-Ablauf laut Partnerabsprache
@@ -273,7 +274,9 @@
       ".cb-hbar-cta{display:inline-flex;align-items:center;gap:6px;color:#ff6b62;font-weight:700;white-space:nowrap}",
       ".cb-hbar-cta .ic{width:13px;height:13px;stroke-width:2.4}",
       ".cb-takeover::after{display:none}",
-      ".cb-takeover>:not(.cb-take){visibility:hidden}",
+      ".cb-takeover>:not(.cb-take){display:none!important}",
+      ".cb-takeover{min-height:420px!important;display:block!important}",
+      "@media(max-width:640px){.cb-takeover{min-height:360px!important}}",
       ".cb-take{position:absolute;inset:0;z-index:4;display:block;overflow:hidden;background:#dfe3e4;color:#0d1b2a;text-decoration:none}",
       ".cb-take:focus-visible{outline:3px solid #4da6ff;outline-offset:-3px}",
       ".cb-take-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 78%;transition:transform .5s}",
@@ -491,7 +494,7 @@
     // suche.html rendert per innerHTML neu (Filter, Sortierung, Seiten) –
     // danach Partner-Karten jedes Mal wieder einsetzen.
     var timer = null;
-    if (grid) {
+    if (grid && PARTNER_CARDS_ON) {
       new MutationObserver(function () {
         clearTimeout(timer);
         timer = setTimeout(function () { inject(grid); }, 20);
