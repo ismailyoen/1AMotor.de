@@ -90,6 +90,40 @@
     }
   ];
 
+  /* ══ Hersteller-Produkte oben im Raster (Anzeige) ═════════════════
+     Werden auf Seite 1 der Kategorie als erste Karten eingesetzt.
+     Daten 1:1 von den Rotax-Produktseiten (Stand 23.10.2026).
+     Fotos kommen direkt von flyrotax.com; lädt eines nicht, springt
+     das Rotax-Motiv aus dem Banner ein.
+  ═══════════════════════════════════════════════════════════════════ */
+  var CATEGORY_PRODUCTS = [
+    {
+      banner: "rotax-flugmotoren",
+      category: "Flugzeugmotor",
+      utm: "utm_source=1amotor&utm_medium=produktkarte&utm_campaign=flugzeugmotor",
+      items: [
+        { id: "rotax-916is", url: "https://www.flyrotax.com/de/products/916-is-c",
+          img: "https://www.flyrotax.com/assets/images/2022_01_AC_Pic_916_light_9.jpg",
+          title: "Rotax 916 iS – 160 PS Turbo-Flugmotor", model: "916 iS A | iSc A | iS C24 | iSc C24",
+          specs: ["117 kW / 160 PS", "TBO 2.000 h", "85,8 kg"] },
+        { id: "rotax-915is", url: "https://www.flyrotax.com/de/products/915-is-a-isc-a",
+          img: "https://www.flyrotax.com/assets/images/products/915-iS-A_iSc-A/rotax-aircraft_engine-915_iS_A-1.jpg",
+          title: "Rotax 915 iS – 141 PS Turbo-Flugmotor", model: "915 iS A | iSc A | iS C24 | iSc C24",
+          specs: ["104 kW / 141 PS", "TBO 1.200 h", "82,2 kg"] },
+        { id: "rotax-912ul", url: "https://www.flyrotax.com/de/products/912-ul-a-f",
+          img: "https://www.flyrotax.com/assets/images/products/912-ULS_S/rotax-aircraft_engine-912-UL-A-F-1.jpg",
+          title: "Rotax 912 UL – 80 PS Flugmotor", model: "912 UL | A | F",
+          specs: ["59,6 kW / 80 PS", "TBO 2.000 h", "55,4 kg"] }
+      ]
+    }
+  ];
+  var PRODUCT_TEXT = {
+    de: { label: "Anzeige", price: "Preis auf Anfrage", cta: "Zum Hersteller", loc: "Gunskirchen, Österreich" },
+    en: { label: "Ad", price: "Price on request", cta: "View at manufacturer", loc: "Gunskirchen, Austria" },
+    fr: { label: "Annonce", price: "Prix sur demande", cta: "Chez le fabricant", loc: "Gunskirchen, Autriche" },
+    tr: { label: "Reklam", price: "Fiyat sorunuz", cta: "Üreticiye git", loc: "Gunskirchen, Avusturya" }
+  };
+
   var PARTNER_CARDS_ON = false; // Maschinensucher-Karten im Raster: true = an
   var EVERY_N = 6;          // nach jeder 6. echten Anzeige
   var MAX_PER_PAGE = 4;     // höchstens 4 Partner-Karten pro Seite
@@ -273,6 +307,15 @@
       ".cb-hbar-src{color:#a9b3bf;font-weight:600}",
       ".cb-hbar-cta{display:inline-flex;align-items:center;gap:6px;color:#ff6b62;font-weight:700;white-space:nowrap}",
       ".cb-hbar-cta .ic{width:13px;height:13px;stroke-width:2.4}",
+      ".rp-card .se-card-img{background:#f3f6fa;overflow:hidden}",
+      ".rp-card .rp-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:10px;box-sizing:border-box}",
+      ".rp-card .rp-photo.fb{object-fit:cover;padding:0}",
+      ".rp-card .cb-pill{top:12px;right:12px;box-shadow:0 1px 4px rgba(13,27,42,.18)}",
+      ".rp-src{font-size:12.5px;font-weight:600;color:#c43f3b;margin-top:-3px}",
+      ".rp-cta{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#c43f3b;white-space:nowrap}",
+      ".rp-cta .ic{width:12px;height:12px;stroke-width:2.4}",
+      ".rp-card .se-spec .ic{width:13px;height:13px;color:#5b7590}",
+      ".se-grid.list .se-card.rp-card .se-card-img{min-height:150px}",
       ".cb-takeover::after{display:none}",
       ".cb-takeover>:not(.cb-take){display:none!important}",
       ".cb-takeover{min-height:420px!important;display:block!important}",
@@ -453,6 +496,56 @@
     hero.classList.add("cb-takeover");
   }
 
+  /* ══ Hersteller-Produktkarten ══════════════════════════════════════ */
+  function productCardHtml(set, banner, it, lang) {
+    var t = PRODUCT_TEXT[lang] || PRODUCT_TEXT.de;
+    var href = it.url + (it.url.indexOf("?") > -1 ? "&" : "?") + set.utm;
+    var fb = banner ? banner.img : "";
+    return '' +
+      '<a class="se-card rp-card" href="' + esc(href) + '" target="_blank" rel="sponsored noopener" data-product-ad="' + esc(it.id) + '"' +
+        ' aria-label="' + esc(t.label + ": " + it.title + " – flyrotax.com") + '">' +
+        '<div class="se-card-img">' +
+          '<img class="rp-photo" src="' + esc(it.img) + '" alt="' + esc(it.title) + '" loading="lazy" referrerpolicy="no-referrer"' +
+            (fb ? ' onerror="this.onerror=null;this.classList.add(\'fb\');this.src=this.getAttribute(\'data-fb\')" data-fb="' + fb + '"' : '') + ' />' +
+          '<span class="cb-pill">' + svg("info") + esc(t.label) + '</span>' +
+        '</div>' +
+        '<div class="se-card-body">' +
+          '<div class="se-card-title">' + esc(it.title) + '</div>' +
+          '<div class="rp-src">Rotax · flyrotax.com</div>' +
+          '<div class="se-specs">' + it.specs.map(function (x) { return '<span class="se-spec">' + svg("check") + esc(x) + '</span>'; }).join("") + '</div>' +
+          '<div class="se-loc-row">' + svg("pin") + '<span>' + esc(t.loc) + '</span></div>' +
+          '<div class="se-card-foot"><span class="se-card-price">' + esc(t.price) + '</span><span class="rp-cta">' + esc(t.cta) + svg("ext") + '</span></div>' +
+        '</div>' +
+      '</a>';
+  }
+  function updateProductCards() {
+    var grid = document.getElementById("se-grid");
+    if (!grid) return;
+    var cats = selectedCategories();
+    var set = null;
+    if (cats.length === 1 && currentPage() === 1) {
+      set = CATEGORY_PRODUCTS.filter(function (x) {
+        var bn = CATEGORY_BANNERS.filter(function (b) { return b.id === x.banner; })[0];
+        return x.category.toLowerCase() === cats[0].toLowerCase() && (!bn || bannerRunning(bn));
+      })[0] || null;
+    }
+    var existing = grid.querySelectorAll("[data-product-ad]");
+    var organic = grid.querySelectorAll(".se-card:not(.rp-card):not(.pa-card)");
+    var lang = pageLang();
+    if (!set || !organic.length) {
+      Array.prototype.forEach.call(existing, function (n) { n.parentNode.removeChild(n); });
+      return;
+    }
+    if (existing.length === set.items.length && grid.firstElementChild === existing[0] && grid.getAttribute("data-rp-lang") === lang) return;
+    Array.prototype.forEach.call(existing, function (n) { n.parentNode.removeChild(n); });
+    var banner = CATEGORY_BANNERS.filter(function (b) { return b.id === set.banner; })[0];
+    var tmp = document.createElement("div");
+    tmp.innerHTML = set.items.map(function (it) { return productCardHtml(set, banner, it, lang); }).join("");
+    var first = grid.firstChild;
+    while (tmp.firstChild) grid.insertBefore(tmp.firstChild, first);
+    grid.setAttribute("data-rp-lang", lang);
+  }
+
   /* ── Emojis in Ergebnissen + Filter ersetzen ── */
   function cleanPage(grid) {
     Array.prototype.forEach.call(grid.querySelectorAll(".se-card:not(.pa-card) .se-card-img"), function (box) {
@@ -505,15 +598,17 @@
     // Kategorie-Banner: reagiert auf Kategorie-Wechsel (Hero wird neu gebaut)
     // und auf die Sprachauswahl (<html lang> ändert sich).
     var bTimer = null;
-    function scheduleBanner() { clearTimeout(bTimer); bTimer = setTimeout(updateCategoryBanner, 30); }
+    function scheduleBanner() { clearTimeout(bTimer); bTimer = setTimeout(function () { updateCategoryBanner(); updateProductCards(); }, 30); }
     new MutationObserver(function (list) {
       for (var i = 0; i < list.length; i++) {
         var t = list[i].target;
-        if (t && t.closest && t.closest("#cb-take")) continue;  // eigene Änderungen ignorieren
+        if (t && t.closest && t.closest("#cb-take, .rp-card")) continue;
+        if (t && t.id === "se-grid" && list[i].addedNodes.length && Array.prototype.every.call(list[i].addedNodes, function (n) { return n.classList && n.classList.contains("rp-card"); })) continue;  // eigene Änderungen ignorieren
         scheduleBanner(); return;
       }
     }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "style"] });
     new MutationObserver(scheduleBanner).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+    updateProductCards();
     updateCategoryBanner();
   }
 
