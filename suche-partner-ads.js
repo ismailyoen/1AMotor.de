@@ -272,8 +272,8 @@
       ".cb-hbar-src{color:#a9b3bf;font-weight:600}",
       ".cb-hbar-cta{display:inline-flex;align-items:center;gap:6px;color:#ff6b62;font-weight:700;white-space:nowrap}",
       ".cb-hbar-cta .ic{width:13px;height:13px;stroke-width:2.4}",
-      ".se-cat-hero.cb-takeover::after{display:none}",
-      ".se-cat-hero.cb-takeover>:not(.cb-take){visibility:hidden}",
+      ".cb-takeover::after{display:none}",
+      ".cb-takeover>:not(.cb-take){visibility:hidden}",
       ".cb-take{position:absolute;inset:0;z-index:4;display:block;overflow:hidden;background:#dfe3e4;color:#0d1b2a;text-decoration:none}",
       ".cb-take:focus-visible{outline:3px solid #4da6ff;outline-offset:-3px}",
       ".cb-take-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 78%;transition:transform .5s}",
@@ -396,7 +396,23 @@
       '</a>';
   }
   function findHero() {
-    return document.getElementById("se-cat-hero") || document.querySelector(".se-cat-hero");
+    var h = document.getElementById("se-cat-hero") || document.querySelector(".se-cat-hero");
+    if (h) return h;
+    // Fallback: großen Kategorie-Kasten über seine Überschrift finden (z. B. „FLUGZEUGMOTOR“)
+    var names = CATEGORY_BANNERS.map(function (b) { return b.category.toLowerCase(); });
+    var heads = document.querySelectorAll("h1, h2");
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].closest("#cb-take")) continue;
+      if (names.indexOf((heads[i].textContent || "").trim().toLowerCase()) === -1) continue;
+      var el = heads[i].parentElement;
+      while (el && el !== document.body) {
+        var cs = getComputedStyle(el);
+        var hasBg = cs.backgroundImage !== "none" || (cs.backgroundColor && cs.backgroundColor !== "rgba(0, 0, 0, 0)" && cs.backgroundColor !== "transparent");
+        if (hasBg && el.offsetHeight >= 250) return el;
+        el = el.parentElement;
+      }
+    }
+    return null;
   }
   function heroCategory(hero) {
     var cats = selectedCategories();
@@ -426,6 +442,8 @@
     var lang = pageLang(), key = b.id + "|" + lang;
     if (take && take.parentNode === hero && take.getAttribute("data-key") === key && hero.classList.contains("cb-takeover")) return;
     if (take && take.parentNode) take.parentNode.removeChild(take);
+    if (getComputedStyle(hero).position === "static") hero.style.position = "relative";
+    hero.style.overflow = "hidden";
     var tmp = document.createElement("div");
     tmp.innerHTML = takeoverHtml(b, lang);
     hero.appendChild(tmp.firstChild);
