@@ -1393,6 +1393,42 @@
 
     <div class="sidebar-inner">
 
+      <!-- Sicherheitstipp: Motor vor Ort kaufen (Skyscanner)
+           Skyscanner zahlt nichts → Pille „Sicherheitstipp“, KEIN „Anzeige“-Label
+           (sonst würde eine Partnerschaft vorgetäuscht). Erst mit echtem
+           Partnerlink auf „Anzeige“ + rel="sponsored" umstellen. Kein Logo. -->
+      <style>
+        .sb-tip{display:block;margin-bottom:12px;padding:13px 14px 11px;border:1px solid var(--border);border-radius:12px;
+          background:linear-gradient(180deg,#f3f8fe 0%,#fff 72%);color:var(--dark);
+          box-shadow:0 1px 4px rgba(13,27,42,.05);transition:border-color .15s,box-shadow .15s,transform .15s}
+        .sb-tip:hover{border-color:var(--blue2);box-shadow:0 6px 18px rgba(26,95,168,.14);transform:translateY(-1px)}
+        .sb-tip:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+        .sb-tip-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+        .sb-tip-ico{width:34px;height:34px;border-radius:9px;background:#e3eefb;color:var(--blue);display:grid;place-items:center;flex-shrink:0}
+        .sb-tip-ico svg{width:19px;height:19px}
+        .sb-tip-pill{display:inline-flex;align-items:center;gap:4px;background:#fff;color:var(--dark);border:1px solid var(--border);
+          font-size:10.5px;font-weight:700;line-height:1.3;padding:3px 9px 3px 7px;border-radius:999px;white-space:nowrap}
+        .sb-tip-pill svg{width:12px;height:12px}
+        .sb-tip-t{display:block;font-size:14.5px;font-weight:800;line-height:1.3;letter-spacing:-.1px}
+        .sb-tip-s{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:4px}
+        .sb-tip-cta{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--border);
+          font-size:12.5px;font-weight:700;color:var(--blue2)}
+        .sb-tip-cta svg{width:15px;height:15px;flex-shrink:0}
+      </style>
+      <a href="https://www.skyscanner.de/" id="sb-tip-sky" class="sb-tip" target="_blank" rel="nofollow noopener"
+         aria-label="Sicherheitstipp: Kauf deinen Motor vor Ort! Über Skyscanner buchen">
+        <span class="sb-tip-top">
+          <span class="sb-tip-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <span class="sb-tip-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg><span data-sbt="pill">Sicherheitstipp</span></span>
+        </span>
+        <span class="sb-tip-t" data-sbt="title">Kauf deinen Motor vor Ort!</span>
+        <span class="sb-tip-s" data-sbt="text">Vorsicht vor Betrug: Schau dir deinen Motor vor Ort an, bevor du zahlst.</span>
+        <span class="sb-tip-cta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+          <span data-sbt="cta">Über Skyscanner buchen</span>
+        </span>
+      </a>
+
       <!-- 1AAdvent -->
       <style>
         .aa-advent-side{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:16px;
@@ -2015,6 +2051,35 @@ function T(key, vars, fallback) {
 <script src="index-live.js?v=4"></script>
 <!-- Partner-Inserate Maschinensucher (als "Anzeige" gekennzeichnet) -->
 <script src="partner-maschinensucher.js?v=2" defer></script>
+<script>
+/* Sicherheitstipp-Box (Sidebar): Texte + Skyscanner-Seite je Sprache */
+(function(){
+  var SBT = {
+    de:{pill:"Sicherheitstipp",title:"Kauf deinen Motor vor Ort!",text:"Vorsicht vor Betrug: Schau dir deinen Motor vor Ort an, bevor du zahlst.",cta:"Über Skyscanner buchen",url:"https://www.skyscanner.de/"},
+    en:{pill:"Safety tip",title:"Buy your engine in person!",text:"Beware of fraud: inspect your engine on site before you pay.",cta:"Book via Skyscanner",url:"https://www.skyscanner.net/"},
+    fr:{pill:"Conseil sécurité",title:"Achetez votre moteur sur place !",text:"Attention aux arnaques : examinez le moteur sur place avant de payer.",cta:"Réserver via Skyscanner",url:"https://www.skyscanner.fr/"},
+    tr:{pill:"Güvenlik ipucu",title:"Motorunu yerinde satın al!",text:"Dolandırıcılığa dikkat: Ödeme yapmadan önce motoru yerinde incele.",cta:"Skyscanner ile ayırt",url:"https://www.skyscanner.com.tr/"}
+  };
+  function lang(){
+    var l = (window.I18n && window.I18n.lang);
+    if (!l) { try { l = localStorage.getItem("1amotor_lang"); } catch(e) {} }
+    return SBT[l] ? l : "de";
+  }
+  function apply(){
+    var box = document.getElementById("sb-tip-sky");
+    if (!box) return;
+    var d = SBT[lang()];
+    box.querySelectorAll("[data-sbt]").forEach(function(el){ el.textContent = d[el.getAttribute("data-sbt")]; });
+    box.href = d.url;
+    box.setAttribute("aria-label", d.pill + ": " + d.title + " " + d.cta);
+  }
+  apply();
+  if (window.I18n && typeof window.I18n.setLang === "function") {
+    var orig = window.I18n.setLang.bind(window.I18n);
+    window.I18n.setLang = function(l){ var r = orig(l); apply(); return r; };
+  }
+})();
+</script>
 <script src="auth-header.js"></script>
   <script>
   // FAQ Accordion – smooth max-height animation
