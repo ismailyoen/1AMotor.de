@@ -83,7 +83,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="lexikon-card.js?v=1"></script>
+<script src="lexikon-card.js?v=2"></script>
 <script>
 /* ── Einstellungen ── */
 const WORKER_URL = "https://1amotor-lexikon.ismail-yoen.workers.dev";
@@ -100,6 +100,7 @@ const FELDER = [
   ["leistung_kw","Leistung (kW)","num"],["hubraum_ccm","Hubraum (cm³)","num"],["drehmoment_nm","Drehmoment (Nm)","num"],
   ["zylinder","Zylinder","num"],["spannung_v","Spannung"],["drehzahl","Drehzahl"],
   ["baujahre","Baujahre"],["hersteller_url","Website des Herstellers (https://…)"],["quelle_url","Quelle / Datenblatt-Link"],
+  ["bild_url","Foto-Link (nur freie Lizenz!)","wide"],["bild_urheber","Foto: Urheber"],["bild_lizenz","Foto: Lizenz"],["bild_seite","Foto: Quelle (Commons-Seite)"],
   ["einsatz","Verbaut in / Einsatz","wide"],["besonderheiten","Besonderheiten","wide"],["beschreibung","Beschreibung (eigener Text)","text"],
 ];
 
@@ -309,6 +310,7 @@ function itemHtml(e) {
   <article class="item" id="i-${e.id}">
     <div>
       <div class="vorschau">${LexikonCard.render(e, "gross")}</div>
+      ${e.bild_url ? `<div class="meta">${LexikonCard.bildnachweis(e)}</div>` : ""}
       <div class="meta">
         <span class="badge b-${e.status}">${{ entwurf: "Entwurf", veroeffentlicht: "Veröffentlicht", verworfen: "Verworfen" }[e.status]}</span>
         &nbsp;angelegt ${new Date(e.created_at).toLocaleString("de-DE")}<br>
@@ -351,7 +353,8 @@ function pruefen(w) {
   if (!w.modell) fehlt.push("Modell");
   if (!w.kategorie) fehlt.push("Kategorie");
   if (!w.beschreibung || w.beschreibung.length < 40) fehlt.push("Beschreibung (mind. 40 Zeichen)");
-  for (const k of ["hersteller_url", "quelle_url"]) if (w[k] && !/^https?:\/\//i.test(w[k])) fehlt.push(`${k === "quelle_url" ? "Quelle" : "Hersteller-Website"} muss mit https:// beginnen`);
+  if (w.bild_url && (!w.bild_urheber || !w.bild_lizenz)) fehlt.push("Foto braucht Urheber und Lizenz (oder Foto-Link leeren)");
+  for (const k of ["hersteller_url", "quelle_url", "bild_url", "bild_seite"]) if (w[k] && !/^https?:\/\//i.test(w[k])) fehlt.push(`${{ quelle_url: "Quelle", hersteller_url: "Hersteller-Website", bild_url: "Foto-Link", bild_seite: "Foto-Quelle" }[k]} muss mit https:// beginnen`);
   return fehlt;
 }
 

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="lexikon-style.css?v=1" />
+<link rel="stylesheet" href="lexikon-style.css?v=2" />
 </head>
 <body>
 <header class="lx-head"><div class="wrap">
@@ -34,7 +34,7 @@
 <script src="cookie-consent.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="lexikon-card.js?v=1"></script>
+<script src="lexikon-card.js?v=2"></script>
 <script>
 (async function () {
   const $ = (s) => document.querySelector(s);
@@ -66,6 +66,7 @@
     `${name}: technische Daten${teile ? " (" + teile + ")" : ""}${e.einsatz ? ", verbaut in " + e.einsatz : ""}. Im Motorenlexikon von 1A Motor.`.slice(0, 158);
   const can = document.createElement("link"); can.rel = "canonical";
   can.href = `https://1amotor.de/motor-info.html?m=${encodeURIComponent(e.slug)}`; document.head.appendChild(can);
+  if (e.bild_url) { const og = document.createElement("meta"); og.setAttribute("property", "og:image"); og.content = e.bild_url; document.head.appendChild(og); }
   const ld = document.createElement("script"); ld.type = "application/ld+json";
   ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
     { "@type": "ListItem", position: 1, name: "1A Motor", item: "https://1amotor.de/" },
@@ -93,7 +94,7 @@
 
   $("#main").innerHTML = `
     <div class="mi-top">
-      <div>${L.render(e, "gross")}</div>
+      <div>${L.render(e, "gross")}${e.bild_url ? `<p class="credit">${L.bildnachweis(e)}</p>` : ""}</div>
       <div class="box">
         <h2>Technische Daten</h2>
         <table class="specs"><tbody>${zeilen.map((z) => `<tr><th>${esc(z[0])}</th><td>${esc(z[1])}</td></tr>`).join("")}</tbody></table>
@@ -117,6 +118,7 @@
           <h2>Hinweis</h2>
           <p style="font-size:14px">Dies ist eine <b>Produktinformation, kein Verkaufsangebot</b>. Die Daten stammen aus öffentlich verfügbaren technischen Unterlagen und können je nach Ausführung abweichen. Alle Angaben ohne Gewähr – prüfe vor dem Kauf immer das Typenschild.</p>
           ${e.quelle_url ? `<div class="note">Quelle: <a href="${esc(e.quelle_url)}" target="_blank" rel="noopener nofollow">${esc(e.quelle_titel || "Datenblatt")}</a></div>` : ""}
+          ${e.bild_url ? `<div class="note">${L.bildnachweis(e)}</div>` : ""}
         </div>
       </aside>
     </div>`;

@@ -70,8 +70,12 @@
     var k = kennzahlen(e);
     var chips = [e.kategorie, e.kraftstoff, e.motorcode ? "Motorcode " + e.motorcode : null]
       .filter(Boolean).slice(0, size === "klein" ? 2 : 3);
+    var foto = e.bild_url
+      ? '<div class="lxc-foto" role="img" aria-label="' + esc(titel(e)) + '" style="background-image:url(\'' +
+        encodeURI(e.bild_url).replace(/'/g, "%27") + '\')"></div>'
+      : "";
     return '' +
-      '<div class="lxc lxc-' + (size || "gross") + '">' +
+      '<div class="lxc lxc-' + (size || "gross") + (foto ? " lxc-mitfoto" : "") + '">' + foto +
         '<div class="lxc-top">' +
           '<span class="lxc-icon">' + icon(e.kategorie, size === "klein" ? 22 : 28) + '</span>' +
           '<span class="lxc-brand"><b>1A</b> Motorenlexikon</span>' +
@@ -84,6 +88,18 @@
             '</div>' + (r[2] && size !== "klein" ? '<div class="lxc-s">' + esc(r[2]) + '</div>' : "") + '</div>';
         }).join("") + '</div>' : '<div class="lxc-empty">Technische Daten folgen</div>') +
       '</div>';
+  }
+
+  /* Pflichtangabe für freie Fotos: Urheber, Lizenz, Quelle */
+  function bildnachweis(e) {
+    if (!e.bild_url) return "";
+    var lizenz = e.bild_lizenz_url
+      ? '<a href="' + esc(e.bild_lizenz_url) + '" target="_blank" rel="noopener nofollow">' + esc(e.bild_lizenz || "Lizenz") + '</a>'
+      : esc(e.bild_lizenz || "");
+    var quelle = e.bild_seite
+      ? '<a href="' + esc(e.bild_seite) + '" target="_blank" rel="noopener nofollow">Wikimedia Commons</a>'
+      : "Wikimedia Commons";
+    return 'Foto: ' + esc(e.bild_urheber || "unbekannt") + (lizenz ? ' · ' + lizenz : "") + ' · via ' + quelle;
   }
 
   var CSS = '' +
@@ -114,7 +130,12 @@
     '.lxc-v{font-size:20px;font-weight:800;margin-top:2px}' +
     '.lxc-klein .lxc-k{font-size:9.5px}.lxc-klein .lxc-v{font-size:14px}' +
     '.lxc-s{font-size:12px;color:#9fd0ff;margin-top:1px}' +
-    '.lxc-empty{font-size:13px;color:rgba(255,255,255,.6);padding:10px 0}';
+    '.lxc-empty{font-size:13px;color:rgba(255,255,255,.6);padding:10px 0}' +
+    '.lxc-foto{margin:-26px -26px 18px;height:220px;background:#0d1b2a center/cover no-repeat;border-bottom:1px solid rgba(255,255,255,.12)}' +
+    '.lxc-klein .lxc-foto{margin:-16px -16px 12px;height:140px}' +
+    '.lxc-mitfoto .lxc-top{position:absolute;top:12px;left:14px;right:14px;margin:0}' +
+    '.lxc-mitfoto .lxc-icon{background:rgba(13,27,42,.7);backdrop-filter:blur(4px)}' +
+    '.lxc-mitfoto .lxc-brand{background:rgba(13,27,42,.7);padding:3px 8px;border-radius:99px;color:rgba(255,255,255,.85)}';
 
   if (!document.getElementById("lxc-css")) {
     var st = document.createElement("style");
@@ -123,5 +144,5 @@
     document.head.appendChild(st);
   }
 
-  window.LexikonCard = { render: render, icon: icon, esc: esc, zahl: zahl, ps: ps, titel: titel, kennzahlen: kennzahlen };
+  window.LexikonCard = { render: render, bildnachweis: bildnachweis, icon: icon, esc: esc, zahl: zahl, ps: ps, titel: titel, kennzahlen: kennzahlen };
 })();
