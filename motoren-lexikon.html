@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Motorenlexikon – technische Daten zu Motoren | 1A Motor</title>
+<meta name="description" content="Das Motorenlexikon von 1A Motor: technische Daten, Motorcodes und Einsatzbereiche von Fahrzeug-, Boots-, Industrie- und Landmaschinenmotoren – übersichtlich und kostenlos." />
+<link rel="canonical" href="https://1amotor.de/motoren-lexikon.html" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="apple-touch-icon" href="favicon-192x192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="lexikon-style.css?v=1" />
+</head>
+<body>
+<header class="lx-head"><div class="wrap">
+  <a class="lx-logo" href="/"><span>1A</span>Motor</a>
+  <nav class="lx-nav"><a href="/suche">Motoren finden</a><a href="motoren-lexikon.html">Motorenlexikon</a><a href="anzeige-erstellen.html">Inserieren</a></nav>
+</div></header>
+
+<section class="lx-hero"><div class="wrap">
+  <h1>Motorenlexikon</h1>
+  <p>Technische Daten, Motorcodes und Einsatzbereiche – damit du den passenden Motor findest, bevor du kaufst oder verkaufst.</p>
+  <div class="lx-search"><input id="q" type="search" placeholder="Hersteller, Modell oder Motorcode – z. B. ALH" autocomplete="off" /></div>
+</div></section>
+
+<main class="wrap">
+  <div class="lx-chips" id="chips"></div>
+  <p class="lx-info" id="info">Einträge werden geladen …</p>
+  <div class="lx-grid" id="grid"></div>
+</main>
+
+<footer class="lx-foot"><div class="wrap">
+  <span>© 1A Motor – Motorenlexikon. Alle Angaben ohne Gewähr.</span>
+  <span><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a></span>
+</div></footer>
+
+<script src="cookie-consent.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="lexikon-card.js?v=1"></script>
+<script>
+(async function () {
+  const $ = (s) => document.querySelector(s);
+  const esc = LexikonCard.esc;
+  let alle = [], kat = "";
+
+  const { data, error } = await supabaseClient
+    .from("motor_lexikon")
+    .select("slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm,leistung_kw,drehmoment_nm,spannung_v,drehzahl")
+    .eq("status", "veroeffentlicht")
+    .order("hersteller", { ascending: true })
+    .limit(2000);
+  if (error) { $("#info").textContent = "Das Lexikon konnte gerade nicht geladen werden."; return; }
+  alle = data || [];
+
+  const p = new URLSearchParams(location.search);
+  $("#q").value = p.get("q") || "";
+  kat = p.get("kategorie") || "";
+
+  const kats = [...new Set(alle.map((e) => e.kategorie).filter(Boolean))].sort((a, b) => a.localeCompare(b, "de"));
+  function chips() {
+    $("#chips").innerHTML = ["", ...kats].map((k) =>
+      `<button class="lx-chip ${k === kat ? "on" : ""}" data-k="${esc(k)}">${k ? esc(k) : "Alle"}</button>`).join("");
+    $("#chips").querySelectorAll(".lx-chip").forEach((b) => (b.onclick = () => { kat = b.dataset.k; chips(); zeigen(); }));
+  }
+
+  function zeigen() {
+    const q = $("#q").value.trim().toLowerCase();
+    const treffer = alle.filter((e) =>
+      (!kat || e.kategorie === kat) &&
+      (!q || [e.hersteller, e.modell, e.motorcode, e.kategorie].filter(Boolean).join(" ").toLowerCase().includes(q)));
+    $("#info").textContent = `${treffer.length} ${treffer.length === 1 ? "Motor" : "Motoren"} im Lexikon`;
+    $("#grid").innerHTML = treffer.length ? treffer.map((e) => `
+      <a class="lx-tile" href="motor-info.html?m=${encodeURIComponent(e.slug)}">
+        ${LexikonCard.render(e, "klein")}
+        <div class="cap">${esc(e.kategorie || "Motor")}${e.motorcode ? " · " + esc(e.motorcode) : ""}</div>
+      </a>`).join("")
+      : `<div class="lx-empty">${alle.length ? "Nichts gefunden – probier einen anderen Suchbegriff." : "Das Lexikon wird gerade aufgebaut – schau bald wieder vorbei."}</div>`;
+    const u = new URLSearchParams();
+    if (q) u.set("q", q); if (kat) u.set("kategorie", kat);
+    history.replaceState(null, "", u.toString() ? "?" + u : location.pathname);
+  }
+
+  $("#q").addEventListener("input", zeigen);
+  chips(); zeigen();
+})();
+</script>
+</body>
+</html>

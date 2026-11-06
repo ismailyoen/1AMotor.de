@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Motorenlexikon – Freigabe | 1A Motor</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--dark:#0d1b2a;--navy:#1b2d42;--blue:#1a5fa8;--sky:#4da6ff;--muted:#7a93ae;--border:#e0e9f2;--bg:#f4f7fb;
+        --ok:#059669;--warn:#b45309;--danger:#b91c1c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Outfit,Arial,sans-serif;background:var(--bg);color:var(--dark);line-height:1.5}
+  a{color:var(--blue)}
+  .top{background:linear-gradient(145deg,#1b2d42,#2a4a6b);color:#fff;padding:18px 0}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800;font-size:18px}
+  .logo span{background:#fff;color:#1b2d42;border-radius:8px;padding:2px 8px}
+  .top small{color:rgba(255,255,255,.7)}
+  h1{font-size:26px;margin:26px 0 4px}
+  .sub{color:var(--muted);margin-bottom:20px}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
+  .panel h2{font-size:17px;margin-bottom:12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  textarea,input,select{font:inherit;border:1px solid var(--border);border-radius:10px;padding:10px 12px;width:100%;background:#fff;color:var(--dark)}
+  textarea{min-height:88px;resize:vertical}
+  .btn{font:inherit;font-weight:700;border:none;border-radius:999px;padding:10px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-ok{background:var(--ok);color:#fff}
+  .btn-ghost{background:#eef3f9;color:var(--navy)}
+  .btn-danger{background:#fde8e8;color:var(--danger)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .drop{display:block;min-height:88px;border:2px dashed #c9d8ea;border-radius:14px;padding:18px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
+  .drop.on{border-color:var(--sky);background:#f0f7ff;color:var(--blue)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .log{margin-top:12px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+  .log div{padding:8px 12px;border-radius:10px;background:var(--bg)}
+  .log .ok{background:#e7f8f1;color:#065f46}.log .err{background:#fde8e8;color:var(--danger)}.log .dup{background:#fff4e5;color:var(--warn)}
+  .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .tab{font:inherit;font-weight:700;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--navy)}
+  .tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .tab b{display:inline-block;min-width:22px;margin-left:4px;padding:0 6px;border-radius:99px;background:rgba(127,147,174,.18);font-size:12px}
+  .item{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;display:grid;grid-template-columns:340px 1fr;gap:20px}
+  .fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .fields label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+  .fields .wide{grid-column:span 3}
+  .fields input,.fields select,.fields textarea{padding:8px 10px;font-size:14px}
+  .meta{font-size:12.5px;color:var(--muted);margin-top:10px;word-break:break-all}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .hint{font-size:13px;color:var(--warn);margin-top:8px}
+  .badge{font-size:12px;font-weight:700;border-radius:99px;padding:3px 10px}
+  .b-entwurf{background:#fff4e5;color:var(--warn)}.b-veroeffentlicht{background:#e7f8f1;color:#065f46}.b-verworfen{background:#eef1f5;color:#64748b}
+  .center{text-align:center;padding:60px 20px;color:var(--muted)}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+  .stat{background:var(--bg);border-radius:12px;padding:12px 14px}
+  .stat b{display:block;font-size:24px;color:var(--navy)}
+  .stat span{font-size:12.5px;color:var(--muted)}
+  .qt{width:100%;border-collapse:collapse;font-size:14px}
+  .qt th,.qt td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .qt th{font-size:12px;color:var(--muted);font-weight:700}
+  .st{font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px;background:#eef1f5;color:#64748b}
+  .st-sucht{background:#e8f1fd;color:var(--blue)}.st-fertig{background:#e7f8f1;color:#065f46}
+  .st-fehler,.st-gesperrt{background:#fde8e8;color:var(--danger)}
+  details.panel summary{cursor:pointer;font-weight:700;font-size:17px}
+  details.panel[open] summary{margin-bottom:12px}
+  @media (max-width:700px){.stats{grid-template-columns:1fr 1fr}.qt .hide-m{display:none}}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;display:none;z-index:9}
+  @media (max-width:900px){.item{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.fields{grid-template-columns:1fr 1fr}.fields .wide{grid-column:span 2}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><span>1A</span> Motor</a>
+  <small id="who">Freigabe Motorenlexikon</small>
+</div></header>
+
+<main class="wrap" id="app"><div class="center">Wird geladen …</div></main>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="lexikon-card.js?v=1"></script>
+<script>
+/* ── Einstellungen ── */
+const WORKER_URL = "https://1amotor-lexikon.ismail-yoen.workers.dev";
+
+const KATEGORIEN = ["Automotor","Dieselmotor Auto","Benzinmotor Auto","Hybridmotor","Elektromotor Auto","LKW Motor","Busmotor",
+  "Motorradmotor","Roller Motor","Bootsmotor","Außenbordmotor","Innenbordmotor","Schiffsdieselmotor","Jetski Motor","Traktormotor",
+  "Landmaschinenmotor","Baumaschinenmotor","Baggermotor","Gabelstapler Motor","Rasenmähermotor","Aufsitzmäher Motor",
+  "Elektromotor Industrie","Drehstrommotor","Servomotor","Getriebemotor","Generator Motor","Pumpenmotor","Kompressormotor",
+  "Lüftermotor","Kranmotor","Aufzugmotor","Flugzeugmotor","Turbinenmotor","Austauschmotor","Sonstiges"];
+
+const FELDER = [
+  ["hersteller","Hersteller"],["modell","Modell"],["motorcode","Motorcode"],
+  ["kategorie","Kategorie","select"],["kraftstoff","Antrieb / Kraftstoff"],["bauart","Bauart"],
+  ["leistung_kw","Leistung (kW)","num"],["hubraum_ccm","Hubraum (cm³)","num"],["drehmoment_nm","Drehmoment (Nm)","num"],
+  ["zylinder","Zylinder","num"],["spannung_v","Spannung"],["drehzahl","Drehzahl"],
+  ["baujahre","Baujahre"],["hersteller_url","Website des Herstellers (https://…)"],["quelle_url","Quelle / Datenblatt-Link"],
+  ["einsatz","Verbaut in / Einsatz","wide"],["besonderheiten","Besonderheiten","wide"],["beschreibung","Beschreibung (eigener Text)","text"],
+];
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => LexikonCard.esc(v);
+let session = null, alle = [], tab = "entwurf";
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.style.display = "block";
+  clearTimeout(toast._t); toast._t = setTimeout(() => (t.style.display = "none"), 3200);
+}
+
+/* ── Start ── */
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data } = await supabaseClient.auth.getSession();
+  session = data?.session;
+  if (!session) {
+    $("#app").innerHTML = `<div class="center"><h1>Bitte einloggen</h1><p class="sub">Melde dich mit deinem 1A-Motor-Konto an.</p>
+      <a class="btn btn-primary" href="login.html?next=lexikon-admin.html">Zum Login</a></div>`;
+    return;
+  }
+  const { data: adm } = await supabaseClient.from("lexikon_admins").select("user_id").eq("user_id", session.user.id).maybeSingle();
+  if (!adm) {
+    $("#app").innerHTML = `<div class="center"><h1>Kein Zugriff</h1><p class="sub">Dieses Konto (${esc(session.user.email)}) ist nicht als Lexikon-Admin eingetragen.</p></div>`;
+    return;
+  }
+  $("#who").textContent = session.user.email;
+  renderShell();
+  await laden();
+});
+
+function renderShell() {
+  $("#app").innerHTML = `
+    <h1>Motorenlexikon – Freigabe</h1>
+    <p class="sub">Der Worker sucht, liest und schreibt vor – du prüfst und gibst frei. Veröffentlicht wird nie automatisch.</p>
+
+    <section class="panel">
+      <h2>Automatische Suche</h2>
+      <p class="meta" style="margin:-6px 0 12px">Der Worker durchsucht stündlich die Websites der Hersteller unten, findet Datenblätter und legt sie dir als Entwürfe hin. Du musst nur noch freigeben.</p>
+      <div class="stats" id="stats"></div>
+      <table class="qt"><thead><tr><th>Hersteller-Website</th><th>Status</th><th class="hide-m">Gefunden</th><th class="hide-m">Zuletzt</th><th></th></tr></thead><tbody id="quellen"></tbody></table>
+      <div class="row" style="margin-top:12px">
+        <input id="neue-domain" placeholder="Weitere Hersteller-Website, z. B. hersteller.de" style="flex:1;min-width:220px" />
+        <button class="btn btn-ghost" id="domain-add">Hinzufügen</button>
+        <button class="btn btn-primary" id="jetzt">Jetzt einen Suchlauf starten</button>
+      </div>
+      <div class="log" id="lauf-log"></div>
+    </section>
+
+    <details class="panel">
+      <summary>Manuell einlesen (optional)</summary>
+      <div class="grid2">
+        <div>
+          <textarea id="urls" placeholder="Links zu Datenblättern (PDF oder Produktseite) – einer pro Zeile"></textarea>
+          <div class="row" style="margin-top:10px"><button class="btn btn-primary" id="go-urls">Links einlesen</button></div>
+        </div>
+        <div>
+          <label class="drop" id="drop">PDF-Datenblätter hierher ziehen oder klicken
+            <input type="file" id="files" accept="application/pdf" multiple hidden />
+          </label>
+          <div class="meta">Nur Text wird gelesen. Eingescannte PDFs ohne Text funktionieren nicht.</div>
+        </div>
+      </div>
+      <div class="log" id="log"></div>
+    </details>
+
+    <div class="tabs" id="tabs"></div>
+    <div id="liste"></div>`;
+
+  $("#go-urls").onclick = () => {
+    const urls = $("#urls").value.split(/\s+/).map((s) => s.trim()).filter(Boolean);
+    if (!urls.length) return toast("Bitte mindestens einen Link einfügen.");
+    verarbeite(urls.map((u) => ({ typ: "url", wert: u, name: u })));
+  };
+  bindSuche();
+  const drop = $("#drop"), inp = $("#files");
+  inp.onchange = () => verarbeite([...inp.files].map((f) => ({ typ: "file", wert: f, name: f.name })));
+  ["dragenter", "dragover"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.add("on"); }));
+  ["dragleave", "drop"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.remove("on"); }));
+  drop.addEventListener("drop", (ev) => {
+    const f = [...ev.dataTransfer.files].filter((x) => x.type === "application/pdf");
+    if (f.length) verarbeite(f.map((x) => ({ typ: "file", wert: x, name: x.name })));
+  });
+}
+
+/* ── Datenblätter nacheinander an den Worker schicken ── */
+async function verarbeite(jobs) {
+  const log = $("#log"), btn = $("#go-urls");
+  btn.disabled = true;
+  for (const job of jobs) {
+    const zeile = document.createElement("div");
+    zeile.textContent = `⏳ ${job.name} wird gelesen …`;
+    log.prepend(zeile);
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      const token = data?.session?.access_token;
+      const opts = { method: "POST", headers: { Authorization: `Bearer ${token}` } };
+      if (job.typ === "file") { const fd = new FormData(); fd.append("file", job.wert); opts.body = fd; }
+      else { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify({ url: job.wert }); }
+      const r = await fetch(`${WORKER_URL}/analyse`, opts);
+      const j = await r.json().catch(() => ({}));
+      if (r.status === 409) { zeile.className = "dup"; zeile.textContent = `↺ ${job.name}: ${j.hinweis || "schon vorhanden"}`; }
+      else if (!r.ok) { zeile.className = "err"; zeile.textContent = `✕ ${job.name}: ${j.error || r.status}`; }
+      else { zeile.className = "ok"; zeile.textContent = `✓ ${LexikonCard.titel(j.eintrag)} – Entwurf angelegt`; }
+    } catch (e) {
+      zeile.className = "err"; zeile.textContent = `✕ ${job.name}: ${e.message}`;
+    }
+  }
+  btn.disabled = false;
+  $("#urls").value = "";
+  tab = "entwurf";
+  await laden();
+}
+
+/* ── Automatische Suche ── */
+async function ladeSuche() {
+  const heute = new Date(); heute.setHours(0, 0, 0, 0);
+  const [{ data: quellen }, { data: queue }] = await Promise.all([
+    supabaseClient.from("lexikon_quellen").select("*").order("domain"),
+    supabaseClient.from("lexikon_queue").select("status,verarbeitet_am").limit(10000),
+  ]);
+  const q = queue || [];
+  const n = (st) => q.filter((x) => x.status === st).length;
+  const heuteN = q.filter((x) => x.verarbeitet_am && new Date(x.verarbeitet_am) >= heute).length;
+  $("#stats").innerHTML = [
+    [n("neu"), "Datenblätter in der Warteschlange"], [heuteN, "Heute verarbeitet"],
+    [n("entwurf"), "Daraus Entwürfe erstellt"], [n("kein_motor") + n("duplikat"), "Aussortiert (kein Motor / doppelt)"],
+  ].map(([z, t]) => `<div class="stat"><b>${z}</b><span>${t}</span></div>`).join("");
+  const label = { neu: "Wartet", sucht: "Sucht", fertig: "Durchsucht", fehler: "Fehler", gesperrt: "Gesperrt" };
+  $("#quellen").innerHTML = (quellen || []).map((x) => `
+    <tr>
+      <td><b>${esc(x.name || x.domain)}</b><br><span class="meta" style="margin:0">${esc(x.domain)}</span>${x.meldung ? `<br><span class="meta" style="margin:0;color:var(--warn)">${esc(x.meldung)}</span>` : ""}</td>
+      <td><span class="st st-${esc(x.status)}">${x.aktiv ? label[x.status] || esc(x.status) : "Pausiert"}</span></td>
+      <td class="hide-m">${x.gefunden || 0}</td>
+      <td class="hide-m">${x.zuletzt_gesucht ? new Date(x.zuletzt_gesucht).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) : "–"}</td>
+      <td style="text-align:right"><button class="btn btn-ghost" style="padding:6px 12px" data-q="${x.id}" data-aktiv="${x.aktiv}">${x.aktiv ? "Pausieren" : "Aktivieren"}</button></td>
+    </tr>`).join("") || `<tr><td colspan="5" class="meta">Noch keine Websites eingetragen.</td></tr>`;
+  $("#quellen").querySelectorAll("[data-q]").forEach((b) => (b.onclick = async () => {
+    await supabaseClient.from("lexikon_quellen").update({ aktiv: b.dataset.aktiv !== "true" }).eq("id", b.dataset.q);
+    ladeSuche();
+  }));
+}
+
+function bindSuche() {
+  $("#domain-add").onclick = async () => {
+    let d = $("#neue-domain").value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+    if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(d)) return toast("Bitte eine Domain wie hersteller.de eingeben.");
+    const { error } = await supabaseClient.from("lexikon_quellen").insert({ domain: d, name: d });
+    if (error) return toast(error.code === "23505" ? "Diese Website ist schon in der Liste." : "Fehler: " + error.message);
+    $("#neue-domain").value = ""; toast("Hinzugefügt – wird beim nächsten Lauf durchsucht."); ladeSuche();
+  };
+  $("#jetzt").onclick = async () => {
+    const b = $("#jetzt"), log = $("#lauf-log");
+    b.disabled = true; b.textContent = "Läuft …";
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      const r = await fetch(`${WORKER_URL}/lauf`, { method: "POST", headers: { Authorization: `Bearer ${data?.session?.access_token}` } });
+      const j = await r.json().catch(() => ({}));
+      const z = document.createElement("div");
+      if (!r.ok) { z.className = "err"; z.textContent = "✕ " + (j.error || r.status); }
+      else {
+        z.className = "ok";
+        const w = Array.isArray(j.warteschlange) ? `${j.warteschlange.length} Datenblatt/-blätter verarbeitet` : j.warteschlange;
+        const sMsg = j.ergebnis ? `${j.suche}: ${j.ergebnis}` : j.neue_datenblaetter != null ? `${j.suche}: ${j.neue_datenblaetter} neue Datenblätter gefunden` : j.suche || j.info || "";
+        z.textContent = `✓ ${[w, sMsg].filter(Boolean).join(" · ")}`;
+      }
+      log.prepend(z);
+    } catch (e) { toast("Fehler: " + e.message); }
+    b.disabled = false; b.textContent = "Jetzt einen Suchlauf starten";
+    await laden();
+  };
+}
+
+/* ── Liste ── */
+async function laden() {
+  const { data, error } = await supabaseClient.from("motor_lexikon").select("*").order("created_at", { ascending: false }).limit(1000);
+  if (error) { $("#liste").innerHTML = `<div class="panel">Fehler: ${esc(error.message)}</div>`; return; }
+  alle = data || [];
+  renderListe();
+  ladeSuche();
+}
+
+function renderListe() {
+  const anz = (s) => alle.filter((e) => e.status === s).length;
+  $("#tabs").innerHTML = [["entwurf", "Entwürfe"], ["veroeffentlicht", "Veröffentlicht"], ["verworfen", "Verworfen"]]
+    .map(([k, l]) => `<button class="tab ${tab === k ? "on" : ""}" data-t="${k}">${l}<b>${anz(k)}</b></button>`).join("");
+  $("#tabs").querySelectorAll(".tab").forEach((b) => (b.onclick = () => { tab = b.dataset.t; renderListe(); }));
+
+  const liste = alle.filter((e) => e.status === tab);
+  if (!liste.length) { $("#liste").innerHTML = `<div class="panel center">Hier ist gerade nichts.</div>`; return; }
+  $("#liste").innerHTML = liste.map(itemHtml).join("");
+  liste.forEach(bindItem);
+}
+
+function feldHtml(e, [k, label, art]) {
+  const v = e[k] == null ? "" : e[k];
+  if (art === "select") {
+    return `<label>${label}<select data-k="${k}">${["", ...KATEGORIEN].map((c) =>
+      `<option ${c === v ? "selected" : ""} value="${esc(c)}">${c || "– wählen –"}</option>`).join("")}</select></label>`;
+  }
+  if (art === "text") return `<label class="wide">${label}<textarea data-k="${k}" rows="4">${esc(v)}</textarea></label>`;
+  return `<label class="${art === "wide" ? "wide" : ""}">${label}<input data-k="${k}" ${art === "num" ? 'inputmode="decimal"' : ""} value="${esc(v)}" /></label>`;
+}
+
+function itemHtml(e) {
+  return `
+  <article class="item" id="i-${e.id}">
+    <div>
+      <div class="vorschau">${LexikonCard.render(e, "gross")}</div>
+      <div class="meta">
+        <span class="badge b-${e.status}">${{ entwurf: "Entwurf", veroeffentlicht: "Veröffentlicht", verworfen: "Verworfen" }[e.status]}</span>
+        &nbsp;angelegt ${new Date(e.created_at).toLocaleString("de-DE")}<br>
+        ${e.quelle_url ? `Quelle: <a href="${esc(e.quelle_url)}" target="_blank" rel="noopener">${esc(e.quelle_titel || e.quelle_url)}</a>` : esc(e.quelle_titel || "")}
+        ${e.status === "veroeffentlicht" ? `<br><a href="motor-info.html?m=${encodeURIComponent(e.slug)}" target="_blank">Öffentliche Seite ansehen →</a>` : ""}
+      </div>
+    </div>
+    <div>
+      <div class="fields">${FELDER.map((f) => feldHtml(e, f)).join("")}</div>
+      <div class="hint" data-hint></div>
+      <div class="actions">
+        <button class="btn btn-ghost" data-a="save">Speichern</button>
+        ${e.status !== "veroeffentlicht" ? `<button class="btn btn-ok" data-a="publish">Veröffentlichen</button>` : `<button class="btn btn-ghost" data-a="unpublish">Zurück zu Entwurf</button>`}
+        ${e.status !== "verworfen" ? `<button class="btn btn-danger" data-a="discard">Verwerfen</button>` : `<button class="btn btn-danger" data-a="delete">Endgültig löschen</button>`}
+      </div>
+    </div>
+  </article>`;
+}
+
+function werte(box) {
+  const out = {};
+  box.querySelectorAll("[data-k]").forEach((el) => {
+    const k = el.dataset.k, f = FELDER.find((x) => x[0] === k);
+    let v = el.value.trim();
+    if (f && f[2] === "num") {
+      v = v.replace(/\s/g, "");
+      if (v.includes(",")) v = v.replace(/\./g, "").replace(",", ".");
+      else if (/^\d{1,3}(\.\d{3})+$/.test(v)) v = v.replace(/\./g, "");
+      v = v === "" || isNaN(Number(v)) ? null : Number(v);
+      if (k === "zylinder" || k === "hubraum_ccm") v = v == null ? null : Math.round(v);
+    } else v = v === "" ? null : v;
+    out[k] = v;
+  });
+  return out;
+}
+
+function pruefen(w) {
+  const fehlt = [];
+  if (!w.hersteller) fehlt.push("Hersteller");
+  if (!w.modell) fehlt.push("Modell");
+  if (!w.kategorie) fehlt.push("Kategorie");
+  if (!w.beschreibung || w.beschreibung.length < 40) fehlt.push("Beschreibung (mind. 40 Zeichen)");
+  for (const k of ["hersteller_url", "quelle_url"]) if (w[k] && !/^https?:\/\//i.test(w[k])) fehlt.push(`${k === "quelle_url" ? "Quelle" : "Hersteller-Website"} muss mit https:// beginnen`);
+  return fehlt;
+}
+
+function bindItem(e) {
+  const box = $(`#i-${e.id}`), hint = box.querySelector("[data-hint]");
+  box.querySelectorAll("[data-k]").forEach((el) => el.addEventListener("input", () => {
+    box.querySelector(".vorschau").innerHTML = LexikonCard.render({ ...e, ...werte(box) }, "gross");
+  }));
+  box.querySelectorAll("[data-a]").forEach((b) => (b.onclick = async () => {
+    const a = b.dataset.a;
+    if (a === "delete") {
+      if (!confirm("Diesen Eintrag endgültig löschen?")) return;
+      const { error } = await supabaseClient.from("motor_lexikon").delete().eq("id", e.id);
+      if (error) return toast("Fehler: " + error.message);
+      toast("Gelöscht."); return laden();
+    }
+    const w = werte(box);
+    if (a === "publish") {
+      const fehlt = pruefen(w);
+      if (fehlt.length) { hint.textContent = "Noch nicht veröffentlichbar – fehlt: " + fehlt.join(", "); return; }
+    }
+    const status = { save: e.status, publish: "veroeffentlicht", unpublish: "entwurf", discard: "verworfen" }[a];
+    b.disabled = true;
+    const { error } = await supabaseClient.from("motor_lexikon").update({ ...w, status }).eq("id", e.id);
+    b.disabled = false;
+    if (error) { hint.textContent = "Fehler: " + error.message; return; }
+    toast({ save: "Gespeichert.", publish: "Veröffentlicht 🎉", unpublish: "Zurück auf Entwurf.", discard: "Verworfen." }[a]);
+    await laden();
+  }));
+}
+</script>
+</body>
+</html>
