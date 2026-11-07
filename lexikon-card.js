@@ -1,6 +1,10 @@
-/* lexikon-card.js – 1A Motor Motorenlexikon
-   Gemeinsame „Datenkarte“ statt Platzhalterbild.
-   Wird von motoren-lexikon.html, motor-info.html und lexikon-admin.html genutzt. */
+/* lexikon-card.js v3 – 1A Motor Motorenlexikon
+   Gemeinsame Lexikon-Karte. Seit v3 im hellen INSERAT-LOOK (weiß, wie die
+   Inseratkarten auf der Startseite) statt dunkelblauer Datenkarte.
+   Genutzt von: motoren-lexikon.html, motor-info.html, lexikon-admin.html,
+   lexikon-raster.js (Startseite + Suche).
+   size: "klein" = Karte im Raster (wie ein Inserat)
+         "gross" = große Karte auf der Detailseite */
 (function () {
   "use strict";
 
@@ -15,6 +19,8 @@
     flug: '<path d="M2 13l8-1 4-8h2l-2 8 6 1v2l-6 1 2 6h-2l-4-6-8-1z"/>',
     motor: '<path d="M4 9h3l2-2h6v3h2l1-1h2v7h-2l-1-1h-2v3H9l-2-2H4zM4 9v8M10 7V5h4v2"/>',
   };
+  var BUCH = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h5"/></svg>';
+  var PFEIL = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
   function gruppe(kat) {
     var t = (kat || "").toLowerCase();
@@ -65,30 +71,74 @@
     return [e.hersteller, e.modell].filter(Boolean).join(" ") || "Motor";
   }
 
-  /* size: "gross" (Detailseite) oder "klein" (Liste) */
-  function render(e, size) {
-    var k = kennzahlen(e);
-    var chips = [e.kategorie, e.kraftstoff, e.motorcode ? "Motorcode " + e.motorcode : null]
-      .filter(Boolean).slice(0, size === "klein" ? 2 : 3);
-    var foto = e.bild_url
-      ? '<div class="lxc-foto" role="img" aria-label="' + esc(titel(e)) + '" style="background-image:url(\'' +
-        encodeURI(e.bild_url).replace(/'/g, "%27") + '\')"></div>'
-      : "";
+  /* „Preiszeile“ der Karte: die wichtigste Kennzahl – kein Preis, kein Angebot */
+  function hauptwert(e) {
+    if (e.leistung_kw) return zahl(e.leistung_kw, 1) + " kW · " + zahl(ps(e.leistung_kw)) + " PS";
+    if (e.hubraum_ccm) return zahl(e.hubraum_ccm) + " cm³";
+    if (e.drehmoment_nm) return zahl(e.drehmoment_nm) + " Nm";
+    if (e.spannung_v) return String(e.spannung_v);
+    return "Technische Daten";
+  }
+
+  /* Grüne Zeile unter der Kennzahl (wie „Gebraucht“ beim Inserat) */
+  function unterzeile(e) {
+    var t = [];
+    if (e.zylinder) t.push(e.zylinder + " Zylinder");
+    else if (e.bauart) t.push(e.bauart);
+    if (e.leistung_kw && e.hubraum_ccm) t.push((Number(e.hubraum_ccm) / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " Liter");
+    if (e.drehmoment_nm && t.length < 2) t.push(zahl(e.drehmoment_nm) + " Nm");
+    if (!t.length && e.kraftstoff) t.push(e.kraftstoff);
+    return t.slice(0, 2).join(" · ") || "Produktinformation";
+  }
+
+  function fotoStil(e) {
+    return e.bild_url ? ' style="background-image:url(\'' + encodeURI(e.bild_url).replace(/'/g, "%27") + '\')"' : "";
+  }
+
+  function renderKlein(e) {
+    var langTitel = titel(e) + (e.kraftstoff ? " – " + e.kraftstoff : "") + (e.motorcode && e.motorcode !== e.modell ? " – Motorcode " + e.motorcode : "");
+    var meta = [e.hersteller, e.motorcode, e.baujahre].filter(Boolean).slice(0, 3);
     return '' +
-      '<div class="lxc lxc-' + (size || "gross") + (foto ? " lxc-mitfoto" : "") + '">' + foto +
-        '<div class="lxc-top">' +
-          '<span class="lxc-icon">' + icon(e.kategorie, size === "klein" ? 22 : 28) + '</span>' +
-          '<span class="lxc-brand"><b>1A</b> Motorenlexikon</span>' +
+      '<div class="lxc lxc-klein' + (e.bild_url ? " lxc-mitfoto" : "") + '">' +
+        '<div class="lxc-img"' + fotoStil(e) + (e.bild_url ? ' role="img" aria-label="' + esc(titel(e)) + '"' : "") + '>' +
+          (e.kategorie ? '<span class="lxc-badge">' + esc(e.kategorie) + '</span>' : "") +
+          '<span class="lxc-book" title="Motorenlexikon">' + BUCH + '</span>' +
+          (e.bild_url ? "" : '<span class="lxc-ico">' + icon(e.kategorie, 54) + '</span>') +
         '</div>' +
-        '<div class="lxc-maker">' + esc(e.hersteller || "") + '</div>' +
-        '<div class="lxc-title">' + esc(e.modell || titel(e)) + '</div>' +
-        '<div class="lxc-chips">' + chips.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join("") + '</div>' +
-        (k.length ? '<div class="lxc-grid">' + k.map(function (r) {
-          return '<div class="lxc-kv"><div class="lxc-k">' + esc(r[0]) + '</div><div class="lxc-v">' + esc(r[1]) +
-            '</div>' + (r[2] && size !== "klein" ? '<div class="lxc-s">' + esc(r[2]) + '</div>' : "") + '</div>';
-        }).join("") + '</div>' : '<div class="lxc-empty">Technische Daten folgen</div>') +
+        '<div class="lxc-body">' +
+          '<div class="lxc-title">' + esc(langTitel) + '</div>' +
+          (meta.length ? '<div class="lxc-meta">' + meta.map(function (m) { return '<span>' + esc(m) + '</span>'; }).join("") + '</div>' : "") +
+          '<div class="lxc-price">' + esc(hauptwert(e)) + '</div>' +
+          '<div class="lxc-sub">' + esc(unterzeile(e)) + '</div>' +
+          '<div class="lxc-seller"><span><b class="lxc-1a">1A</b> Motorenlexikon</span><span class="lxc-go">Daten ansehen ' + PFEIL + '</span></div>' +
+        '</div>' +
       '</div>';
   }
+
+  function renderGross(e) {
+    var k = kennzahlen(e);
+    var chips = [e.kategorie, e.kraftstoff, e.motorcode ? "Motorcode " + e.motorcode : null].filter(Boolean);
+    return '' +
+      '<div class="lxc lxc-gross' + (e.bild_url ? " lxc-mitfoto" : "") + '">' +
+        '<div class="lxc-img"' + fotoStil(e) + (e.bild_url ? ' role="img" aria-label="' + esc(titel(e)) + '"' : "") + '>' +
+          (e.kategorie ? '<span class="lxc-badge">' + esc(e.kategorie) + '</span>' : "") +
+          '<span class="lxc-book" title="Motorenlexikon">' + BUCH + '</span>' +
+          (e.bild_url ? "" : '<span class="lxc-ico">' + icon(e.kategorie, 72) + '</span>') +
+        '</div>' +
+        '<div class="lxc-body">' +
+          '<div class="lxc-maker">' + esc(e.hersteller || "") + '</div>' +
+          '<div class="lxc-bigtitle">' + esc(e.modell || titel(e)) + '</div>' +
+          '<div class="lxc-meta">' + chips.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join("") + '</div>' +
+          (k.length ? '<div class="lxc-grid">' + k.map(function (r) {
+            return '<div class="lxc-kv"><div class="lxc-k">' + esc(r[0]) + '</div><div class="lxc-v">' + esc(r[1]) +
+              '</div>' + (r[2] ? '<div class="lxc-s">' + esc(r[2]) + '</div>' : "") + '</div>';
+          }).join("") + '</div>' : '<div class="lxc-empty">Technische Daten folgen</div>') +
+          '<div class="lxc-seller"><span><b class="lxc-1a">1A</b> Motorenlexikon</span><span>Produktinformation – kein Angebot</span></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function render(e, size) { return size === "klein" ? renderKlein(e) : renderGross(e); }
 
   /* Pflichtangabe für freie Fotos: Urheber, Lizenz, Quelle */
   function bildnachweis(e) {
@@ -102,47 +152,53 @@
     return 'Foto: ' + esc(e.bild_urheber || "unbekannt") + (lizenz ? ' · ' + lizenz : "") + ' · via ' + quelle;
   }
 
+  /* Gleiche Maße und Farben wie .listing-card auf der Startseite */
   var CSS = '' +
-    '.lxc{position:relative;overflow:hidden;border-radius:18px;color:#fff;font-family:Outfit,Arial,sans-serif;' +
-    'background:radial-gradient(120% 90% at 100% 0%,rgba(77,166,255,.35) 0%,rgba(77,166,255,0) 55%),linear-gradient(150deg,#1b2d42 0%,#0d1b2a 100%);' +
-    'box-shadow:0 18px 40px -18px rgba(13,27,42,.55)}' +
-    '.lxc:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:22px 22px;pointer-events:none}' +
-    '.lxc>*{position:relative;z-index:1}' +
-    '.lxc-gross{padding:26px 26px 24px;min-height:300px}' +
-    '.lxc-klein{padding:16px 16px 14px;display:flex;flex-direction:column}' +
-    '.lxc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}' +
-    '.lxc-icon{display:inline-flex;width:44px;height:44px;border-radius:12px;align-items:center;justify-content:center;background:rgba(255,255,255,.1);color:#9fd0ff}' +
-    '.lxc-klein .lxc-icon{width:34px;height:34px;border-radius:10px}' +
-    '.lxc-brand{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)}' +
-    '.lxc-brand b{display:inline-block;background:#fff;color:#1b2d42;border-radius:5px;padding:0 5px;margin-right:4px;font-weight:800}' +
-    '.lxc-maker{font-size:13px;font-weight:600;color:#9fd0ff;text-transform:uppercase;letter-spacing:.06em}' +
-    '.lxc-title{font-size:30px;line-height:1.1;font-weight:800;margin:4px 0 12px;word-break:break-word}' +
-    '.lxc-klein .lxc-title{font-size:19px;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}' +
-    '.lxc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}' +
-    '.lxc-klein .lxc-chips{margin-bottom:4px}' +
-    '.lxc-chips span{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}' +
-    '.lxc-klein .lxc-chips span{font-size:11px;padding:3px 8px}' +
-    '.lxc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}' +
-    '.lxc-klein .lxc-grid{gap:6px;margin-top:10px}' +
-    '.lxc-kv{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px}' +
-    '.lxc-klein .lxc-kv{padding:6px 8px;border-radius:9px}' +
-    '.lxc-k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.55)}' +
-    '.lxc-v{font-size:20px;font-weight:800;margin-top:2px}' +
-    '.lxc-klein .lxc-k{font-size:9.5px}.lxc-klein .lxc-v{font-size:14px}' +
-    '.lxc-s{font-size:12px;color:#9fd0ff;margin-top:1px}' +
-    '.lxc-empty{font-size:13px;color:rgba(255,255,255,.6);padding:10px 0}' +
-    '.lxc-foto{margin:-26px -26px 18px;height:220px;background:#0d1b2a center/cover no-repeat;border-bottom:1px solid rgba(255,255,255,.12)}' +
-    '.lxc-klein .lxc-foto{margin:-16px -16px 12px;height:140px}' +
-    '.lxc-mitfoto .lxc-top{position:absolute;top:12px;left:14px;right:14px;margin:0}' +
-    '.lxc-mitfoto .lxc-icon{background:rgba(13,27,42,.7);backdrop-filter:blur(4px)}' +
-    '.lxc-mitfoto .lxc-brand{background:rgba(13,27,42,.7);padding:3px 8px;border-radius:99px;color:rgba(255,255,255,.85)}';
+    '.lxc{position:relative;display:flex;flex-direction:column;height:100%;background:#fff;color:#0d1b2a;border:1px solid #e0e9f2;' +
+      'border-radius:12px;overflow:hidden;font-family:Outfit,Arial,sans-serif;line-height:1.5;text-align:left;' +
+      'box-shadow:0 2px 16px rgba(13,27,42,.08);transition:transform .2s,box-shadow .2s,border-color .2s}' +
+    'a:hover>.lxc,.lxc:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(13,27,42,.14);border-color:#b3d3f0}' +
+    '.lxc-img{position:relative;height:190px;flex-shrink:0;display:flex;align-items:center;justify-content:center;' +
+      'background:linear-gradient(135deg,#dce8f5,#f0f6fd) center/cover no-repeat;color:#7fa6cc}' +
+    '.lxc-mitfoto .lxc-img{background-color:#e7eef6}' +
+    '.lxc-ico{display:flex;opacity:.9}' +
+    '.lxc-badge{position:absolute;top:10px;left:10px;z-index:2;background:rgba(13,27,42,.72);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);' +
+      'color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;max-width:calc(100% - 64px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
+    '.lxc-book{position:absolute;top:10px;right:10px;z-index:2;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);' +
+      'border:1px solid #e0e9f2;display:grid;place-items:center;color:#1a5fa8}' +
+    '.lxc-body{display:flex;flex-direction:column;flex:1;padding:14px 16px}' +
+    '.lxc-title{font-size:14px;font-weight:700;color:#0d1b2a;margin-bottom:6px;line-height:1.4;min-height:40px;' +
+      'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}' +
+    '.lxc-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:#7a93ae;margin-bottom:8px}' +
+    '.lxc-meta span{background:#f4f7fb;padding:2px 8px;border-radius:4px}' +
+    '.lxc-price{font-size:21px;font-weight:900;color:#1a5fa8;margin-bottom:4px;letter-spacing:-.2px}' +
+    '.lxc-sub{font-size:12px;color:#10b981;font-weight:600;margin-bottom:10px}' +
+    '.lxc-seller{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#7a93ae;' +
+      'border-top:1px solid #e0e9f2;padding-top:10px;margin-top:auto}' +
+    '.lxc-1a{display:inline-block;background:linear-gradient(145deg,#1b2d42,#2a4a6b);color:#fff;font-size:9.5px;font-weight:900;border-radius:4px;padding:1px 4px;margin-right:3px;vertical-align:1px}' +
+    '.lxc-go{display:inline-flex;align-items:center;gap:4px;color:#2176c7;font-weight:700;white-space:nowrap}' +
+    /* große Karte (Detailseite) */
+    '.lxc-gross .lxc-img{height:280px}' +
+    '.lxc-gross .lxc-body{padding:22px 24px 20px}' +
+    '.lxc-maker{font-size:13px;font-weight:700;color:#2176c7;text-transform:uppercase;letter-spacing:.06em}' +
+    '.lxc-bigtitle{font-size:30px;line-height:1.1;font-weight:900;margin:4px 0 12px;letter-spacing:-.4px;word-break:break-word}' +
+    '.lxc-gross .lxc-meta{margin-bottom:16px}' +
+    '.lxc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}' +
+    '.lxc-kv{background:#f4f7fb;border:1px solid #e0e9f2;border-radius:10px;padding:10px 12px}' +
+    '.lxc-k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7a93ae;font-weight:600}' +
+    '.lxc-v{font-size:20px;font-weight:900;margin-top:2px;color:#0d1b2a}' +
+    '.lxc-s{font-size:12px;color:#1a5fa8;font-weight:600;margin-top:1px}' +
+    '.lxc-empty{font-size:13px;color:#7a93ae;padding:6px 0 14px}' +
+    /* Rahmen von lexikon-raster.js neutralisieren – die Karte bringt Schatten selbst mit */
+    '.lxr-tile.lxr-tile,.lxr-tile.lxr-tile:hover{box-shadow:none;transform:none;border-radius:12px}' +
+    '.lx-tile.lx-tile:hover{transform:none}';
 
-  if (!document.getElementById("lxc-css")) {
-    var st = document.createElement("style");
-    st.id = "lxc-css";
-    st.textContent = CSS;
-    document.head.appendChild(st);
-  }
+  var alt = document.getElementById("lxc-css");
+  if (alt) alt.remove();
+  var st = document.createElement("style");
+  st.id = "lxc-css";
+  st.textContent = CSS;
+  document.head.appendChild(st);
 
-  window.LexikonCard = { render: render, bildnachweis: bildnachweis, icon: icon, esc: esc, zahl: zahl, ps: ps, titel: titel, kennzahlen: kennzahlen };
+  window.LexikonCard = { render: render, bildnachweis: bildnachweis, icon: icon, esc: esc, zahl: zahl, ps: ps, titel: titel, kennzahlen: kennzahlen, hauptwert: hauptwert };
 })();
