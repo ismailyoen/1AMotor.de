@@ -9,24 +9,53 @@
 <link rel="apple-touch-icon" href="favicon-192x192.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="lexikon-style.css?v=2" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="lexikon-seite.css?v=1" />
 </head>
 <body>
-<header class="lx-head"><div class="wrap">
-  <a class="lx-logo" href="/"><span>1A</span>Motor</a>
-  <nav class="lx-nav"><a href="/suche">Motoren finden</a><a href="motoren-lexikon.html">Motorenlexikon</a><a href="anzeige-erstellen.html">Inserieren</a></nav>
-</div></header>
 
-<section class="lx-hero"><div class="wrap">
-  <div class="crumbs"><a href="/">1A Motor</a> › <a href="motoren-lexikon.html">Motorenlexikon</a> › <span id="crumb">…</span></div>
-  <h1 id="h1" style="margin-top:10px">Wird geladen …</h1>
-  <p id="lead"></p>
-</div></section>
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><div class="logo-mark">1A</div><div class="logo-name">Motor</div></a>
+    <form class="search-bar" action="suche.html" method="get" role="search">
+      <input name="q" type="text" placeholder="Motor, Hersteller, Modell oder Teilenummer suchen…" aria-label="Inserate durchsuchen" />
+      <button class="search-submit" type="submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Suchen</span>
+      </button>
+    </form>
+    <div class="header-right">
+      <a class="hdr-btn hdr-btn-outline" href="motoren-lexikon.html">Motorenlexikon</a>
+      <a class="hdr-btn hdr-btn-primary" href="anzeige-erstellen.html">＋ Anzeige erstellen</a>
+    </div>
+  </div>
+</header>
 
-<main class="wrap" id="main"></main>
+<nav class="cat-bar">
+  <div class="container cat-bar-inner">
+    <a href="index.html">Startseite</a>
+    <a href="suche.html">Top-Angebote</a>
+    <a href="motoren-lexikon.html" class="active">Motorenlexikon</a>
+    <a href="motorsport-news.html">Motorsport News</a>
+    <a href="anzeige-erstellen.html">Kostenlos inserieren</a>
+  </div>
+</nav>
 
-<footer class="lx-foot"><div class="wrap">
+<section class="hero hero-detail">
+  <div class="hero-bg"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <nav class="crumbs" aria-label="Brotkrumen"><a href="index.html">1A Motor</a><span>›</span><a href="motoren-lexikon.html">Motorenlexikon</a><span>›</span><span id="crumb">…</span></nav>
+      <div class="d-maker" id="maker"></div>
+      <h1 id="h1">Wird geladen …</h1>
+      <div class="d-tags" id="tags"></div>
+    </div>
+  </div>
+</section>
+
+<main class="container" id="main" style="padding-bottom:40px"></main>
+
+<footer class="foot"><div class="container">
   <span>© 1A Motor – Motorenlexikon. Alle Angaben ohne Gewähr.</span>
   <span><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a></span>
 </div></footer>
@@ -34,20 +63,30 @@
 <script src="cookie-consent.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="lexikon-card.js?v=2"></script>
+<script src="lexikon-card.js?v=3"></script>
 <script>
 (async function () {
   const $ = (s) => document.querySelector(s);
   const L = LexikonCard, esc = L.esc;
   const slug = new URLSearchParams(location.search).get("m");
+  const IC = {
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+    buch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h5"/></svg>',
+    auto: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 17v-4l2-5h14l2 5v4M7 17v2M17 17v2"/></svg>',
+    stern: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>',
+    tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>',
+    lupe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
+  };
 
   function nichtGefunden() {
     document.title = "Motor nicht gefunden | 1A Motor";
     $("#h1").textContent = "Motor nicht gefunden";
     $("#crumb").textContent = "Nicht gefunden";
-    $("#main").innerHTML = `<div class="box" style="margin:-30px 0 50px;text-align:center">
-      <p>Diesen Eintrag gibt es nicht (mehr).</p><div class="cta" style="max-width:320px;margin:18px auto 0">
-      <a class="btn btn-primary" href="motoren-lexikon.html">Zum Motorenlexikon</a></div></div>`;
+    $("#main").innerHTML = `<div class="box" style="margin:-60px 0 30px;position:relative;z-index:3;text-align:center">
+      <p>Diesen Eintrag gibt es nicht (mehr).</p>
+      <div style="max-width:320px;margin:18px auto 0"><a class="btn btn-primary" href="motoren-lexikon.html">Zum Motorenlexikon</a></div></div>`;
     const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m);
   }
   if (!slug) return nichtGefunden();
@@ -56,7 +95,7 @@
     .eq("slug", slug).eq("status", "veroeffentlicht").maybeSingle();
   if (!e) return nichtGefunden();
 
-  const name = L.titel(e) + (e.motorcode ? ` (${e.motorcode})` : "");
+  const name = L.titel(e) + (e.motorcode && e.motorcode !== e.modell ? ` (${e.motorcode})` : "");
   const psWert = L.ps(e.leistung_kw);
 
   /* ── SEO ── */
@@ -74,12 +113,27 @@
     { "@type": "ListItem", position: 3, name: name, item: can.href } ] });
   document.head.appendChild(ld);
 
-  /* ── Kopf ── */
+  /* ── Hero ── */
   $("#crumb").textContent = name;
-  $("#h1").textContent = name;
-  $("#lead").textContent = [e.kategorie, teile].filter(Boolean).join(" · ");
+  $("#maker").textContent = e.hersteller || "";
+  $("#h1").textContent = (e.modell || L.titel(e)) + (e.motorcode && e.motorcode !== e.modell ? " · " + e.motorcode : "");
+  $("#tags").innerHTML = [e.kategorie, e.kraftstoff, e.bauart, e.baujahre ? "Baujahre " + e.baujahre : null]
+    .filter(Boolean).map((t) => `<span>${esc(t)}</span>`).join("") + `<span class="ok">Produktinformation · kein Angebot</span>`;
 
-  /* ── Technische Daten ── */
+  /* ── Kennzahlen-Kacheln ── */
+  const kachel = (k, v, s, anteil) => `<div class="d-stat"><div class="k">${k}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ""}
+    ${anteil ? `<div class="d-gauge"><i style="width:${Math.max(6, Math.min(100, anteil * 100)).toFixed(0)}%"></i></div>` : ""}</div>`;
+  const kacheln = [];
+  if (e.leistung_kw) kacheln.push(kachel("Leistung", `${L.zahl(psWert)} PS`, `${L.zahl(e.leistung_kw, 1)} kW`, e.leistung_kw / 450));
+  if (e.hubraum_ccm) kacheln.push(kachel("Hubraum", `${L.zahl(e.hubraum_ccm)} cm³`, `${(e.hubraum_ccm / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Liter`, e.hubraum_ccm / 7000));
+  if (e.drehmoment_nm) kacheln.push(kachel("Drehmoment", `${L.zahl(e.drehmoment_nm)} Nm`, "", e.drehmoment_nm / 900));
+  if (e.zylinder) kacheln.push(kachel("Zylinder", esc(e.zylinder), esc(e.bauart || ""), e.zylinder / 12));
+  if (kacheln.length < 4 && e.spannung_v) kacheln.push(kachel("Spannung", esc(e.spannung_v), ""));
+  if (kacheln.length < 4 && e.drehzahl) kacheln.push(kachel("Drehzahl", esc(e.drehzahl), ""));
+  if (kacheln.length < 4 && e.kraftstoff) kacheln.push(kachel("Antrieb", esc(e.kraftstoff), ""));
+  if (kacheln.length < 4 && e.baujahre) kacheln.push(kachel("Baujahre", esc(e.baujahre), ""));
+
+  /* ── Datenblatt ── */
   const zeilen = [
     ["Hersteller", e.hersteller], ["Modell", e.modell], ["Motorcode", e.motorcode], ["Kategorie", e.kategorie],
     ["Antrieb / Kraftstoff", e.kraftstoff], ["Bauart", e.bauart], ["Zylinder", e.zylinder],
@@ -90,56 +144,93 @@
   ].filter((z) => z[1] !== null && z[1] !== undefined && z[1] !== "");
 
   const suchbegriff = [e.hersteller, e.motorcode || e.modell].filter(Boolean).join(" ");
-  const suchLink = `/suche?q=${encodeURIComponent(suchbegriff)}${e.kategorie ? "&category=" + encodeURIComponent(e.kategorie) : ""}`;
+  const suchLink = `suche.html?q=${encodeURIComponent(suchbegriff)}${e.kategorie ? "&category=" + encodeURIComponent(e.kategorie) : ""}`;
+  const foto = e.bild_url ? ` style="background-image:url('${encodeURI(e.bild_url).replace(/'/g, "%27")}')" role="img" aria-label="${esc(name)}"` : "";
 
   $("#main").innerHTML = `
-    <div class="mi-top">
-      <div>${L.render(e, "gross")}${e.bild_url ? `<p class="credit">${L.bildnachweis(e)}</p>` : ""}</div>
-      <div class="box">
-        <h2>Technische Daten</h2>
-        <table class="specs"><tbody>${zeilen.map((z) => `<tr><th>${esc(z[0])}</th><td>${esc(z[1])}</td></tr>`).join("")}</tbody></table>
-        <div class="cta">
-          <a class="btn btn-primary" href="${suchLink}">Angebote für diesen Motor suchen</a>
-          <a class="btn btn-light" href="anzeige-erstellen.html">Diesen Motor kostenlos inserieren</a>
-          ${e.hersteller_url ? `<a class="btn btn-light" href="${esc(e.hersteller_url)}" target="_blank" rel="noopener">Website des Herstellers</a>` : ""}
+    <div class="d-top">
+      <div class="d-photo">
+        <div class="img"${foto}>
+          ${e.kategorie ? `<span class="badge">${esc(e.kategorie)}</span>` : ""}
+          ${e.bild_url ? "" : L.icon(e.kategorie, 110)}
+          <span class="stamp"><b>1A</b> Motorenlexikon</span>
+        </div>
+        ${e.bild_url ? `<div class="cap">${L.bildnachweis(e)}</div>` : ""}
+      </div>
+      <div>
+        ${kacheln.length ? `<div class="d-stats">${kacheln.slice(0, 4).join("")}</div>` : ""}
+        <div class="d-actions">
+          <a class="btn btn-primary" href="${suchLink}">${IC.lupe} Angebote für diesen Motor suchen</a>
+          <a class="btn btn-dark" href="anzeige-erstellen.html">${IC.plus} Diesen Motor kostenlos inserieren</a>
+          ${e.hersteller_url ? `<a class="btn btn-light" href="${esc(e.hersteller_url)}" target="_blank" rel="noopener">${IC.link} Website des Herstellers</a>` : ""}
         </div>
       </div>
     </div>
-    <div class="mi-cols">
+
+    <div class="d-cols">
       <div>
-        ${e.beschreibung ? `<div class="box"><h2>Über diesen Motor</h2><p>${esc(e.beschreibung).replace(/\n/g, "<br>")}</p></div>` : ""}
-        ${e.einsatz || e.besonderheiten ? `<div class="box" style="margin-top:20px">
-          ${e.einsatz ? `<h2>Verbaut in / Einsatz</h2><p>${esc(e.einsatz)}</p>` : ""}
-          ${e.besonderheiten ? `<h2 style="margin-top:${e.einsatz ? 18 : 0}px">Besonderheiten</h2><p>${esc(e.besonderheiten)}</p>` : ""}</div>` : ""}
-        <div class="box" style="margin-top:20px" id="angebote-box"><h2>Passende Angebote auf 1A Motor</h2><div id="angebote">Wird gesucht …</div></div>
+        ${e.beschreibung ? `<div class="box"><h2>${IC.buch} Über diesen Motor</h2><p>${esc(e.beschreibung).replace(/\n/g, "<br>")}</p></div>` : ""}
+        ${e.einsatz ? `<div class="box"><h2>${IC.auto} Verbaut in / Einsatz</h2><p>${esc(e.einsatz)}</p></div>` : ""}
+        ${e.besonderheiten ? `<div class="box"><h2>${IC.stern} Besonderheiten</h2><p>${esc(e.besonderheiten)}</p></div>` : ""}
+        <div class="box" id="angebote-box"><h2>${IC.tag} Passende Angebote auf 1A Motor</h2><div id="angebote"><p>Wird gesucht …</p></div></div>
       </div>
-      <aside>
+      <aside class="sheet">
         <div class="box">
-          <h2>Hinweis</h2>
-          <p style="font-size:14px">Dies ist eine <b>Produktinformation, kein Verkaufsangebot</b>. Die Daten stammen aus öffentlich verfügbaren technischen Unterlagen und können je nach Ausführung abweichen. Alle Angaben ohne Gewähr – prüfe vor dem Kauf immer das Typenschild.</p>
-          ${e.quelle_url ? `<div class="note">Quelle: <a href="${esc(e.quelle_url)}" target="_blank" rel="noopener nofollow">${esc(e.quelle_titel || "Datenblatt")}</a></div>` : ""}
-          ${e.bild_url ? `<div class="note">${L.bildnachweis(e)}</div>` : ""}
+          <div class="sheet-head"><h2 style="margin:0">Datenblatt</h2><small>${esc(e.motorcode || e.modell || "")}</small></div>
+          <table class="specs"><tbody>${zeilen.map((z) => `<tr><th>${esc(z[0])}</th><td>${esc(z[1])}</td></tr>`).join("")}</tbody></table>
+          <div class="note">${IC.info}<span>Das ist eine <b>Produktinformation, kein Verkaufsangebot</b>. Die Daten stammen aus öffentlich verfügbaren Unterlagen und können je nach Ausführung abweichen. Alle Angaben ohne Gewähr – prüfe vor dem Kauf immer das Typenschild.</span></div>
+          ${e.quelle_url ? `<div class="note">${IC.link}<span>Quelle: <a href="${esc(e.quelle_url)}" target="_blank" rel="noopener nofollow">${esc(e.quelle_titel || "Datenblatt")}</a></span></div>` : ""}
         </div>
       </aside>
-    </div>`;
+    </div>
 
-  /* ── Echte, passende Inserate ── */
+    <section class="panel related" id="related" hidden>
+      <div class="panel-head"><div><h2>Weitere Motoren im Lexikon</h2><p id="related-info"></p></div>
+        <a class="more-link" href="motoren-lexikon.html${e.kategorie ? "?kategorie=" + encodeURIComponent(e.kategorie) : ""}">Alle ansehen →</a></div>
+      <div class="grid" id="related-grid"></div>
+    </section>`;
+
+  /* ── Echte, passende Inserate (im Inserat-Look der Startseite) ── */
   try {
     const begriff = (e.motorcode || e.modell || "").replace(/[%_,()]/g, " ").trim();
     let q = supabaseClient.from("listings").select("id,title,price,image_urls").eq("status", "Freigegeben").limit(6);
     q = begriff ? q.ilike("title", `%${begriff}%`) : q.ilike("manufacturer", `%${(e.hersteller || "").replace(/[%_,()]/g, " ")}%`);
     const { data: off } = await q;
     if (!off || !off.length) {
-      $("#angebote").innerHTML = `<p>Gerade gibt es kein passendes Inserat. <a href="${suchLink}">Ähnliche Motoren ansehen</a> oder <a href="anzeige-erstellen.html">selbst einen inserieren</a>.</p>`;
+      $("#angebote").innerHTML = `<div class="offers-empty">${L.icon(e.kategorie, 34)}<span>Gerade gibt es kein passendes Inserat.
+        <a href="${suchLink}">Ähnliche Motoren ansehen</a> oder <a href="anzeige-erstellen.html">selbst einen inserieren</a> – kostenlos.</span></div>`;
     } else {
       $("#angebote").innerHTML = `<div class="offers">${off.map((o) => {
         const img = Array.isArray(o.image_urls) && o.image_urls[0];
-        const preis = Number(o.price) > 0 ? Number(o.price).toLocaleString("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }) : "Preis auf Anfrage";
-        return `<a class="offer" href="/listing-detail?id=${encodeURIComponent(o.id)}"><div class="img" ${img ? `style="background-image:url('${encodeURI(img)}')"` : ""}></div>
-          <div class="t">${esc(o.title || "Motor")}</div><div class="p">${preis}</div></a>`;
+        const preis = Number(o.price) > 0 ? Number(o.price).toLocaleString("de-DE", { style: "currency", currency: "EUR" }) : "Preis auf Anfrage";
+        return `<a class="listing-card" href="listing-detail.html?id=${encodeURIComponent(o.id)}">
+          <div class="listing-image"${img ? ` style="background-image:url('${encodeURI(img).replace(/'/g, "%27")}')"` : ""}>${img ? "" : L.icon(e.kategorie, 44)}<span class="badge">Inserat</span></div>
+          <div class="listing-body"><div class="listing-title">${esc(o.title || "Motor")}</div><div class="price">${preis}</div></div></a>`;
       }).join("")}</div>`;
     }
   } catch (_) { $("#angebote-box").remove(); }
+
+  /* ── Weitere Lexikon-Einträge (gleiche Kategorie, sonst gleicher Hersteller) ── */
+  try {
+    const felder = "slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm,leistung_kw,drehmoment_nm,spannung_v,drehzahl,baujahre,bild_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite";
+    const holen = (spalte, wert) => supabaseClient.from("motor_lexikon").select(felder).eq("status", "veroeffentlicht")
+      .eq(spalte, wert).neq("slug", e.slug).limit(12);
+    let liste = [];
+    if (e.kategorie) liste = (await holen("kategorie", e.kategorie)).data || [];
+    if (liste.length < 4 && e.hersteller) {
+      const mehr = (await holen("hersteller", e.hersteller)).data || [];
+      mehr.forEach((m) => { if (!liste.some((x) => x.slug === m.slug)) liste.push(m); });
+    }
+    liste.sort((a, b) => (b.bild_url ? 1 : 0) - (a.bild_url ? 1 : 0));
+    liste = liste.slice(0, 4);
+    if (liste.length) {
+      $("#related-info").textContent = e.kategorie ? `Mehr aus „${e.kategorie}“` : `Mehr von ${e.hersteller}`;
+      $("#related-grid").innerHTML = liste.map((m) => `<div class="cell">
+        <a class="tile lx-tile" href="motor-info.html?m=${encodeURIComponent(m.slug)}">${L.render(m, "klein")}</a>
+        ${m.bild_url ? `<p class="credit">${L.bildnachweis(m)}</p>` : ""}</div>`).join("");
+      $("#related").hidden = false;
+    }
+  } catch (_) {}
 })();
 </script>
 </body>
