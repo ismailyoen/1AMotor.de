@@ -1,22 +1,20 @@
 // ══════════════════════════════════════════════════════════════════════════════
-//  lexikon-raster.js  v2  —  1A Motor
-//  Mischt die ORIGINALEN Motorenlexikon-Karten (LexikonCard, wie auf
-//  motoren-lexikon.html) zwischen die Inserate:
+//  lexikon-raster.js  v3  —  1A Motor
+//  Mischt die Motorenlexikon-Karten (weißer Inserat-Look aus lexikon-card.js)
+//  zwischen die Inserate:
 //    • Startseite  (#home-listing-grid)
 //    • Suche       (#se-grid)
-//  Jede DRITTE Karte ist ein Lexikon-Beitrag: Inserat, Inserat, Lexikon …
 //
-//  • Nur veröffentlichte Lexikon-Einträge (status = veroeffentlicht).
-//  • In der Suche passen die Lexikon-Karten zum Suchbegriff / zur Kategorie,
-//    wenn es passende Einträge gibt – sonst gemischt. Jede Seite der
-//    Pagination zeigt andere Einträge.
-//  • Foto-Nachweis (Urheber, Lizenz, Commons) steht unter jeder Karte.
-//  • Läuft unabhängig: ein MutationObserver setzt die Karten nach jedem
-//    Neuaufbau des Rasters (Filter, Sortierung, Sprache, Partner) neu.
+//  v3:
+//  • GEMISCHTE Positionen: Lexikon-Karten stehen nicht mehr immer in derselben
+//    Spalte. Zwischen zwei Lexikon-Karten liegen zufällig 1–3 Inserate
+//    (im Schnitt jede 3. Karte). Die Verteilung wechselt alle 20 Minuten und
+//    pro Seite der Suche, bleibt aber beim Filtern/Neuaufbau stabil (kein Springen).
+//  • lädt lexikon-card.js mit eigenem Versionsschlüssel nach, damit alte,
+//    zwischengespeicherte (blaue) Karten im Browser nicht mehr auftauchen.
 //
 //  Einbinden – jeweils GANZ UNTEN vor </body>:
-//    <script src="lexikon-raster.js?v=2" defer></script>
-//  (lexikon-card.js wird automatisch nachgeladen, falls es fehlt.)
+//    <script src="lexikon-raster.js?v=2" defer></script>   (bleibt so)
 // ══════════════════════════════════════════════════════════════════════════════
 (function () {
   "use strict";
@@ -25,7 +23,9 @@
     { id: "home-listing-grid", leer: [".empty-box"] },
     { id: "se-grid", leer: [".se-empty", ".se-loading"], suche: true, proSeite: 24 },
   ];
-  const JEDE_N_TE = 3;                       // jede 3. Karte = Lexikon
+  const ABSTAND_MIN = 1;                     // mind. 1 Inserat zwischen Lexikon-Karten
+  const ABSTAND_MAX = 3;                     // höchstens 3 → im Schnitt jede 3. Karte
+  const KARTEN_VERSION = "3";                // bei Änderungen an lexikon-card.js hochzählen
   const DETAIL = "motor-info.html?m=";
   const FELDER = "slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm," +
     "leistung_kw,drehmoment_nm,spannung_v,drehzahl,baujahre,bild_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite";
@@ -46,14 +46,26 @@
   }
   const SEED = Math.floor(Date.now() / (20 * 60 * 1000)) + 7;
 
-  // ── lexikon-card.js sicherstellen ──────────────────────────────────────────
+  // Feste, aber gemischte Abstände: z. B. 2,1,3,2,1,3 … (stabil für Seed + Seite)
+  function abstaende(seed, anzahl) {
+    const r = rng(seed), out = [];
+    let letzter = 0;
+    for (let i = 0; i < anzahl; i++) {
+      let a = ABSTAND_MIN + Math.floor(r() * (ABSTAND_MAX - ABSTAND_MIN + 1));
+      if (a === letzter && r() < 0.6) a = a === ABSTAND_MAX ? ABSTAND_MIN : a + 1; // seltener gleiche Abstände hintereinander
+      out.push(a); letzter = a;
+    }
+    return out;
+  }
+
+  // ── lexikon-card.js in der aktuellen Version sicherstellen ──────────────────
   function ladeKarte() {
-    if (window.LexikonCard) return Promise.resolve(true);
+    if (window.LexikonCard && window.LexikonCard.hauptwert) return Promise.resolve(true); // v3 schon da
     return new Promise((ok) => {
       const s = document.createElement("script");
-      s.src = "lexikon-card.js?v=" + Math.floor(Date.now() / 864e5); // täglich frisch
+      s.src = "lexikon-card.js?v=" + KARTEN_VERSION + "-" + Math.floor(Date.now() / 864e5);
       s.onload = () => ok(!!window.LexikonCard);
-      s.onerror = () => ok(false);
+      s.onerror = () => ok(!!window.LexikonCard);
       document.head.appendChild(s);
     });
   }
@@ -72,6 +84,10 @@
     return mischen(data.filter((e) => e.bild_url), SEED).concat(mischen(data.filter((e) => !e.bild_url), SEED));
   }
 
+  function seite() {
+    return Math.max(1, parseInt(new URLSearchParams(location.search).get("page"), 10) || 1);
+  }
+
   // In der Suche: passende Einträge nach vorn
   function reihenfolge(r) {
     if (!r.suche) return { liste: alle, start: 0 };
@@ -79,7 +95,6 @@
     const kats = (p.get("category") || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
     const woerter = (p.get("q") || "").toLowerCase().split(/\s+/).filter((w) => w.length > 1);
     const hersteller = (p.get("hersteller") || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-    const seite = Math.max(1, parseInt(p.get("page"), 10) || 1);
     let liste = alle;
     if (kats.length || woerter.length || hersteller.length) {
       const punkte = (e) => {
@@ -94,11 +109,11 @@
         .sort((a, b) => b.n - a.n || a.i - b.i).map((x) => x.e);
     }
     // pro Seite andere Lexikon-Einträge
-    const slots = Math.floor((r.proSeite || 24) / (JEDE_N_TE - 1));
-    return { liste, start: liste.length ? ((seite - 1) * slots) % liste.length : 0 };
+    const slots = Math.ceil((r.proSeite || 24) / 2);
+    return { liste, start: liste.length ? ((seite() - 1) * slots) % liste.length : 0 };
   }
 
-  // ── Karte bauen (Original-Lexikonkarte) ────────────────────────────────────
+  // ── Karte bauen ────────────────────────────────────────────────────────────
   const cache = new Map();   // slug -> DOM-Knoten (wiederverwendet, kein Flackern)
   function karte(e) {
     if (cache.has(e.slug)) return cache.get(e.slug);
@@ -125,13 +140,20 @@
       return;
     }
     const { liste, start } = reihenfolge(r);
+    const gaps = abstaende(SEED * 31 + seite() * 7 + (r.suche ? 3 : 0), echte.length + 1);
     const soll = [];
-    let k = 0;
-    echte.forEach((c, i) => {
+    // Spaltenzahl des Rasters (Desktop 3, Handy 1–2) – nie zweimal dieselbe Spalte hintereinander
+    const spalten = Math.max(1, (getComputedStyle(grid).gridTemplateColumns || "").split(" ").filter(Boolean).length);
+    let k = 0, bisNaechste = gaps[0], letzteSpalte = -1;
+    echte.forEach((c) => {
       soll.push(c);
-      if ((i + 1) % (JEDE_N_TE - 1) === 0 && k < liste.length) {
+      bisNaechste--;
+      if (bisNaechste === 0 && spalten > 2 && soll.length % spalten === letzteSpalte) { bisNaechste = 1; return; }
+      if (bisNaechste === 0 && k < liste.length) {
+        letzteSpalte = soll.length % spalten;
         soll.push(karte(liste[(start + k) % liste.length]));
         k++;
+        bisNaechste = gaps[k] || 2;
       }
     });
     const ist = kinder.filter((c) => soll.includes(c) || c.hasAttribute("data-lexikon"));
@@ -149,8 +171,7 @@
     s.id = "lxr-style";
     s.textContent = `
       .lxr-cell{display:flex;flex-direction:column;min-width:0}
-      .lxr-tile{display:block;flex:1;border-radius:14px;transition:transform .2s,box-shadow .2s;text-decoration:none}
-      .lxr-tile:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(13,27,42,.18)}
+      .lxr-tile{display:block;flex:1;border-radius:12px;text-decoration:none;color:inherit}
       .lxr-tile>.lxc{height:100%}
       .lxr-credit{margin:7px 2px 0;font-size:11px;line-height:1.4;color:#7a93ae}
       .lxr-credit a{color:inherit;text-decoration:underline}
