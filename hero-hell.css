@@ -1,0 +1,64 @@
+/* ══════════════════════════════════════════════════════════════════
+   1A Motor – Heller Kategorie-Hero auf suche.html (hero-hell.css)
+   v1 · 08.11.2026
+   Überschreibt den dunklen Hero (#se-cat-hero): heller Hintergrund,
+   dunkle Schrift, Foto wird nicht mehr abgedunkelt – nur ein weicher
+   Übergang ins Weiß. Gilt für alle Kategorien.
+
+   Einbinden in suche.html im <head>, NACH mobile.css:
+     <link rel="stylesheet" href="hero-hell.css?v=1" />
+   ══════════════════════════════════════════════════════════════════ */
+
+.se-cat-hero {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f6fd 100%);
+  border: 1px solid #e0e9f2;
+  box-shadow: 0 10px 32px rgba(13, 27, 42, 0.08);
+}
+.se-ch-media { background-color: #f0f6fd; }
+
+/* Weicher Übergang vom Text ins Foto – hell statt dunkel */
+.se-ch-fade {
+  background: linear-gradient(to right,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.55) 14%,
+    rgba(255, 255, 255, 0) 38%);
+}
+
+.se-ch-crumb, .se-ch-crumb a { color: #7a93ae; }
+.se-ch-crumb a:hover { color: #2176c7; }
+
+.se-ch-tag {
+  background: #e8f2fc;
+  border: 1px solid #b9d6f2;
+  color: #1a5fa8;
+}
+
+.se-ch-title { color: #0d1b2a; }
+.se-ch-sub { color: #4a6582; }
+
+.se-ch-badge {
+  color: #1b2d42;
+  background: #ffffff;
+  border: 1px solid #e0e9f2;
+  box-shadow: 0 1px 4px rgba(13, 27, 42, 0.05);
+}
+.se-ch-badge svg { color: #10b981; }
+
+.se-ch-cta {
+  background: linear-gradient(135deg, #1a5fa8, #2176c7);
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(26, 95, 168, 0.28);
+}
+.se-ch-cta:hover { background: linear-gradient(135deg, #1a5fa8, #2176c7); filter: brightness(1.06); }
+.se-ch-cta:focus-visible { outline-color: #2176c7; }
+
+.se-ch-meta { color: #7a93ae; }
+
+@media (max-width: 900px) {
+  /* Handy: Foto oben, kurzer heller Übergang nach unten zum Text */
+  .se-ch-fade {
+    background: linear-gradient(to top,
+      #ffffff 0%,
+      rgba(255, 255, 255, 0) 28%);
+  }
+}
