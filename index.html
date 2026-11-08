@@ -404,6 +404,9 @@
 
     .sidebar-list { display: flex; flex-direction: column; gap: 2px; }
     .cat-group-head { cursor: pointer; user-select: none; }
+    .cat-ico { width: 26px; height: 26px; flex-shrink: 0; display: grid; place-items: center; border-radius: 7px; background: var(--light); color: var(--blue); transition: background .12s, color .12s; }
+    .cat-ico svg { width: 15px; height: 15px; }
+    .cat-group-head:hover .cat-ico { background: var(--blue2); color: #fff; }
     .cat-sublist { display: flex; flex-direction: column; gap: 2px; }
     .sidebar-list label {
       display: flex; align-items: center; gap: 9px;
@@ -1462,7 +1465,7 @@
 
             <!-- Fahrzeugmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-fz')">
-              <span style="font-size:15px;">🚗</span>
+              <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);" data-i18n="idx.grp.fz">Fahrzeugmotoren</span>
               <span class="cat-count">–</span>
               <svg id="grp-fz-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1477,7 +1480,7 @@
 
             <!-- Bootsmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-boot')">
-              <span style="font-size:15px;">⛵</span>
+              <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 18H2a4 4 0 0 0 4 4h12a4 4 0 0 0 4-4Z"/><path d="M21 14 10 2 3 14h18Z"/><path d="M10 2v16"/></svg></span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);" data-i18n="idx.grp.boot">Bootsmotoren</span>
               <span class="cat-count">–</span>
               <svg id="grp-boot-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1491,7 +1494,7 @@
 
             <!-- Industriemotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-ind')">
-              <span style="font-size:15px;">🏭</span>
+              <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg></span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);" data-i18n="idx.grp.ind">Industriemotoren</span>
               <span class="cat-count">–</span>
               <svg id="grp-ind-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1507,7 +1510,7 @@
 
             <!-- Agrarmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-agr')">
-              <span style="font-size:15px;">🚜</span>
+              <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m10 11 11 .9a1 1 0 0 1 .8 1.1l-.665 4.158a1 1 0 0 1-.988.842H20"/><path d="M16 18h-5"/><path d="M18 5a1 1 0 0 0-1 1v5.573"/><path d="M3 4h8.129a1 1 0 0 1 .99.863L13 11.246"/><path d="M4 11V4"/><path d="M7 15h.01"/><path d="M8 10.1V4"/><circle cx="18" cy="18" r="2"/><circle cx="7" cy="15" r="5"/></svg></span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);" data-i18n="idx.grp.agr">Agrar- & Landmaschinen</span>
               <span class="cat-count">–</span>
               <svg id="grp-agr-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1521,7 +1524,7 @@
 
             <!-- Sondermotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-sond')">
-              <span style="font-size:15px;">⚙️</span>
+              <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);" data-i18n="idx.grp.sond">Spezial- & Sondermotoren</span>
               <span class="cat-count">–</span>
               <svg id="grp-sond-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1539,7 +1542,7 @@
 
             <!-- Motorrad -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-moto')">
-              <span style="font-size:15px;">🏍️</span>
+              <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);" data-i18n="idx.grp.moto">Motorrad & Zweirad</span>
               <span class="cat-count">–</span>
               <svg id="grp-moto-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1552,7 +1555,7 @@
 
             <!-- Austauschmotoren -->
             <label class="cat-group-head" onclick="sidebarToggleGroup('grp-aus')">
-              <span style="font-size:15px;">🔄</span>
+              <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></span>
               <span style="font-weight:700;font-size:13px;color:var(--dark);" data-i18n="idx.grp.aus">Austausch- & Reman</span>
               <span class="cat-count">–</span>
               <svg id="grp-aus-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:auto;flex-shrink:0;transition:transform .2s;"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1572,12 +1575,12 @@
         <div class="sidebar-title" onclick="sidebarToggle(this)" data-i18n="idx.side.fuel">Kraftstoff / Antrieb</div>
         <div class="sidebar-body">
           <div class="sidebar-list">
-            <label><input type="checkbox" name="fuel" value="Diesel"> 🛢 <span data-i18n="idx.fuel.diesel">Diesel</span></label>
-            <label><input type="checkbox" name="fuel" value="Benzin"> ⛽ <span data-i18n="idx.fuel.benzin">Benzin</span></label>
-            <label><input type="checkbox" name="fuel" value="Elektrisch"> ⚡ <span data-i18n="idx.fuel.elektro">Elektrisch</span></label>
-            <label><input type="checkbox" name="fuel" value="Gas LPG"> 🔵 <span data-i18n="idx.fuel.gas">Gas (LPG/CNG)</span></label>
-            <label><input type="checkbox" name="fuel" value="Hybrid"> 🔋 <span data-i18n="idx.fuel.hybrid">Hybrid</span></label>
-            <label><input type="checkbox" name="fuel" value="Wasserstoff"> 💧 <span data-i18n="idx.fuel.h2">Wasserstoff</span></label>
+            <label><input type="checkbox" name="fuel" value="Diesel"> <span data-i18n="idx.fuel.diesel">Diesel</span></label>
+            <label><input type="checkbox" name="fuel" value="Benzin"> <span data-i18n="idx.fuel.benzin">Benzin</span></label>
+            <label><input type="checkbox" name="fuel" value="Elektrisch"> <span data-i18n="idx.fuel.elektro">Elektrisch</span></label>
+            <label><input type="checkbox" name="fuel" value="Gas LPG"> <span data-i18n="idx.fuel.gas">Gas (LPG/CNG)</span></label>
+            <label><input type="checkbox" name="fuel" value="Hybrid"> <span data-i18n="idx.fuel.hybrid">Hybrid</span></label>
+            <label><input type="checkbox" name="fuel" value="Wasserstoff"> <span data-i18n="idx.fuel.h2">Wasserstoff</span></label>
           </div>
         </div>
       </div>
@@ -1588,10 +1591,10 @@
         <div class="sidebar-body">
           <div class="sidebar-list">
             <label><input type="radio" name="cond" value=""> <span data-i18n="idx.cond.all">Alle Zustände</span></label>
-            <label><input type="radio" name="cond" value="Neu"> ✨ <span data-i18n="idx.cond.new">Neu</span></label>
-            <label><input type="radio" name="cond" value="Gebraucht"> 🔧 <span data-i18n="idx.cond.used">Gebraucht</span></label>
-            <label><input type="radio" name="cond" value="Generalüberholt"> 🔄 <span data-i18n="idx.cond.reman">Generalüberholt</span></label>
-            <label><input type="radio" name="cond" value="Defekt"> ⚠️ <span data-i18n="idx.cond.defect">Defekt / Teile</span></label>
+            <label><input type="radio" name="cond" value="Neu"> <span data-i18n="idx.cond.new">Neu</span></label>
+            <label><input type="radio" name="cond" value="Gebraucht"> <span data-i18n="idx.cond.used">Gebraucht</span></label>
+            <label><input type="radio" name="cond" value="Generalüberholt"> <span data-i18n="idx.cond.reman">Generalüberholt</span></label>
+            <label><input type="radio" name="cond" value="Defekt"> <span data-i18n="idx.cond.defect">Defekt / Teile</span></label>
           </div>
         </div>
       </div>
@@ -1613,10 +1616,10 @@
         <div class="sidebar-title" onclick="sidebarToggle(this)" data-i18n="idx.side.seller">Anbieter</div>
         <div class="sidebar-body">
           <div class="sidebar-list">
-            <label><input type="checkbox" name="seller" value="verified"> ✅ <span data-i18n="idx.sel.verified">Geprüfte Händler</span></label>
-            <label><input type="checkbox" name="seller" value="top"> ⭐ <span data-i18n="idx.sel.top">Top-Bewertung</span></label>
-            <label><input type="checkbox" name="seller" value="commercial"> 🏢 <span data-i18n="idx.sel.commercial">Gewerblich</span></label>
-            <label><input type="checkbox" name="seller" value="private"> 👤 <span data-i18n="idx.sel.private">Privat</span></label>
+            <label><input type="checkbox" name="seller" value="verified"> <span data-i18n="idx.sel.verified">Geprüfte Händler</span></label>
+            <label><input type="checkbox" name="seller" value="top"> <span data-i18n="idx.sel.top">Top-Bewertung</span></label>
+            <label><input type="checkbox" name="seller" value="commercial"> <span data-i18n="idx.sel.commercial">Gewerblich</span></label>
+            <label><input type="checkbox" name="seller" value="private"> <span data-i18n="idx.sel.private">Privat</span></label>
           </div>
         </div>
       </div>
@@ -1632,7 +1635,7 @@
              data-full-width-responsive="true"></ins>
         <script type="text/plain" data-cookiecategory="marketing">(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <div id="adsense-placeholder" style="background:linear-gradient(135deg,#f0f4f8,#e8eef5);border:1.5px dashed #c8d6e5;border-radius:10px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;">
-          <div style="font-size:28px;">📢</div>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
           <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.07em;" data-i18n="idx.ad.label">Werbung</div>
           <div style="font-size:11px;color:#94a3b8;line-height:1.5;" data-i18n-html="idx.ad.pending">Google AdSense<br>erscheint nach Freischaltung</div>
           <a href="kontakt.html" style="margin-top:6px;font-size:11px;font-weight:600;color:#3b82f6;text-decoration:none;background:rgba(59,130,246,.08);padding:5px 12px;border-radius:999px;border:1px solid rgba(59,130,246,.2);" data-i18n="idx.ad.cta">Direkt hier werben →</a>
