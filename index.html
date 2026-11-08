@@ -1635,6 +1635,73 @@
           <a href="kontakt.html" style="margin-top:6px;font-size:11px;font-weight:600;color:#3b82f6;text-decoration:none;background:rgba(59,130,246,.08);padding:5px 12px;border-radius:999px;border:1px solid rgba(59,130,246,.2);" data-i18n="idx.ad.cta">Direkt hier werben →</a>
         </div>
       </div>
+
+    </div><!-- /sidebar-inner -->
+  </aside>
+
+  <!-- Content -->
+  <div class="content-area">
+
+    <!-- Burger / Filter-Toggle (Mobile) -->
+    <button class="mob-filter-btn" id="mob-filter-btn" onclick="toggleSidebar()">
+      <div class="burger-icon">
+        <span></span><span></span><span></span>
+      </div>
+      <span id="mob-filter-label" data-i18n="idx.mobfilter">Filter &amp; Kategorien</span>
+    </button>
+
+    <!-- Anzeigen Panel -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 data-i18n="listings.title">Aktuelle Angebote</h2>
+          <p id="home-results-info" data-i18n="idx.list.loading">Angebote werden geladen…</p>
+        </div>
+        <div class="panel-head-right">
+          <select class="sort-sel" id="home-sort-select">
+            <option value="latest" data-i18n="listings.newest">Neueste zuerst</option>
+            <option value="price_asc" data-i18n="listings.cheapest">Preis ↑</option>
+            <option value="price_desc" data-i18n="listings.dearest">Preis ↓</option>
+          </select>
+          <a href="suche.html" class="view-all-link" data-i18n="listings.all">Alle ansehen →</a>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="listing-grid" id="home-listing-grid">
+          <div class="empty-box" data-i18n="idx.list.loading">Angebote werden geladen…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-panel">
+
+      <!-- Hero mit Foto rechts -->
+      <div class="faq-hero">
+        <div class="faq-hero-photo"></div>
+        <div class="faq-hero-content">
+          <div class="faq-hero-label" data-i18n="idx.faq.label">Häufige Fragen</div>
+          <h2 data-i18n-html="idx.faq.h2">Alles über <span>gebrauchte &amp;<br>generalüberholte</span> Motoren</h2>
+          <p class="faq-hero-sub" data-i18n="idx.faq.sub">Antworten auf die wichtigsten Fragen rund um Kauf, Einbau und Betrieb.</p>
+          <div class="faq-ad-slot">
+            <span class="faq-ad-tag" data-i18n="idx.ad.badge">Anzeige</span>
+            <!-- Echtes AdSense-Ad-Unit: sobald in AdSense ein eigener Anzeigenblock
+                 für diese Fläche angelegt wurde, data-ad-slot mit der echten ID ersetzen. -->
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; min-height:58px;"
+                 data-ad-client="ca-pub-4690558719999917"
+                 data-ad-slot="6813860288"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+            <script type="text/plain" data-cookiecategory="marketing">(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <div class="faq-ad-placeholder">
+              <span class="faq-ad-placeholder-icon">📢</span>
+              <div class="faq-ad-placeholder-text">
+                <strong data-i18n="idx.ad.space">Werbefläche</strong>
+                <span data-i18n="idx.ad.spacesub">Hier könnte Ihre Anzeige stehen</span>
+              </div>
+              <a href="kontakt.html" class="faq-ad-placeholder-cta" data-i18n="idx.ad.spacecta">Jetzt hier werben →</a>
+            </div>
           </div>
         </div>
       </div>
