@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [
+    "/robots.txt",
+    "/favicon.ico",
+    "/cdn-cgi/*",
+    "/*.js",
+    "/*.css",
+    "/*.png",
+    "/*.jpg",
+    "/*.jpeg",
+    "/*.webp",
+    "/*.svg",
+    "/*.gif",
+    "/*.ico",
+    "/*.woff2",
+    "/*.json",
+    "/*.webmanifest",
+    "/*.mp4"
+  ]
+}
