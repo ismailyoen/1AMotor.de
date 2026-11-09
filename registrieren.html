@@ -2,582 +2,326 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<link rel="icon" type="image/x-icon" href="favicon.ico" />
-<link rel="apple-touch-icon" href="favicon-192x192.png" />
-<meta name="description" content="Kostenlos registrieren auf 1A Motor – als Käufer Motoren finden oder als Händler Anzeigen schalten." />
-<meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://1amotor.de/registrieren.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Registrieren – 1A Motor</title>
+<meta name="description" content="Kostenlos registrieren auf 1A Motor – als Käufer Motoren finden oder als Verkäufer Anzeigen schalten. Keine Provision." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://1amotor.de/registrieren" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon-192x192.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="/kettensaege.webp" />
+<link rel="stylesheet" href="/mobile.css" />
 <style>
-:root {
-  --blue:   #1a5fa8;
-  --blue2:  #2176c7;
-  --sky:    #4da6ff;
-  --dark:   #0d1b2a;
-  --navy:   #1b2d42;
-  --white:  #ffffff;
-  --muted:  #7a93ae;
-  --border: #e0e9f2;
-  --bg:     #f4f7fb;
-  --r:      14px;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Outfit', Arial, sans-serif;
-  min-height: 100vh;
-  background: var(--dark);
-  background-image:
-    linear-gradient(135deg, rgba(7,21,36,.88) 0%, rgba(13,35,60,.80) 60%, rgba(22,50,80,.72) 100%),
-    url('hero-bg.png');
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px 40px;
-}
+  :root {
+    --ink: #0f1b2b; --ink2: #2b3a4f; --muted: #6b7d93; --line: #d6dee8;
+    --bg: #f4f7fb; --blue: #2f62a8; --blue-h: #27548f; --sky: #5aa0f2;
+    --navy: #1b2a3f; --navy2: #111b2b; --soft: #e9f0f9;
+    --ok: #16a34a; --err: #dc2626; --r: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body { font-family: 'Outfit', Arial, sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; }
 
-/* ── Header ── */
-.page-header {
-  width: 100%; max-width: 520px;
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 18px;
-}
-.logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
-.logo-mark {
-  width: 36px; height: 36px; border-radius: 9px;
-  background: linear-gradient(145deg, #1b2d42, #2a4a6b);
-  display: grid; place-items: center;
-  font-weight: 900; font-size: 14px; color: #fff;
-  font-family: 'Outfit', Arial, sans-serif;
-}
-.logo-name { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
-.header-link {
-  font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none;
-  transition: color .15s;
-}
-.header-link:hover { color: var(--sky); }
+  .auth { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
 
-/* ── Card ── */
-.auth-card {
-  width: 100%; max-width: 520px;
-  background: #fff;
-  border-radius: 22px;
-  overflow: hidden;
-  box-shadow: 0 32px 80px rgba(0,0,0,.45);
-}
+  /* ── Linke Seite: Foto + Text ── */
+  .side { position: relative; overflow: hidden; color: #fff; background: #111; display: flex; flex-direction: column; justify-content: flex-end; padding: 64px clamp(32px, 7vw, 100px) clamp(48px, 9vh, 96px); }
+  /* Kettensäge als Vollbild, dunkler Verlauf von unten nach oben */
+  .side-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% 50%; }
+  .side::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.72) 28%, rgba(0,0,0,.32) 52%, rgba(0,0,0,0) 72%),
+      linear-gradient(to bottom, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 18%); }
+  .side > *:not(.side-photo) { position: relative; z-index: 1; }
+  .side-logo { position: absolute !important; top: 32px; left: clamp(32px, 7vw, 100px); display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; letter-spacing: -.01em; color: #fff; }
+  .side-logo b { background: var(--blue); border-radius: 8px; padding: 3px 8px; font-size: 16px; }
+  .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sky); margin-bottom: 22px; }
+  .side h2 { font-size: clamp(32px, 3.4vw, 44px); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 30px; }
+  .checks { list-style: none; display: grid; gap: 16px; }
+  .checks li { display: flex; align-items: center; gap: 14px; font-size: 17px; color: #dbe4ef; }
+  .checks svg { flex: none; width: 20px; height: 20px; stroke: var(--sky); }
 
-/* ── Card Header (dark banner) ── */
-.card-header {
-  background: linear-gradient(135deg, #0d2040 0%, #1a3a6b 60%, #1e4a8a 100%);
-  padding: 26px 30px 24px;
-  position: relative;
-  overflow: hidden;
-  min-height: 130px;
-}
-.card-header::before {
-  /* subtle grid pattern */
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-.header-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(255,255,255,.15);
-  border: 1px solid rgba(255,255,255,.2);
-  padding: 4px 12px; border-radius: 999px;
-  font-size: 11px; font-weight: 700; color: rgba(255,255,255,.9);
-  letter-spacing: .06em; text-transform: uppercase;
-  margin-bottom: 12px; position: relative; z-index: 1;
-}
-.header-badge svg { width: 11px; height: 11px; stroke: rgba(255,255,255,.8); }
-.card-header h1 {
-  font-size: 30px; font-weight: 900; color: #fff;
-  letter-spacing: -.4px; line-height: 1.1; margin-bottom: 8px;
-  position: relative; z-index: 1;
-}
-.card-header p {
-  font-size: 13.5px; color: rgba(255,255,255,.65); line-height: 1.55;
-  max-width: 300px; position: relative; z-index: 1;
-}
+  /* ── Rechte Seite: Formular ── */
+  .main { display: flex; align-items: center; justify-content: center; padding: 56px 24px; }
+  .box { width: 100%; max-width: 440px; }
+  .box h1 { font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 22px; }
 
-/* Motor SVG illustration top-right */
-.header-illustration {
-  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-  opacity: .18; z-index: 0;
-}
-.header-illustration svg { width: 120px; height: 120px; }
+  .social { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .social.one { grid-template-columns: 1fr; }
+  .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; height: 48px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); font-weight: 700; font-size: 16px; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
+  .btn-social:hover { border-color: #b9c6d6; box-shadow: 0 2px 10px rgba(15,27,43,.06); }
+  .btn-social svg { width: 20px; height: 20px; }
+  .btn-social[hidden] { display: none; }
 
-/* ── Card Body ── */
-.card-body { padding: 26px 28px 24px; }
+  .divider { display: flex; align-items: center; gap: 14px; margin: 22px 0 18px; color: var(--muted); font-size: 15px; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #e1e7ef; }
 
-/* ── Type Toggle (new style) ── */
-.type-toggle {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; margin-bottom: 20px;
-}
-.type-btn {
-  display: flex; align-items: center; gap: 11px;
-  padding: 13px 14px; border-radius: 12px;
-  border: 1.5px solid var(--border);
-  background: #fafcff; cursor: pointer;
-  transition: border-color .15s, background .15s, box-shadow .15s;
-  text-align: left; font-family: inherit;
-  position: relative;
-}
-.type-btn:hover { border-color: #a8c8f0; background: #f0f7ff; }
-.type-btn.active {
-  border-color: var(--blue2);
-  background: #eff6ff;
-  box-shadow: 0 0 0 3px rgba(33,118,199,.1);
-}
-.type-btn-icon {
-  width: 38px; height: 38px; border-radius: 10px;
-  display: grid; place-items: center; flex-shrink: 0;
-}
-.type-btn.active .type-btn-icon { background: #dbeafe; }
-.type-btn:not(.active) .type-btn-icon { background: #f1f5f9; }
-.type-btn-icon svg { width: 20px; height: 20px; }
-.type-btn.active .type-btn-icon svg { stroke: var(--blue2); }
-.type-btn:not(.active) .type-btn-icon svg { stroke: #64748b; }
-.type-btn-text {}
-.type-btn-label { font-size: 13.5px; font-weight: 700; color: var(--dark); display: block; }
-.type-btn-sub   { font-size: 11.5px; color: var(--muted); display: block; margin-top: 1px; }
-.type-btn.active .type-btn-label { color: var(--blue2); }
+  .seg-label { font-size: 14px; font-weight: 700; color: var(--ink2); margin-bottom: 8px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 5px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); }
+  .seg button { height: 40px; border: 0; border-radius: 9px; background: transparent; font-weight: 700; font-size: 15px; color: var(--muted); transition: background .15s, color .15s; }
+  .seg button.active { background: var(--navy); color: #fff; }
+  .seg-hint { font-size: 13.5px; color: var(--muted); margin: 8px 2px 4px; min-height: 19px; }
 
-/* Checkmark badge */
-.type-check {
-  position: absolute; top: 9px; right: 9px;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--blue2);
-  display: none; align-items: center; justify-content: center;
-}
-.type-btn.active .type-check { display: flex; }
-.type-check svg { width: 11px; height: 11px; stroke: #fff; }
+  .field { margin-top: 16px; }
+  .field-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .field label { font-size: 14px; font-weight: 700; color: var(--ink2); }
+  .field-top a { font-size: 14px; font-weight: 600; color: var(--ink2); }
+  .field-top a:hover { color: var(--blue); }
+  .input-wrap { position: relative; }
+  .field input { width: 100%; height: 50px; padding: 0 16px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); font: inherit; font-size: 16px; color: var(--ink); outline: none; transition: border-color .15s, box-shadow .15s; }
+  .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(47,98,168,.12); }
+  .field input.has-eye { padding-right: 48px; }
+  .eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border: 0; background: none; color: #94a3b8; display: grid; place-items: center; border-radius: 8px; }
+  .eye:hover { color: var(--ink2); }
+  .eye svg { width: 20px; height: 20px; }
 
-/* Info boxes */
-.info-box {
-  border-radius: 10px; padding: 11px 14px;
-  margin-bottom: 18px; font-size: 13px; line-height: 1.5;
-  display: none; align-items: flex-start; gap: 8px;
-}
-.info-box.show { display: flex; }
-.info-box-buyer  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
-.info-box-seller { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
-.info-box svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+  .btn-primary { width: 100%; height: 54px; margin-top: 22px; border: 0; border-radius: var(--r); background: var(--blue); color: #fff; font-weight: 700; font-size: 18px; box-shadow: 0 10px 24px -10px rgba(47,98,168,.6); transition: background .15s, transform .05s; }
+  .btn-primary:hover { background: var(--blue-h); }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-primary:disabled { opacity: .7; cursor: default; }
 
-/* ── Form ── */
-.form-group { margin-bottom: 14px; }
-.form-label {
-  display: block; font-size: 13px; font-weight: 700;
-  color: #334155; margin-bottom: 6px;
-}
-.input-wrap { position: relative; }
-.input-wrap svg {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  width: 17px; height: 17px; stroke: #94a3b8; pointer-events: none;
-}
-.input-wrap input {
-  width: 100%; padding: 13px 14px 13px 42px;
-  border: 1.5px solid var(--border); border-radius: 11px;
-  font-size: 14px; font-family: inherit; color: var(--dark);
-  outline: none; transition: border-color .15s, box-shadow .15s;
-  background: #fafcff;
-}
-.input-wrap input:focus {
-  border-color: var(--blue2);
-  box-shadow: 0 0 0 3px rgba(33,118,199,.1);
-  background: #fff;
-}
-.input-wrap input::placeholder { color: #b0bfcc; }
+  .legal { font-size: 13px; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; }
+  .legal a { color: var(--ink2); text-decoration: underline; text-underline-offset: 2px; }
 
-/* Password toggle eye */
-.pw-eye {
-  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  cursor: pointer; background: none; border: none; padding: 0;
-  color: #94a3b8; display: flex; align-items: center;
-}
-.pw-eye svg { width: 18px; height: 18px; stroke: currentColor; }
-.pw-eye:hover { color: var(--blue2); }
+  .msg { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; text-align: center; }
+  .msg.error { display: block; background: #fef2f2; color: var(--err); border: 1px solid #fecaca; }
+  .msg.success { display: block; background: #f0fdf4; color: var(--ok); border: 1px solid #bbf7d0; }
 
-/* ── Submit ── */
-.submit-btn {
-  width: 100%; padding: 15px;
-  background: linear-gradient(135deg, var(--blue), var(--blue2));
-  color: #fff; border: none; border-radius: 12px;
-  font-size: 15.5px; font-weight: 800; font-family: inherit;
-  cursor: pointer; transition: opacity .15s, transform .12s;
-  margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 8px;
-  box-shadow: 0 6px 20px rgba(26,95,168,.35);
-}
-.submit-btn:hover  { opacity: .92; transform: translateY(-1px); }
-.submit-btn:active { transform: translateY(0); }
-.submit-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
-.submit-btn svg { width: 18px; height: 18px; stroke: #fff; }
+  .peek { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding: 14px 16px; background: var(--soft); border-radius: 14px; font-size: 15.5px; color: var(--ink2); }
+  .peek svg { width: 22px; height: 22px; stroke: var(--blue); flex: none; }
+  .peek a { margin-left: auto; background: var(--navy); color: #fff; font-weight: 700; font-size: 15px; padding: 9px 14px; border-radius: 9px; }
+  .peek a:hover { background: #0f1b2b; }
 
-/* ── Auth message ── */
-.auth-msg {
-  padding: 11px 14px; border-radius: 10px;
-  font-size: 13.5px; font-weight: 600; margin-top: 12px;
-  text-align: center; display: none;
-}
-.auth-msg.error   { display:block; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
-.auth-msg.success { display:block; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+  .switch { text-align: center; margin-top: 22px; font-size: 15.5px; color: var(--muted); }
+  .switch a { color: var(--blue); font-weight: 600; }
+  .switch a:hover { text-decoration: underline; }
 
-/* ── Divider ── */
-.divider {
-  display: flex; align-items: center; gap: 12px;
-  margin: 18px 0; color: var(--muted); font-size: 12.5px;
-}
-.divider::before, .divider::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
-
-/* ── Google Button ── */
-.google-btn {
-  width: 100%; padding: 13px 14px;
-  background: #fff; border: 1.5px solid var(--border);
-  border-radius: 12px; font-size: 14px; font-weight: 700;
-  font-family: inherit; cursor: pointer; color: var(--dark);
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  transition: background .15s, border-color .15s, box-shadow .15s;
-}
-.google-btn:hover {
-  background: #f8faff; border-color: #a8c8f0;
-  box-shadow: 0 2px 8px rgba(13,27,42,.08);
-}
-.google-icon { width: 20px; height: 20px; flex-shrink: 0; }
-
-/* ── Footer link ── */
-.extra {
-  text-align: center; font-size: 14px; color: var(--muted); margin-top: 18px;
-}
-.extra a { color: var(--blue2); font-weight: 700; text-decoration: none; }
-.extra a:hover { text-decoration: underline; }
-
-/* ── Page footer ── */
-footer {
-  text-align: center; padding: 16px 0 0;
-  font-size: 12px; color: rgba(255,255,255,.28);
-  width: 100%; max-width: 520px;
-}
-
-/* ── Responsive ── */
-@media (max-width: 560px) {
-  body { padding: 16px 12px 60px; justify-content: flex-start; }
-  .card-header { padding: 22px 22px 20px; min-height: 110px; }
-  .card-header h1 { font-size: 24px; }
-  .header-illustration { display: none; }
-  .card-body { padding: 20px 18px 20px; }
-  .type-btn { padding: 11px 12px; gap: 9px; }
-  .type-btn-label { font-size: 13px; }
-  .page-header { margin-bottom: 14px; }
-}
+  /* ── Handy / Tablet ── */
+  @media (max-width: 900px) {
+    .auth { grid-template-columns: 1fr; }
+    .side { min-height: 260px; padding: 76px 24px 28px; }
+    .side-photo { object-position: 62% 50%; }
+    .side::after { background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.45) 55%, rgba(0,0,0,.35) 100%); }
+    .side-logo { top: 22px; left: 24px; }
+    .eyebrow { margin-bottom: 10px; font-size: 12px; }
+    .side h2 { font-size: 30px; margin-bottom: 0; }
+    .checks { display: none; }
+    .main { padding: 30px 20px 36px; align-items: flex-start; }
+    .box h1 { font-size: 28px; }
+  }
+  @media (max-width: 380px) { .social { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<div class="page-header">
-  <a href="index.html" class="logo">
-    <div class="logo-mark">1A</div>
-    <span class="logo-name">Motor</span>
-  </a>
-  <a href="login.html" class="header-link">Bereits registriert? Einloggen →</a>
+<div class="auth">
+
+  <!-- ══ Links: Kettensäge + Vorteile ══ -->
+  <aside class="side">
+    <img class="side-photo" src="/kettensaege.webp" alt="" width="1400" height="1038" fetchpriority="high" />
+    <a class="side-logo" href="/"><b>1A</b> Motor</a>
+    <div class="eyebrow">1A Motor 2027</div>
+    <h2>Willkommen bei 1A&nbsp;Motor.</h2>
+    <ul class="checks">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>Kostenlos – keine Provision</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>Nachrichten und Angebote an einem Ort</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>Inserate und Bestand verwalten</li>
+    </ul>
+  </aside>
+
+  <!-- ══ Rechts: Formular ══ -->
+  <main class="main">
+    <div class="box">
+      <h1>Konto erstellen</h1>
+
+      <div class="social one" id="social">
+        <button type="button" class="btn-social" id="google-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 3.9 5.9 3.9 9.5s-1.3 6.8-3.9 9.5c-2.6-2.7-3.9-5.9-3.9-9.5S9.4 5.2 12 2.5z"/></svg>
+          Mit Google
+        </button>
+        <button type="button" class="btn-social" id="apple-btn" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="16.5" r="3.5"/><path d="M10 14 19 5M16 8l2.5 2.5M18.5 5.5 21 8"/></svg>
+          Mit Apple
+        </button>
+      </div>
+
+      <div class="divider">oder</div>
+
+      <form id="register-form" novalidate>
+        <div class="seg-label">Ich möchte</div>
+        <div class="seg" role="tablist">
+          <button type="button" id="btn-buyer" class="active">Kaufen</button>
+          <button type="button" id="btn-seller">Verkaufen</button>
+        </div>
+        <input type="hidden" id="account-type" value="Käufer" />
+        <p class="seg-hint" id="type-hint">Motoren suchen, Händler anschreiben, Favoriten speichern.</p>
+
+        <div class="field">
+          <div class="field-top"><label for="reg-name">Vor- und Nachname</label></div>
+          <input type="text" id="reg-name" autocomplete="name" required />
+        </div>
+
+        <div class="field">
+          <div class="field-top"><label for="reg-email">E-Mail</label></div>
+          <input type="email" id="reg-email" autocomplete="email" required />
+        </div>
+
+        <div class="field">
+          <div class="field-top"><label for="reg-password">Passwort</label></div>
+          <div class="input-wrap">
+            <input type="password" id="reg-password" class="has-eye" autocomplete="new-password" placeholder="Mindestens 6 Zeichen" required />
+            <button type="button" class="eye" data-eye="reg-password" aria-label="Passwort anzeigen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-top"><label for="reg-password2">Passwort wiederholen</label></div>
+          <div class="input-wrap">
+            <input type="password" id="reg-password2" class="has-eye" autocomplete="new-password" required />
+            <button type="button" class="eye" data-eye="reg-password2" aria-label="Passwort anzeigen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="reg-btn">Konto erstellen</button>
+        <p class="legal">Mit der Registrierung akzeptierst du unsere <a href="/agb">AGB</a> und die <a href="/datenschutz">Datenschutzerklärung</a>.</p>
+        <div class="msg" id="reg-msg" role="status"></div>
+      </form>
+
+      <div class="peek">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4M5.3 5.3l2.8 2.8M15.9 15.9l2.8 2.8M5.3 18.7l2.8-2.8M15.9 8.1l2.8-2.8"/></svg>
+        Nur mal reinschauen?
+        <a href="/suche">Ohne Konto stöbern</a>
+      </div>
+
+      <p class="switch">Schon ein Konto? <a href="/login">Anmelden</a></p>
+    </div>
+  </main>
 </div>
-
-<div class="auth-card">
-
-  <!-- Dark Header Banner -->
-  <div class="card-header">
-    <div class="header-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-      Kostenlos &amp; Sicher
-    </div>
-    <h1>Konto erstellen</h1>
-    <p>Registriere dich kostenlos auf 1A Motor und werde Teil des größten Motoren-Marktplatzes in Deutschland.</p>
-
-    <!-- Motor SVG Illustration -->
-    <div class="header-illustration">
-      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="20" y="35" width="80" height="50" rx="6" stroke="white" stroke-width="1.5" fill="none"/>
-        <rect x="30" y="45" width="22" height="22" rx="3" stroke="white" stroke-width="1.2" fill="none"/>
-        <rect x="68" y="45" width="22" height="22" rx="3" stroke="white" stroke-width="1.2" fill="none"/>
-        <line x1="52" y1="56" x2="68" y2="56" stroke="white" stroke-width="1.2"/>
-        <line x1="20" y1="56" x2="8" y2="56" stroke="white" stroke-width="3" stroke-linecap="round"/>
-        <line x1="100" y1="56" x2="112" y2="56" stroke="white" stroke-width="3" stroke-linecap="round"/>
-        <rect x="44" y="22" width="32" height="13" rx="3" stroke="white" stroke-width="1.2" fill="none"/>
-        <rect x="44" y="85" width="32" height="13" rx="3" stroke="white" stroke-width="1.2" fill="none"/>
-        <circle cx="41" cy="56" r="8" stroke="white" stroke-width="1.2" fill="none"/>
-        <circle cx="79" cy="56" r="8" stroke="white" stroke-width="1.2" fill="none"/>
-        <circle cx="41" cy="56" r="3" stroke="white" stroke-width="1" fill="none"/>
-        <circle cx="79" cy="56" r="3" stroke="white" stroke-width="1" fill="none"/>
-        <line x1="52" y1="28.5" x2="68" y2="28.5" stroke="white" stroke-width="1"/>
-        <line x1="52" y1="91.5" x2="68" y2="91.5" stroke="white" stroke-width="1"/>
-      </svg>
-    </div>
-  </div>
-
-  <!-- Form Body -->
-  <div class="card-body">
-
-    <!-- Typ-Toggle -->
-    <div class="type-toggle">
-
-      <button class="type-btn active" id="btn-buyer" type="button">
-        <div class="type-btn-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <div class="type-btn-text">
-          <span class="type-btn-label">Privat &amp; Käufer</span>
-          <span class="type-btn-sub">Motoren suchen &amp; kaufen</span>
-        </div>
-        <div class="type-check">
-          <svg viewBox="0 0 14 14" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2.5 7l3 3 6-6"/>
-          </svg>
-        </div>
-      </button>
-
-      <button class="type-btn" id="btn-seller" type="button">
-        <div class="type-btn-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-        </div>
-        <div class="type-btn-text">
-          <span class="type-btn-label">Händler</span>
-          <span class="type-btn-sub">Inserate verwalten &amp; verkaufen</span>
-        </div>
-        <div class="type-check">
-          <svg viewBox="0 0 14 14" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2.5 7l3 3 6-6"/>
-          </svg>
-        </div>
-      </button>
-
-    </div>
-
-    <!-- Info Boxes -->
-    <div class="info-box info-box-buyer show" id="buyer-info">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-        <polyline points="22 4 12 14.01 9 11.01"/>
-      </svg>
-      Als Käufer kannst du sofort Motoren suchen, Händler kontaktieren und Favoriten speichern.
-    </div>
-    <div class="info-box info-box-seller" id="seller-info">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      Als Händler kannst du Anzeigen erstellen, Anfragen verwalten und dein Profil pflegen.
-    </div>
-
-    <input type="hidden" id="account-type" value="Käufer" />
-
-    <!-- Form -->
-    <form id="register-form">
-
-      <div class="form-group">
-        <label class="form-label">Vor- und Nachname</label>
-        <div class="input-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-          <input type="text" id="reg-name" placeholder="Max Mustermann" required autocomplete="name" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">E-Mail-Adresse</label>
-        <div class="input-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
-          <input type="email" id="reg-email" placeholder="deine@email.de" required autocomplete="email" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Passwort</label>
-        <div class="input-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
-          <input type="password" id="reg-password" placeholder="Mindestens 6 Zeichen" required autocomplete="new-password" />
-          <button type="button" class="pw-eye" onclick="togglePw('reg-password',this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Passwort bestätigen</label>
-        <div class="input-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
-          <input type="password" id="reg-password2" placeholder="Passwort wiederholen" required autocomplete="new-password" />
-          <button type="button" class="pw-eye" onclick="togglePw('reg-password2',this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <button type="submit" class="submit-btn" id="reg-btn">
-        Konto erstellen
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </button>
-
-      <div class="auth-msg" id="reg-msg"></div>
-    </form>
-
-    <div class="divider">oder</div>
-
-    <!-- Google Button -->
-    <button class="google-btn" type="button" id="google-btn">
-      <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-      </svg>
-      Mit Google fortfahren
-    </button>
-
-    <div class="extra">Bereits ein Konto? <a href="login.html">Einloggen</a></div>
-
-  </div>
-</div>
-
-<footer>© 2026 1A Motor – Motorenmarktplatz Deutschland</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+<script src="/supabase.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+(async function () {
+  const $ = (id) => document.getElementById(id);
+  const form = $("register-form"), regBtn = $("reg-btn"), regMsg = $("reg-msg");
+  const accountType = $("account-type"), btnBuyer = $("btn-buyer"), btnSeller = $("btn-seller"), hint = $("type-hint");
 
-  // Bereits eingeloggt?
-  const { data } = await supabaseClient.auth.getSession();
-  if (data?.session?.user) { window.location.href = "dashboard.html"; return; }
+  function showMsg(text, type) { regMsg.className = "msg " + type; regMsg.textContent = text; }
 
-  const btnBuyer    = document.getElementById("btn-buyer");
-  const btnSeller   = document.getElementById("btn-seller");
-  const accountType = document.getElementById("account-type");
-  const buyerInfo   = document.getElementById("buyer-info");
-  const sellerInfo  = document.getElementById("seller-info");
-
+  // ── Kontotyp: Käufer / Verkäufer (?typ=kaeufer|verkaeufer, alt: ?type=dealer)
+  const HINTS = {
+    "Käufer":    "Motoren suchen, Händler anschreiben, Favoriten speichern.",
+    "Verkäufer": "Anzeigen erstellen, Anfragen beantworten, Bestand verwalten."
+  };
   function setType(type) {
-    const isDealer = type === "Händler";
-    btnSeller.classList.toggle("active",  isDealer);
-    btnBuyer.classList.toggle("active",  !isDealer);
-    accountType.value = type;
-    sellerInfo.classList.toggle("show",  isDealer);
-    buyerInfo.classList.toggle("show",  !isDealer);
+    const seller = type === "Verkäufer";
+    btnSeller.classList.toggle("active", seller);
+    btnBuyer.classList.toggle("active", !seller);
+    accountType.value = seller ? "Verkäufer" : "Käufer";
+    hint.textContent = HINTS[accountType.value];
   }
+  const p = new URLSearchParams(location.search);
+  const typ = (p.get("typ") || p.get("type") || "").toLowerCase();
+  setType(["verkaeufer", "verkäufer", "seller", "dealer", "haendler", "händler"].includes(typ) ? "Verkäufer" : "Käufer");
+  btnBuyer.addEventListener("click", () => setType("Käufer"));
+  btnSeller.addEventListener("click", () => setType("Verkäufer"));
 
-  // URL-Parameter: ?type=dealer → Händler vorauswählen
-  const urlParams = new URLSearchParams(window.location.search);
-  setType(urlParams.get("type") === "dealer" ? "Händler" : "Käufer");
-
-  btnBuyer.addEventListener("click",  () => setType("Käufer"));
-  btnSeller.addEventListener("click", () => setType("Händler"));
-
-  // Passwort anzeigen/verbergen
-  window.togglePw = function(id, btn) {
-    const inp = document.getElementById(id);
+  // ── Passwort anzeigen/verbergen
+  document.querySelectorAll("[data-eye]").forEach((btn) => btn.addEventListener("click", () => {
+    const inp = $(btn.dataset.eye);
     const show = inp.type === "password";
     inp.type = show ? "text" : "password";
-    btn.style.color = show ? "var(--blue2)" : "#94a3b8";
-  };
+    btn.style.color = show ? "var(--blue)" : "";
+  }));
 
-  // Google Login
-  document.getElementById("google-btn").addEventListener("click", async () => {
+  if (typeof supabaseClient === "undefined") return;
+
+  // ── Bereits eingeloggt? → Dashboard
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data?.session?.user) { location.href = "/dashboard"; return; }
+  } catch (e) {}
+
+  // ── Social Login: Apple nur zeigen, wenn in Supabase aktiviert
+  try {
+    const r = await fetch(SUPABASE_URL + "/auth/v1/settings", { headers: { apikey: SUPABASE_KEY } });
+    const ext = (await r.json()).external || {};
+    if (ext.apple) { $("apple-btn").hidden = false; $("social").classList.remove("one"); }
+    if (ext.google === false) $("google-btn").hidden = true;
+  } catch (e) {}
+
+  async function oauth(provider) {
     const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin + "/dashboard.html" }
+      provider, options: { redirectTo: location.origin + "/dashboard.html" }
     });
-    if (error) showMsg("Google-Login fehlgeschlagen: " + error.message, "error");
-  });
-
-  // Formular
-  const form   = document.getElementById("register-form");
-  const regBtn = document.getElementById("reg-btn");
-  const regMsg = document.getElementById("reg-msg");
-
-  function showMsg(text, type) {
-    regMsg.className = "auth-msg " + type;
-    regMsg.textContent = text;
+    if (error) showMsg("Anmeldung fehlgeschlagen: " + error.message, "error");
   }
+  $("google-btn").addEventListener("click", () => oauth("google"));
+  $("apple-btn").addEventListener("click", () => oauth("apple"));
 
+  // ── Registrierung
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name      = document.getElementById("reg-name").value.trim();
-    const email     = document.getElementById("reg-email").value.trim();
-    const password  = document.getElementById("reg-password").value;
-    const password2 = document.getElementById("reg-password2").value;
-    const role      = accountType.value === "Händler" ? "seller" : "buyer";
+    const name      = $("reg-name").value.trim();
+    const email     = $("reg-email").value.trim();
+    const password  = $("reg-password").value;
+    const password2 = $("reg-password2").value;
+    const isSeller  = accountType.value === "Verkäufer";
+    const role      = isSeller ? "seller" : "buyer";
 
-    if (!name || !email || !password)  { showMsg("Bitte alle Felder ausfüllen.", "error"); return; }
-    if (password.length < 6)           { showMsg("Passwort muss mindestens 6 Zeichen haben.", "error"); return; }
-    if (password !== password2)        { showMsg("Die Passwörter stimmen nicht überein.", "error"); return; }
+    if (!name || !email || !password) { showMsg("Bitte alle Felder ausfüllen.", "error"); return; }
+    if (password.length < 6)          { showMsg("Passwort muss mindestens 6 Zeichen haben.", "error"); return; }
+    if (password !== password2)       { showMsg("Die Passwörter stimmen nicht überein.", "error"); return; }
 
-    regBtn.disabled = true;
-    regBtn.innerHTML = 'Wird registriert…';
+    regBtn.disabled = true; regBtn.textContent = "Wird registriert …";
 
     // 1. Registrieren
     const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-      email, password,
-      options: { data: { full_name: name, role } }
+      email, password, options: { data: { full_name: name, role } }
     });
-
     if (signUpError) {
       let msg = signUpError.message;
-      if (msg.includes("already registered")) msg = "Diese E-Mail ist bereits registriert.";
+      if (/already registered/i.test(msg)) msg = "Diese E-Mail ist bereits registriert.";
       showMsg("Fehler: " + msg, "error");
-      regBtn.disabled = false;
-      regBtn.innerHTML = 'Konto erstellen <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+      regBtn.disabled = false; regBtn.textContent = "Konto erstellen";
       return;
     }
 
-    // 2. Einloggen
-    const { data: loginData } = await supabaseClient.auth.signInWithPassword({ email, password });
-    const user = loginData?.user || signUpData?.user;
-
-    // 3. Seller Profile anlegen
-    if (role === "seller" && user) {
-      await supabaseClient.from("seller_profiles").upsert([{
-        user_id: user.id, company_name: name, email, city: "", country: "DE"
-      }], { onConflict: "user_id" });
+    // 2. Einloggen (falls signUp noch keine Sitzung geliefert hat)
+    let user = signUpData?.session?.user || null;
+    if (!user) {
+      const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (loginError) {
+        showMsg("Registriert! Bitte bestätige deine E-Mail und melde dich dann an.", "success");
+        setTimeout(() => { location.href = "/login"; }, 2500);
+        return;
+      }
+      user = loginData?.user || null;
     }
 
-    showMsg("✅ Registrierung erfolgreich! Du wirst weitergeleitet...", "success");
-    setTimeout(() => {
-      window.location.href = role === "seller" ? "dashboard.html" : "index.html";
-    }, 1400);
+    // 3. Anbieterprofil für alle anlegen – jeder darf inserieren
+    if (user) {
+      const { error: profileError } = await supabaseClient.from("seller_profiles").upsert([{
+        user_id: user.id, company_name: name, email, city: "", country: "DE"
+      }], { onConflict: "user_id" });
+      if (profileError) console.warn("Profil wird beim ersten Inserat angelegt:", profileError);
+    }
+
+    showMsg("✅ Registrierung erfolgreich! Du wirst weitergeleitet …", "success");
+    // Verkäufer direkt zum ersten Inserat, Käufer ins Dashboard
+    setTimeout(() => { location.href = isSeller ? "/anzeige-erstellen" : "/dashboard"; }, 1400);
   });
-});
+})();
 </script>
-<script src="mobile.js" defer></script>
+<script src="/mobile.js"></script>
 </body>
 </html>
