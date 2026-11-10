@@ -1,6 +1,10 @@
-/* lexikon-card.js v3 – 1A Motor Motorenlexikon
+/* lexikon-card.js v4 – 1A Motor Motorenlexikon
    Gemeinsame Lexikon-Karte. Seit v3 im hellen INSERAT-LOOK (weiß, wie die
    Inseratkarten auf der Startseite) statt dunkelblauer Datenkarte.
+   v4: zeigt das vom Bildschneider-Roboter bearbeitete Foto (bild_frei_url),
+       sobald es auf bilder-pruefen.html übernommen wurde – sonst das Original.
+       Bildnachweis steckt hinter einem kleinen ⓘ-Knopf unten links im Bild
+       (Klick öffnet/schließt ihn). Funktioniert auch innerhalb von Links.
    Genutzt von: motoren-lexikon.html, motor-info.html, lexikon-admin.html,
    lexikon-raster.js (Startseite + Suche).
    size: "klein" = Karte im Raster (wie ein Inserat)
@@ -20,6 +24,7 @@
     motor: '<path d="M4 9h3l2-2h6v3h2l1-1h2v7h-2l-1-1h-2v3H9l-2-2H4zM4 9v8M10 7V5h4v2"/>',
   };
   var BUCH = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h5"/></svg>';
+  var INFO = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>';
   var PFEIL = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
   function gruppe(kat) {
@@ -91,19 +96,24 @@
     return t.slice(0, 2).join(" · ") || "Produktinformation";
   }
 
+  /* Bearbeitetes Foto (übernommen) hat Vorrang vor dem Original */
+  function foto(e) { return (e && (e.bild_frei_url || e.bild_url)) || ""; }
+
   function fotoStil(e) {
-    return e.bild_url ? ' style="background-image:url(\'' + encodeURI(e.bild_url).replace(/'/g, "%27") + '\')"' : "";
+    var f = foto(e);
+    return f ? ' style="background-image:url(\'' + encodeURI(f).replace(/'/g, "%27") + '\')"' : "";
   }
 
   function renderKlein(e) {
     var langTitel = titel(e) + (e.kraftstoff ? " – " + e.kraftstoff : "") + (e.motorcode && e.motorcode !== e.modell ? " – Motorcode " + e.motorcode : "");
     var meta = [e.hersteller, e.motorcode, e.baujahre].filter(Boolean).slice(0, 3);
     return '' +
-      '<div class="lxc lxc-klein' + (e.bild_url ? " lxc-mitfoto" : "") + '">' +
-        '<div class="lxc-img"' + fotoStil(e) + (e.bild_url ? ' role="img" aria-label="' + esc(titel(e)) + '"' : "") + '>' +
+      '<div class="lxc lxc-klein' + (foto(e) ? " lxc-mitfoto" : "") + '">' +
+        '<div class="lxc-img"' + fotoStil(e) + '>' +
+          (foto(e) ? '<span class="lxc-alt" role="img" aria-label="' + esc(titel(e)) + '"></span>' : "") +
           (e.kategorie ? '<span class="lxc-badge">' + esc(e.kategorie) + '</span>' : "") +
           '<span class="lxc-book" title="Motorenlexikon">' + BUCH + '</span>' +
-          (e.bild_url ? "" : '<span class="lxc-ico">' + icon(e.kategorie, 54) + '</span>') +
+          (foto(e) ? quelle(e) : '<span class="lxc-ico">' + icon(e.kategorie, 54) + '</span>') +
         '</div>' +
         '<div class="lxc-body">' +
           '<div class="lxc-title">' + esc(langTitel) + '</div>' +
@@ -119,11 +129,12 @@
     var k = kennzahlen(e);
     var chips = [e.kategorie, e.kraftstoff, e.motorcode ? "Motorcode " + e.motorcode : null].filter(Boolean);
     return '' +
-      '<div class="lxc lxc-gross' + (e.bild_url ? " lxc-mitfoto" : "") + '">' +
-        '<div class="lxc-img"' + fotoStil(e) + (e.bild_url ? ' role="img" aria-label="' + esc(titel(e)) + '"' : "") + '>' +
+      '<div class="lxc lxc-gross' + (foto(e) ? " lxc-mitfoto" : "") + '">' +
+        '<div class="lxc-img"' + fotoStil(e) + '>' +
+          (foto(e) ? '<span class="lxc-alt" role="img" aria-label="' + esc(titel(e)) + '"></span>' : "") +
           (e.kategorie ? '<span class="lxc-badge">' + esc(e.kategorie) + '</span>' : "") +
           '<span class="lxc-book" title="Motorenlexikon">' + BUCH + '</span>' +
-          (e.bild_url ? "" : '<span class="lxc-ico">' + icon(e.kategorie, 72) + '</span>') +
+          (foto(e) ? quelle(e) : '<span class="lxc-ico">' + icon(e.kategorie, 72) + '</span>') +
         '</div>' +
         '<div class="lxc-body">' +
           '<div class="lxc-maker">' + esc(e.hersteller || "") + '</div>' +
@@ -140,16 +151,31 @@
 
   function render(e, size) { return size === "klein" ? renderKlein(e) : renderGross(e); }
 
-  /* Pflichtangabe für freie Fotos: Urheber, Lizenz, Quelle */
-  function bildnachweis(e) {
+  /* Pflichtangabe für freie Fotos: Urheber, Lizenz, Quelle – und ob 1A Motor es bearbeitet hat.
+     link(href, text) baut den Link; in Karten (die selbst ein Link sind) als <span data-href>,
+     weil ein <a> in einem <a> die Karte zerreißen würde. */
+  function nachweis(e, link) {
     if (!e.bild_url) return "";
-    var lizenz = e.bild_lizenz_url
-      ? '<a href="' + esc(e.bild_lizenz_url) + '" target="_blank" rel="noopener nofollow">' + esc(e.bild_lizenz || "Lizenz") + '</a>'
-      : esc(e.bild_lizenz || "");
-    var quelle = e.bild_seite
-      ? '<a href="' + esc(e.bild_seite) + '" target="_blank" rel="noopener nofollow">Wikimedia Commons</a>'
-      : "Wikimedia Commons";
-    return 'Foto: ' + esc(e.bild_urheber || "unbekannt") + (lizenz ? ' · ' + lizenz : "") + ' · via ' + quelle;
+    var lizenz = e.bild_lizenz_url ? link(e.bild_lizenz_url, e.bild_lizenz || "Lizenz") : esc(e.bild_lizenz || "");
+    var commons = e.bild_seite ? link(e.bild_seite, "Wikimedia Commons") : "Wikimedia Commons";
+    return 'Foto: ' + esc(e.bild_urheber || "unbekannt") + (lizenz ? ' · ' + lizenz : "") + ' · via ' + commons +
+      (e.bild_frei_url ? '<br>Bearbeitet von 1A Motor: Ausschnitt, gespiegelt' : "");
+  }
+
+  function bildnachweis(e) {
+    return nachweis(e, function (href, text) {
+      return '<a href="' + esc(href) + '" target="_blank" rel="noopener nofollow">' + esc(text) + '</a>';
+    });
+  }
+
+  /* ⓘ-Knopf + aufklappbarer Bildnachweis, sitzt unten links im Foto */
+  function quelle(e) {
+    if (!e.bild_url) return "";
+    var text = nachweis(e, function (href, t) {
+      return '<span class="lxq-link" role="link" tabindex="0" data-href="' + esc(href) + '">' + esc(t) + '</span>';
+    });
+    return '<button type="button" class="lxq-btn" aria-expanded="false" aria-label="Bildquelle anzeigen" title="Bildquelle">' + INFO + '</button>' +
+      '<span class="lxq-panel" role="note">' + text + '</span>';
   }
 
   /* Gleiche Maße und Farben wie .listing-card auf der Startseite */
@@ -162,6 +188,7 @@
       'background:linear-gradient(135deg,#dce8f5,#f0f6fd) center/cover no-repeat;color:#7fa6cc}' +
     '.lxc-mitfoto .lxc-img{background-color:#e7eef6}' +
     '.lxc-ico{display:flex;opacity:.9}' +
+    '.lxc-alt{position:absolute;inset:0}' +
     '.lxc-badge{position:absolute;top:10px;left:10px;z-index:2;background:rgba(13,27,42,.72);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);' +
       'color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;max-width:calc(100% - 64px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
     '.lxc-book{position:absolute;top:10px;right:10px;z-index:2;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);' +
@@ -191,7 +218,18 @@
     '.lxc-empty{font-size:13px;color:#7a93ae;padding:6px 0 14px}' +
     /* Rahmen von lexikon-raster.js neutralisieren – die Karte bringt Schatten selbst mit */
     '.lxr-tile.lxr-tile,.lxr-tile.lxr-tile:hover{box-shadow:none;transform:none;border-radius:12px}' +
-    '.lx-tile.lx-tile:hover{transform:none}';
+    '.lx-tile.lx-tile:hover{transform:none}' +
+    /* ⓘ Bildquelle – unten links im Foto, Text erst nach Klick */
+    '.lxq-btn{position:absolute;left:10px;bottom:10px;z-index:3;width:28px;height:28px;padding:0;border-radius:50%;' +
+      'border:1px solid rgba(224,233,242,.9);background:rgba(255,255,255,.92);color:#1b2d42;display:grid;place-items:center;cursor:pointer;' +
+      'box-shadow:0 2px 8px rgba(13,27,42,.18);transition:background .15s,color .15s}' +
+    '.lxq-btn:hover,.lxq-offen>.lxq-btn{background:#1b2d42;color:#fff;border-color:#1b2d42}' +
+    '.lxq-btn:focus-visible,.lxq-link:focus-visible{outline:2px solid #4da6ff;outline-offset:2px}' +
+    '.lxq-panel{display:none;position:absolute;left:10px;right:10px;bottom:46px;z-index:3;padding:8px 11px;border-radius:9px;' +
+      'background:rgba(13,27,42,.9);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:#fff;' +
+      'font:500 11.5px/1.45 Outfit,Arial,sans-serif;text-align:left;word-break:break-word;cursor:default}' +
+    '.lxq-offen>.lxq-panel{display:block}' +
+    '.lxq-link{text-decoration:underline;cursor:pointer;color:#cfe4ff}';
 
   var alt = document.getElementById("lxc-css");
   if (alt) alt.remove();
@@ -200,5 +238,43 @@
   st.textContent = CSS;
   document.head.appendChild(st);
 
-  window.LexikonCard = { render: render, bildnachweis: bildnachweis, icon: icon, esc: esc, zahl: zahl, ps: ps, titel: titel, kennzahlen: kennzahlen, hauptwert: hauptwert };
+  /* Klicks auf ⓘ und auf die Quellen-Links: nie die Karte öffnen (Capture-Phase, vor dem Link) */
+  if (!window.__lxqKlick) {
+    window.__lxqKlick = true;
+    var schliessen = function (ausser) {
+      var offen = document.querySelectorAll(".lxq-offen");
+      for (var i = 0; i < offen.length; i++) {
+        if (offen[i] === ausser) continue;
+        offen[i].classList.remove("lxq-offen");
+        var b = offen[i].querySelector(".lxq-btn");
+        if (b) { b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-label", "Bildquelle anzeigen"); }
+      }
+    };
+    var oeffneLink = function (el) { window.open(el.getAttribute("data-href"), "_blank", "noopener"); };
+    document.addEventListener("click", function (ev) {
+      var t = ev.target && ev.target.closest ? ev.target : null;
+      if (!t) return;
+      var btn = t.closest(".lxq-btn");
+      if (btn) {
+        ev.preventDefault(); ev.stopPropagation();
+        var box = btn.parentElement, auf = !box.classList.contains("lxq-offen");
+        schliessen(box);
+        box.classList.toggle("lxq-offen", auf);
+        btn.setAttribute("aria-expanded", auf ? "true" : "false");
+        btn.setAttribute("aria-label", auf ? "Bildquelle schließen" : "Bildquelle anzeigen");
+        return;
+      }
+      var link = t.closest(".lxq-link");
+      if (link) { ev.preventDefault(); ev.stopPropagation(); oeffneLink(link); return; }
+      if (t.closest(".lxq-panel")) { ev.preventDefault(); ev.stopPropagation(); return; }
+      schliessen(null);
+    }, true);
+    document.addEventListener("keydown", function (ev) {
+      var link = ev.target && ev.target.closest && ev.target.closest(".lxq-link");
+      if (link && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); ev.stopPropagation(); oeffneLink(link); }
+      if (ev.key === "Escape") schliessen(null);
+    }, true);
+  }
+
+  window.LexikonCard = { render: render, bildnachweis: bildnachweis, quelle: quelle, foto: foto, icon: icon, esc: esc, zahl: zahl, ps: ps, titel: titel, kennzahlen: kennzahlen, hauptwert: hauptwert };
 })();

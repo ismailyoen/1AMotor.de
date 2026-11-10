@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════════════════════════════
-//  lexikon-raster.js  v3  —  1A Motor
+//  lexikon-raster.js  v4  —  1A Motor
 //  Mischt die Motorenlexikon-Karten (weißer Inserat-Look aus lexikon-card.js)
 //  zwischen die Inserate:
 //    • Startseite  (#home-listing-grid)
@@ -13,6 +13,11 @@
 //  • lädt lexikon-card.js mit eigenem Versionsschlüssel nach, damit alte,
 //    zwischengespeicherte (blaue) Karten im Browser nicht mehr auftauchen.
 //
+//  v4:
+//  • zeigt das bearbeitete Foto (bild_frei_url), sobald es übernommen wurde.
+//  • Bildnachweis nicht mehr unter der Karte, sondern hinter dem ⓘ im Foto
+//    (kommt aus lexikon-card.js v4).
+//
 //  Einbinden – jeweils GANZ UNTEN vor </body>:
 //    <script src="lexikon-raster.js?v=2" defer></script>   (bleibt so)
 // ══════════════════════════════════════════════════════════════════════════════
@@ -25,10 +30,10 @@
   ];
   const ABSTAND_MIN = 1;                     // mind. 1 Inserat zwischen Lexikon-Karten
   const ABSTAND_MAX = 3;                     // höchstens 3 → im Schnitt jede 3. Karte
-  const KARTEN_VERSION = "3";                // bei Änderungen an lexikon-card.js hochzählen
+  const KARTEN_VERSION = "4";                // bei Änderungen an lexikon-card.js hochzählen
   const DETAIL = "motor-info.html?m=";
   const FELDER = "slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm," +
-    "leistung_kw,drehmoment_nm,spannung_v,drehzahl,baujahre,bild_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite";
+    "leistung_kw,drehmoment_nm,spannung_v,drehzahl,baujahre,bild_url,bild_frei_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite";
 
   // ── Gleiches Misch-Prinzip wie index-live.js / suche.html (alle 20 Min neu) ──
   function rng(seed) {
@@ -60,7 +65,7 @@
 
   // ── lexikon-card.js in der aktuellen Version sicherstellen ──────────────────
   function ladeKarte() {
-    if (window.LexikonCard && window.LexikonCard.hauptwert) return Promise.resolve(true); // v3 schon da
+    if (window.LexikonCard && window.LexikonCard.quelle) return Promise.resolve(true); // v4 schon da
     return new Promise((ok) => {
       const s = document.createElement("script");
       s.src = "lexikon-card.js?v=" + KARTEN_VERSION + "-" + Math.floor(Date.now() / 864e5);
@@ -122,8 +127,7 @@
     n.className = "lxr-cell";
     n.setAttribute("data-lexikon", e.slug);
     n.innerHTML =
-      `<a class="lxr-tile" href="${DETAIL}${encodeURIComponent(e.slug)}">${L.render(e, "klein")}</a>` +
-      (e.bild_url && L.bildnachweis ? `<p class="lxr-credit">${L.bildnachweis(e)}</p>` : "");
+      `<a class="lxr-tile" href="${DETAIL}${encodeURIComponent(e.slug)}">${L.render(e, "klein")}</a>`;
     cache.set(e.slug, n);
     return n;
   }

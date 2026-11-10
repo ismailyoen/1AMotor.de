@@ -103,7 +103,7 @@
 <script src="cookie-consent.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="lexikon-card.js?v=3"></script>
+<script src="lexikon-card.js?v=4"></script>
 <script>
 (async function () {
   const $ = (s) => document.querySelector(s);
@@ -113,7 +113,7 @@
 
   const { data, error } = await supabaseClient
     .from("motor_lexikon")
-    .select("slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm,leistung_kw,drehmoment_nm,spannung_v,drehzahl,baujahre,bild_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite")
+    .select("slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm,leistung_kw,drehmoment_nm,spannung_v,drehzahl,baujahre,bild_url,bild_frei_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite")
     .eq("status", "veroeffentlicht")
     .order("hersteller", { ascending: true })
     .limit(2000);
@@ -160,8 +160,7 @@
       .sort(sortierer[sort] || sortierer.az);
     $("#info").textContent = `${treffer.length.toLocaleString("de-DE")} ${treffer.length === 1 ? "Motor" : "Motoren"} im Lexikon${kat ? " · " + kat : ""}`;
     $("#grid").innerHTML = treffer.length ? treffer.slice(0, sichtbar).map((e) => `<div class="cell">
-      <a class="tile lx-tile" href="motor-info.html?m=${encodeURIComponent(e.slug)}">${L.render(e, "klein")}</a>
-      ${e.bild_url ? `<p class="credit">${L.bildnachweis(e)}</p>` : ""}</div>`).join("")
+      <a class="tile lx-tile" href="motor-info.html?m=${encodeURIComponent(e.slug)}">${L.render(e, "klein")}</a></div>`).join("")
       : `<div class="empty">${alle.length ? "Nichts gefunden – probier einen anderen Suchbegriff." : "Das Lexikon wird gerade aufgebaut – schau bald wieder vorbei."}</div>`;
     $("#more").hidden = treffer.length <= sichtbar;
     const u = new URLSearchParams();
