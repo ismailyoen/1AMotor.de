@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Lexikon-Bilder prüfen | 1A Motor</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--dark:#0d1b2a;--navy:#1b2d42;--blue:#1a5fa8;--sky:#4da6ff;--muted:#7a93ae;--border:#e0e9f2;--bg:#f4f7fb;
+        --ok:#059669;--warn:#b45309;--danger:#b91c1c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Outfit,Arial,sans-serif;background:var(--bg);color:var(--dark);line-height:1.5}
+  a{color:var(--blue)}
+  .top{background:linear-gradient(145deg,#1b2d42,#2a4a6b);color:#fff;padding:18px 0}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800;font-size:18px}
+  .logo span{background:#fff;color:#1b2d42;border-radius:8px;padding:2px 8px}
+  .top small{color:rgba(255,255,255,.7);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55vw}
+  h1{font-size:26px;margin:26px 0 4px}
+  .sub{color:var(--muted);margin-bottom:20px;max-width:760px}
+  .btn{font:inherit;font-weight:700;border:none;border-radius:999px;padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-ok{background:var(--ok);color:#fff}
+  .btn-ghost{background:#eef3f9;color:var(--navy)}
+  .btn-danger{background:#fde8e8;color:var(--danger)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn svg{width:16px;height:16px;flex:none}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tab{font:inherit;font-weight:700;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--navy)}
+  .tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .tab b{display:inline-block;min-width:22px;margin-left:4px;padding:0 6px;border-radius:99px;background:rgba(127,147,174,.18);font-size:12px;text-align:center}
+  .tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;transition:opacity .2s}
+  .card.weg{opacity:.35;pointer-events:none}
+  .card h3{font-size:16px;line-height:1.3}
+  .meta{font-size:12.5px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .badge{font-size:11.5px;font-weight:700;border-radius:99px;padding:2px 9px;background:#eef1f5;color:#64748b}
+  .b-pub{background:#e7f8f1;color:#065f46}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pair.single{grid-template-columns:1fr}
+  .pane{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--border);cursor:zoom-in;background:#f4f7fb}
+  .pane img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .pane .lbl{position:absolute;left:8px;top:8px;font-size:11px;font-weight:700;background:rgba(13,27,42,.72);color:#fff;border-radius:6px;padding:1px 7px}
+  .actions{display:flex;gap:8px;margin-top:auto}
+  .actions .btn{flex:1}
+  .msg{font-size:13px;color:var(--danger);background:#fde8e8;border-radius:10px;padding:8px 10px}
+  .center{text-align:center;padding:60px 20px;color:var(--muted)}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
+  .more{display:flex;justify-content:center;margin:20px 0 40px}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;display:none;z-index:20;max-width:90vw}
+  .zoom{position:fixed;inset:0;background:rgba(13,27,42,.88);display:none;align-items:center;justify-content:center;z-index:15;padding:24px;cursor:zoom-out}
+  .zoom.on{display:flex}
+  .zoom div{max-width:min(1100px,96vw);max-height:90vh;border-radius:14px;overflow:hidden;display:flex}
+  .zoom img{max-width:100%;max-height:90vh;object-fit:contain;display:block}
+  @media (max-width:700px){
+    h1{font-size:22px}
+    .grid{grid-template-columns:1fr}
+    .bar{flex-direction:column;align-items:stretch}
+    .tools{justify-content:space-between}
+  }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><span>1A</span> Motor</a>
+  <small id="who">Bilder prüfen</small>
+</div></header>
+
+<main class="wrap" id="app"><div class="center">Wird geladen …</div></main>
+<div class="zoom" id="zoom" role="dialog" aria-label="Großansicht"><div><img alt="" /></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+/* ── 1A Motor – Prüfseite für den Bildschneider-Roboter ──
+   Der Roboter schneidet Lexikon-Fotos auf 4:3 zu, spiegelt sie, setzt „1amotor.de“ in den
+   goldenen Schnitt und legt sie in den privaten Ordner „lexikon-pruefung“.
+   Hier prüfst du sie. „Übernehmen“ kopiert das Bild in den öffentlichen Ordner „lexikon-bilder“.
+   Ohne „Übernehmen“ ist nichts davon öffentlich. */
+
+const PRUEF = "lexikon-pruefung";
+const OEFFENTLICH = "lexikon-bilder";
+const PRO_SEITE = 30;
+const FELDER = "id,slug,hersteller,modell,motorcode,status,bild_url,bild_urheber,bild_lizenz," +
+  "bild_frei_status,bild_frei_pfad,bild_frei_url,bild_frei_meldung,bild_frei_am,bild_frei_versuche";
+
+const TABS = [
+  ["zu_pruefen", "Zu prüfen"],
+  ["uebernommen", "Übernommen"],
+  ["abgelehnt", "Abgelehnt"],
+  ["fehler", "Fehler"],
+];
+
+const ICON = {
+  ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>',
+};
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sb = () => supabaseClient;
+let alle = [], tab = "zu_pruefen", sichtbar = PRO_SEITE, links = {};
+
+function toast(text) {
+  const t = $("#toast"); t.textContent = text; t.style.display = "block";
+  clearTimeout(toast._t); toast._t = setTimeout(() => (t.style.display = "none"), 3400);
+}
+
+function titel(e) {
+  return [e.hersteller, e.modell || e.motorcode].filter(Boolean).join(" ") || e.slug || `Eintrag ${e.id}`;
+}
+
+/* ── Start: eingeloggt + Lexikon-Admin? ── */
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data } = await sb().auth.getSession();
+  const session = data?.session;
+  if (!session) {
+    $("#app").innerHTML = `<div class="center"><h1>Bitte einloggen</h1><p class="sub" style="margin:8px auto 18px">Melde dich mit deinem 1A-Motor-Konto an.</p>
+      <a class="btn btn-primary" href="login.html?next=bilder-pruefen.html">Zum Login</a></div>`;
+    return;
+  }
+  const { data: adm } = await sb().from("lexikon_admins").select("user_id").eq("user_id", session.user.id).maybeSingle();
+  if (!adm) {
+    $("#app").innerHTML = `<div class="center"><h1>Kein Zugriff</h1><p class="sub" style="margin:8px auto">Dieses Konto (${esc(session.user.email)}) ist nicht als Lexikon-Admin eingetragen.</p></div>`;
+    return;
+  }
+  $("#who").textContent = session.user.email;
+  await laden();
+});
+
+async function laden() {
+  const { data, error } = await sb().from("motor_lexikon").select(FELDER)
+    .not("bild_frei_status", "is", null).order("bild_frei_am", { ascending: false }).range(0, 1999);
+  if (error) {
+    $("#app").innerHTML = `<div class="panel">Fehler beim Laden: ${esc(error.message)}<br><small>Ist <b>supabase-setup.sql</b> schon ausgeführt?</small></div>`;
+    return;
+  }
+  alle = data || [];
+  await zeichnen();
+}
+
+async function signierteLinks(liste) {
+  const fehlen = liste.filter((e) => e.bild_frei_status === "zu_pruefen" && e.bild_frei_pfad && !links[e.bild_frei_pfad]);
+  if (!fehlen.length) return;
+  const { data } = await sb().storage.from(PRUEF).createSignedUrls(fehlen.map((e) => e.bild_frei_pfad), 3600);
+  (data || []).forEach((d) => { if (d.signedUrl) links[d.path] = d.signedUrl; });
+}
+
+function freiBild(e) {
+  if (e.bild_frei_status === "uebernommen") return e.bild_frei_url;
+  if (e.bild_frei_status === "zu_pruefen") return links[e.bild_frei_pfad] || "";
+  return "";
+}
+
+async function zeichnen() {
+  const anz = (s) => alle.filter((e) => e.bild_frei_status === s).length;
+  const liste = alle.filter((e) => e.bild_frei_status === tab);
+  const teil = liste.slice(0, sichtbar);
+  await signierteLinks(teil);
+
+  $("#app").innerHTML = `
+    <h1>Lexikon-Bilder prüfen</h1>
+    <p class="sub">Der Roboter schneidet jeden Tag die Fotos aus dem Motorenlexikon auf 4:3 zu, spiegelt sie und setzt „1amotor.de“ in den goldenen Schnitt. Online ist davon nichts, bis du „Übernehmen“ drückst. Klick auf ein Bild für die Großansicht.</p>
+    <div class="bar">
+      <div class="tabs" role="tablist">${TABS.map(([k, l]) =>
+        `<button class="tab ${tab === k ? "on" : ""}" role="tab" aria-selected="${tab === k}" data-t="${k}">${l}<b>${anz(k)}</b></button>`).join("")}</div>
+      <div class="tools">
+        ${tab === "zu_pruefen" && teil.length > 1 ? `<button class="btn btn-ok" id="alle">${ICON.ok} Alle ${teil.length} übernehmen</button>` : ""}
+      </div>
+    </div>
+    ${teil.length ? `<div class="grid">${teil.map(karte).join("")}</div>` :
+      `<div class="panel center">${tab === "zu_pruefen" ? "Alles geprüft. Der Roboter legt beim nächsten Lauf neue Bilder hin." : "Hier ist gerade nichts."}</div>`}
+    ${liste.length > teil.length ? `<div class="more"><button class="btn btn-ghost" id="mehr">Weitere ${Math.min(PRO_SEITE, liste.length - teil.length)} anzeigen</button></div>` : ""}`;
+
+  $("#app").querySelectorAll(".tab").forEach((b) => (b.onclick = () => { tab = b.dataset.t; sichtbar = PRO_SEITE; zeichnen(); }));
+  const mehr = $("#mehr"); if (mehr) mehr.onclick = () => { sichtbar += PRO_SEITE; zeichnen(); };
+  const alleBtn = $("#alle"); if (alleBtn) alleBtn.onclick = () => alleUebernehmen(teil);
+  teil.forEach((e) => binden(e));
+}
+
+function karte(e) {
+  const frei = freiBild(e);
+  const am = e.bild_frei_am ? new Date(e.bild_frei_am).toLocaleDateString("de-DE") : "";
+  const knoepfe = {
+    zu_pruefen: `<button class="btn btn-danger" data-a="ablehnen">${ICON.x} Ablehnen</button><button class="btn btn-ok" data-a="uebernehmen">${ICON.ok} Übernehmen</button>`,
+    uebernommen: `<button class="btn btn-ghost" data-a="zuruecknehmen">${ICON.back} Zurücknehmen</button>`,
+    abgelehnt: `<button class="btn btn-ghost" data-a="neu">${ICON.back} Nochmal schneiden lassen</button>`,
+    fehler: `<button class="btn btn-ghost" data-a="neu">${ICON.back} Nochmal versuchen</button>`,
+  }[e.bild_frei_status] || "";
+  const zeigeFrei = e.bild_frei_status === "zu_pruefen" || e.bild_frei_status === "uebernommen";
+  return `
+  <article class="card" id="k-${e.id}">
+    <div>
+      <h3>${esc(titel(e))}</h3>
+      <div class="meta">
+        ${e.status === "veroeffentlicht" ? '<span class="badge b-pub">Lexikon: veröffentlicht</span>' : '<span class="badge">Lexikon: Entwurf</span>'}
+        ${am ? `<span>bearbeitet am ${am}</span>` : ""}
+      </div>
+    </div>
+    <div class="pair ${zeigeFrei ? "" : "single"}">
+      <div class="pane" data-zoom="${esc(e.bild_url)}" title="Original"><img src="${esc(e.bild_url)}" alt="Original: ${esc(titel(e))}" loading="lazy" referrerpolicy="no-referrer" /><span class="lbl">Original</span></div>
+      ${zeigeFrei ? `<div class="pane" data-zoom="${esc(frei)}" title="Bearbeitet">${frei ? `<img src="${esc(frei)}" alt="Bearbeitet: ${esc(titel(e))}" loading="lazy" />` : ""}<span class="lbl">Bearbeitet</span></div>` : ""}
+    </div>
+    ${e.bild_frei_status === "fehler" && e.bild_frei_meldung ? `<div class="msg">${esc(e.bild_frei_meldung)}${(e.bild_frei_versuche || 0) >= 3 ? " · versucht es nicht mehr von allein" : ""}</div>` : ""}
+    <div class="actions">${knoepfe}</div>
+  </article>`;
+}
+
+function binden(e) {
+  const k = $(`#k-${e.id}`); if (!k) return;
+  k.querySelectorAll("[data-zoom]").forEach((p) => (p.onclick = () => zoom(p.dataset.zoom)));
+  k.querySelectorAll("[data-a]").forEach((b) => (b.onclick = async () => {
+    k.querySelectorAll("button").forEach((x) => (x.disabled = true));
+    try {
+      await AKTION[b.dataset.a](e);
+      k.classList.add("weg");
+      toast({ uebernehmen: "Übernommen", ablehnen: "Abgelehnt", zuruecknehmen: "Zurückgenommen", neu: "Kommt beim nächsten Lauf wieder dran" }[b.dataset.a]);
+      setTimeout(zeichnen, 350);
+    } catch (err) {
+      toast("Fehler: " + (err.message || err));
+      k.querySelectorAll("button").forEach((x) => (x.disabled = false));
+    }
+  }));
+}
+
+function zoom(src) {
+  if (!src) return;
+  const z = $("#zoom");
+  z.querySelector("img").src = src;
+  z.classList.add("on");
+}
+$("#zoom").onclick = () => $("#zoom").classList.remove("on");
+document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") $("#zoom").classList.remove("on"); });
+
+/* ── Aktionen ── */
+async function setze(e, werte) {
+  const { data, error } = await sb().from("motor_lexikon").update(werte).eq("id", e.id).select("id");
+  if (error) throw error;
+  if (!data || !data.length) throw new Error("Keine Berechtigung zum Ändern (supabase-setup.sql ausgeführt?)");
+  Object.assign(e, werte);
+}
+
+const AKTION = {
+  async uebernehmen(e) {
+    const { data: blob, error } = await sb().storage.from(PRUEF).download(e.bild_frei_pfad);
+    if (error) throw error;
+    const up = await sb().storage.from(OEFFENTLICH).upload(e.bild_frei_pfad, blob, { upsert: true, contentType: "image/webp", cacheControl: "31536000" });
+    if (up.error) throw up.error;
+    const url = sb().storage.from(OEFFENTLICH).getPublicUrl(e.bild_frei_pfad).data.publicUrl + "?v=" + Date.now().toString(36);
+    await setze(e, { bild_frei_status: "uebernommen", bild_frei_url: url });
+    await sb().storage.from(PRUEF).remove([e.bild_frei_pfad]);
+  },
+  async ablehnen(e) {
+    await setze(e, { bild_frei_status: "abgelehnt", bild_frei_url: null });
+    if (e.bild_frei_pfad) await sb().storage.from(PRUEF).remove([e.bild_frei_pfad]);
+  },
+  async zuruecknehmen(e) {
+    if (e.bild_frei_pfad) {
+      const r = await sb().storage.from(OEFFENTLICH).remove([e.bild_frei_pfad]);
+      if (r.error) throw r.error;
+    }
+    await setze(e, { bild_frei_status: "abgelehnt", bild_frei_url: null });
+  },
+  async neu(e) {
+    await setze(e, { bild_frei_status: null, bild_frei_versuche: 0, bild_frei_meldung: null, bild_frei_url: null });
+    alle = alle.filter((x) => x.id !== e.id);
+  },
+};
+
+async function alleUebernehmen(teil) {
+  const offen = teil.filter((e) => e.bild_frei_status === "zu_pruefen");
+  if (!confirm(`Alle ${offen.length} angezeigten Bilder übernehmen? Hast du jedes angeschaut?`)) return;
+  const btn = $("#alle"); btn.disabled = true;
+  let ok = 0, fehler = 0;
+  for (const e of offen) {
+    btn.textContent = `Übernehme … ${ok + fehler + 1}/${offen.length}`;
+    try { await AKTION.uebernehmen(e); ok++; } catch (_) { fehler++; }
+  }
+  toast(`${ok} übernommen${fehler ? `, ${fehler} Fehler` : ""}`);
+  await zeichnen();
+}
+</script>
+</body>
+</html>
