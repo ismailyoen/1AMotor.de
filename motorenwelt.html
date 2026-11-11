@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motorenwelt – stöbern, staunen, vergleichen | 1A Motor</title>
+<meta name="description" content="Stöbere durch Motoren vom Dampfmotor bis zum V8: technische Daten, Rekorde, Vergleiche und Marktwerte als Richtwert. Das Motorenlexikon von 1A Motor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!--
+  1A Motor · Motorenwelt (Prototyp)
+  ---------------------------------
+  Läuft für sich allein mit den eingebetteten Daten (Stand: Lexikon vom 11.11.2026).
+  Auf 1amotor.de: vor diesem Skript supabase.js einbinden. Dann lädt die Seite
+  motor_lexikon und motor_marktwert live aus Supabase und speichert Suchaufträge
+  in der Tabelle suchauftraege (SQL dazu: motorenwelt.sql).
+-->
+<style>
+:root{
+  --dark:#0d1b2a; --navy:#1b2d42; --blue:#1a5fa8; --blue2:#2176c7; --sky:#4da6ff;
+  --light:#e8f2fc; --white:#fff; --muted:#7a93ae; --border:#e0e9f2; --bg:#f4f7fb;
+  --success:#10b981; --text:#334155; --gold:#c8a24a;
+  --shadow:0 2px 16px rgba(13,27,42,.08); --shadow2:0 8px 40px rgba(13,27,42,.14);
+  --r:12px; --max:1360px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Outfit,Arial,sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:var(--blue2)}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+
+/* Kopf */
+.top{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.top .wrap{display:flex;align-items:center;gap:22px;height:62px}
+.top .btn{margin-left:auto}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--dark);font-weight:800;font-size:20px}
+.logo i{font-style:normal;background:var(--dark);color:#fff;border-radius:8px;width:34px;height:34px;display:grid;place-items:center;font-size:14px}
+.nav{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav a{white-space:nowrap;text-decoration:none;color:var(--navy);font-weight:500;font-size:14.5px;padding:8px 12px;border-radius:8px}
+.nav a:hover{background:var(--bg)}
+.nav a.on{color:var(--blue);background:var(--light);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:10px;padding:11px 18px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .12s,box-shadow .12s,background .12s}
+.btn:active{transform:translateY(1px)}
+.btn.primaer{background:var(--blue2);color:#fff}
+.btn.primaer:hover{background:var(--blue)}
+.btn.dunkel{background:var(--dark);color:#fff}
+.btn.hell{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn.hell:hover{border-color:var(--sky)}
+.btn.glas{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.22)}
+.btn.glas:hover{background:rgba(255,255,255,.18)}
+
+/* Hero */
+.hero{background:radial-gradient(1200px 500px at 85% -10%,rgba(77,166,255,.28),transparent 60%),radial-gradient(800px 400px at 0% 110%,rgba(33,118,199,.35),transparent 60%),linear-gradient(160deg,var(--dark),var(--navy));color:#fff;padding:56px 0 64px;overflow:hidden;position:relative}
+.hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,#000,transparent)}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.augenbraue{display:inline-flex;align-items:center;gap:8px;background:rgba(77,166,255,.14);border:1px solid rgba(77,166,255,.35);color:#cfe6ff;font-size:12px;font-weight:700;letter-spacing:.08em;padding:6px 12px;border-radius:999px}
+.hero h1{font-size:clamp(34px,5vw,58px);line-height:1.04;margin:18px 0 14px;font-weight:800;letter-spacing:-.02em}
+.hero h1 span{color:var(--sky)}
+.hero p.lead{font-size:17px;line-height:1.6;color:#c7d6e6;max-width:560px;margin:0 0 24px}
+.suche{display:flex;background:#fff;border-radius:12px;padding:6px;max-width:560px;box-shadow:var(--shadow2)}
+.suche input{flex:1;border:0;outline:0;font:inherit;font-size:16px;padding:10px 12px;color:var(--dark);min-width:0}
+.hero .aktionen{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.zahlen{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.zahl{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 16px;min-width:96px}
+.zahl b{display:block;font-size:24px;font-weight:800}
+.zahl small{color:#9fb6cc;font-size:12.5px}
+.fotostapel{position:relative;height:340px}
+.fotostapel figure{position:absolute;margin:0;border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45);border:3px solid rgba(255,255,255,.9);background:#1b2d42;transition:transform .5s}
+.fotostapel img{width:100%;height:100%;object-fit:cover;display:block}
+.fotostapel figure:nth-child(1){width:62%;height:62%;left:2%;top:6%;transform:rotate(-6deg)}
+.fotostapel figure:nth-child(2){width:58%;height:58%;right:0;top:0;transform:rotate(5deg)}
+.fotostapel figure:nth-child(3){width:64%;height:62%;left:20%;bottom:0;transform:rotate(-1deg);z-index:2}
+.fotostapel:hover figure:nth-child(1){transform:rotate(-9deg) translateX(-8px)}
+.fotostapel:hover figure:nth-child(2){transform:rotate(8deg) translateX(8px)}
+
+/* Abschnitte */
+section.block{padding:36px 0 8px}
+.kopfzeile{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.kopfzeile h2{margin:0;font-size:26px;color:var(--dark);font-weight:800;letter-spacing:-.01em}
+.kopfzeile p{margin:4px 0 0;color:var(--muted);font-size:15px}
+
+/* Rekorde */
+.rekorde{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:14px;overflow-x:auto;padding:4px 2px 16px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.rekord{scroll-snap-align:start;text-align:left;border:1px solid var(--border);background:#fff;border-radius:var(--r);padding:0;display:flex;overflow:hidden;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;min-height:112px}
+.rekord:hover{transform:translateY(-3px);box-shadow:var(--shadow2)}
+.rekord .rb{width:96px;flex:none;background:var(--light);display:grid;place-items:center;color:var(--blue);position:relative;overflow:hidden}
+.rekord .rb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rekord .rt{padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.rekord .rt small{font-size:12px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.05em}
+.rekord .rt b{font-size:20px;color:var(--dark);font-weight:800;line-height:1.15}
+.rekord .rt span{font-size:13.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Werkzeugleiste */
+.leiste{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:12px;box-shadow:var(--shadow);position:sticky;top:70px;z-index:10}
+.chips{display:flex;gap:6px;overflow-x:auto;flex:1;scrollbar-width:none;padding:2px}
+.chip{flex:none;white-space:nowrap;border:1px solid var(--border);background:#fff;color:var(--navy);padding:7px 12px;border-radius:999px;font-size:13.5px;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.chip small{color:var(--muted);font-size:12px}
+.chip.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+.chip.on small{color:#9fb6cc}
+.chip.mw.on{background:var(--success);border-color:var(--success)}
+.chip.mw.on small{color:#e6fff6}
+select.sort{border:1px solid var(--border);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;color:var(--navy);background:#fff}
+.info{color:var(--muted);font-size:14px;margin:16px 2px 12px}
+
+/* Karten */
+.raster{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:16px}
+.karte{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;outline:none;animation:rein .35s ease both}
+.karte:hover,.karte:focus-visible{transform:translateY(-3px);box-shadow:var(--shadow2)}
+.karte:focus-visible{border-color:var(--sky)}
+@keyframes rein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bild{position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,var(--light),#d9e8f8);display:grid;place-items:center;color:var(--blue);overflow:hidden}
+.bild img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.karte:hover .bild img{transform:scale(1.04)}
+.bild .kat{position:absolute;left:10px;top:10px;background:rgba(13,27,42,.78);color:#fff;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;backdrop-filter:blur(4px)}
+.bild .lx{position:absolute;right:10px;top:10px;background:#fff;color:var(--blue);font-size:11.5px;font-weight:700;padding:4px 8px;border-radius:999px;display:inline-flex;gap:4px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.inhalt{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.inhalt h3{margin:0;font-size:15.5px;line-height:1.3;color:var(--dark);font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:40px}
+.haupt{font-size:19px;font-weight:800;color:var(--dark);margin-top:2px}
+.unter{font-size:13.5px;color:var(--success);font-weight:600}
+.mw{margin-top:8px;display:flex;flex-direction:column;background:var(--light);border-radius:9px;padding:7px 10px}
+.mw span{font-size:11.5px;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.mw b{font-size:15px;color:var(--navy)}
+.mw.leer{background:var(--bg);color:var(--muted);font-size:13px;font-weight:500}
+.fuss{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:10px;font-size:12.5px;color:var(--muted)}
+.fuss span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vgl{border:1px solid var(--border);background:#fff;color:var(--navy);border-radius:8px;padding:5px 8px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.vgl:hover{border-color:var(--sky)}
+.vgl.an{background:var(--blue2);border-color:var(--blue2);color:#fff}
+.mehr-sensor{height:1px}
+.ende{text-align:center;color:var(--muted);padding:26px 0 8px;font-size:14px}
+.leerzustand{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--muted);background:#fff;border:1px dashed var(--border);border-radius:var(--r)}
+
+/* Hinweis unten */
+.hinweis{max-width:var(--max);margin:30px auto 120px;padding:18px 20px;color:var(--muted);font-size:13.5px;line-height:1.6;text-align:center}
+.cta-band{background:var(--dark);color:#fff;border-radius:16px;padding:26px 28px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:34px}
+.cta-band h3{margin:0 0 4px;font-size:22px}
+.cta-band p{margin:0;color:#b8c9da}
+
+/* Vergleichsleiste */
+.vleiste{position:fixed;left:50%;bottom:16px;transform:translate(-50%,140%);background:var(--dark);color:#fff;border-radius:14px;box-shadow:var(--shadow2);padding:10px 10px 10px 16px;display:flex;align-items:center;gap:10px;z-index:30;transition:transform .25s;max-width:calc(100% - 24px)}
+.vleiste.zeigen{transform:translate(-50%,0)}
+.vleiste .vchips{display:flex;gap:6px;overflow-x:auto}
+.vchip{background:rgba(255,255,255,.1);border-radius:8px;padding:6px 8px;font-size:13px;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.vchip button{background:none;border:0;color:#9fb6cc;padding:0 2px;font-size:15px}
+.vleiste .btn{padding:9px 14px;font-size:14px;white-space:nowrap}
+.vleiste .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* Dialoge */
+dialog{border:0;padding:0;border-radius:18px;max-width:min(1040px,calc(100% - 24px));width:100%;box-shadow:0 30px 90px rgba(0,0,0,.4);color:var(--text)}
+dialog::backdrop{background:rgba(13,27,42,.62);backdrop-filter:blur(3px)}
+.dkopf{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 12px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:2}
+.dkopf b{color:var(--dark);font-size:15px}
+.zu{border:0;background:var(--bg);width:36px;height:36px;border-radius:10px;font-size:20px;color:var(--navy)}
+.detail{display:grid;grid-template-columns:1.05fr 1fr;gap:26px;padding:20px}
+.dbild{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/3;background:linear-gradient(135deg,var(--light),#d9e8f8);display:grid;place-items:center;color:var(--blue)}
+.dbild img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.credit-knopf{position:absolute;left:10px;bottom:10px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(13,27,42,.7);color:#fff;display:grid;place-items:center;z-index:2}
+.credit{position:absolute;left:10px;right:10px;bottom:48px;background:rgba(13,27,42,.9);color:#e5eef7;font-size:12.5px;line-height:1.5;padding:10px 12px;border-radius:10px;z-index:2}
+.credit a{color:var(--sky)}
+.dtext .katzeile{font-size:13px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.05em}
+.dtext h2{margin:6px 0 4px;font-size:28px;line-height:1.15;color:var(--dark);font-weight:800}
+.dtext .bauzeit{color:var(--muted);font-size:15px}
+.werte{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0}
+.wert{background:var(--bg);border-radius:10px;padding:10px 12px}
+.wert small{display:block;color:var(--muted);font-size:12px;font-weight:600}
+.wert b{color:var(--dark);font-size:16px}
+.wert i{font-style:normal;color:var(--muted);font-size:13px;margin-left:4px}
+.mwbox{border:1px solid #cfe2f6;background:linear-gradient(180deg,var(--light),#fff);border-radius:12px;padding:14px}
+.mwbox .gross{font-size:24px;font-weight:800;color:var(--navy)}
+.mwbox .tag{display:inline-block;background:var(--blue2);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+.mwbox p{margin:6px 0 8px;font-size:13.5px;line-height:1.5}
+.mwbox details summary{cursor:pointer;font-size:13px;color:var(--blue2);font-weight:600}
+.mwbox ul{margin:8px 0 0;padding-left:18px;font-size:12.5px;line-height:1.6}
+.mwbox .stand{font-size:12px;color:var(--muted);margin-top:8px}
+.mwbox.leer{background:var(--bg);border-color:var(--border)}
+.handeln{display:grid;gap:10px;margin-top:14px}
+.alarm{border:1px solid var(--border);border-radius:12px;padding:12px}
+.alarm b{color:var(--dark);font-size:14.5px}
+.alarm form{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.alarm input[type=email]{flex:1;min-width:180px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font:inherit;font-size:14.5px}
+.alarm label{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:8px}
+.alarm .ok{color:var(--success);font-weight:600;font-size:14px;margin-top:8px}
+.aehnlich{padding:0 20px 22px}
+.aehnlich h3{margin:4px 0 12px;font-size:18px;color:var(--dark)}
+.mini-raster{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mini{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;text-align:left;padding:0;transition:transform .15s,box-shadow .15s}
+.mini:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.mini .bild{aspect-ratio:16/10}
+.mini div.t{padding:8px 10px;font-size:13px;font-weight:600;color:var(--dark);line-height:1.3}
+.mini div.t small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
+.dfuss{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border);background:var(--bg);border-radius:0 0 18px 18px}
+
+/* Vergleich */
+.vtab{width:100%;border-collapse:collapse;font-size:14.5px;table-layout:fixed;min-width:560px}
+.vtab th,.vtab td{padding:11px 12px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.vtab th{color:var(--muted);font-weight:600;font-size:13px;width:150px}
+.vtab td.sieg{background:#ecfdf5;color:#065f46;font-weight:700}
+.vtab td.sieg::after{content:" ★";color:var(--gold)}
+.vtab .kopfbild{aspect-ratio:4/3;border-radius:10px;overflow:hidden;position:relative;background:var(--light);display:grid;place-items:center;color:var(--blue);margin-bottom:8px}
+.vtab .kopfbild img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vtab .name{font-weight:700;color:var(--dark)}
+.vrahmen{padding:16px 20px 20px;overflow-x:auto}
+
+.toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-20px);background:var(--dark);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+.toast.zeigen{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr}
+  .fotostapel{height:240px}
+  .detail{grid-template-columns:1fr}
+  .mini-raster{grid-template-columns:repeat(2,1fr)}
+  .leiste{top:62px}
+}
+@media (max-width:560px){
+  .top .nav{display:none}
+  .hero{padding:36px 0 44px}
+  .raster{grid-template-columns:repeat(2,1fr);gap:10px}
+  .inhalt h3{font-size:14px}
+  .haupt{font-size:16px}
+  .fuss .vgl{padding:4px 6px}
+  .werte{grid-template-columns:1fr 1fr}
+  .zahlen{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .zahl{min-width:0;padding:10px 8px}
+  .zahl b{font-size:19px}
+  .zahl small{font-size:11px}
+  .top .btn{padding:9px 12px;font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="https://1amotor.de/"><i>1A</i>Motor</a>
+    <nav class="nav" aria-label="Hauptnavigation">
+      <a href="https://1amotor.de/">Startseite</a>
+      <a href="https://1amotor.de/motoren-lexikon">Motorenlexikon</a>
+      <a class="on" href="#">Motorenwelt</a>
+      <a href="https://1amotor.de/motorsport-news">Motorsport News</a>
+    </nav>
+    <a class="btn dunkel" id="kopf-inserieren" href="#">＋ Anzeige erstellen</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="augenbraue">⚙️ 1A MOTORENWELT</span>
+      <h1>Stöbern, staunen,<br><span>vergleichen.</span></h1>
+      <p class="lead">Vom Dampfmotor aus dem 18. Jahrhundert bis zum Jaguar-V8: Entdecke, welche Motoren es gibt, was sie leisten und was sie gebraucht ungefähr kosten.</p>
+      <form class="suche" id="suche-form" role="search">
+        <input id="q" type="search" placeholder="Hersteller, Modell oder Motorcode – z. B. M30" autocomplete="off" aria-label="Motoren durchsuchen">
+        <button class="btn primaer" type="submit">Suchen</button>
+      </form>
+      <div class="aktionen">
+        <button class="btn glas" id="zufall-hero" type="button">🎲 Überrasch mich</button>
+        <a class="btn glas" href="#rekorde">🏆 Rekorde ansehen</a>
+      </div>
+      <div class="zahlen" id="zahlen"></div>
+    </div>
+    <div class="fotostapel" id="fotostapel" aria-hidden="true"></div>
+  </div>
+</section>
+
+<main>
+  <section class="block" id="rekorde">
+    <div class="wrap">
+      <div class="kopfzeile">
+        <div><h2>Rekorde aus dem Lexikon</h2><p>Der stärkste, der älteste, der langlebigste: tipp eine Karte an.</p></div>
+      </div>
+      <div class="rekorde" id="rekord-liste"></div>
+    </div>
+  </section>
+
+  <section class="block" id="entdecken">
+    <div class="wrap">
+      <div class="kopfzeile">
+        <div><h2>Alle Motoren entdecken</h2><p id="mischung-info">Jeden Tag neu gemischt.</p></div>
+      </div>
+      <div class="leiste">
+        <div class="chips" id="chips"></div>
+        <select class="sort" id="sort" aria-label="Sortierung">
+          <option value="entdecken">Entdecken (täglich neu)</option>
+          <option value="ps">Stärkste zuerst</option>
+          <option value="ccm">Größter Hubraum</option>
+          <option value="alt">Älteste zuerst</option>
+          <option value="mw">Mit Marktwert zuerst</option>
+          <option value="az">Hersteller A–Z</option>
+        </select>
+      </div>
+      <div class="info" id="info"></div>
+      <div class="raster" id="raster"></div>
+      <div class="mehr-sensor" id="sensor"></div>
+      <div class="ende" id="ende" hidden></div>
+
+      <div class="cta-band">
+        <div><h3>Du hast so einen Motor in der Garage?</h3><p>Inseriere ihn kostenlos bei 1A Motor. Wer danach sucht, wird benachrichtigt.</p></div>
+        <a class="btn primaer" id="band-inserieren" href="#">Kostenlos inserieren</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<p class="hinweis">Die Einträge der Motorenwelt sind Produktinformationen aus dem 1A-Motorenlexikon, keine Verkaufsangebote. Marktwerte sind Richtwerte aus öffentlich sichtbaren Gebrauchtangeboten und ändern sich laufend. Alle Angaben ohne Gewähr – prüfe vor dem Kauf immer das Typenschild. Fotos: Wikimedia Commons, Urheber und Lizenz über das ⓘ am jeweiligen Bild.</p>
+
+<div class="vleiste" id="vleiste" role="region" aria-label="Vergleich">
+  <div class="vchips" id="vchips"></div>
+  <button class="btn primaer" id="vergleichen" type="button">Vergleichen</button>
+</div>
+
+<dialog id="detail-dialog" aria-label="Motor-Details">
+  <div class="dkopf"><b id="detail-kopf">Motorenlexikon</b><button class="zu" data-zu aria-label="Schließen">×</button></div>
+  <div id="detail-inhalt"></div>
+</dialog>
+
+<dialog id="vergleich-dialog" aria-label="Motoren vergleichen">
+  <div class="dkopf"><b>Motoren im Vergleich</b><button class="zu" data-zu aria-label="Schließen">×</button></div>
+  <div class="vrahmen" id="vergleich-inhalt"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* Eingebettete Daten – werden auf 1amotor.de durch die Live-Daten aus Supabase ersetzt */
+window.LEXIKON_DATEN = [{"slug":"alfa-romeo-twin-spark-7a6d","hersteller":"Alfa Romeo","modell":"Twin Spark","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":4,"hubraum_ccm":1370,"leistung_kw":757.1,"drehmoment_nm":null,"baujahre":"1986-2009","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Alfa_Romeo_16V_Twin_Spark_engine.JPG/1280px-Alfa_Romeo_16V_Twin_Spark_engine.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/alfa-romeo-twin-spark-7a6d.webp?v=mwb2qwko","bild_urheber":"Lennart Coopmans","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:Alfa_Romeo_16V_Twin_Spark_engine.JPG"},{"slug":"bmw-m30-f503","hersteller":"BMW","modell":"M30","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":6,"hubraum_ccm":2494,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1968-1995","bild_url":"https://upload.wikimedia.org/wikipedia/commons/5/52/BMW_E28_motor.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/bmw-m30-f503.webp?v=mwb2rjxg","bild_urheber":"Jan Ascher","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:BMW_E28_motor.jpg"},{"slug":"bmw-247-f1bd","hersteller":"BMW","modell":"247","motorcode":null,"kategorie":"Motorradmotor","kraftstoff":"Benzin","bauart":"Boxer","zylinder":2,"hubraum_ccm":1000,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1974-1995","bild_url":null,"bild_frei_url":null,"bild_urheber":null,"bild_lizenz":null,"bild_lizenz_url":null,"bild_seite":null},{"slug":"boulton-and-watt-old-bess-4974","hersteller":"Boulton and Watt","modell":"Old Bess","motorcode":null,"kategorie":"Generator Motor","kraftstoff":"Dampf","bauart":null,"zylinder":1,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1777","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Old_bess_beam_engine_may_2015.JPG/1280px-Old_bess_beam_engine_may_2015.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/boulton-and-watt-old-bess-4974.webp?v=mwb2qek6","bild_urheber":"Geni","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Old_bess_beam_engine_may_2015.JPG"},{"slug":"bristol-aero-engine-bristol-janus-5b5d","hersteller":"Bristol Aero Engine","modell":"Bristol Janus","motorcode":null,"kategorie":"Turbinenmotor","kraftstoff":"Kerosin","bauart":null,"zylinder":null,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":null,"bild_url":null,"bild_frei_url":null,"bild_urheber":null,"bild_lizenz":null,"bild_lizenz_url":null,"bild_seite":null},{"slug":"british-motor-corporation-bmc-c-series-85fc","hersteller":"British Motor Corporation","modell":"BMC C-Series","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihen-6-Zylinder","zylinder":6,"hubraum_ccm":2639,"leistung_kw":63,"drehmoment_nm":null,"baujahre":"1954-1971","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Austin_3-litre_C-series_engine.jpg/1280px-Austin_3-litre_C-series_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/british-motor-corporation-bmc-c-series-85fc.webp?v=mwb2qtg3","bild_urheber":"Draco2008","bild_lizenz":"CC BY 2.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/2.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Austin_3-litre_C-series_engine.jpg"},{"slug":"brown-boveri-cie-neuchaetel-gas-turbine-e4b2","hersteller":"Brown, Boveri & Cie","modell":"Neuchätel gas turbine","motorcode":null,"kategorie":"Turbinenmotor","kraftstoff":"Diesel","bauart":null,"zylinder":null,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1939","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/The_Neuchatel_gas_turbine_exhibited_at_the_1939_Swiss_National_Expo.jpg/1280px-The_Neuchatel_gas_turbine_exhibited_at_the_1939_Swiss_National_Expo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":null,"bild_urheber":"Not credited","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:The_Neuchatel_gas_turbine_exhibited_at_the_1939_Swiss_National_Expo.jpg"},{"slug":"brp-rotax-rotax-912-is-sport-6e24","hersteller":"BRP-Rotax","modell":"Rotax 912 iS Sport","motorcode":null,"kategorie":"Flugzeugmotor","kraftstoff":"Benzin","bauart":null,"zylinder":4,"hubraum_ccm":1352,"leistung_kw":73.5,"drehmoment_nm":121,"baujahre":null,"bild_url":null,"bild_frei_url":null,"bild_urheber":null,"bild_lizenz":null,"bild_lizenz_url":null,"bild_seite":null},{"slug":"brp-rotax-rotax-912-uls-7324","hersteller":"BRP-Rotax","modell":"Rotax 912 ULS","motorcode":null,"kategorie":"Flugzeugmotor","kraftstoff":"Benzin","bauart":null,"zylinder":4,"hubraum_ccm":1352,"leistung_kw":73.5,"drehmoment_nm":128,"baujahre":null,"bild_url":null,"bild_frei_url":null,"bild_urheber":null,"bild_lizenz":null,"bild_lizenz_url":null,"bild_seite":null},{"slug":"chevrolet-small-block-engine-f8bd","hersteller":"Chevrolet","modell":"small-block engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":4301,"leistung_kw":81,"drehmoment_nm":215,"baujahre":"1954-2003","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/1985_Chevrolet_Corvette_L98_Engine.jpg/1280px-1985_Chevrolet_Corvette_L98_Engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chevrolet-small-block-engine-f8bd.webp?v=mwb2r42q","bild_urheber":"Jared.annis","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:1985_Chevrolet_Corvette_L98_Engine.jpg"},{"slug":"chrysler-1-8-2-0-2-4-a2e0","hersteller":"Chrysler","modell":"1.8, 2.0, 2.4","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":4,"hubraum_ccm":1798,"leistung_kw":851.1,"drehmoment_nm":151221,"baujahre":"1994-2010","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/EDZ_2.4L_Turbo_engine_HD.png/1280px-EDZ_2.4L_Turbo_engine_HD.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-1-8-2-0-2-4-a2e0.webp?v=mwb2rsse","bild_urheber":"Black Wolf DPCMX","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:EDZ_2.4L_Turbo_engine_HD.png"},{"slug":"chrysler-la-engine-2249","hersteller":"Chrysler","modell":"LA engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V6, V8, V10","zylinder":null,"hubraum_ccm":39032,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1964-2003","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/1976_Chrysler_VK_Charger_770_coupe_02.jpg/1280px-1976_Chrysler_VK_Charger_770_coupe_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-la-engine-2249.webp?v=mwb2rz4v","bild_urheber":"OSX","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:1976_Chrysler_VK_Charger_770_coupe_02.jpg"},{"slug":"chrysler-chrysler-b-engine-add5","hersteller":"Chrysler","modell":"Chrysler B engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Gasoline","bauart":"V8","zylinder":8,"hubraum_ccm":350000,"leistung_kw":125,"drehmoment_nm":407,"baujahre":"1958-1978","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/413crossram.jpg/1280px-413crossram.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-chrysler-b-engine-add5.webp?v=mwb2s0pw","bild_urheber":"Dyno Tested at English Wikipedia","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:413crossram.jpg"},{"slug":"chrysler-2-2-2-5-017b","hersteller":"Chrysler","modell":"2.2 & 2.5","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Gasoline,Methanol","bauart":"Inline-4","zylinder":4,"hubraum_ccm":2213,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1981-1995","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Chrysler_2.2_TBI.jpg/1280px-Chrysler_2.2_TBI.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-2-2-2-5-017b.webp?v=mwb2ru6b","bild_urheber":"Waraudon","bild_lizenz":"CC0","bild_lizenz_url":"http://creativecommons.org/publicdomain/zero/1.0/deed.en","bild_seite":"https://commons.wikimedia.org/wiki/File:Chrysler_2.2_TBI.jpg"},{"slug":"chrysler-chrysler-3-3-3-8-1239","hersteller":"Chrysler","modell":"Chrysler 3.3 & 3.8","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Gasoline,Compressed Natural Gas,E85","bauart":"V6","zylinder":6,"hubraum_ccm":3301,"leistung_kw":1103.2,"drehmoment_nm":244333,"baujahre":"1989-2011","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/2005_Chrysler_Town_and_Country_LX_3.3_engine.JPG/1280px-2005_Chrysler_Town_and_Country_LX_3.3_engine.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-chrysler-3-3-3-8-1239.webp?v=mwb2r730","bild_urheber":"No machine-readable author provided. Sfoskett~commonswiki assumed (based on copyright claims).","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:2005_Chrysler_Town_and_Country_LX_3.3_engine.JPG"},{"slug":"chrysler-a-engine-d733","hersteller":"Chrysler","modell":"A engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":4527,"leistung_kw":138,"drehmoment_nm":null,"baujahre":"1956-1967","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/1959_Dodge_Sweptside_318_A_engine.jpg/1280px-1959_Dodge_Sweptside_318_A_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-a-engine-d733.webp?v=mwb2rx6u","bild_urheber":"Greg Gjerdingen from Willmar, USA, cropped and altered by uploader Mr.choppers","bild_lizenz":"CC BY 2.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/2.0","bild_seite":"https://commons.wikimedia.org/wiki/File:1959_Dodge_Sweptside_318_A_engine.jpg"},{"slug":"chrysler-powertech-71b0","hersteller":"Chrysler","modell":"PowerTech","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin, E85","bauart":"V6/V8","zylinder":null,"hubraum_ccm":3701,"leistung_kw":155,"drehmoment_nm":null,"baujahre":"1999-2013","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Jeep_Grand_Cherokee_WJ_47_Power_Tech_V8.jpg/1280px-Jeep_Grand_Cherokee_WJ_47_Power_Tech_V8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-powertech-71b0.webp?v=mwb2r96g","bild_urheber":"unbekannt","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:Jeep_Grand_Cherokee_WJ_47_Power_Tech_V8.jpg"},{"slug":"chrysler-corporation-chrysler-lh-ed9b","hersteller":"Chrysler Corporation","modell":"Chrysler LH","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin, E85","bauart":"V6","zylinder":6,"hubraum_ccm":2736,"leistung_kw":131,"drehmoment_nm":258,"baujahre":"1998-2010","bild_url":"https://upload.wikimedia.org/wikipedia/commons/5/5e/2.7_Chrysler_DOHC_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-corporation-chrysler-lh-ed9b.webp?v=mwb2raoy","bild_urheber":"VX1NG","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:2.7_Chrysler_DOHC_Front.jpg"},{"slug":"chrysler-corporation-chrysler-flathead-engine-b0f7","hersteller":"Chrysler Corporation","modell":"Chrysler Flathead engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":null,"zylinder":null,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1924-1964","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/1937_Dodge_Brothers_coupe_engine.JPG/1280px-1937_Dodge_Brothers_coupe_engine.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-corporation-chrysler-flathead-engine-b0f7.webp?v=mwb2rk9s","bild_urheber":"Stephen Foskett (Wikipedia User: sfoskett )","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:1937_Dodge_Brothers_coupe_engine.JPG"},{"slug":"chrysler-corporation-chrysler-slant-six-g-rg-engine-4cf0","hersteller":"Chrysler Corporation","modell":"Chrysler Slant Six (G, RG) engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Gasoline","bauart":"Straight-6","zylinder":6,"hubraum_ccm":170,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1959-1991","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/1965_Plymouth_Barracuda_at_2015_Rockville_Show_6of6.jpg/1280px-1965_Plymouth_Barracuda_at_2015_Rockville_Show_6of6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/chrysler-corporation-chrysler-slant-six-g-rg-engine-4cf0.webp?v=mwb2rvov","bild_urheber":"CZmarlin — Christopher Ziemnowicz — a photo credit is required if this image is used anywhere other than Wikipedia.","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:1965_Plymouth_Barracuda_at_2015_Rockville_Show_6of6.jpg"},{"slug":"elsbett-ag-elsbett-c033","hersteller":"Elsbett AG","modell":"Elsbett","motorcode":null,"kategorie":"Dieselmotor Auto","kraftstoff":"Pflanzenöl (PVO)","bauart":null,"zylinder":3,"hubraum_ccm":null,"leistung_kw":66,"drehmoment_nm":null,"baujahre":null,"bild_url":"https://upload.wikimedia.org/wikipedia/commons/7/72/Motor.gif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":null,"bild_urheber":"No machine-readable author provided. Fabiofra assumed (based on copyright claims).","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:Motor.gif"},{"slug":"fiat-lancia-fiat-twin-cam-engine-1a12","hersteller":"Fiat/Lancia","modell":"Fiat Twin Cam engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin, Diesel","bauart":"Reihenmotor","zylinder":4,"hubraum_ccm":1297,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1966-2000","bild_url":"https://upload.wikimedia.org/wikipedia/commons/4/42/Locust_Fiat.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/fiat-lancia-fiat-twin-cam-engine-1a12.webp?v=mwb2q1t2","bild_urheber":"Turbojo at English Wikipedia","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:Locust_Fiat.JPG"},{"slug":"ford-duratec-9ba6","hersteller":"Ford","modell":"Duratec","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"I3, I4, I5, V6","zylinder":null,"hubraum_ccm":998,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1993-heute","bild_url":null,"bild_frei_url":null,"bild_urheber":null,"bild_lizenz":null,"bild_lizenz_url":null,"bild_seite":null},{"slug":"ford-335-3cf1","hersteller":"Ford","modell":"335","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":4942,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1969-1982","bild_url":"https://upload.wikimedia.org/wikipedia/commons/8/8f/1969_Ford_Mustang_351_Cleveland.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-335-3cf1.webp?v=mwb2rbja","bild_urheber":"Stephen Foskett (Wikipedia User: sfoskett )","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:1969_Ford_Mustang_351_Cleveland.JPG"},{"slug":"ford-duratorq-c202","hersteller":"Ford","modell":"Duratorq","motorcode":null,"kategorie":"Dieselmotor Auto","kraftstoff":"Diesel","bauart":null,"zylinder":null,"hubraum_ccm":1399,"leistung_kw":50,"drehmoment_nm":160,"baujahre":"2000-2020","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Ford_Duratorq_TDCi_2.0.JPG/1280px-Ford_Duratorq_TDCi_2.0.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-duratorq-c202.webp?v=mwb2s8z5","bild_urheber":"Astrowarinhari","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Ford_Duratorq_TDCi_2.0.JPG"},{"slug":"ford-motor-company-ford-taunus-v4-1605","hersteller":"Ford Motor Company","modell":"Ford Taunus V4","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V4","zylinder":4,"hubraum_ccm":1183,"leistung_kw":29.4,"drehmoment_nm":80,"baujahre":"1962-1981","bild_url":"https://upload.wikimedia.org/wikipedia/commons/0/01/Saab_Sonett_III_Ford_V4_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-ford-taunus-v4-1605.webp?v=mwb2rgys","bild_urheber":"User:Sfoskett","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:Saab_Sonett_III_Ford_V4_engine.jpg"},{"slug":"ford-motor-company-ford-fe-v8-4f8c","hersteller":"Ford Motor Company","modell":"Ford FE V8","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":5400,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1958-1976","bild_url":"https://upload.wikimedia.org/wikipedia/commons/b/b8/Ford_FE_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-ford-fe-v8-4f8c.webp?v=mwb2sdje","bild_urheber":"FordFE com","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:Ford_FE_engine.jpg"},{"slug":"ford-motor-company-ford-modular-engine-ee38","hersteller":"Ford Motor Company","modell":"Ford Modular Engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8, V10","zylinder":null,"hubraum_ccm":4601,"leistung_kw":140.8,"drehmoment_nm":null,"baujahre":"1990-heute","bild_url":"https://upload.wikimedia.org/wikipedia/commons/1/13/1999-2000-2001-2002-2003-2004-ford-mustang-8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-ford-modular-engine-ee38.webp?v=mwb2rbpn","bild_urheber":"TheBalance at English Wikipedia","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:1999-2000-2001-2002-2003-2004-ford-mustang-8.jpg"},{"slug":"ford-motor-company-ford-cvh-engine-5af4","hersteller":"Ford Motor Company","modell":"Ford CVH engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":4,"hubraum_ccm":1117,"leistung_kw":51,"drehmoment_nm":86,"baujahre":"1980-2004","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Ford_CVH_1600i_engine.jpg/1280px-Ford_CVH_1600i_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-ford-cvh-engine-5af4.webp?v=mwb2s7ss","bild_urheber":"Laurie Lind","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Ford_CVH_1600i_engine.jpg"},{"slug":"ford-motor-company-ford-boss-302-ab4a","hersteller":"Ford Motor Company","modell":"Ford Boss 302","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Gasoline","bauart":"V8","zylinder":8,"hubraum_ccm":4942,"leistung_kw":213.5,"drehmoment_nm":null,"baujahre":"1969-1970","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/Ford_Boss_302_engine.jpg/1280px-Ford_Boss_302_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-ford-boss-302-ab4a.webp?v=mwb2s5za","bild_urheber":"unbekannt","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:Ford_Boss_302_engine.jpg"},{"slug":"ford-motor-company-y-block-v8-5b64","hersteller":"Ford Motor Company","modell":"Y-block V8","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1954-1964","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/%2756-7_Sunliner_engine_bay.JPG/1280px-%2756-7_Sunliner_engine_bay.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-y-block-v8-5b64.webp?v=mwb2s3jb","bild_urheber":"Trekphiler","bild_lizenz":"CC BY 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:%2756-7_Sunliner_engine_bay.JPG"},{"slug":"ford-motor-company-ford-385-v8-850e","hersteller":"Ford Motor Company","modell":"Ford 385 V8","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":370000,"leistung_kw":276,"drehmoment_nm":null,"baujahre":"1968-1998","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Boss_429.jpg/1280px-Boss_429.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-ford-385-v8-850e.webp?v=mwb2sc67","bild_urheber":"Photo by User:Morven .","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:Boss_429.jpg"},{"slug":"ford-motor-company-lincoln-y-block-v8-277b","hersteller":"Ford Motor Company","modell":"Lincoln Y-block V8","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":4547,"leistung_kw":112,"drehmoment_nm":332.5,"baujahre":"1952-1963","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Lincoln_Premiere%2C_1957_%284%29.jpg/1280px-Lincoln_Premiere%2C_1957_%284%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-lincoln-y-block-v8-277b.webp?v=mwb2qms1","bild_urheber":"Cjp24","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Lincoln_Premiere,_1957_(4).jpg"},{"slug":"ford-motor-company-ford-small-block-7fb0","hersteller":"Ford Motor Company","modell":"Ford small block","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":221,"leistung_kw":84.6,"drehmoment_nm":262,"baujahre":"1961-2002","bild_url":"https://upload.wikimedia.org/wikipedia/commons/0/08/Shelby_Mustang_GT350_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-motor-company-ford-small-block-7fb0.webp?v=mwb2s4rk","bild_urheber":"unbekannt","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:Shelby_Mustang_GT350_engine.jpg"},{"slug":"ford-of-britain-ford-kent-engine-a15d","hersteller":"Ford of Britain","modell":"Ford Kent engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihen-Vierzylinder","zylinder":4,"hubraum_ccm":997,"leistung_kw":28.6,"drehmoment_nm":null,"baujahre":"1959-2002","bild_url":"https://upload.wikimedia.org/wikipedia/commons/6/6d/AnadolA1-motor-1300cc.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ford-of-britain-ford-kent-engine-a15d.webp?v=mwb2sb6y","bild_urheber":"EnginT","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:AnadolA1-motor-1300cc.jpg"},{"slug":"ford-of-europe-psa-group-jaguar-cars-land-rover-ajd-v6-dt17-dt20-14f7","hersteller":"Ford of Europe, PSA Group, Jaguar Cars, Land Rover","modell":"AJD-V6, DT17, DT20","motorcode":null,"kategorie":"Dieselmotor Auto","kraftstoff":"Diesel","bauart":"V6, V8","zylinder":7,"hubraum_ccm":2720,"leistung_kw":140.2,"drehmoment_nm":440.7,"baujahre":"2004-2009","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Jaguar_diesel_engine_shot_at_the_2006_London_Motor_Show_-_Flickr_-_exfordy.jpg/1280px-Jaguar_diesel_engine_shot_at_the_2006_London_Motor_Show_-_Flickr_-_exfordy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":null,"bild_urheber":"Brian Snelson from Hockley, Essex, England","bild_lizenz":"CC BY 2.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/2.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Jaguar_diesel_engine_shot_at_the_2006_London_Motor_Show_-_Flickr_-_exfordy.jpg"},{"slug":"fran-aise-de-m-canique-prv-engine-d273","hersteller":"Française de Mécanique","modell":"PRV engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V6","zylinder":6,"hubraum_ccm":2458,"leistung_kw":97,"drehmoment_nm":208,"baujahre":"1974-1998","bild_url":"https://upload.wikimedia.org/wikipedia/commons/2/25/PRVenginevolvo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/fran-aise-de-m-canique-prv-engine-d273.webp?v=mwb2sfyf","bild_urheber":"Svennex at English Wikipedia","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:PRVenginevolvo.jpg"},{"slug":"general-electric-lm6000-638a","hersteller":"General Electric","modell":"LM6000","motorcode":null,"kategorie":"Sonstiges","kraftstoff":"Gas","bauart":null,"zylinder":null,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":null,"bild_url":"https://upload.wikimedia.org/wikipedia/commons/4/42/General_Electric_LM6000.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/general-electric-lm6000-638a.webp?v=mwb2quqe","bild_urheber":"TDC at English Wikipedia","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:General_Electric_LM6000.jpg"},{"slug":"general-motors-ls-small-block-engine-5b75","hersteller":"General Motors","modell":"LS small-block engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Gasoline, E85","bauart":"V8, V6","zylinder":null,"hubraum_ccm":260000,"leistung_kw":187.5,"drehmoment_nm":387,"baujahre":"1997-heute","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/1998ChevroletCamaroZ28-engine.jpg/1280px-1998ChevroletCamaroZ28-engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/general-motors-ls-small-block-engine-5b75.webp?v=mwb2r5to","bild_urheber":"Rich Niewiroski Jr.","bild_lizenz":"CC BY 2.5","bild_lizenz_url":"https://creativecommons.org/licenses/by/2.5","bild_seite":"https://commons.wikimedia.org/wiki/File:1998ChevroletCamaroZ28-engine.jpg"},{"slug":"general-motors-northstar-8d82","hersteller":"General Motors","modell":"Northstar","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":4565,"leistung_kw":158,"drehmoment_nm":439,"baujahre":"1993-2011","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/Cadillac_4.6_L_DOHC_V8_engine.jpg/1280px-Cadillac_4.6_L_DOHC_V8_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/general-motors-northstar-8d82.webp?v=mwb2s2ao","bild_urheber":"VX1NG","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Cadillac_4.6_L_DOHC_V8_engine.jpg"},{"slug":"gm-ecotec-l850-5020","hersteller":"GM","modell":"Ecotec","motorcode":"L850","kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":null,"zylinder":4,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"2000","bild_url":null,"bild_frei_url":null,"bild_urheber":null,"bild_lizenz":null,"bild_lizenz_url":null,"bild_seite":null},{"slug":"indian-motorcycle-indian-scout-ftr750-e8a1","hersteller":"Indian Motorcycle","modell":"Indian Scout FTR750","motorcode":null,"kategorie":"Motorradmotor","kraftstoff":"Benzin","bauart":"V-twin","zylinder":null,"hubraum_ccm":748,"leistung_kw":null,"drehmoment_nm":null,"baujahre":null,"bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Indian_Scout_FTR750.jpg/1280px-Indian_Scout_FTR750.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/indian-motorcycle-indian-scout-ftr750-e8a1.webp?v=mwb2qpyy","bild_urheber":"Brian Kitchen","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Indian_Scout_FTR750.jpg"},{"slug":"jaguar-aj-v8-5d53","hersteller":"Jaguar","modell":"AJ-V8","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":5000,"leistung_kw":176,"drehmoment_nm":516,"baujahre":"1996-2020","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/2001_Jaguar_S-Type_AJ-V8_engine.JPG/1280px-2001_Jaguar_S-Type_AJ-V8_engine.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/jaguar-aj-v8-5d53.webp?v=mwb2r1mv","bild_urheber":"No machine-readable author provided. Sfoskett~commonswiki assumed (based on copyright claims).","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:2001_Jaguar_S-Type_AJ-V8_engine.JPG"},{"slug":"jaguar-cars-aj-v6-c8e7","hersteller":"Jaguar Cars","modell":"AJ-V6","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V6","zylinder":6,"hubraum_ccm":2099,"leistung_kw":116.2,"drehmoment_nm":201,"baujahre":"1999-2011","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Jaguar_XKR_-_Flickr_-_The_Car_Spy_%287%29.jpg/1280px-Jaguar_XKR_-_Flickr_-_The_Car_Spy_%287%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/jaguar-cars-aj-v6-c8e7.webp?v=mwb2r0g4","bild_urheber":"The Car Spy","bild_lizenz":"CC BY 2.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/2.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Jaguar_XKR_-_Flickr_-_The_Car_Spy_(7).jpg"},{"slug":"kiekhaefer-mercury-mercury-super-10-hurricane-a10d","hersteller":"Kiekhaefer Mercury","modell":"Mercury Super 10 Hurricane","motorcode":null,"kategorie":"Außenbordmotor","kraftstoff":null,"bauart":null,"zylinder":null,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1950-1952","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/1951_Mercury_Super_10_Hurricane_Outboard_Motor.JPG/1280px-1951_Mercury_Super_10_Hurricane_Outboard_Motor.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/kiekhaefer-mercury-mercury-super-10-hurricane-a10d.webp?v=mwb2qheo","bild_urheber":"Sidcraft","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:1951_Mercury_Super_10_Hurricane_Outboard_Motor.JPG"},{"slug":"lancia-lancia-v4-engine-c7de","hersteller":"Lancia","modell":"Lancia V4 engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V4","zylinder":4,"hubraum_ccm":903,"leistung_kw":21.1,"drehmoment_nm":null,"baujahre":"1922-1976","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Lancia_Fulvia_5M_1972_m2_engine.jpg/1280px-Lancia_Fulvia_5M_1972_m2_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/lancia-lancia-v4-engine-c7de.webp?v=mwb2qg29","bild_urheber":"Craig Howell","bild_lizenz":"CC BY 2.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/2.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Lancia_Fulvia_5M_1972_m2_engine.jpg"},{"slug":"nicolaus-otto-otto-engine-08d4","hersteller":"Nicolaus Otto","modell":"Otto engine","motorcode":null,"kategorie":"Generator Motor","kraftstoff":"Benzin","bauart":null,"zylinder":1,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":null,"bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Otto_Engines_-_WMSTR_Montage_2.ogv/250px--Otto_Engines_-_WMSTR_Montage_2.ogv.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo","bild_frei_url":null,"bild_urheber":"DMahalko , Dale Mahalko, Gilman, WI, USA -- Email: dmahalko@gmail.com","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Otto_Engines_-_WMSTR_Montage_2.ogv"},{"slug":"nissan-y-258d","hersteller":"Nissan","modell":"Y","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":3988,"leistung_kw":143.2,"drehmoment_nm":323,"baujahre":"1965-1990","bild_url":"https://upload.wikimedia.org/wikipedia/commons/f/f2/Y44E.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/nissan-y-258d.webp?v=mwb2qiwo","bild_urheber":"Ypy31","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:Y44E.jpg"},{"slug":"nissan-z-engine-d448","hersteller":"Nissan","modell":"Z engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":4,"hubraum_ccm":1595,"leistung_kw":69.8,"drehmoment_nm":null,"baujahre":"1979-1989","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Nissan_Bluebird_910_SSS_engine_room.jpg/1280px-Nissan_Bluebird_910_SSS_engine_room.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/nissan-z-engine-d448.webp?v=mwb2qxqu","bild_urheber":"TTTNIS","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:Nissan_Bluebird_910_SSS_engine_room.jpg"},{"slug":"nissan-l-7a4d","hersteller":"Nissan","modell":"L","motorcode":null,"kategorie":"Automotor","kraftstoff":"Benzin, Diesel","bauart":null,"zylinder":null,"hubraum_ccm":1296,"leistung_kw":48.1,"drehmoment_nm":null,"baujahre":"1966-1986","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/1971_Nissan_Skyline_2000GT_engine_room.jpg/1280px-1971_Nissan_Skyline_2000GT_engine_room.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/nissan-l-7a4d.webp?v=mwb2qzaj","bild_urheber":"TTTNIS","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:1971_Nissan_Skyline_2000GT_engine_room.jpg"},{"slug":"nissan-c-engine-b551","hersteller":"Nissan","modell":"C engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":null,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":64.7,"baujahre":"1957-1964","bild_url":"https://upload.wikimedia.org/wikipedia/commons/5/56/1957_Nissan_Model_C_engine_right.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/nissan-c-engine-b551.webp?v=mwb2qldh","bild_urheber":"Morio","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:1957_Nissan_Model_C_engine_right.jpg"},{"slug":"nissan-sr20ve-09b4","hersteller":"Nissan","modell":"SR20VE","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":null,"zylinder":null,"hubraum_ccm":2000,"leistung_kw":152,"drehmoment_nm":206,"baujahre":"2001-2003","bild_url":"https://upload.wikimedia.org/wikipedia/commons/0/0e/Nissan_SR16VE_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/nissan-sr20ve-09b4.webp?v=mwb2rc1z","bild_urheber":"Impreziv at English Wikipedia","bild_lizenz":"Public domain","bild_lizenz_url":null,"bild_seite":"https://commons.wikimedia.org/wiki/File:Nissan_SR16VE_engine.jpg"},{"slug":"pontiac-pontiac-v8-engine-aac7","hersteller":"Pontiac","modell":"Pontiac V8 engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V8","zylinder":8,"hubraum_ccm":265,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1955-1981","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/1965_Pontiac_GTO_engine_01.jpg/1280px-1965_Pontiac_GTO_engine_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/pontiac-pontiac-v8-engine-aac7.webp?v=mwb2r2zu","bild_urheber":"Joe Mabel","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:1965_Pontiac_GTO_engine_01.jpg"},{"slug":"pratt-whitney-ft4-4321","hersteller":"Pratt & Whitney","modell":"FT4","motorcode":null,"kategorie":"Turbinenmotor","kraftstoff":"Erdgas","bauart":null,"zylinder":null,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1961-1976","bild_url":null,"bild_frei_url":null,"bild_urheber":null,"bild_lizenz":null,"bild_lizenz_url":null,"bild_seite":null},{"slug":"r-a-lister-and-company-lister-d-e3f0","hersteller":"R A Lister and Company","modell":"Lister D","motorcode":null,"kategorie":"Generator Motor","kraftstoff":"Benzin, Paraffin","bauart":null,"zylinder":null,"hubraum_ccm":null,"leistung_kw":7.1,"drehmoment_nm":null,"baujahre":"1926-1965","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Lister_D%2C_Castle_Combe.jpg/1280px-Lister_D%2C_Castle_Combe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/r-a-lister-and-company-lister-d-e3f0.webp?v=mwb2qoef","bild_urheber":"Andy Dingley","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Lister_D,_Castle_Combe.jpg"},{"slug":"rover-group-rover-k-series-efa0","hersteller":"Rover Group","modell":"Rover K-series","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":4,"hubraum_ccm":1113,"leistung_kw":44,"drehmoment_nm":124,"baujahre":"1988-2005","bild_url":"https://upload.wikimedia.org/wikipedia/commons/b/b5/MG_7_black_2008_engine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/rover-group-rover-k-series-efa0.webp?v=mwb2sa5t","bild_urheber":"Swoolverton ( talk )","bild_lizenz":"CC BY 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:MG_7_black_2008_engine.jpg"},{"slug":"ryan-falconer-racing-engines-falconer-v-12-33f1","hersteller":"Ryan Falconer Racing Engines","modell":"Falconer V-12","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V-12","zylinder":12,"hubraum_ccm":null,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1990","bild_url":"https://upload.wikimedia.org/wikipedia/commons/8/81/BrammoV12gearbox.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/ryan-falconer-racing-engines-falconer-v-12-33f1.webp?v=mwb2qkak","bild_urheber":"Brammo","bild_lizenz":"CC BY 3.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/3.0","bild_seite":"https://commons.wikimedia.org/wiki/File:BrammoV12gearbox.jpg"},{"slug":"toyota-gr-1a9f","hersteller":"Toyota","modell":"GR","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"V6","zylinder":6,"hubraum_ccm":null,"leistung_kw":173.5,"drehmoment_nm":266,"baujahre":"2002-heute","bild_url":"https://upload.wikimedia.org/wikipedia/commons/f/fd/Toyota_1GR-FE_engine_001.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled","bild_frei_url":null,"bild_urheber":"Tennen-Gas","bild_lizenz":"CC BY-SA 3.0","bild_lizenz_url":"http://creativecommons.org/licenses/by-sa/3.0/","bild_seite":"https://commons.wikimedia.org/wiki/File:Toyota_1GR-FE_engine_001.JPG"},{"slug":"tritec-motors-tritec-engine-af8e","hersteller":"Tritec Motors","modell":"Tritec engine","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Reihenmotor","zylinder":4,"hubraum_ccm":1397,"leistung_kw":550.2,"drehmoment_nm":122.25,"baujahre":"1999-2007","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Mini_Cooper_S_Convertible_-_Flickr_-_The_Car_Spy_%2817%29.jpg/1280px-Mini_Cooper_S_Convertible_-_Flickr_-_The_Car_Spy_%2817%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/tritec-motors-tritec-engine-af8e.webp?v=mwb2rpio","bild_urheber":"The Car Spy","bild_lizenz":"CC BY 2.0","bild_lizenz_url":"https://creativecommons.org/licenses/by/2.0","bild_seite":"https://commons.wikimedia.org/wiki/File:Mini_Cooper_S_Convertible_-_Flickr_-_The_Car_Spy_(17).jpg"},{"slug":"universal-motor-company-universal-atomic-4-ea59","hersteller":"Universal Motor Company","modell":"Universal Atomic 4","motorcode":null,"kategorie":"Innenbordmotor","kraftstoff":"Benzin","bauart":null,"zylinder":4,"hubraum_ccm":null,"leistung_kw":130.2,"drehmoment_nm":null,"baujahre":"1949-1984","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/UniversalAtomic4_1977.jpg/1280px-UniversalAtomic4_1977.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":null,"bild_urheber":"NSEasternShoreChemist","bild_lizenz":"CC BY-SA 4.0","bild_lizenz_url":"https://creativecommons.org/licenses/by-sa/4.0","bild_seite":"https://commons.wikimedia.org/wiki/File:UniversalAtomic4_1977.jpg"},{"slug":"volvo-personvagnar-volvo-b4b-b14-b16-c733","hersteller":"Volvo Personvagnar","modell":"Volvo B4B, B14, B16","motorcode":null,"kategorie":"Benzinmotor Auto","kraftstoff":"Benzin","bauart":"Inline-4","zylinder":null,"hubraum_ccm":1414,"leistung_kw":null,"drehmoment_nm":null,"baujahre":"1944-1962","bild_url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/1951_Volvo_PV444CS_AM-12-12_P1.jpg/1280px-1951_Volvo_PV444CS_AM-12-12_P1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","bild_frei_url":"https://xaqfptumjkmulobdbfid.supabase.co/storage/v1/object/public/lexikon-bilder/volvo-personvagnar-volvo-b4b-b14-b16-c733.webp?v=mwb2senf","bild_urheber":"Alfvanbeem","bild_lizenz":"CC0","bild_lizenz_url":"http://creativecommons.org/publicdomain/zero/1.0/deed.en","bild_seite":"https://commons.wikimedia.org/wiki/File:1951_Volvo_PV444CS_AM-12-12_P1.jpg"}];
+window.MARKTWERT_DATEN = {"alfa-romeo-twin-spark-7a6d":{"von":450,"bis":2000,"art":"gebraucht","waehrung":"EUR","hinweis":"Gebrauchte Twin-Spark-Motoren (1.4 bis 2.0) ab rund 450 €, überholt inklusive Einbau um 2.000 €.","quellen":[{"t":"eBay: Motor AR32104, Alfa 156 1.6 Twin Spark – 446,80 €","u":"https://www.ebay.de/b/Alfa-Romeo-156-Sportwagon-Motoren-Getriebe-furs-Auto/33615/bn_1563337"},{"t":"eBay: Motor Alfa 147 1.6 Twin Spark – 684 €","u":"https://www.ebay.de/itm/405597849370"},{"t":"eBay-Shop: 2.0 Twin Spark überholt inkl. Einbau – 1.999 €","u":"https://www.ebay.de/str/alfaromeoteilediscount"}]},"bmw-m30-f503":{"von":550,"bis":2200,"art":"gebraucht","waehrung":"EUR","hinweis":"Komplett- und Rumpfmotoren, je nach Hubraum (2.5 bis 3.5) und Zustand.","quellen":[{"t":"BMW-Syndikat (eBay): E28 525i M30 – 540 €, E34 M30 Block – 955 €","u":"https://www.bmw-syndikat.de/bmw-teile_motoren_124_26.html"},{"t":"eBay-Übersicht: M30B30 komplett ca. 1.043 €, M30 aus 7er E23 – 2.199 €","u":"https://gebraucht-kaufen.de/bmw-m30-motor"}]},"ford-duratorq-c202":{"von":300,"bis":1000,"art":"gebraucht","waehrung":"EUR","hinweis":"1.4 TDCi (F6JA/F6JB/F6JD/KVJA) aus Fiesta und Fusion.","quellen":[{"t":"eBay: Motor F6JB, Ford Fusion – 299,99 €","u":"https://www.ebay.de/p/1514962284"},{"t":"eBay: weitere 1.4-TDCi-Motoren 300–495 €","u":"https://www.ebay.de/p/1155502321"},{"t":"eBay: Komplettmotor Fiesta V Van 1.4 TDCi – 1.009,14 €","u":"https://www.ebay.de/itm/286121221323"}]},"jaguar-aj-v8-5d53":{"von":2000,"bis":9900,"art":"gebraucht","waehrung":"EUR","hinweis":"Von 4.0 Kompressor bis 4.2 Kompressor mit wenig Kilometern.","quellen":[{"t":"eBay: XJ X308 AJ27S 4.0 Kompressor – 2.046,77 €","u":"https://www.ebay.de/p/4057673064"},{"t":"eBay: S-Type 4.2 V8, 59.000 km – 5.800 €","u":"https://www.ebay.de/itm/192880237218"},{"t":"eBay: XF 4.2 V8 S/C, 43.589 km – 9.900 €","u":"https://www.ebay.de/itm/195426308096"}]},"brp-rotax-rotax-912-uls-7324":{"von":2000,"bis":9000,"art":"gebraucht","waehrung":"EUR","hinweis":"Hängt stark an den Reststunden bis zur Grundüberholung (TBO). Britische Angebote grob in Euro umgerechnet.","quellen":[{"t":"AFORS: Rotax 912 ULS – £1.900","u":"https://afors.uk/engines+propellors/for-sale/standardView-55609/Rotax-912-ULS-Now-Sold"},{"t":"AFORS: 912 ULS2 (2013), instandgesetzt – £8.000 inkl. MwSt.","u":"https://afors.uk/engines+propellors/for-sale/standardView-35692/rotax-912uls2-100hp-2013-engine-low-hrs"}]},"toyota-gr-1a9f":{"von":1700,"bis":2500,"art":"gebraucht","waehrung":"EUR","hinweis":"Beispiel 2GR-FE 3.5 V6 (Camry, RAV4, Sienna).","quellen":[{"t":"eBay: 2GR-FE-Motoren 1.699–2.499 €","u":"https://www.ebay.de/shop/2grfe"}]},"jaguar-cars-aj-v6-c8e7":{"von":500,"bis":1350,"art":"gebraucht","waehrung":"EUR","hinweis":"Beispiel X-Type 2.5 V6 (Motorcode XB).","quellen":[{"t":"eBay: X-Type-2.5-V6-Motoren 510–1.350 €","u":"https://www.ebay.de/p/1030898097"}]},"tritec-motors-tritec-engine-af8e":{"von":350,"bis":1200,"art":"gebraucht","waehrung":"EUR","hinweis":"Mini R50/R52 1.6 (W10B16), ohne defekte Motoren.","quellen":[{"t":"eBay: Motor Mini R50 W10B16A – 425 €","u":"https://www.ebay.de/itm/396807849852"},{"t":"eBay: Mini R50 W10B16A, 96.000 km – 649,99 €","u":"https://www.ebay.de/itm/353959178869"},{"t":"eBay: Motor Mini R50 (2006) – 1.215 €","u":"https://www.ebay.de/itm/156799698043"}]},"ford-of-europe-psa-group-jaguar-cars-land-rover-ajd-v6-dt17-dt20-14f7":{"von":1700,"bis":2000,"art":"gebraucht","waehrung":"EUR","hinweis":"2.7 TDV6 (276DT) aus Discovery 3 und Range Rover Sport. Britisches Angebot grob umgerechnet.","quellen":[{"t":"eBay: Motor 276DT TDV6 – 1.699 €","u":"https://www.ebay.com/itm/326655215511"},{"t":"eBay UK: 2.7 TDV6, 55.000 Meilen – £1.700","u":"https://www.ebay.co.uk/itm/144487409554"}]},"ford-duratec-9ba6":{"von":250,"bis":1000,"art":"gebraucht","waehrung":"EUR","hinweis":"Je nach Variante: 1.3 ab rund 250 €, 1.6 bis rund 1.000 €.","quellen":[{"t":"eBay: Fiesta 1.3 Duratec, Motoren 249–550 €","u":"https://www.ebay.de/p/1114969944"},{"t":"eBay: Fiesta/Fusion 1.4 und 1.6, Motoren 594–991 €","u":"https://www.ebay.de/p/1513981731"}]},"chevrolet-small-block-engine-f8bd":{"von":4300,"bis":13700,"art":"neu","waehrung":"USD","hinweis":"Neue 350er-Crate-Motoren (5,7 l) von Chevrolet Performance in den USA, ohne Versand und Zoll.","quellen":[{"t":"SlashGear: Crate-Motoren 4.276–13.672 $","u":"https://www.slashgear.com/1669915/350-small-block-how-much-horsepower-chevrolet-engine-price"}]}};
+window.MARKTWERT_STAND = "November 2026";
+</script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Einstellungen ---------- */
+  var INSERIEREN_URL = "https://1amotor.de/"; // TODO: auf die Seite „Anzeige erstellen“ setzen
+  var DETAIL_URL = "https://1amotor.de/motor-info.html?m="; // bestehende Lexikon-Detailseite
+  var PRO_LADUNG = 12;
+  var MAX_VERGLEICH = 3;
+  var JAHR = new Date().getFullYear();
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  ["#kopf-inserieren", "#band-inserieren"].forEach(function (s) { $(s).href = INSERIEREN_URL; });
+
+  /* ---------- Hilfen ---------- */
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+  function zahl(n, st) { return Number(n).toLocaleString("de-DE", { maximumFractionDigits: st == null ? 0 : st }); }
+  function ps(kw) { return kw ? Math.round(Number(kw) * 1.35962) : null; }
+  function liter(ccm) { return (Number(ccm) / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 }); }
+  function titel(e) { return [e.hersteller, e.modell].filter(Boolean).join(" ") || "Motor"; }
+  function foto(e) { return (e && (e.bild_frei_url || e.bild_url)) || ""; }
+
+  function jahre(e) {
+    var t = String(e.baujahre || "");
+    var m = t.match(/\d{4}/g);
+    if (!m) return null;
+    var von = Number(m[0]);
+    var bis = m[1] ? Number(m[1]) : (/heute/i.test(t) ? JAHR : von);
+    return { von: von, bis: bis, dauer: bis - von, laeuft: /heute/i.test(t) };
+  }
+
+  var ICONS = {
+    auto: '<path d="M5 17h14M3 17v-4l2-5h14l2 5v4M7 17v2M17 17v2"/><circle cx="7.5" cy="13.5" r="1"/><circle cx="16.5" cy="13.5" r="1"/>',
+    zweirad: '<circle cx="5.5" cy="16" r="3.5"/><circle cx="18.5" cy="16" r="3.5"/><path d="M5.5 16l4-7h5l4 7M9.5 9h-2M14.5 9l1.5-3h2"/>',
+    boot: '<path d="M3 15l2 4h14l2-4H3zM12 4v11M12 4l6 9h-6"/>',
+    flug: '<path d="M2 13l8-1 4-8h2l-2 8 6 1v2l-6 1 2 6h-2l-4-6-8-1z"/>',
+    industrie: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+    motor: '<path d="M4 9h3l2-2h6v3h2l1-1h2v7h-2l-1-1h-2v3H9l-2-2H4zM4 9v8M10 7V5h4v2"/>'
+  };
+  function gruppe(kat) {
+    var t = (kat || "").toLowerCase();
+    if (/motorrad|roller|quad/.test(t)) return "zweirad";
+    if (/boot|außenbord|innenbord|schiff/.test(t)) return "boot";
+    if (/flug|turbine/.test(t)) return "flug";
+    if (/industrie|generator|pumpe/.test(t)) return "industrie";
+    if (/auto|diesel|benzin|hybrid/.test(t)) return "auto";
+    return "motor";
+  }
+  function icon(kat, gr) {
+    gr = gr || 40;
+    return '<svg viewBox="0 0 24 24" width="' + gr + '" height="' + gr + '" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[gruppe(kat)] + "</svg>";
+  }
+  var BUCH = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg>';
+
+  /* Bild mit Rückfall auf das Kategorie-Symbol, falls das Foto nicht lädt */
+  function bildHtml(e, gr) {
+    var f = foto(e);
+    return icon(e.kategorie, gr) + (f ? '<img src="' + esc(f) + '" alt="' + esc(titel(e)) + '" loading="lazy" onerror="this.remove()">' : "");
+  }
+
+  /* ---------- Plausibilitätsprüfung ---------- */
+  /* Fängt offensichtliche Fehler aus dem Datenimport ab, damit sie nicht in Rekorden
+     und Sortierungen landen. Dieselben Korrekturen stehen als SQL in motorenwelt.sql. */
+  var MANUELL = {
+    "universal-motor-company-universal-atomic-4-ea59": { feld: "leistung_kw", grund: "177 PS passen nicht zum Atomic 4 (rund 30 PS)" }
+  };
+  var KORREKTUREN = [];
+  var KRAFTSTOFF = [[/compressed natural gas/gi, "Erdgas"], [/gasoline|petrol/gi, "Benzin"], [/kerosene/gi, "Kerosin"], [/vegetable oil/gi, "Pflanzenöl"], [/\s*,\s*/g, ", "]];
+  function deutsch(t) { KRAFTSTOFF.forEach(function (r) { t = t.replace(r[0], r[1]); }); return t; }
+  function pruefe(roh) {
+    var e = {};
+    for (var k in roh) e[k] = roh[k];
+    var kat = (e.kategorie || "").toLowerCase();
+    var fahrzeug = /auto|motorrad|bord/.test(kat);
+    function setze(feld, neu, grund) { KORREKTUREN.push({ slug: e.slug, feld: feld, alt: e[feld], neu: neu, grund: grund }); e[feld] = neu; }
+
+    if (fahrzeug && e.hubraum_ccm && e.zylinder >= 4 && e.hubraum_ccm < 500)
+      setze("hubraum_ccm", Math.round(e.hubraum_ccm * 16.387), "vermutlich Kubikzoll statt cm³");
+    if (fahrzeug && e.hubraum_ccm > 20000)
+      setze("hubraum_ccm", null, "Hubraum unplausibel groß");
+    if (e.leistung_kw && e.hubraum_ccm && ps(e.leistung_kw) / (e.hubraum_ccm / 1000) > 200)
+      setze("leistung_kw", null, "über 200 PS pro Liter");
+    if (fahrzeug && e.drehmoment_nm > 3000)
+      setze("drehmoment_nm", null, "Drehmoment unplausibel hoch");
+    if (e.zylinder && e.zylinder % 2 === 1 && /^v/i.test(e.bauart || ""))
+      setze("zylinder", null, "ungerade Zylinderzahl bei V-Motor");
+    if (e.kraftstoff) e.kraftstoff = deutsch(e.kraftstoff);
+    var m = MANUELL[e.slug];
+    if (m && e[m.feld] != null) setze(m.feld, null, m.grund);
+    return e;
+  }
+
+  /* ---------- Anzeige-Texte ---------- */
+  function hauptwert(e) {
+    if (e.leistung_kw) return zahl(ps(e.leistung_kw)) + " PS · " + zahl(e.leistung_kw, 1) + " kW";
+    if (e.hubraum_ccm) return zahl(e.hubraum_ccm) + " cm³";
+    if (e.drehmoment_nm) return zahl(e.drehmoment_nm) + " Nm";
+    return "Technische Daten";
+  }
+  function unterzeile(e) {
+    var t = [];
+    if (e.zylinder) t.push(e.zylinder + " Zylinder");
+    else if (e.bauart) t.push(e.bauart);
+    if (e.leistung_kw && e.hubraum_ccm) t.push(liter(e.hubraum_ccm) + " Liter");
+    if (!t.length && e.kraftstoff) t.push(e.kraftstoff);
+    return t.slice(0, 2).join(" · ") || "Produktinformation";
+  }
+  function jahrText(v) { return v === 1 ? "1 Jahr" : v + " Jahre"; }
+  function geld(n, w) { return zahl(n) + (w === "USD" ? " $" : " €"); }
+  function mwText(mw) { return "ca. " + geld(mw.von, mw.waehrung) + " – " + geld(mw.bis, mw.waehrung); }
+  function mwLabel(mw) { return mw.art === "neu" ? "Neupreis" : "Marktwert gebraucht"; }
+
+  /* ---------- Zustand ---------- */
+  var ALLE = [], MW = {}, STAND = window.MARKTWERT_STAND || "";
+  var kat = "", nurMw = false, sicht = [], gezeigt = 0;
+  var vergleich = [];
+
+  /* Tägliche Mischung: jeder Tag eine andere, aber stabile Reihenfolge */
+  function zufallsgen(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var heute = new Date();
+  var tagesZufall = zufallsgen(heute.getFullYear() * 10000 + (heute.getMonth() + 1) * 100 + heute.getDate());
+  var mischRang = {};
+
+  var sortierer = {
+    entdecken: function (a, b) { return (foto(b) ? 1 : 0) - (foto(a) ? 1 : 0) || mischRang[a.slug] - mischRang[b.slug]; },
+    ps: function (a, b) { return (Number(b.leistung_kw) || 0) - (Number(a.leistung_kw) || 0); },
+    ccm: function (a, b) { return (Number(b.hubraum_ccm) || 0) - (Number(a.hubraum_ccm) || 0); },
+    alt: function (a, b) { var x = jahre(a), y = jahre(b); return (x ? x.von : 9999) - (y ? y.von : 9999); },
+    mw: function (a, b) { return (MW[b.slug] ? 1 : 0) - (MW[a.slug] ? 1 : 0) || sortierer.entdecken(a, b); },
+    az: function (a, b) { return titel(a).localeCompare(titel(b), "de"); }
+  };
+
+  /* ---------- Daten laden ---------- */
+  var FELDER = "slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm,leistung_kw,drehmoment_nm,baujahre,bild_url,bild_frei_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite";
+  function ladeDaten() {
+    var sb = window.supabaseClient;
+    if (!sb) return Promise.resolve({ lexikon: window.LEXIKON_DATEN || [], marktwerte: window.MARKTWERT_DATEN || {}, live: false });
+    return Promise.all([
+      sb.from("motor_lexikon").select(FELDER).eq("status", "veroeffentlicht").limit(2000),
+      sb.from("motor_marktwert").select("*")
+    ]).then(function (r) {
+      if (r[0].error || !r[0].data || !r[0].data.length) throw new Error("Lexikon leer");
+      var mw = {};
+      (r[1].data || []).forEach(function (z) {
+        mw[z.slug] = { von: z.preis_von, bis: z.preis_bis, art: z.preis_art, waehrung: z.waehrung, hinweis: z.hinweis, quellen: z.quellen || [], stand: z.stand };
+        if (z.stand && !STAND) STAND = new Date(z.stand).toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+      });
+      return { lexikon: r[0].data, marktwerte: mw, live: true };
+    }).catch(function () {
+      return { lexikon: window.LEXIKON_DATEN || [], marktwerte: window.MARKTWERT_DATEN || {}, live: false };
+    });
+  }
+
+  /* ---------- Kopfbereich ---------- */
+  function zeigeZahlen() {
+    var hersteller = {}, kats = {};
+    ALLE.forEach(function (e) { if (e.hersteller) hersteller[e.hersteller] = 1; if (e.kategorie) kats[e.kategorie] = 1; });
+    var mwAnzahl = ALLE.filter(function (e) { return MW[e.slug]; }).length;
+    $("#zahlen").innerHTML = [
+      [ALLE.length, "Motoren"], [Object.keys(hersteller).length, "Hersteller"],
+      [Object.keys(kats).length, "Kategorien"], [mwAnzahl, "mit Marktwert"]
+    ].map(function (z) { return '<div class="zahl"><b>' + zahl(z[0]) + "</b><small>" + z[1] + "</small></div>"; }).join("");
+
+    var mitFoto = ALLE.filter(function (e) { return e.bild_frei_url; });
+    mitFoto.sort(function (a, b) { return mischRang[a.slug] - mischRang[b.slug]; });
+    $("#fotostapel").innerHTML = mitFoto.slice(0, 3).map(function (e) {
+      return '<figure><img src="' + esc(foto(e)) + '" alt="" onerror="var s=this.closest(\'.fotostapel\');this.parentNode.remove();if(s&&!s.children.length)s.remove()"></figure>';
+    }).join("");
+  }
+
+  /* ---------- Rekorde ---------- */
+  function rekorde() {
+    function max(liste, f) { var best = null; liste.forEach(function (e) { var v = f(e); if (v != null && !isNaN(v) && (best === null || v > best.v)) best = { e: e, v: v }; }); return best; }
+    function min(liste, f) { var r = max(liste, function (e) { var v = f(e); return v == null ? null : -v; }); if (r) r.v = -r.v; return r; }
+    var liste = [
+      ["💪", "Stärkster Motor", max(ALLE, function (e) { return e.leistung_kw ? ps(e.leistung_kw) : null; }), function (v) { return zahl(v) + " PS"; }],
+      ["🏛️", "Ältester Motor", min(ALLE, function (e) { var j = jahre(e); return j ? j.von : null; }), function (v) { return "Baujahr " + v; }],
+      ["⏳", "Am längsten gebaut", max(ALLE, function (e) { var j = jahre(e); return j && j.dauer > 0 ? j.dauer : null; }), jahrText],
+      ["🛢️", "Größter Hubraum", max(ALLE, function (e) { return e.hubraum_ccm || null; }), function (v) { return liter(v) + " Liter"; }],
+      ["🤏", "Kleinster Hubraum", min(ALLE.filter(function (e) { return /auto/i.test(e.kategorie || ""); }), function (e) { return e.hubraum_ccm || null; }), function (v) { return zahl(v) + " cm³"; }],
+      ["🔥", "Höchste Literleistung", max(ALLE, function (e) { return e.leistung_kw && e.hubraum_ccm ? Math.round(ps(e.leistung_kw) / (e.hubraum_ccm / 1000)) : null; }), function (v) { return v + " PS pro Liter"; }],
+      ["🔢", "Meiste Zylinder", max(ALLE, function (e) { return e.zylinder || null; }), function (v) { return v + " Zylinder"; }],
+      ["💶", "Höchster Marktwert", max(ALLE, function (e) { var m = MW[e.slug]; return m && m.waehrung !== "USD" && m.art !== "neu" ? m.bis : null; }), function (v) { return "bis ca. " + geld(v); }]
+    ].filter(function (r) { return r[2]; });
+
+    $("#rekord-liste").innerHTML = liste.map(function (r) {
+      var e = r[2].e;
+      return '<button class="rekord" type="button" data-slug="' + esc(e.slug) + '">' +
+        '<div class="rb">' + bildHtml(e, 34) + "</div>" +
+        '<div class="rt"><small>' + r[0] + " " + esc(r[1]) + "</small><b>" + esc(r[3](r[2].v)) + "</b><span>" + esc(titel(e)) + "</span></div></button>";
+    }).join("");
+  }
+
+  /* ---------- Filter & Liste ---------- */
+  function chips() {
+    var anzahl = {};
+    ALLE.forEach(function (e) { if (e.kategorie) anzahl[e.kategorie] = (anzahl[e.kategorie] || 0) + 1; });
+    var kats = Object.keys(anzahl).sort(function (a, b) { return anzahl[b] - anzahl[a] || a.localeCompare(b, "de"); });
+    var mwAnzahl = ALLE.filter(function (e) { return MW[e.slug]; }).length;
+    $("#chips").innerHTML =
+      '<button class="chip mw ' + (nurMw ? "on" : "") + '" data-mw="1">💶 Mit Marktwert<small>' + mwAnzahl + "</small></button>" +
+      [""].concat(kats).map(function (k) {
+        return '<button class="chip ' + (k === kat ? "on" : "") + '" data-k="' + esc(k) + '">' + (k ? esc(k) : "Alle") + "<small>" + (k ? anzahl[k] : ALLE.length) + "</small></button>";
+      }).join("");
+  }
+
+  function treffer() {
+    var q = $("#q").value.trim().toLowerCase();
+    var s = $("#sort").value;
+    return ALLE.filter(function (e) {
+      if (kat && e.kategorie !== kat) return false;
+      if (nurMw && !MW[e.slug]) return false;
+      if (!q) return true;
+      return [e.hersteller, e.modell, e.motorcode, e.kategorie, e.kraftstoff, e.bauart].filter(Boolean).join(" ").toLowerCase().indexOf(q) !== -1;
+    }).sort(sortierer[s] || sortierer.entdecken);
+  }
+
+  function karte(e) {
+    var mw = MW[e.slug], an = vergleich.indexOf(e.slug) !== -1;
+    return '<article class="karte" tabindex="0" data-slug="' + esc(e.slug) + '" aria-label="' + esc(titel(e)) + '">' +
+      '<div class="bild">' + bildHtml(e, 46) +
+      '<span class="kat">' + esc(e.kategorie || "Motor") + '</span><span class="lx">' + BUCH + " Lexikon</span></div>" +
+      '<div class="inhalt"><h3>' + esc(titel(e)) + "</h3>" +
+      '<div class="haupt">' + esc(hauptwert(e)) + "</div>" +
+      '<div class="unter">' + esc(unterzeile(e)) + "</div>" +
+      (mw ? '<div class="mw"><span>' + mwLabel(mw) + " · Richtwert</span><b>" + mwText(mw) + "</b></div>" : '<div class="mw leer">Marktwert folgt</div>') +
+      '<div class="fuss"><span>' + esc([e.baujahre, e.kraftstoff].filter(Boolean).join(" · ")) + "</span>" +
+      '<button class="vgl ' + (an ? "an" : "") + '" type="button" data-vgl="' + esc(e.slug) + '" aria-pressed="' + an + '">' + (an ? "✓ Vergleich" : "＋ Vergleichen") + "</button></div>" +
+      "</div></article>";
+  }
+
+  function liste(neu) {
+    if (neu) { sicht = treffer(); gezeigt = 0; $("#raster").innerHTML = ""; }
+    var teil = sicht.slice(gezeigt, gezeigt + PRO_LADUNG);
+    gezeigt += teil.length;
+    if (!sicht.length) $("#raster").innerHTML = '<div class="leerzustand">Nichts gefunden – probier einen anderen Suchbegriff oder eine andere Kategorie.</div>';
+    else $("#raster").insertAdjacentHTML("beforeend", teil.map(karte).join(""));
+    $("#info").textContent = zahl(sicht.length) + " " + (sicht.length === 1 ? "Motor" : "Motoren") + (kat ? " · " + kat : "") + (nurMw ? " · mit Marktwert" : "");
+    var fertig = gezeigt >= sicht.length;
+    $("#ende").hidden = !fertig || !sicht.length;
+    $("#ende").textContent = "Das waren alle " + zahl(sicht.length) + ". Lust auf mehr? 🎲 Lass dich überraschen.";
+  }
+
+  /* ---------- Ähnliche Motoren ---------- */
+  function aehnliche(e, n) {
+    var j = jahre(e);
+    return ALLE.filter(function (x) { return x.slug !== e.slug; }).map(function (x) {
+      var p = 0, jx = jahre(x);
+      if (x.kategorie === e.kategorie) p += 3;
+      if (x.hersteller === e.hersteller) p += 2;
+      if (x.zylinder && x.zylinder === e.zylinder) p += 2;
+      if (x.hubraum_ccm && e.hubraum_ccm && Math.abs(x.hubraum_ccm - e.hubraum_ccm) / e.hubraum_ccm < 0.25) p += 2;
+      if (x.leistung_kw && e.leistung_kw && Math.abs(x.leistung_kw - e.leistung_kw) / e.leistung_kw < 0.25) p += 1;
+      if (x.kraftstoff && x.kraftstoff === e.kraftstoff) p += 1;
+      if (j && jx && Math.abs(j.von - jx.von) <= 10) p += 1;
+      if (foto(x)) p += 0.5;
+      return { x: x, p: p + mischRang[x.slug] / 1000 };
+    }).sort(function (a, b) { return b.p - a.p; }).slice(0, n || 4).map(function (z) { return z.x; });
+  }
+
+  /* ---------- Detail ---------- */
+  var aktuell = null;
+  function finde(slug) { for (var i = 0; i < ALLE.length; i++) if (ALLE[i].slug === slug) return ALLE[i]; return null; }
+
+  function creditHtml(e) {
+    if (!foto(e)) return "";
+    var teile = [];
+    teile.push("Foto: " + esc(e.bild_urheber || "unbekannt"));
+    if (e.bild_lizenz) teile.push(e.bild_lizenz_url ? '<a href="' + esc(e.bild_lizenz_url) + '" target="_blank" rel="noopener">' + esc(e.bild_lizenz) + "</a>" : esc(e.bild_lizenz));
+    if (e.bild_seite) teile.push('<a href="' + esc(e.bild_seite) + '" target="_blank" rel="noopener">Wikimedia Commons</a>');
+    if (e.bild_frei_url) teile.push("bearbeitet von 1A Motor (Ausschnitt, gespiegelt)");
+    return '<button class="credit-knopf" type="button" data-credit aria-label="Bildnachweis anzeigen">ⓘ</button><div class="credit" hidden>' + teile.join(" · ") + "</div>";
+  }
+
+  function wertKachel(label, wert, zusatz) {
+    return '<div class="wert"><small>' + label + "</small><b>" + esc(wert) + "</b>" + (zusatz ? "<i>" + esc(zusatz) + "</i>" : "") + "</div>";
+  }
+
+  function oeffne(slug) {
+    var e = finde(slug);
+    if (!e) return;
+    aktuell = e;
+    var mw = MW[e.slug], j = jahre(e), w = [];
+    if (e.leistung_kw) w.push(wertKachel("Leistung", zahl(ps(e.leistung_kw)) + " PS", zahl(e.leistung_kw, 1) + " kW"));
+    if (e.hubraum_ccm) w.push(wertKachel("Hubraum", zahl(e.hubraum_ccm) + " cm³", liter(e.hubraum_ccm) + " l"));
+    if (e.drehmoment_nm) w.push(wertKachel("Drehmoment", zahl(e.drehmoment_nm) + " Nm"));
+    if (e.zylinder) w.push(wertKachel("Zylinder", String(e.zylinder), e.bauart || ""));
+    else if (e.bauart) w.push(wertKachel("Bauart", e.bauart));
+    if (e.kraftstoff) w.push(wertKachel("Antrieb", e.kraftstoff));
+    if (j) w.push(wertKachel("Bauzeit", e.baujahre, j.dauer > 0 ? (j.laeuft ? "seit " + (j.dauer === 1 ? "1 Jahr" : j.dauer + " Jahren") : jahrText(j.dauer)) : ""));
+    if (e.motorcode) w.push(wertKachel("Motorcode", e.motorcode));
+
+    var mwHtml = mw
+      ? '<div class="mwbox"><div style="font-size:12.5px;font-weight:700;color:var(--blue)">' + mwLabel(mw).toUpperCase() + "</div>" +
+        '<div class="gross">' + mwText(mw) + '<span class="tag">Richtwert</span></div>' +
+        "<p>" + esc(mw.hinweis || "") + "</p>" +
+        "<details><summary>Woher kommt der Wert?</summary><ul>" +
+        (mw.quellen || []).map(function (q) { return '<li><a href="' + esc(q.u) + '" target="_blank" rel="noopener nofollow">' + esc(q.t) + "</a></li>"; }).join("") +
+        "</ul></details>" +
+        '<div class="stand">Aus öffentlich sichtbaren Angeboten' + (STAND ? ", Stand " + esc(STAND) : "") + ". Kein Angebot von 1A Motor, ohne Gewähr.</div></div>"
+      : '<div class="mwbox leer"><b style="color:var(--dark)">Marktwert folgt</b><p>Für diesen Motor haben wir noch zu wenige Angebote gesehen. Sobald welche bei 1A Motor inseriert werden, erscheint hier ein Richtwert.</p></div>';
+
+    $("#detail-kopf").textContent = "Motorenlexikon · " + (e.kategorie || "Motor");
+    $("#detail-inhalt").innerHTML =
+      '<div class="detail">' +
+        '<div><div class="dbild">' + bildHtml(e, 80) + creditHtml(e) + "</div></div>" +
+        '<div class="dtext">' +
+          '<div class="katzeile">' + esc(e.kategorie || "Motor") + "</div>" +
+          "<h2>" + esc(titel(e)) + "</h2>" +
+          '<div class="bauzeit">' + esc([e.baujahre, e.kraftstoff].filter(Boolean).join(" · ")) + "</div>" +
+          '<div class="werte">' + w.join("") + "</div>" +
+          mwHtml +
+          '<div class="handeln">' +
+            '<div class="alarm"><b>🔔 Benachrichtige mich, wenn so ein Motor inseriert wird</b>' +
+              '<form id="alarm-form" novalidate>' +
+                '<input type="email" name="email" placeholder="deine@email.de" required aria-label="E-Mail-Adresse">' +
+                '<button class="btn primaer" type="submit">Suchauftrag anlegen</button>' +
+              "</form>" +
+              '<label><input type="checkbox" id="einwilligung"><span>Ich möchte per E-Mail benachrichtigt werden, sobald ein passender Motor inseriert wird. Abmeldung jederzeit, siehe <a href="https://1amotor.de/datenschutz" target="_blank" rel="noopener">Datenschutz</a>.</span></label>' +
+              '<div class="ok" id="alarm-ok" hidden></div>' +
+            "</div>" +
+            '<a class="btn hell" href="' + esc(INSERIEREN_URL) + '">🏷️ Du hast so einen? Kostenlos inserieren</a>' +
+          "</div>" +
+        "</div>" +
+      "</div>" +
+      '<div class="aehnlich"><h3>Ähnliche Motoren</h3><div class="mini-raster">' +
+        aehnliche(e, 4).map(function (x) {
+          return '<button class="mini" type="button" data-slug="' + esc(x.slug) + '"><div class="bild">' + bildHtml(x, 30) + '</div><div class="t">' + esc(titel(x)) + "<small>" + esc(hauptwert(x)) + "</small></div></button>";
+        }).join("") +
+      "</div></div>" +
+      '<div class="dfuss">' +
+        '<button class="btn hell" type="button" data-vgl="' + esc(e.slug) + '">' + (vergleich.indexOf(e.slug) !== -1 ? "✓ Im Vergleich" : "＋ Zum Vergleich") + "</button>" +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn hell" href="' + esc(DETAIL_URL + encodeURIComponent(e.slug)) + '">Lexikon-Seite</a>' +
+        '<button class="btn dunkel" type="button" data-zufall>🎲 Nächster Zufallsmotor</button></div>' +
+      "</div>";
+
+    var d = $("#detail-dialog");
+    if (!d.open) d.showModal();
+    d.scrollTop = 0;
+    try { history.replaceState(null, "", "#m=" + encodeURIComponent(e.slug)); } catch (_) {}
+
+    $("#alarm-form").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var mail = this.email.value.trim(), ok = $("#alarm-ok");
+      ok.hidden = false;
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) { ok.style.color = "#b91c1c"; ok.textContent = "Bitte gib eine gültige E-Mail-Adresse ein."; return; }
+      if (!$("#einwilligung").checked) { ok.style.color = "#b91c1c"; ok.textContent = "Bitte bestätige kurz die Einwilligung."; return; }
+      ok.style.color = ""; ok.textContent = "Wird gespeichert …";
+      var sb = window.supabaseClient;
+      var fertig = function (text) { ok.textContent = text; $("#alarm-form").hidden = true; };
+      if (!sb) { fertig("✓ Vorschau: Auf 1amotor.de wird der Suchauftrag hier gespeichert."); return; }
+      sb.from("suchauftraege").insert({ slug: e.slug, email: mail, einwilligung: true }).then(function (r) {
+        if (r.error) { ok.style.color = "#b91c1c"; ok.textContent = "Das hat nicht geklappt. Versuch es bitte später noch einmal."; }
+        else fertig("✓ Eingetragen. Wir melden uns, sobald so ein Motor inseriert wird.");
+      });
+    });
+  }
+
+  function zufall() {
+    var pool = ALLE.filter(function (e) { return foto(e) && (!aktuell || e.slug !== aktuell.slug); });
+    if (!pool.length) pool = ALLE;
+    oeffne(pool[Math.floor(Math.random() * pool.length)].slug);
+  }
+
+  /* ---------- Vergleich ---------- */
+  function schalteVergleich(slug) {
+    var i = vergleich.indexOf(slug);
+    if (i !== -1) vergleich.splice(i, 1);
+    else if (vergleich.length >= MAX_VERGLEICH) { toast("Höchstens " + MAX_VERGLEICH + " Motoren gleichzeitig – entferne erst einen."); return; }
+    else vergleich.push(slug);
+    $$('[data-vgl="' + slug.replace(/"/g, "") + '"]').forEach(function (b) {
+      var an = vergleich.indexOf(slug) !== -1;
+      b.classList.toggle("an", an && b.classList.contains("vgl"));
+      b.setAttribute("aria-pressed", an);
+      b.textContent = b.classList.contains("vgl") ? (an ? "✓ Vergleich" : "＋ Vergleichen") : (an ? "✓ Im Vergleich" : "＋ Zum Vergleich");
+    });
+    vleiste();
+  }
+  function vleiste() {
+    $("#vchips").innerHTML = vergleich.map(function (s) {
+      var e = finde(s);
+      return '<span class="vchip">' + esc(titel(e).slice(0, 26)) + '<button type="button" data-raus="' + esc(s) + '" aria-label="Entfernen">×</button></span>';
+    }).join("");
+    $("#vergleichen").disabled = vergleich.length < 2;
+    $("#vergleichen").textContent = vergleich.length < 2 ? "Noch " + (2 - vergleich.length) + " wählen" : vergleich.length + " vergleichen";
+    $("#vleiste").classList.toggle("zeigen", vergleich.length > 0);
+  }
+  function zeigeVergleich() {
+    var es = vergleich.map(finde);
+    function zeile(label, f, fmt, besser) {
+      var werte = es.map(f);
+      var gueltig = werte.filter(function (v) { return v != null; });
+      var best = besser && gueltig.length > 1 ? (besser === "hoch" ? Math.max.apply(null, gueltig) : Math.min.apply(null, gueltig)) : null;
+      var einmalig = best != null && gueltig.filter(function (v) { return v === best; }).length === 1;
+      return "<tr><th>" + label + "</th>" + werte.map(function (v) {
+        return '<td class="' + (einmalig && v === best ? "sieg" : "") + '">' + (v == null ? "–" : esc(fmt(v))) + "</td>";
+      }).join("") + "</tr>";
+    }
+    $("#vergleich-inhalt").innerHTML = '<table class="vtab"><thead><tr><th></th>' +
+      es.map(function (e) { return '<td><div class="kopfbild">' + bildHtml(e, 34) + '</div><div class="name">' + esc(titel(e)) + '</div><div style="color:var(--muted);font-size:13px">' + esc(e.kategorie || "") + "</div></td>"; }).join("") +
+      "</tr></thead><tbody>" +
+      zeile("Leistung", function (e) { return e.leistung_kw ? ps(e.leistung_kw) : null; }, function (v) { return zahl(v) + " PS"; }, "hoch") +
+      zeile("Hubraum", function (e) { return e.hubraum_ccm || null; }, function (v) { return zahl(v) + " cm³"; }, "hoch") +
+      zeile("PS pro Liter", function (e) { return e.leistung_kw && e.hubraum_ccm ? Math.round(ps(e.leistung_kw) / (e.hubraum_ccm / 1000)) : null; }, function (v) { return v + " PS/l"; }, "hoch") +
+      zeile("Drehmoment", function (e) { return e.drehmoment_nm || null; }, function (v) { return zahl(v) + " Nm"; }, "hoch") +
+      zeile("Zylinder", function (e) { return e.zylinder || null; }, String, "hoch") +
+      zeile("Antrieb", function (e) { return e.kraftstoff || null; }, String) +
+      zeile("Bauzeit", function (e) { return e.baujahre || null; }, String) +
+      zeile("Jahre gebaut", function (e) { var j = jahre(e); return j && j.dauer > 0 ? j.dauer : null; }, jahrText, "hoch") +
+      zeile("Marktwert", function (e) { return MW[e.slug] ? mwText(MW[e.slug]) : null; }, String) +
+      "</tbody></table>" +
+      '<p style="color:var(--muted);font-size:12.5px;margin:12px 0 0">★ = bester Wert in der Zeile. Werte aus dem 1A-Motorenlexikon, ohne Gewähr.</p>';
+    $("#vergleich-dialog").showModal();
+  }
+
+  /* ---------- Kleinkram ---------- */
+  var toastZeit;
+  function toast(t) {
+    var el = $("#toast"); el.textContent = t; el.classList.add("zeigen");
+    clearTimeout(toastZeit); toastZeit = setTimeout(function () { el.classList.remove("zeigen"); }, 2600);
+  }
+
+  /* ---------- Ereignisse ---------- */
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    var vgl = t.closest("[data-vgl]");
+    if (vgl) { ev.stopPropagation(); schalteVergleich(vgl.getAttribute("data-vgl")); return; }
+    var raus = t.closest("[data-raus]");
+    if (raus) { schalteVergleich(raus.getAttribute("data-raus")); return; }
+    if (t.closest("[data-credit]")) { var c = t.closest(".dbild").querySelector(".credit"); c.hidden = !c.hidden; return; }
+    if (t.closest("[data-zufall]")) { zufall(); return; }
+    if (t.closest("[data-zu]")) { t.closest("dialog").close(); return; }
+    var k = t.closest(".karte, .rekord, .mini");
+    if (k && k.getAttribute("data-slug")) { if ($("#vergleich-dialog").open) $("#vergleich-dialog").close(); oeffne(k.getAttribute("data-slug")); return; }
+    var chip = t.closest(".chip");
+    if (chip) {
+      if (chip.hasAttribute("data-mw")) nurMw = !nurMw; else kat = chip.getAttribute("data-k");
+      chips(); liste(true); return;
+    }
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" && ev.target.classList && ev.target.classList.contains("karte")) oeffne(ev.target.getAttribute("data-slug"));
+  });
+  $$("dialog").forEach(function (d) {
+    d.addEventListener("click", function (ev) { if (ev.target === d) d.close(); });
+    d.addEventListener("close", function () { if (d.id === "detail-dialog") { aktuell = null; try { history.replaceState(null, "", location.pathname + location.search); } catch (_) {} } });
+  });
+  $("#zufall-hero").addEventListener("click", zufall);
+  $("#vergleichen").addEventListener("click", function () { if (vergleich.length >= 2) zeigeVergleich(); });
+  $("#sort").addEventListener("change", function () { liste(true); });
+  var tippen;
+  $("#q").addEventListener("input", function () { clearTimeout(tippen); tippen = setTimeout(function () { liste(true); }, 150); });
+  $("#suche-form").addEventListener("submit", function (ev) { ev.preventDefault(); liste(true); $("#entdecken").scrollIntoView({ behavior: "smooth" }); });
+
+  /* Endlos-Scrollen */
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (eintraege) {
+      if (eintraege[0].isIntersecting && gezeigt < sicht.length) liste(false);
+    }, { rootMargin: "600px" }).observe($("#sensor"));
+  }
+
+  /* ---------- Start ---------- */
+  ladeDaten().then(function (d) {
+    ALLE = d.lexikon.map(pruefe);
+    MW = d.marktwerte || {};
+    ALLE.forEach(function (e) { mischRang[e.slug] = tagesZufall(); });
+    if (KORREKTUREN.length && window.console) console.info("Motorenwelt: " + KORREKTUREN.length + " unplausible Werte ausgeblendet", KORREKTUREN);
+    $("#mischung-info").textContent = "Jeden Tag neu gemischt. Das ist die Mischung für " + heute.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) + ".";
+    zeigeZahlen(); rekorde(); chips(); liste(true); vleiste();
+    var m = location.hash.match(/m=([^&]+)/);
+    if (m) oeffne(decodeURIComponent(m[1]));
+  });
+})();
+</script>
+</body>
+</html>
