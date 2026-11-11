@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Motorenwelt – stöbern, staunen, vergleichen | 1A Motor</title>
-<meta name="description" content="Stöbere durch Motoren vom Dampfmotor bis zum V8: technische Daten, Rekorde, Vergleiche und Marktwerte als Richtwert. Das Motorenlexikon von 1A Motor.">
+<title>Motorenwelt – Motorenlexikon mit technischen Daten, Rekorden & Marktwerten | 1A Motor</title>
+<meta name="description" content="Das Motorenlexikon von 1A Motor: technische Daten zu jedem Motor, vom Dampfmotor bis zum V8 – mit Rekorden, Vergleich und Marktwerten als Richtwert.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -239,7 +239,6 @@ dialog::backdrop{background:rgba(13,27,42,.62);backdrop-filter:blur(3px)}
     <a class="logo" href="https://1amotor.de/"><i>1A</i>Motor</a>
     <nav class="nav" aria-label="Hauptnavigation">
       <a href="https://1amotor.de/">Startseite</a>
-      <a href="https://1amotor.de/motoren-lexikon">Motorenlexikon</a>
       <a class="on" href="#">Motorenwelt</a>
       <a href="https://1amotor.de/motorsport-news">Motorsport News</a>
     </nav>
@@ -252,7 +251,7 @@ dialog::backdrop{background:rgba(13,27,42,.62);backdrop-filter:blur(3px)}
     <div>
       <span class="augenbraue">⚙️ 1A MOTORENWELT</span>
       <h1>Stöbern, staunen,<br><span>vergleichen.</span></h1>
-      <p class="lead">Vom Dampfmotor aus dem 18. Jahrhundert bis zum Jaguar-V8: Entdecke, welche Motoren es gibt, was sie leisten und was sie gebraucht ungefähr kosten.</p>
+      <p class="lead">Technische Daten zu jedem Motor – vom Dampfmotor aus dem 18. Jahrhundert bis zum Jaguar-V8. Entdecke, was es gibt, was sie leisten und was sie gebraucht ungefähr kosten.</p>
       <form class="suche" id="suche-form" role="search">
         <input id="q" type="search" placeholder="Hersteller, Modell oder Motorcode – z. B. M30" autocomplete="off" aria-label="Motoren durchsuchen">
         <button class="btn primaer" type="submit">Suchen</button>
@@ -271,7 +270,7 @@ dialog::backdrop{background:rgba(13,27,42,.62);backdrop-filter:blur(3px)}
   <section class="block" id="rekorde">
     <div class="wrap">
       <div class="kopfzeile">
-        <div><h2>Rekorde aus dem Lexikon</h2><p>Der stärkste, der älteste, der langlebigste: tipp eine Karte an.</p></div>
+        <div><h2>Rekorde der Motorenwelt</h2><p>Der stärkste, der älteste, der langlebigste: tipp eine Karte an.</p></div>
       </div>
       <div class="rekorde" id="rekord-liste"></div>
     </div>
@@ -306,7 +305,7 @@ dialog::backdrop{background:rgba(13,27,42,.62);backdrop-filter:blur(3px)}
   </section>
 </main>
 
-<p class="hinweis">Die Einträge der Motorenwelt sind Produktinformationen aus dem 1A-Motorenlexikon, keine Verkaufsangebote. Marktwerte sind Richtwerte aus öffentlich sichtbaren Gebrauchtangeboten und ändern sich laufend. Alle Angaben ohne Gewähr – prüfe vor dem Kauf immer das Typenschild. Fotos: Wikimedia Commons, Urheber und Lizenz über das ⓘ am jeweiligen Bild.</p>
+<p class="hinweis">Die Einträge der Motorenwelt sind Produktinformationen, keine Verkaufsangebote. Marktwerte sind Richtwerte aus öffentlich sichtbaren Gebrauchtangeboten und ändern sich laufend. Alle Angaben ohne Gewähr – prüfe vor dem Kauf immer das Typenschild. Fotos: Wikimedia Commons, Urheber und Lizenz über das ⓘ am jeweiligen Bild.</p>
 
 <div class="vleiste" id="vleiste" role="region" aria-label="Vergleich">
   <div class="vchips" id="vchips"></div>
@@ -314,7 +313,7 @@ dialog::backdrop{background:rgba(13,27,42,.62);backdrop-filter:blur(3px)}
 </div>
 
 <dialog id="detail-dialog" aria-label="Motor-Details">
-  <div class="dkopf"><b id="detail-kopf">Motorenlexikon</b><button class="zu" data-zu aria-label="Schließen">×</button></div>
+  <div class="dkopf"><b id="detail-kopf">Motorenwelt</b><button class="zu" data-zu aria-label="Schließen">×</button></div>
   <div id="detail-inhalt"></div>
 </dialog>
 
@@ -337,7 +336,7 @@ window.MARKTWERT_STAND = "November 2026";
 
   /* ---------- Einstellungen ---------- */
   var INSERIEREN_URL = "https://1amotor.de/anzeige-erstellen";
-  var DETAIL_URL = "https://1amotor.de/motor-info.html?m="; // bestehende Lexikon-Detailseite
+  var DETAIL_URL = "https://1amotor.de/motor-info.html?m="; // Detailseite je Motor (bleibt bestehen)
   var PRO_LADUNG = 12;
   var MAX_VERGLEICH = 3;
   var JAHR = new Date().getFullYear();
@@ -572,7 +571,7 @@ window.MARKTWERT_STAND = "November 2026";
     var mw = MW[e.slug], an = vergleich.indexOf(e.slug) !== -1;
     return '<article class="karte" tabindex="0" data-slug="' + esc(e.slug) + '" aria-label="' + esc(titel(e)) + '">' +
       '<div class="bild">' + bildHtml(e, 46) +
-      '<span class="kat">' + esc(e.kategorie || "Motor") + '</span><span class="lx">' + BUCH + " Lexikon</span></div>" +
+      '<span class="kat">' + esc(e.kategorie || "Motor") + '</span><span class="lx">' + BUCH + " Info</span></div>" +
       '<div class="inhalt"><h3>' + esc(titel(e)) + "</h3>" +
       '<div class="haupt">' + esc(hauptwert(e)) + "</div>" +
       '<div class="unter">' + esc(unterzeile(e)) + "</div>" +
@@ -653,7 +652,7 @@ window.MARKTWERT_STAND = "November 2026";
         '<div class="stand">Aus öffentlich sichtbaren Angeboten' + (STAND ? ", Stand " + esc(STAND) : "") + ". Kein Angebot von 1A Motor, ohne Gewähr.</div></div>"
       : '<div class="mwbox leer"><b style="color:var(--dark)">Marktwert folgt</b><p>Für diesen Motor haben wir noch zu wenige Angebote gesehen. Sobald welche bei 1A Motor inseriert werden, erscheint hier ein Richtwert.</p></div>';
 
-    $("#detail-kopf").textContent = "Motorenlexikon · " + (e.kategorie || "Motor");
+    $("#detail-kopf").textContent = "Motorenwelt · " + (e.kategorie || "Motor");
     $("#detail-inhalt").innerHTML =
       '<div class="detail">' +
         '<div><div class="dbild">' + bildHtml(e, 80) + creditHtml(e) + "</div></div>" +
@@ -683,7 +682,7 @@ window.MARKTWERT_STAND = "November 2026";
       "</div></div>" +
       '<div class="dfuss">' +
         '<button class="btn hell" type="button" data-vgl="' + esc(e.slug) + '">' + (vergleich.indexOf(e.slug) !== -1 ? "✓ Im Vergleich" : "＋ Zum Vergleich") + "</button>" +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn hell" href="' + esc(DETAIL_URL + encodeURIComponent(e.slug)) + '">Lexikon-Seite</a>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn hell" href="' + esc(DETAIL_URL + encodeURIComponent(e.slug)) + '">Alle Details ↗</a>' +
         '<button class="btn dunkel" type="button" data-zufall>🎲 Nächster Zufallsmotor</button></div>' +
       "</div>";
 
@@ -762,7 +761,7 @@ window.MARKTWERT_STAND = "November 2026";
       zeile("Jahre gebaut", function (e) { var j = jahre(e); return j && j.dauer > 0 ? j.dauer : null; }, jahrText, "hoch") +
       zeile("Marktwert", function (e) { return MW[e.slug] ? mwText(MW[e.slug]) : null; }, String) +
       "</tbody></table>" +
-      '<p style="color:var(--muted);font-size:12.5px;margin:12px 0 0">★ = bester Wert in der Zeile. Werte aus dem 1A-Motorenlexikon, ohne Gewähr.</p>';
+      '<p style="color:var(--muted);font-size:12.5px;margin:12px 0 0">★ = bester Wert in der Zeile. Werte aus der 1A Motorenwelt, ohne Gewähr.</p>';
     $("#vergleich-dialog").showModal();
   }
 
@@ -819,7 +818,13 @@ window.MARKTWERT_STAND = "November 2026";
     ALLE.forEach(function (e) { mischRang[e.slug] = tagesZufall(); });
     if (KORREKTUREN.length && window.console) console.info("Motorenwelt: " + KORREKTUREN.length + " unplausible Werte ausgeblendet", KORREKTUREN);
     $("#mischung-info").textContent = "Jeden Tag neu gemischt. Das ist die Mischung für " + heute.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) + ".";
+    var p = new URLSearchParams(location.search);
+    if (p.get("q")) $("#q").value = p.get("q");
+    if (p.get("kategorie")) kat = p.get("kategorie");
+    var alteSortierung = { az: "az", ps: "ps", ccm: "ccm", foto: "entdecken" };
+    if (alteSortierung[p.get("sort")]) $("#sort").value = alteSortierung[p.get("sort")];
     zeigeZahlen(); rekorde(); chips(); liste(true); vleiste();
+    if (p.get("q") || p.get("kategorie")) $("#entdecken").scrollIntoView();
     var m = location.hash.match(/m=([^&]+)/);
     if (m) oeffne(decodeURIComponent(m[1]));
   });
