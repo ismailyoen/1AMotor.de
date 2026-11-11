@@ -8,13 +8,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase.js"></script>
 <!--
   1A Motor · Motorenwelt (Prototyp)
   ---------------------------------
   Läuft für sich allein mit den eingebetteten Daten (Stand: Lexikon vom 11.11.2026).
-  Auf 1amotor.de: vor diesem Skript supabase.js einbinden. Dann lädt die Seite
-  motor_lexikon und motor_marktwert live aus Supabase und speichert Suchaufträge
-  in der Tabelle suchauftraege (SQL dazu: motorenwelt.sql).
+  Auf 1amotor.de lädt die Seite über /supabase.js motor_lexikon und motor_marktwert
+  live und speichert Suchaufträge in suchauftraege (SQL dazu: motorenwelt.sql).
+  Ohne Supabase (z. B. lokale Vorschau) nimmt sie die eingebetteten Daten.
 -->
 <style>
 :root{
@@ -334,7 +336,7 @@ window.MARKTWERT_STAND = "November 2026";
   "use strict";
 
   /* ---------- Einstellungen ---------- */
-  var INSERIEREN_URL = "https://1amotor.de/"; // TODO: auf die Seite „Anzeige erstellen“ setzen
+  var INSERIEREN_URL = "https://1amotor.de/anzeige-erstellen";
   var DETAIL_URL = "https://1amotor.de/motor-info.html?m="; // bestehende Lexikon-Detailseite
   var PRO_LADUNG = 12;
   var MAX_VERGLEICH = 3;
@@ -473,10 +475,18 @@ window.MARKTWERT_STAND = "November 2026";
     az: function (a, b) { return titel(a).localeCompare(titel(b), "de"); }
   };
 
+  /* ---------- Supabase-Client ----------
+     supabase.js legt „supabaseClient“ als globale const an (nicht als window.supabaseClient).
+     typeof kann werfen, wenn supabase.js zwar geladen, die Bibliothek aber fehlte – daher try. */
+  function client() {
+    try { return typeof supabaseClient !== "undefined" ? supabaseClient : (window.supabaseClient || null); }
+    catch (_) { return null; }
+  }
+
   /* ---------- Daten laden ---------- */
   var FELDER = "slug,hersteller,modell,motorcode,kategorie,kraftstoff,bauart,zylinder,hubraum_ccm,leistung_kw,drehmoment_nm,baujahre,bild_url,bild_frei_url,bild_urheber,bild_lizenz,bild_lizenz_url,bild_seite";
   function ladeDaten() {
-    var sb = window.supabaseClient;
+    var sb = client();
     if (!sb) return Promise.resolve({ lexikon: window.LEXIKON_DATEN || [], marktwerte: window.MARKTWERT_DATEN || {}, live: false });
     return Promise.all([
       sb.from("motor_lexikon").select(FELDER).eq("status", "veroeffentlicht").limit(2000),
@@ -689,7 +699,7 @@ window.MARKTWERT_STAND = "November 2026";
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) { ok.style.color = "#b91c1c"; ok.textContent = "Bitte gib eine gültige E-Mail-Adresse ein."; return; }
       if (!$("#einwilligung").checked) { ok.style.color = "#b91c1c"; ok.textContent = "Bitte bestätige kurz die Einwilligung."; return; }
       ok.style.color = ""; ok.textContent = "Wird gespeichert …";
-      var sb = window.supabaseClient;
+      var sb = client();
       var fertig = function (text) { ok.textContent = text; $("#alarm-form").hidden = true; };
       if (!sb) { fertig("✓ Vorschau: Auf 1amotor.de wird der Suchauftrag hier gespeichert."); return; }
       sb.from("suchauftraege").insert({ slug: e.slug, email: mail, einwilligung: true }).then(function (r) {
