@@ -210,6 +210,12 @@
       background: var(--blue2); color: #fff; font-size: 10px; font-weight: 800;
       letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px;
     }
+    /* Drei feste Reiter (Motorenwelt, Motorsport News, 1ATeile): auf dem Handy die ganze Leiste wischbar */
+    @media (max-width: 760px) {
+      .cat-bar-wrap { overflow-x: auto; scrollbar-width: none; }
+      .cat-bar-wrap::-webkit-scrollbar { display: none; }
+      .cat-bar-wrap .cat-bar-inner { flex: none; overflow: visible; }
+    }
 
     /* ══════════════════════════════════════
        HERO
@@ -1266,6 +1272,7 @@
     <div class="top-left">
       <a href="motorsport-news">Motorsport News</a>
       <a href="motorenwelt">Motorenwelt</a>
+      <a href="teile">1ATeile</a>
       <a href="ueber-uns" data-i18n="idx.top.about">Über uns</a>
       <a href="kontakt" data-i18n="idx.top.contact">Hilfe &amp; Kontakt</a>
       <a href="#" onclick="openDealerModal(event)"><span data-i18n="idx.top.dealer">Händlerbereich</span></a>
@@ -1331,6 +1338,7 @@
     <a href="#" data-guest-only onclick="openAccountChooser(event)" data-i18n="nav.register">Registrieren</a>
     <a href="motorsport-news">📰 Motorsport News</a>
     <a href="motorenwelt">Motorenwelt</a>
+      <a href="teile">1ATeile</a>
     <a href="ueber-uns" data-i18n="idx.top.about">Über uns</a>
     <a href="kontakt" data-i18n="idx.top.contact">Hilfe &amp; Kontakt</a>
     <a href="impressum" data-i18n="idx.top.imprint">Impressum</a>
@@ -1344,6 +1352,9 @@
   <div class="container cat-bar-wrap">
     <a href="motorenwelt" class="cat-bar-news">
       <span class="nb">Neu</span> Motorenwelt
+    </a>
+    <a href="teile" class="cat-bar-news">
+      <span class="nb">Neu</span> 1ATeile
     </a>
     <a href="motorsport-news" class="cat-bar-news">
       <span class="nb">Neu</span> Motorsport News
@@ -1979,6 +1990,7 @@
           <li><a href="suche?category=Bootsmotor" data-i18n="idx.ft.marine">Bootsmotoren</a></li>
           <li><a href="suche?category=Austauschmotor" data-i18n="idx.ft.exchange">Austauschmotoren</a></li>
           <li><a href="motorenwelt">Motorenwelt</a></li>
+          <li><a href="teile">1ATeile</a></li>
         </ul>
       </div>
       <div>
