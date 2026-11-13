@@ -6,7 +6,6 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"}}</script>
 <title>1ATeile – Motoren in 3D drehen, zerlegen und Teile finden | 1A Motor</title>
 <meta name="description" content="1ATeile: Motoren in 3D drehen und zerlegen – vom PKW-Motor über Außenborder, Motorrad, Kart und Flugmotor bis zum Aufzugsantrieb. Motorteile direkt anklicken, Funktion verstehen und passende Angebote auf 1A Motor finden.">
-<link rel="preload" as="image" href="/1ateile-hero.webp" type="image/webp">
 <link rel="canonical" href="https://1amotor.de/teile">
 <meta property="og:title" content="1ATeile – Motoren in 3D drehen, zerlegen und Teile finden">
 <meta property="og:description" content="Motor wählen, in 3D zerlegen, Teil antippen und passende Angebote finden.">
@@ -58,12 +57,19 @@ button{font:inherit;cursor:pointer}
 .btn svg{flex:none}
 
 /* Hero */
-.hero{background:radial-gradient(800px 400px at 0% 110%,rgba(33,118,199,.30),transparent 60%),linear-gradient(100deg,var(--dark) 0%,#141c26 55%,#16191f 100%);color:#fff;padding:56px 0 60px;min-height:520px;display:flex;align-items:center;overflow:hidden;position:relative}
+.hero{background:radial-gradient(800px 400px at 0% 110%,rgba(33,118,199,.30),transparent 60%),radial-gradient(700px 520px at 78% 50%,rgba(33,118,199,.16),transparent 70%),linear-gradient(100deg,var(--dark) 0%,#111b27 55%,#0f1620 100%);color:#fff;padding:56px 0 60px;min-height:520px;display:flex;align-items:center;overflow:hidden;position:relative}
 .hero>.wrap{width:100%}
-.hero-bild{position:absolute;top:0;bottom:0;right:max(-120px,calc((100% - var(--max)) / 2 - 40px));height:100%;aspect-ratio:1.78;background:#16191f url(/1ateile-hero.jpg) 50% 50%/cover no-repeat;background-image:image-set(url(/1ateile-hero.webp) type("image/webp"),url(/1ateile-hero.jpg) type("image/jpeg"));-webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.6) 16%,#000 34%,#000 86%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.6) 16%,#000 34%,#000 86%,transparent 100%);pointer-events:none}
 .hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:linear-gradient(100deg,#000 0,transparent 45%);mask-image:linear-gradient(100deg,#000 0,transparent 45%);pointer-events:none}
-.hero .wrap{position:relative;z-index:1}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:10px;align-items:center}
 .hero .text{max-width:560px}
+.hero-3d{position:relative;height:500px;margin:-36px -20px -36px 0}
+.hero-3d::before{content:"";position:absolute;inset:6% 4%;background:radial-gradient(closest-side,rgba(33,118,199,.32),rgba(33,118,199,.08) 60%,transparent);filter:blur(10px);pointer-events:none}
+.hero-3d .st-canvas{position:absolute;inset:0;width:100%!important;height:100%!important;pointer-events:none}
+.hero-chip{position:absolute;right:16px;bottom:14px;z-index:2;display:flex;align-items:center;gap:14px;background:rgba(13,27,42,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px 10px 10px 16px}
+.hero-chip small{display:block;font-size:10.5px;letter-spacing:.1em;font-weight:700;color:#8fb3d6;text-transform:uppercase}
+.hero-chip b{display:block;font-size:14.5px;color:#fff;font-weight:700;min-height:1.3em}
+.hero-chip a{flex:none;text-decoration:none;background:var(--blue2);color:#fff;font-size:13px;font-weight:700;padding:9px 13px;border-radius:10px;white-space:nowrap}
+.hero-chip a:hover{background:var(--blue)}
 .augenbraue{display:inline-flex;align-items:center;gap:8px;background:rgba(77,166,255,.14);border:1px solid rgba(77,166,255,.35);color:#cfe6ff;font-size:12px;font-weight:700;letter-spacing:.08em;padding:6px 12px;border-radius:999px}
 .hero h1{font-size:clamp(32px,4.6vw,52px);line-height:1.05;margin:16px 0 12px;font-weight:800;letter-spacing:-.02em}
 .hero h1 span{color:var(--sky)}
@@ -193,9 +199,11 @@ main{padding:26px 0 8px}
 }
 @media (max-width:900px){
   :root{--h:440px}
-  .hero{padding:30px 0 34px;min-height:0}
-  .hero-bild{right:-30%;opacity:.32;background-position:62% 50%;-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.6),#000 60%);mask-image:linear-gradient(180deg,rgba(0,0,0,.6),#000 60%)}
-  .schritte{display:none}
+  .hero{padding:30px 0 6px;min-height:0}
+  .hero .wrap{grid-template-columns:1fr;gap:0}
+  .hero-3d{height:320px;margin:0 -20px}
+  .hero-chip{left:16px;right:16px;bottom:12px}
+    .schritte{display:none}
   .katalog{grid-template-columns:minmax(0,1fr)}
   .links .feldkopf{display:none}
   .links{background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible}
@@ -227,6 +235,7 @@ main{padding:26px 0 8px}
 .studio{padding:34px 0 10px}
 .st-kopf{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:16px}
 .st-kopf .augenbraue{background:var(--light);border-color:#c9def3;color:var(--blue)}
+.st-kopf h2 .wein{color:#8e1f32}
 .st-kopf h2{margin:10px 0 6px;font-size:clamp(26px,3.2vw,38px);line-height:1.08;color:var(--dark);letter-spacing:-.02em;font-weight:800}
 .st-kopf p{margin:0;color:#5b7189;font-size:16px;line-height:1.55;max-width:640px}
 .st-kats{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
@@ -323,7 +332,6 @@ main{padding:26px 0 8px}
 </header>
 
 <section class="hero">
-  <div class="hero-bild" role="img" aria-label="Zerlegter Motor in Explosionsdarstellung"></div>
   <div class="wrap">
     <div class="text">
       <span class="augenbraue"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg> 1ATEILE</span>
@@ -339,7 +347,9 @@ main{padding:26px 0 8px}
         <span class="schritt"><b>3</b>Angebote ansehen</span>
       </div>
     </div>
-
+    <div class="hero-3d" id="hero-3d" aria-hidden="true">
+      <div class="hero-chip"><div><small>Gerade im Bild</small><b id="hero-name"></b></div><a href="#studio" id="hero-oeffnen">Im 3D-Studio öffnen</a></div>
+    </div>
   </div>
 </section>
 
@@ -348,7 +358,7 @@ main{padding:26px 0 8px}
     <div class="st-kopf">
       <div>
         <span class="augenbraue"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg> 1ATEILE · 3D-STUDIO</span>
-        <h2>Motor wählen. Drehen. Zerlegen.</h2>
+        <h2>Motor wählen. Drehen. Zerlegen. <span class="wein">Bestellen!</span></h2>
         <p>28 Motoren – vom Dreizylinder über Außenborder und Jetski bis zum Strahltriebwerk. Jedes Bauteil lässt sich anklicken – mit Funktion und passenden Angeboten.</p>
       </div>
     </div>
@@ -359,7 +369,7 @@ main{padding:26px 0 8px}
         <div class="st-marken" id="st-marken"></div>
         <div class="st-oben">
           <div class="st-chip"><b id="st-name">Motor</b><span id="st-kurz"></span></div>
-          <div class="st-chip st-tipp">Ziehen = drehen · Scrollen = zoomen · Rechte Maustaste = verschieben</div>
+          <div class="st-chip st-tipp">Ziehen = drehen · Klick ins Modell, dann Scrollen = zoomen</div>
         </div>
         <div class="st-tip" id="st-tip"></div>
         <div class="st-leiste" role="toolbar" aria-label="3D-Ansicht steuern">
@@ -2054,11 +2064,13 @@ function starteStudio(opt) {
   const MAT = baueMaterialien();
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: !!opt.screenshot });
   const mobil = window.matchMedia('(max-width: 760px)').matches;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobil ? 1.75 : 2));
+  const hero = !!opt.hero;
+  const ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hero ? 1.5 : (mobil ? 1.75 : 2)));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = !hero;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.className = 'st-canvas';
   renderer.domElement.setAttribute('aria-label', 'Interaktives 3D-Modell des gewählten Motors');
@@ -2073,6 +2085,16 @@ function starteStudio(opt) {
   steuerung.minDistance = 2.2; steuerung.maxDistance = 22;
   steuerung.autoRotate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; steuerung.autoRotateSpeed = .55;
   steuerung.screenSpacePanning = true;
+  if (hero) { steuerung.enabled = false; steuerung.autoRotateSpeed = .9; }
+  else {
+    // Mausrad zoomt erst nach einem Klick ins Modell – sonst scrollt die Seite ganz normal weiter
+    let aktiv = false;
+    steuerung.enableZoom = false;
+    renderer.domElement.addEventListener('pointerdown', () => { aktiv = true; steuerung.enableZoom = true; });
+    buehne.addEventListener('pointerleave', () => { aktiv = false; steuerung.enableZoom = false; });
+    renderer.domElement.addEventListener('wheel', e => { steuerung.enableZoom = aktiv || e.ctrlKey; }, { capture: true, passive: true });
+    renderer.domElement.addEventListener('touchstart', () => { steuerung.enableZoom = true; }, { passive: true });
+  }
 
   const licht = new THREE.DirectionalLight(0xffffff, 2.2);
   licht.position.set(4, 9, 6); licht.castShadow = true;
@@ -2082,10 +2104,14 @@ function starteStudio(opt) {
   const gegen = new THREE.DirectionalLight(0xdbe8ff, .7); gegen.position.set(-6, 3, -5); scene.add(gegen);
   scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa6b2, .35));
   const boden = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: .16 }));
-  boden.rotation.x = -Math.PI / 2; boden.receiveShadow = true; scene.add(boden);
+  boden.rotation.x = -Math.PI / 2; boden.receiveShadow = true; if (!hero) scene.add(boden);
+  if (hero) {
+    const rand = new THREE.DirectionalLight(0x4da6ff, 2.4); rand.position.set(-6, 4, -7); scene.add(rand);
+    const rand2 = new THREE.DirectionalLight(0x9fd0ff, 1.2); rand2.position.set(7, -2, -4); scene.add(rand2);
+  }
 
   let motor = null, auswahl = null, hover = null, ex = 0, exZiel = 0, theta = 0, laeuft = false, roentgen = false, nummern = false;
-  let kameraFlug = null, zuletzt = performance.now(), sichtbar = true, bodenY = 0;
+  let kameraFlug = null, zuletzt = performance.now(), sichtbar = true, bodenY = 0, heroZeit = 0;
   const ray = new THREE.Raycaster(), zeiger = new THREE.Vector2();
 
   function materialKopien(t) {
@@ -2127,6 +2153,7 @@ function starteStudio(opt) {
     scene.add(motor.root);
     auswahl = null; hover = null; theta = 0; motor.stelle(0);
     motor.teile.forEach(t => { t.position.copy(t.userData.heim); });
+    if (hero) { exZiel = .55; ex = 0; laeuft = !ruhig; }
     rahmen(true);
     const box3 = new THREE.Box3().setFromObject(motor.root);
     bodenY = box3.min.y - .02; boden.position.y = bodenY;
@@ -2147,7 +2174,7 @@ function starteStudio(opt) {
     const c = box3.getCenter(new THREE.Vector3()), s = box3.getSize(new THREE.Vector3());
     const r = Math.max(s.x, s.y * 1.05, s.z * .9) * .5;
     const asp = Math.max(.6, kamera.aspect);
-    const dist = r / Math.tan(kamera.fov * RAD / 2) * (asp < 1 ? 1.08 / asp : 1.08) + r * .3;
+    const dist = (r / Math.tan(kamera.fov * RAD / 2) * (asp < 1 ? 1.08 / asp : 1.08) + r * .3) * (hero ? .76 : 1);
     const richtung = new THREE.Vector3(...(motor.cfg.blick || [1.05, .62, 1.25])).normalize();
     const ziel = { t: c.clone(), p: c.clone().addScaledVector(richtung, dist) };
     if (sofort) { steuerung.target.copy(ziel.t); kamera.position.copy(ziel.p); steuerung.update(); }
@@ -2254,6 +2281,7 @@ function starteStudio(opt) {
     requestAnimationFrame(schritt);
     const jetzt = performance.now(), dt = Math.min(.05, (jetzt - zuletzt) / 1000); zuletzt = jetzt;
     if (!sichtbar || !motor || document.hidden) return;
+    if (hero && !ruhig) { heroZeit += dt; exZiel = .55 * (1 - Math.cos(heroZeit * TAU / 10)) / 2; }
     ex += (exZiel - ex) * (1 - Math.exp(-dt * 5));
     if (laeuft) { theta += dt * 3.2; motor.stelle(theta); }
     const k = 1 - Math.exp(-dt * 7);
@@ -2288,7 +2316,7 @@ function starteStudio(opt) {
 
   return {
     MOTOREN, KATEGORIEN,
-    lade: id => lade(MOTOREN.find(m => m.id === id) || MOTOREN[0]),
+    lade: id => { heroZeit = 0; lade(MOTOREN.find(m => m.id === id) || MOTOREN[0]); },
     waehle: k => waehle(k),
     explosion: v => { exZiel = v; },
     rahmen: () => rahmen(false),
@@ -2337,6 +2365,7 @@ function starteStudio(opt) {
   $('#st-kats').addEventListener('click', e => { const b = e.target.closest('.st-kat'); if (!b || b.dataset.k === kat) return; zeigeKat(b.dataset.k); const erst = motoren.find(m => m.kat === b.dataset.k); if (erst) zeige(erst.id, true); });
   $('#st-motoren').addEventListener('click', e => { const b = e.target.closest('.st-motor'); if (b) zeige(b.dataset.m, true); });
 
+  window.__studioZeige = id => zeige(id, true);
   function zeige(id, merken) {
     const m = motoren.find(x => x.id === id) || motoren[0];
     aktiv = m;
@@ -2402,6 +2431,37 @@ function starteStudio(opt) {
   const start = new URLSearchParams(location.search);
   zeige(start.get('m') || 'r4b', false);
   if (start.get('t') && liste.some(e => e.key === start.get('t'))) S.waehle(start.get('t'));
+})();
+
+/* ------------------------------------------------- Hero: lebender 3D-Motor */
+(function () {
+  const el = document.getElementById('hero-3d');
+  if (!el) return;
+  try { const t = document.createElement('canvas'); if (!(t.getContext('webgl2') || t.getContext('webgl'))) { el.remove(); return; } } catch (_) { el.remove(); return; }
+  let H;
+  try { H = starteStudio({ buehne: el, hero: true }); } catch (_) { el.remove(); return; }
+  const folge = ['v8', 'tfan', 'stern7', 'ab6', 'r6', 'lkw6'];
+  const name = document.getElementById('hero-name');
+  const canvas = el.querySelector('canvas');
+  let i = 0, sichtbar = true;
+  canvas.style.transition = 'opacity .6s ease';
+  function zeigeHero() {
+    const id = folge[i % folge.length], m = H.MOTOREN.find(x => x.id === id);
+    H.lade(id); el.dataset.m = id; name.textContent = m ? m.name : '';
+    canvas.style.opacity = 1;
+  }
+  zeigeHero();
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { sichtbar = es.some(e => e.isIntersecting); }).observe(el);
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(() => {
+    if (document.hidden || !sichtbar) return;
+    canvas.style.opacity = 0;
+    setTimeout(() => { i++; zeigeHero(); }, 650);
+  }, 10000);
+  document.getElementById('hero-oeffnen').addEventListener('click', e => {
+    e.preventDefault();
+    if (window.__studioZeige) window.__studioZeige(el.dataset.m);
+    document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 })();
 
 </script>
