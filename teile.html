@@ -6,6 +6,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"}}</script>
 <title>1ATeile – Motoren in 3D drehen, zerlegen und Teile finden | 1A Motor</title>
 <meta name="description" content="1ATeile: Motoren in 3D drehen und zerlegen – vom PKW-Motor über Außenborder, Motorrad, Kart und Flugmotor bis zum Aufzugsantrieb. Motorteile direkt anklicken, Funktion verstehen und passende Angebote auf 1A Motor finden.">
+<link rel="preload" as="image" href="/1ateile-hero.webp" type="image/webp">
 <link rel="canonical" href="https://1amotor.de/teile">
 <meta property="og:title" content="1ATeile – Motoren in 3D drehen, zerlegen und Teile finden">
 <meta property="og:description" content="Motor wählen, in 3D zerlegen, Teil antippen und passende Angebote finden.">
@@ -57,20 +58,21 @@ button{font:inherit;cursor:pointer}
 .btn svg{flex:none}
 
 /* Hero */
-.hero{background:radial-gradient(1200px 500px at 85% -10%,rgba(77,166,255,.28),transparent 60%),radial-gradient(800px 400px at 0% 110%,rgba(33,118,199,.35),transparent 60%),linear-gradient(160deg,var(--dark),var(--navy));color:#fff;padding:44px 0 48px;overflow:hidden;position:relative}
-.hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:linear-gradient(180deg,#000,transparent);mask-image:linear-gradient(180deg,#000,transparent);pointer-events:none}
-.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.hero{background:radial-gradient(800px 400px at 0% 110%,rgba(33,118,199,.30),transparent 60%),linear-gradient(100deg,var(--dark) 0%,#141c26 55%,#16191f 100%);color:#fff;padding:56px 0 60px;min-height:520px;display:flex;align-items:center;overflow:hidden;position:relative}
+.hero>.wrap{width:100%}
+.hero-bild{position:absolute;top:0;bottom:0;right:max(-120px,calc((100% - var(--max)) / 2 - 40px));height:100%;aspect-ratio:1.78;background:#16191f url(/1ateile-hero.jpg) 50% 50%/cover no-repeat;background-image:image-set(url(/1ateile-hero.webp) type("image/webp"),url(/1ateile-hero.jpg) type("image/jpeg"));-webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.6) 16%,#000 34%,#000 86%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.6) 16%,#000 34%,#000 86%,transparent 100%);pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:linear-gradient(100deg,#000 0,transparent 45%);mask-image:linear-gradient(100deg,#000 0,transparent 45%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1}
+.hero .text{max-width:560px}
 .augenbraue{display:inline-flex;align-items:center;gap:8px;background:rgba(77,166,255,.14);border:1px solid rgba(77,166,255,.35);color:#cfe6ff;font-size:12px;font-weight:700;letter-spacing:.08em;padding:6px 12px;border-radius:999px}
 .hero h1{font-size:clamp(32px,4.6vw,52px);line-height:1.05;margin:16px 0 12px;font-weight:800;letter-spacing:-.02em}
 .hero h1 span{color:var(--sky)}
 .hero p.lead{font-size:17px;line-height:1.6;color:#c7d6e6;max-width:560px;margin:0 0 22px}
 .suche{display:flex;background:#fff;border-radius:12px;padding:6px;max-width:560px;box-shadow:var(--shadow2)}
 .suche input{flex:1;border:0;outline:0;font:inherit;font-size:16px;padding:10px 12px;color:var(--dark);min-width:0;background:transparent}
-.schritte{display:grid;gap:10px}
-.schritt{display:flex;gap:14px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 16px}
-.schritt b{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--blue2);font-size:15px}
-.schritt span{color:#dbe7f3;font-size:15px;line-height:1.4}
-.schritt span strong{color:#fff;display:block;font-weight:600}
+.schritte{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.schritt{display:inline-flex;gap:9px;align-items:center;background:rgba(13,27,42,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:6px 14px 6px 6px;color:#dbe7f3;font-size:13.5px;font-weight:600}
+.schritt b{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--blue2);font-size:12px;color:#fff}
 
 /* Katalog */
 main{padding:26px 0 8px}
@@ -191,8 +193,8 @@ main{padding:26px 0 8px}
 }
 @media (max-width:900px){
   :root{--h:440px}
-  .hero{padding:30px 0 34px}
-  .hero .wrap{grid-template-columns:1fr;gap:22px}
+  .hero{padding:30px 0 34px;min-height:0}
+  .hero-bild{right:-30%;opacity:.32;background-position:62% 50%;-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.6),#000 60%);mask-image:linear-gradient(180deg,rgba(0,0,0,.6),#000 60%)}
   .schritte{display:none}
   .katalog{grid-template-columns:minmax(0,1fr)}
   .links .feldkopf{display:none}
@@ -321,8 +323,9 @@ main{padding:26px 0 8px}
 </header>
 
 <section class="hero">
+  <div class="hero-bild" role="img" aria-label="Zerlegter Motor in Explosionsdarstellung"></div>
   <div class="wrap">
-    <div>
+    <div class="text">
       <span class="augenbraue"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg> 1ATEILE</span>
       <h1>Teil finden?<br><span>Einfach antippen.</span></h1>
       <p class="lead">Wähle deinen Motor im 3D-Studio, zerlege ihn und tippe auf das Teil – du siehst, wie es heißt, wofür es da ist und welche Angebote es dazu auf 1A Motor gibt.</p>
@@ -330,12 +333,13 @@ main{padding:26px 0 8px}
         <input id="direkt-q" type="search" placeholder="Teilenummer oder Teil direkt suchen" autocomplete="off" aria-label="Teilenummer oder Teil suchen">
         <button class="btn primaer" type="submit">Suchen</button>
       </form>
+      <div class="schritte" aria-hidden="true">
+        <span class="schritt"><b>1</b>Motor wählen</span>
+        <span class="schritt"><b>2</b>Zerlegen &amp; antippen</span>
+        <span class="schritt"><b>3</b>Angebote ansehen</span>
+      </div>
     </div>
-    <div class="schritte" aria-hidden="true">
-      <div class="schritt"><b>1</b><span><strong>Motor wählen</strong>PKW, LKW, Boot, Motorrad, Kart, Flugzeug, Aufzug – in 3D</span></div>
-      <div class="schritt"><b>2</b><span><strong>Zerlegen &amp; antippen</strong>jedes Bauteil mit Funktion erklärt</span></div>
-      <div class="schritt"><b>3</b><span><strong>Angebote ansehen</strong>passende Inserate direkt auf 1A Motor</span></div>
-    </div>
+
   </div>
 </section>
 
