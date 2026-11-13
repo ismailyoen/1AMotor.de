@@ -409,7 +409,7 @@ main{padding:26px 0 8px}
       <div>
         <span class="augenbraue"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg> 1ATEILE · 3D-STUDIO</span>
         <h2>Motor wählen. Drehen. Zerlegen. <span class="wein">Bestellen!</span></h2>
-        <p>28 Motoren – vom Dreizylinder über Außenborder und Jetski bis zum Strahltriebwerk. Jedes Bauteil lässt sich anklicken – mit Funktion und passenden Angeboten.</p>
+        <p>48 Motoren – vom Rasenmäher über Außenborder und Waschmaschine bis zum Strahltriebwerk. Jedes Bauteil lässt sich anklicken – mit Funktion und passenden Angeboten.</p>
       </div>
     </div>
     <div class="st-kats" id="st-kats" aria-label="Motorart wählen"></div>
@@ -504,9 +504,29 @@ const MOTOREN = [
   { id: 'kart1', kat: 'kart', name: 'Kartmotor Einzylinder', kurz: 'Kart · 4-Takt · luftgekühlt', typ: 'reihe', n: 1, kroepf: [0], kraftstoff: 'b', turbo: 0, steuer: 'kette', deckel: 'alu', block: 'alu', luft: true, neigung: 25, ohne: ['nebentrieb', 'wanne', 'motorlager', 'kuehlung', 'kupplung', 'ansaug', 'steuer', 'oelfilter', 'anlasser'], mass: { b: .44, rk: .19, L: .6, pitch: .5 }, extra: c => extraKart(c) },
   { id: 'lift1', kat: 'aufzug', name: 'Aufzugsantrieb mit Schneckengetriebe', kurz: 'Seilaufzug · klassisch · Maschinenraum', typ: 'elektro', aufzug: true },
   { id: 'lift2', kat: 'aufzug', name: 'Getriebelose Aufzugsmaschine', kurz: 'Seilaufzug · PM-Synchronmotor', typ: 'aufzug_gl' },
-  { id: 'easm', kat: 'elektro', name: 'Drehstrom-Asynchronmotor', kurz: 'Industrie · Kurzschlussläufer · IEC', typ: 'elektro' }
+  { id: 'easm', kat: 'industrie', name: 'Drehstrom-Asynchronmotor', kurz: 'Industrie · Kurzschlussläufer · IEC', typ: 'elektro' },
+  { id: 'bau4', kat: 'nutz', name: 'Baumaschinen Reihen-4 Diesel', kurz: 'Bagger/Radlader · 4,4 l · Rädertrieb', typ: 'reihe', n: 4, kroepf: [0, 180, 180, 0], kraftstoff: 'd', turbo: 1, steuer: 'zahnrad', deckel: 'graphit', block: 'guss', lkw: true, ohne: ['klima', 'kupplung'], mass: { b: .44, rk: .24, L: .76, pitch: .56 }, extra: c => extraBau(c) },
+  { id: 'ind6', kat: 'nutz', name: 'Industrie-Diesel mit Generator', kurz: 'Stromaggregat · Reihen-6 · 12 l', typ: 'reihe', n: 6, kroepf: [0, 120, 240, 240, 120, 0], kraftstoff: 'd', turbo: 1, steuer: 'zahnrad', deckel: 'alu', block: 'guss', lkw: true, ohne: ['klima', 'kupplung', 'motorlager'], mass: { b: .46, rk: .25, L: .80, pitch: .58 }, extra: c => extraAggregat(c) },
+  { id: 'kett1', kat: 'garten', name: 'Kettensägenmotor 2-Takt', kurz: 'Motorsäge · Einzylinder · 50 cm³', typ: 'reihe', n: 1, kroepf: [0], kraftstoff: 'b', turbo: 0, steuer: 'kette', deckel: 'alu', block: 'alu', luft: true, blick: [1.2, .7, 1.4], ohne: ['nebentrieb', 'wanne', 'motorlager', 'kuehlung', 'kupplung', 'ansaug', 'steuer', 'oelfilter', 'anlasser', 'ventiltrieb', 'deckel', 'schwung', 'schlauch'], mass: { b: .4, rk: .16, L: .5, pitch: .5 }, extra: c => extraKette(c) },
+  { id: 'frei1', kat: 'garten', name: 'Freischneider 2-Takt', kurz: 'Motorsense · Einzylinder · Schaftrohr', typ: 'reihe', n: 1, kroepf: [0], kraftstoff: 'b', turbo: 0, steuer: 'kette', deckel: 'alu', block: 'alu', luft: true, blick: [1.4, .6, 1.1], ohne: ['nebentrieb', 'wanne', 'motorlager', 'kuehlung', 'kupplung', 'ansaug', 'steuer', 'oelfilter', 'anlasser', 'ventiltrieb', 'deckel', 'schwung', 'schlauch'], mass: { b: .36, rk: .14, L: .46, pitch: .5 }, extra: c => extraFreischneider(c) },
+  { id: 'rasen1', kat: 'garten', name: 'Rasenmähermotor OHV', kurz: 'Rasenmäher · Einzylinder · senkrechte Welle', typ: 'reihe', n: 1, kroepf: [0], kraftstoff: 'b', turbo: 0, steuer: 'kette', deckel: 'schwarz', block: 'alu', luft: true, aussenborder: true, ohne: ['nebentrieb', 'wanne', 'motorlager', 'kuehlung', 'kupplung', 'ansaug', 'oelfilter', 'anlasser', 'schwung', 'schlauch'], mass: { b: .44, rk: .19, L: .58, pitch: .5 }, extra: c => extraRasen(c) },
+  { id: 'aufsitz2', kat: 'garten', name: 'Aufsitzmäher V2 OHV', kurz: 'Rasentraktor · V-Twin · senkrechte Welle', typ: 'v', winkel: 90, n: 2, kroepf: [0], kraftstoff: 'b', turbo: 0, steuer: 'kette', deckel: 'schwarz', block: 'alu', luft: true, aussenborder: true, aufsitz: true, ohne: ['nebentrieb', 'wanne', 'motorlager', 'kuehlung', 'kupplung', 'ansaug', 'schwung', 'schlauch'], mass: { b: .4, rk: .18, L: .54 }, extra: c => extraRasen(c) },
+  { id: 'gen1', kat: 'haus', name: 'Stromerzeuger Benzin', kurz: 'Notstrom · Einzylinder 4-Takt · 3 kW', typ: 'reihe', n: 1, kroepf: [0], kraftstoff: 'b', turbo: 0, steuer: 'kette', deckel: 'schwarz', block: 'alu', luft: true, neigung: 20, blick: [1.3, .6, 1.3], ohne: ['nebentrieb', 'wanne', 'motorlager', 'kuehlung', 'kupplung', 'ansaug', 'oelfilter', 'anlasser', 'schwung', 'schlauch'], mass: { b: .4, rk: .17, L: .54, pitch: .5 }, extra: c => extraGenerator(c) },
+  { id: 'komp1', kat: 'haus', name: 'Kolbenkompressor', kurz: 'Werkstatt · Drehstrommotor · V-Verdichter', typ: 'elektro', blick: [1.1, .6, 1.5], eextra: c => extraKompressor(c) },
+  { id: 'wasch1', kat: 'haus', name: 'Waschmaschinenmotor (Universalmotor)', kurz: 'Riemenantrieb · Kollektor · Kohlebürsten', typ: 'emaschine', art: 'wasch' },
+  { id: 'wasch2', kat: 'haus', name: 'Waschmaschinen-Direktantrieb', kurz: 'Außenläufer · bürstenlos · ohne Riemen', typ: 'emaschine', art: 'dd' },
+  { id: 'getr1', kat: 'industrie', name: 'Getriebemotor (Stirnrad)', kurz: 'Förderband · Drehstrommotor · 2-stufig', typ: 'elektro', eextra: c => extraGetriebe(c) },
+  { id: 'servo1', kat: 'industrie', name: 'Servomotor', kurz: 'Automation · PM-Synchron · mit Bremse', typ: 'emaschine', art: 'servo' },
+  { id: 'schritt1', kat: 'industrie', name: 'Schrittmotor (Hybrid)', kurz: 'CNC · NEMA 23 · 1,8° Schritt', typ: 'emaschine', art: 'schritt' },
+  { id: 'spindel1', kat: 'industrie', name: 'Frässpindel (HF-Spindel)', kurz: 'CNC · 24.000 min⁻¹ · wassergekühlt', typ: 'emaschine', art: 'spindel' },
+  { id: 'luft1', kat: 'industrie', name: 'EC-Lüftermotor (Axial)', kurz: 'Lüftungstechnik · Außenläufer · drehzahlgeregelt', typ: 'emaschine', art: 'luefter', blick: [1.3, .5, 1.0] },
+  { id: 'pumpe1', kat: 'industrie', name: 'Kreiselpumpe mit Normmotor', kurz: 'Pumpenmotor · Spiralgehäuse · Gleitringdichtung', typ: 'elektro', eextra: c => extraPumpe(c) },
+  { id: 'hyd1', kat: 'industrie', name: 'Hydraulikmotor (Orbital)', kurz: 'Mobilhydraulik · Gerotor · langsam laufend', typ: 'emaschine', art: 'hyd' },
+  { id: 'eauto1', kat: 'emob', name: 'PKW-Elektroantrieb (E-Achse)', kurz: 'Elektroauto · PMSM · mit Inverter & Getriebe', typ: 'emaschine', art: 'eauto', blick: [1.1, .7, 1.3] },
+  { id: 'ebike1', kat: 'emob', name: 'E-Bike Mittelmotor', kurz: 'Pedelec · bürstenlos · Planetengetriebe', typ: 'emaschine', art: 'ebike', blick: [1.3, .5, 1.1] },
+  { id: 'eab1', kat: 'emob', name: 'Elektro-Außenborder', kurz: 'Boot · Pod-Antrieb · Lithium-Akku', typ: 'emaschine', art: 'eab', blick: [1.4, .5, 1.3] }
 ];
-const KATEGORIEN = [['pkw', 'PKW'], ['nutz', 'LKW & Traktor'], ['boot', 'Boot'], ['moto', 'Motorrad'], ['kart', 'Kart'], ['flug', 'Flugzeug'], ['aufzug', 'Aufzug'], ['elektro', 'Elektro']];
+const KATEGORIEN = [['pkw', 'PKW'], ['emob', 'E-Antrieb'], ['nutz', 'LKW, Traktor & Bau'], ['boot', 'Boot'], ['moto', 'Motorrad'], ['kart', 'Kart'], ['flug', 'Flugzeug'], ['garten', 'Garten & Forst'], ['haus', 'Haushalt & Werkstatt'], ['industrie', 'Industrie-Antriebe'], ['aufzug', 'Aufzug']];
 
 /* Kurztexte zu den Bauteilen (eigene Formulierungen) */
 const INFO = {
@@ -585,6 +605,7 @@ function baueMaterialien() {
     weiss: P({ color: 0xe9edf1, metalness: .1, roughness: .3, clearcoat: 1, clearcoatRoughness: .06 }),
     kupfer: P({ color: 0xc0703f, metalness: 1, roughness: .32 }),
     blech: P({ color: 0x3b4a5a, metalness: .55, roughness: .4, clearcoat: .6 }),
+    orange: P({ color: 0xe0661c, metalness: .2, roughness: .45, clearcoat: .6 }),
     gruen: P({ color: 0x2f6b3a, metalness: .45, roughness: .35, clearcoat: .8, clearcoatRoughness: .1 })
   };
 }
@@ -1440,8 +1461,1053 @@ function baueEmotor(cfg, MAT) {
     for (let i = 0; i < 4; i++) M(zY(.015, .03, 6), MAT.stahl, g, .2 + (i % 2 ? .17 : -.17), R + .245, i < 2 ? .17 : -.17);
   });
   if (cfg.aufzug) extraAufzug({ M, teil, root, drehend, MAT, lack, R, L });
+  if (cfg.eextra) cfg.eextra({ M, teil, root, drehend, MAT, lack, R, L });
   function stelle(theta) { drehend.forEach(d => { d.obj.rotation.x = theta * d.f; }); }
   return { root, teile, stelle, geos, cfg };
+}
+
+
+/* ===================================================== Garten & Forst, Werkstatt */
+const INFO5 = {
+  /* Zweitakt / Kleinmotoren */
+  zylinder2t: 'Beim Zweitakter übernimmt der Kolben die Steuerung: Er gibt Einlass-, Überström- und Auslasskanal in der Zylinderwand frei und verschließt sie wieder. Ventile und Nockenwellen entfallen.',
+  vergaser: 'Der Membranvergaser mischt Kraftstoff und Luft. Er arbeitet lageunabhängig – die Säge läuft auch auf dem Kopf. Leerlauf- und Volllastgemisch werden über die L- und H-Schraube eingestellt.',
+  luftfilter_k: 'Der Luftfilter hält Sägespäne und Staub vom Vergaser fern. Ein verstopfter Filter macht das Gemisch fett und kostet Leistung.',
+  zuendmodul: 'Das elektronische Zündmodul sitzt am Rand des Schwungrads. Die Magnete im Schwungrad induzieren den Zündstrom – ganz ohne Batterie.',
+  schwungrad_l: 'Das Schwungrad aus Magnesium trägt die Zündmagnete und die Lüfterflügel, die Kühlluft über die Zylinderrippen blasen.',
+  seilzug: 'Mit dem Seilzugstarter wird der Motor von Hand angeworfen. Die Rückholfeder spult das Seil wieder auf.',
+  fliehkupplung: 'Die Fliehkraftkupplung greift erst bei höherer Drehzahl: Im Leerlauf steht die Kette, beim Gasgeben pressen die Backen gegen die Kupplungstrommel.',
+  kettenrad: 'Das Kettenrad sitzt auf der Kupplungstrommel und treibt die Sägekette an. Es verschleißt mit der Kette und wird mit ihr getauscht.',
+  schwert: 'Die Führungsschiene (Schwert) führt die Sägekette in einer Nut. Länge und Nutbreite müssen zu Kette und Säge passen.',
+  saegekette: 'Die Sägekette besteht aus Schneidezähnen, Treibgliedern und Verbindungsgliedern. Teilung, Treibgliedstärke und Gliederzahl müssen zum Schwert passen.',
+  kettenbremse: 'Der Handschutz löst die Kettenbremse aus: Ein Bremsband legt sich um die Kupplungstrommel und stoppt die Kette im Bruchteil einer Sekunde.',
+  daempfer_k: 'Der Schalldämpfer senkt den Abgaslärm und trägt bei vielen Sägen den Funkenschutz.',
+  griffgehaeuse: 'Das hintere Griffgehäuse enthält Kraftstoff- und Öltank, Gashebel und Gashebelsperre. Vibrationsdämpfer trennen es vom Motor.',
+  buegel: 'Der vordere Bügelgriff aus Rohr ist über Antivibrationselemente mit dem Motor verbunden.',
+  oelpumpe_k: 'Die Kettenölpumpe fördert Haftöl über das Schwert in die Kettennut – angetrieben von der Kupplungstrommel.',
+  /* Rasenmäher */
+  messer: 'Der Messerbalken sitzt direkt auf der senkrechten Kurbelwelle. Er wird mit der Messerschraube befestigt und muss nach dem Schärfen ausgewuchtet sein.',
+  messerkupplung: 'Die Messerkupplung mit Bremse stoppt das Messer, sobald der Bügel losgelassen wird – der Motor läuft weiter.',
+  motorbremse: 'Die Schwungradbremse stoppt Motor und Messer innerhalb von drei Sekunden, wenn der Sicherheitsbügel losgelassen wird.',
+  tank_r: 'Der Kraftstofftank sitzt oben am Motor. Der Tankdeckel hat eine kleine Belüftungsbohrung.',
+  luftfilter_r: 'Der Papier- oder Schaumstoffluftfilter sitzt im Filtergehäuse neben dem Vergaser und wird jede Saison gereinigt oder getauscht.',
+  vergaser_r: 'Der Schwimmervergaser dosiert den Kraftstoff. Mit dem Primer wird vor dem Start Gemisch in den Ansaugtrakt gepumpt.',
+  haube_r: 'Die Lüfterhaube mit Startergehäuse lenkt die Kühlluft des Schwungrads über den Zylinder und trägt den Seilzugstarter.',
+  ohv: 'Beim OHV-Motor sitzen die Ventile im Zylinderkopf und werden über Stößelstangen und Kipphebel betätigt – die Nockenwelle liegt unten im Kurbelgehäuse.',
+  riemenscheibe_a: 'Die Doppel-Riemenscheibe am unteren Wellenende treibt über Keilriemen das Mähwerk und den Fahrantrieb an.',
+  elektrostart: 'Der Elektrostarter greift in den Zahnkranz am Schwungrad. Die Batterie wird über die Ladespule unter dem Schwungrad geladen.',
+  zuendspule_r: 'Die Zündspule sitzt mit einem definierten Luftspalt am Schwungrad. Die Magnete im Schwungrad erzeugen die Zündspannung.',
+  /* Freischneider */
+  schaftrohr: 'Im Schaftrohr läuft die Antriebswelle vom Motor zum Winkelgetriebe. Der Griffbügel wird am Rohr festgeklemmt.',
+  winkelgetriebe: 'Das Winkelgetriebe lenkt die Drehung um und untersetzt sie. Es wird regelmäßig gefettet.',
+  schneidwerkzeug: 'Fadenkopf oder Dickichtmesser werden am Winkelgetriebe befestigt. Der Schutz muss zum Werkzeug passen.',
+  kupplungsglocke: 'Die Kupplungsglocke nimmt die Kraft der Fliehkraftkupplung auf und überträgt sie auf die Antriebswelle im Schaftrohr.',
+  /* Stromerzeuger */
+  generator_s: 'Der Synchrongenerator sitzt direkt auf der Kurbelwelle. Rotor und Stator erzeugen 230 Volt – die Drehzahl bestimmt die Frequenz.',
+  avr: 'Der Spannungsregler (AVR) hält die Ausgangsspannung bei wechselnder Last konstant.',
+  schalttafel: 'Die Schalttafel trägt Steckdosen, Schutzschalter, Betriebsstundenzähler und Zündschalter.',
+  rahmen_s: 'Der Rohrrahmen schützt Motor und Generator und trägt die Gummipuffer, die Vibrationen vom Boden fernhalten.',
+  tank_s: 'Der große Kraftstofftank sitzt oben auf dem Rahmen und reicht je nach Last für viele Stunden Betrieb.',
+  /* Bau & Industrie-Diesel */
+  hydpumpe: 'Die Hydraulikpumpe am Nebenabtrieb versorgt Arbeitshydraulik und Fahrantrieb der Baumaschine.',
+  syncgen: 'Der Synchrongenerator ist über eine elastische Kupplung mit dem Schwungrad verbunden und liefert Drehstrom für das Netz oder die Notstromversorgung.',
+  elastkupplung: 'Die elastische Kupplung gleicht Versatz zwischen Motor und Generator aus und dämpft Drehschwingungen.',
+  /* Kompressor */
+  kompblock: 'Der Verdichterblock arbeitet wie ein Motor ohne Zündung: Die Kolben saugen Luft an und drücken sie verdichtet in den Kessel.',
+  ventilplatte: 'Die Ventilplatte zwischen Zylinder und Kopf trägt die Lamellenventile für Ansaugen und Ausstoßen.',
+  kompkopf: 'Der Zylinderkopf mit Kühlrippen führt die Druckluft zum Nachkühler und zum Kessel.',
+  keilriemen: 'Der Keilriemen überträgt die Kraft vom Motor auf das Schwungrad des Verdichters und untersetzt die Drehzahl.',
+  schwunglueft: 'Das Schwungrad des Verdichters ist zugleich Lüfterrad und kühlt Zylinder und Kopf.',
+  druckschalter: 'Der Druckschalter schaltet den Motor beim Erreichen des Enddrucks ab und bei Luftentnahme wieder ein. Daneben Manometer und Sicherheitsventil.',
+  nachkuehler: 'Im Nachkühler-Rohr kühlt die verdichtete Luft ab, bevor sie in den Kessel strömt – so fällt weniger Kondenswasser im Kessel an.',
+  luftfilter_c: 'Der Ansaugfilter hält Staub aus dem Verdichter fern und dämpft das Ansauggeräusch.'
+};
+
+/* Zweitakt-Kleinmotor: Vergaser, Zündung, Starter – gemeinsam für Kettensäge und Freischneider */
+function kleinmotorTeile(c, G) {
+  const { MAT, M, teil, root, drehend, baenke, xmin, xmax, YK, HB, lagerX, lagerLen } = c;
+  const bk = baenke[0], xS = lagerX[0] - lagerLen / 2 - .11;
+  teil('Membranvergaser', Object.assign({ s: 'Vergaser Kettensäge', info: INFO5.vergaser, ex: [0, .3, 1.1] }, G), root, g => {
+    const p0 = bk.welt(0, YK + .14, bk.sIn * (HB + .04)), d = bk.welt(0, .12, bk.sIn).normalize();
+    M(rohr([p0, p0.clone().addScaledVector(d, .14)], .05, 6, 16), MAT.gummi, g);
+    richte(M(box(.2, .18, .16), MAT.alu, g, ...p0.clone().addScaledVector(d, .24).toArray()), d);
+    richte(M(zY(.03, .05, 12), MAT.gelb, g, ...p0.clone().addScaledVector(d, .24).add(new THREE.Vector3(.1, 0, 0)).toArray()), d);
+  });
+  teil('Luftfilter', Object.assign({ s: 'Luftfilter Kettensäge', info: INFO5.luftfilter_k, ex: [0, .5, 1.6], gehaeuse: true }, G), root, g => {
+    const p0 = bk.welt(0, YK + .14, bk.sIn * (HB + .04)), d = bk.welt(0, .12, bk.sIn).normalize();
+    richte(M(zY(.2, .14, 48), MAT.kunststoff, g, ...p0.clone().addScaledVector(d, .42).toArray()), d);
+    richte(M(zY(.17, .06, 48), MAT.lackRot, g, ...p0.clone().addScaledVector(d, .52).toArray()), d);
+  });
+  teil('Schalldämpfer', Object.assign({ s: 'Schalldämpfer Kettensäge', info: INFO5.daempfer_k, ex: [0, -.2, -1.2] }, G), root, g => {
+    const p0 = bk.welt(0, YK + .1, -bk.sIn * (HB + .04)), d = bk.welt(0, 0, -bk.sIn).normalize();
+    M(rohr([p0, p0.clone().addScaledVector(d, .1)], .045, 6, 14), MAT.heiss, g);
+    richte(M(extY(rr(.44, .28, .08), .2, .03), MAT.stahlMatt, g, ...p0.clone().addScaledVector(d, .2).add(new THREE.Vector3(0, -.12, 0)).toArray()), d);
+    for (let i = 0; i < 3; i++) M(zZ(.012, .12, 8), MAT.dunkel, g, p0.x - .1 + i * .1, p0.y - .22, p0.z + d.z * .3);
+  });
+  teil('Schwungrad mit Lüfterflügeln', Object.assign({ s: 'Schwungrad Kettensäge', info: INFO5.schwungrad_l, ex: [-.8, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xS; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(zX(.3, .1, 56), MAT.alu, r);
+    for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; M(box(.08, .2, .02), MAT.alu, r, -.08, Math.cos(a) * .18, Math.sin(a) * .18).rotation.x = a; }
+    [0, Math.PI].forEach(a => M(box(.1, .06, .1), MAT.dunkel, r, 0, Math.cos(a) * .27, Math.sin(a) * .27).rotation.x = a);
+  });
+  teil('Zündmodul', Object.assign({ s: 'Zündmodul Kettensäge', info: INFO5.zuendmodul, ex: [-.7, .7, 0] }, G), root, g => {
+    M(box(.1, .14, .18), MAT.kunststoff, g, xS, .4, 0);
+    M(box(.1, .05, .22), MAT.stahlMatt, g, xS, .32, 0);
+    M(rohr([[xS, .45, .05], [xS + .2, .62, .15], [bk.welt(0, YK + .42, 0).x + .1, YK + .4, .05]], .012, 20, 6), MAT.kunststoff, g);
+  });
+  teil('Seilzugstarter mit Lüfterhaube', Object.assign({ s: 'Seilzugstarter Kettensäge', info: INFO5.seilzug, ex: [-1.5, 0, 0], gehaeuse: true }, G), root, g => {
+    const x = xS - .12;
+    M(new THREE.CylinderGeometry(.42, .42, .22, 56, 1, true).rotateZ(Math.PI / 2), MAT.lackRot, g, x, 0, 0);
+    M(extX(kreis(.42), .04, .012, 56), MAT.lackRot, g, x - .13, 0, 0);
+    for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; M(box(.03, .05, .18), MAT.dunkel, g, x - .16, Math.cos(a) * .25, Math.sin(a) * .25).rotation.x = a; }
+    M(zX(.07, .05, 24), MAT.dunkel, g, x - .18, 0, 0);
+    M(rohr([[x - .19, 0, 0], [x - .26, .15, .1], [x - .3, .4, .22]], .008, 12, 6), MAT.keramik, g);
+    M(box(.05, .06, .2), MAT.schwarz, g, x - .3, .42, .22);
+  });
+  teil('Fliehkraftkupplung', Object.assign({ s: 'Fliehkraftkupplung Kettensäge', info: INFO5.fliehkupplung, ex: [1.0, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xmax + .16; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(zX(.05, .2, 16), MAT.stahl, r);
+    for (let i = 0; i < 3; i++) { const a = i / 3 * TAU; const s = new THREE.Shape(); s.absarc(0, 0, .2, a + .15, a + TAU / 3 - .15, false); s.absarc(0, 0, .1, a + TAU / 3 - .15, a + .15, true); M(extX(s, .1, .004, 24), MAT.stahlMatt, r); }
+    M(ringX(.14, .012, 32), MAT.stahl, r);
+  });
+  return { xS };
+}
+
+function extraKette(c) {
+  const { MAT, M, teil, root, drehend, xmin, xmax, xmid } = c;
+  const G = { gruppe: 'Kettensäge: Antrieb & Schneidgarnitur' }, H = { gruppe: 'Kettensäge: Griffe & Gehäuse' };
+  const { xS } = kleinmotorTeile(c, { gruppe: 'Kettensäge: Vergaser, Zündung & Starter' });
+  const xK = xmax + .3, zS = -1.25;
+  teil('Kupplungstrommel mit Kettenrad', Object.assign({ s: 'Kettenrad Kettensäge', info: INFO5.kettenrad, ex: [1.3, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xK; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(lathe([[.05, -.06], [.23, -.06], [.23, .06], [.21, .06], [.21, -.03], [.05, -.03]], 48).rotateZ(-Math.PI / 2), MAT.stahlMatt, r);
+    M(extX(zahnrad(7, .12, .08, .05), .05, .003, 6), MAT.stahl, r, .1, 0, 0);
+  });
+  teil('Kettenölpumpe', Object.assign({ innen: true, s: 'Ölpumpe Kettensäge', info: INFO5.oelpumpe_k, ex: [.6, -.6, 0] }, G), root, g => {
+    M(zX(.06, .14, 20), MAT.alu, g, xmax + .1, -.28, .1);
+    M(extX(zahnrad(16, .07, .06, .02), .03, .002, 4), MAT.stahl, g, xmax + .2, -.28, .1);
+  });
+  teil('Führungsschiene (Schwert)', Object.assign({ s: 'Schwert Kettensäge', info: INFO5.schwert, ex: [0, 0, -1.6] }, G), root, g => {
+    const s = new THREE.Shape(); s.moveTo(0, .12); s.lineTo(zS * 1.55, .09); s.absarc(zS * 1.55, 0, .09, Math.PI / 2, -Math.PI / 2, false); s.lineTo(0, -.12); s.closePath();
+    const geo = ext(s, .022, .004, 32); geo.translate(0, 0, -.011); geo.rotateY(Math.PI / 2); // Form in (x→z, y)
+    M(geo, MAT.stahlMatt, g, xK + .12, 0, 0);
+    M(zX(.06, .022, 24), MAT.dunkel, g, xK + .12, 0, zS * 1.55);
+    [.35, .5].forEach(z => M(zX(.018, .03, 10), MAT.dunkel, g, xK + .12, 0, -z));
+  });
+  teil('Sägekette', Object.assign({ s: 'Sägekette', info: INFO5.saegekette, ex: [0, 0, -2.0] }, G), root, g => {
+    const rm = riemen([{ y: 0, z: 0, r: .14 }, { y: 0, z: zS * 1.55, r: .12 }], .04, .035);
+    M(rm.geo, MAT.dunkel, g, xK + .12, 0, 0);
+    const h = rm.huelle; for (let i = 0; i < h.length; i += 3) { const p = h[i]; M(box(.04, .05, .04), MAT.stahl, g, xK + .12, p[1] * 1.22, p[0] * (Math.abs(p[0]) > .3 ? 1 : 1.22)); }
+  });
+  teil('Kettenraddeckel', Object.assign({ s: 'Kettenraddeckel Kettensäge', info: 'Der Kettenraddeckel verdeckt Kupplung und Kettenrad. Mit den beiden Muttern wird zugleich das Schwert geklemmt.', ex: [1.9, 0, 0], gehaeuse: true }, H), root, g => {
+    M(extX(rr(.7, .66, .2), .06, .02), MAT.lackRot, g, xK + .2, -.02, -.12);
+    [-.1, .22].forEach(z => M(zX(.05, .06, 6), MAT.stahlMatt, g, xK + .26, -.02, -z));
+  });
+  teil('Handschutz mit Kettenbremse', Object.assign({ s: 'Kettenbremse Kettensäge', info: INFO5.kettenbremse, ex: [0, 1.0, -.5] }, H), root, g => {
+    M(extX(rr(.72, .28, .08), .05, .012), MAT.lackRot, g, xmid + .25, .72, -.75).rotation.y = -.4;
+    M(rohr([[xmid + .1, .35, -.55], [xmid + .15, .55, -.7], [xmid + .25, .72, -.75]], .02, 10, 8), MAT.stahlMatt, g);
+  });
+  teil('Bügelgriff', Object.assign({ s: 'Griff Kettensäge', info: INFO5.buegel, ex: [0, 1.3, 0] }, H), root, g => {
+    M(rohr([[xmin - .2, -.3, .5], [xmin - .35, .5, .5], [xmin - .25, 1.05, .2], [xmid - .1, 1.15, -.3], [xmid + .1, .9, -.55], [xmid + .15, .3, -.6]], .035, 60, 12), MAT.gummi, g);
+  });
+  teil('Griffgehäuse mit Tank', Object.assign({ s: 'Griffgehäuse Kettensäge', info: INFO5.griffgehaeuse, ex: [-.4, -1.3, .6], gehaeuse: true }, H), root, g => {
+    M(extY(rr(xmax - xmin + .5, 1.2, .18), .38, .05), MAT.lackRot, g, xmid - .1, -.86, .1);
+    M(zY(.07, .05, 24), MAT.schwarz, g, xmin + .1, -.46, .5); M(zY(.07, .05, 24), MAT.schwarz, g, xmax, -.46, .5);
+    M(rohr([[xmid - .2, -.55, .75], [xmid - .2, -.3, 1.3], [xmid - .2, -.7, 1.6], [xmid - .2, -.86, .75]], .05, 30, 12), MAT.gummi, g);
+    M(box(.06, .12, .16), MAT.schwarz, g, xmid - .2, -.46, 1.26);
+    [-1, 1].forEach(s => [.3, -.3].forEach(z => M(zY(.045, .1, 16), MAT.gummi, g, xmid + s * .45, -.52, z)));
+  });
+}
+
+function extraFreischneider(c) {
+  const { MAT, M, teil, root, drehend, xmin, xmax, xmid } = c;
+  const G = { gruppe: 'Freischneider: Schaft & Werkzeug' };
+  kleinmotorTeile(c, { gruppe: 'Freischneider: Vergaser, Zündung & Starter' });
+  const xG = xmax + .3, L = 3.2;
+  teil('Kupplungsglocke', Object.assign({ s: 'Kupplungsglocke Freischneider', info: INFO5.kupplungsglocke, ex: [.9, 0, 0] }, G), root, g => {
+    M(lathe([[.05, -.02], [.24, -.02], [.24, .14], [.22, .14], [.22, 0], [.05, 0]], 48).rotateZ(-Math.PI / 2), MAT.stahlMatt, g, xG - .05, 0, 0);
+    M(extX(rr(.6, .6, .2), .12, .02), MAT.alu, g, xG + .1, 0, 0);
+  });
+  teil('Schaftrohr mit Antriebswelle', Object.assign({ s: 'Schaftrohr Freischneider', info: INFO5.schaftrohr, ex: [1.4, 0, 0] }, G), root, g => {
+    M(zX(.055, L, 24), MAT.alu, g, xG + .16 + L / 2, 0, 0);
+    const w = new THREE.Group(); w.position.x = xG + .16 + L / 2; g.add(w); drehend.push({ obj: w, f: 1 });
+    M(zX(.018, L + .3, 10), MAT.stahl, w);
+    M(box(.1, .12, .08), MAT.kunststoff, g, xG + 1.3, 0, 0);
+    M(rohr([[xG + 1.3, .05, 0], [xG + 1.3, .4, .55], [xG + 1.25, .42, .9]], .03, 20, 10), MAT.gummi, g);
+    M(rohr([[xG + 1.3, .05, 0], [xG + 1.3, .4, -.55], [xG + 1.35, .42, -.9]], .03, 20, 10), MAT.gummi, g);
+    M(box(.12, .08, .2), MAT.lackRot, g, xG + 1.3, .42, .9);
+  });
+  teil('Winkelgetriebe', Object.assign({ s: 'Winkelgetriebe Freischneider', info: INFO5.winkelgetriebe, ex: [1.2, -.4, 0] }, G), root, g => {
+    const x = xG + .16 + L + .1;
+    M(lathe([[0, -.25], [.14, -.25], [.17, -.1], [.14, .08], [.08, .1], [0, .1]], 40), MAT.alu, g, x, -.08, 0);
+    M(zX(.1, .3, 32), MAT.alu, g, x - .1, 0, 0);
+  });
+  teil('Dickichtmesser mit Schutz', Object.assign({ s: 'Dickichtmesser Freischneider', info: INFO5.schneidwerkzeug, ex: [1.2, -1.2, 0] }, G), root, g => {
+    const x = xG + .16 + L + .1;
+    const r = new THREE.Group(); r.position.set(x, -.36, 0); r.rotation.z = -Math.PI / 2; g.add(r);
+    const d = new THREE.Group(); r.add(d); drehend.push({ obj: d, f: 1.0 });
+    for (let i = 0; i < 3; i++) { const a = i / 3 * TAU; const s = new THREE.Shape(); s.moveTo(0, -.05); s.lineTo(.55, -.1); s.lineTo(.6, 0); s.lineTo(.55, .1); s.lineTo(0, .05); s.closePath(); const geo = ext(s, .012); geo.rotateY(Math.PI / 2); M(geo, MAT.stahl, d).rotation.x = a; }
+    M(zX(.08, .05, 24), MAT.stahlMatt, d);
+    const sch = new THREE.Shape(); sch.absarc(0, 0, .62, 0, Math.PI, false); sch.lineTo(-.62, 0); sch.closePath();
+    const sg = ext(sch, .03, .01, 32); sg.rotateX(Math.PI / 2); M(sg, MAT.lackRot, g, x, -.26, 0).rotation.y = Math.PI / 2;
+  });
+  teil('Kraftstofftank', Object.assign({ s: 'Kraftstofftank Freischneider', info: INFO3.tank, ex: [0, -1.0, 0] }, G), root, g => {
+    M(extY(rr(xmax - xmin + .2, .8, .18), .36, .05), MAT.kunststoff, g, xmid, -.84, 0);
+    M(zY(.07, .05, 24), MAT.schwarz, g, xmid - .2, -.46, .3);
+  });
+}
+
+/* Rasenmäher / Aufsitzmäher: senkrechte Kurbelwelle (root ist um -90° gedreht, aussen = Welt) */
+function extraRasen(c) {
+  const { MAT, M, teil, root, aussen, drehend, cfg, baenke, xmin, xmax, xmid, YK, HB, lagerX, lagerLen } = c;
+  const G = { gruppe: 'Mähermotor: Zündung, Starter & Kraftstoff' }, A = { gruppe: 'Mähermotor: Abtrieb' };
+  const xS = lagerX[0] - lagerLen / 2 - .11;           // lokal: oberes Wellenende
+  const xU = xmax + .2;                                 // lokal: unteres Wellenende
+  const auf = !!cfg.aufsitz, bk = baenke[0];
+  teil('Schwungrad mit Lüfter und Zahnkranz', Object.assign({ s: 'Schwungrad Rasenmäher', info: INFO5.schwungrad_l, ex: [-.9, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xS; g.add(r); drehend.push({ obj: r, f: 1 });
+    const R = auf ? .5 : .42;
+    M(zX(R, .08, 64), MAT.alu, r);
+    if (auf) M(extX(zahnrad(70, R + .03, R + .005, R - .03), .03, .002, 4), MAT.stahl, r, .04, 0, 0);
+    for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; M(box(.12, R * .55, .022), MAT.alu, r, -.1, Math.cos(a) * R * .62, Math.sin(a) * R * .62).rotation.x = a; }
+    [0, Math.PI].forEach(a => M(box(.1, .08, .12), MAT.dunkel, r, -.02, Math.cos(a) * (R - .06), Math.sin(a) * (R - .06)).rotation.x = a);
+  });
+  if (!auf) teil('Schwungradbremse', Object.assign({ s: 'Motorbremse Rasenmäher', info: INFO5.motorbremse, ex: [-.5, -.8, 0] }, G), root, g => {
+    M(box(.08, .18, .06), MAT.gummi, g, xS, -.42, -.08);
+    M(box(.06, .3, .04), MAT.stahlMatt, g, xS, -.52, -.1);
+    M(rohr([[xS, -.6, -.1], [xS - .2, -.75, -.4], [xS - .3, -.8, -.9]], .01, 12, 6), MAT.dunkel, g);
+  });
+  teil(auf ? 'Lüfterhaube' : 'Lüfterhaube mit Seilzugstarter', Object.assign({ s: auf ? 'Lüfterhaube Aufsitzmäher' : 'Seilzugstarter Rasenmäher', info: auf ? INFO5.haube_r : INFO5.seilzug, ex: [-1.6, 0, 0], gehaeuse: true }, G), root, g => {
+    const R = auf ? .6 : .52, x = xS - .08;
+    M(new THREE.CylinderGeometry(R, R + .04, .3, 64, 1, true).rotateZ(Math.PI / 2), MAT.lackRot, g, x, 0, 0);
+    M(extX(kreis(R), .04, .015, 64), MAT.lackRot, g, x - .17, 0, 0);
+    for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; M(box(.03, .02, .12), MAT.dunkel, g, x - .18, Math.cos(a) * R * .72, Math.sin(a) * R * .72).rotation.x = a; }
+    if (!auf) {
+      M(zX(.1, .06, 32), MAT.dunkel, g, x - .22, 0, 0);
+      M(rohr([[x - .24, 0, 0], [x - .32, .2, .2], [x - .36, .45, .5]], .008, 12, 6), MAT.keramik, g);
+      M(box(.06, .05, .22), MAT.schwarz, g, x - .36, .46, .52);
+    }
+  });
+  if (auf) teil('Elektrostarter', Object.assign({ s: 'Anlasser Aufsitzmäher', info: INFO5.elektrostart, ex: [-.6, 0, -1.1] }, G), root, g => {
+    M(zX(.11, .4, 32), MAT.dunkel, g, xS - .1, -.1, -.62);
+    M(zX(.06, .14, 20), MAT.stahlMatt, g, xS + .15, -.1, -.62);
+    M(extX(zahnrad(9, .06, .045, .02), .05, .002, 4), MAT.stahl, g, xS + .22, -.1, -.62);
+  });
+  teil('Kraftstofftank', Object.assign({ s: 'Tank Rasenmäher', info: INFO5.tank_r, ex: [-.8, -1.2, 0] }, G), root, g => {
+    M(extX(rr(.6, .9, .14), .36, .05), MAT.kunststoff, g, xS - .25, -.9, .2);
+    M(zX(.09, .06, 24), MAT.schwarz, g, xS - .46, -.9, .2);
+  });
+  teil(auf ? 'Vergaser mit Luftfilterkasten' : 'Vergaser mit Luftfilter', Object.assign({ s: 'Vergaser Rasenmäher', info: INFO5.vergaser_r, ex: [0, .4, 1.3] }, G), root, g => {
+    const p0 = bk.welt(0, YK + .14, bk.sIn * (HB + .04)), d = bk.welt(0, .1, bk.sIn).normalize();
+    M(rohr([p0, p0.clone().addScaledVector(d, .14)], .05, 6, 16), MAT.alu, g);
+    richte(M(box(.18, .2, .16), MAT.alu, g, ...p0.clone().addScaledVector(d, .24).toArray()), d);
+    richte(M(extY(rr(auf ? .5 : .36, auf ? .4 : .3, .06), .18, .02), MAT.kunststoff, g, ...p0.clone().addScaledVector(d, .4).toArray()), d);
+    if (!auf) richte(M(zY(.03, .02, 16), MAT.lackRot, g, ...p0.clone().addScaledVector(d, .3).add(new THREE.Vector3(.1, 0, 0)).toArray()), d);
+  });
+  teil('Schalldämpfer', Object.assign({ s: 'Schalldämpfer Rasenmäher', info: INFO5.daempfer_k, ex: [0, -.3, -1.2] }, G), root, g => {
+    baenke.forEach(b => {
+      const p0 = b.welt(0, YK + .1, -b.sIn * (HB + .04)), d = b.welt(0, 0, -b.sIn).normalize();
+      M(rohr([p0, p0.clone().addScaledVector(d, .14)], .04, 6, 14), MAT.heiss, g);
+      richte(M(zY(.2, .3, 40), MAT.stahlMatt, g, ...p0.clone().addScaledVector(d, .3).toArray()), d);
+    });
+  });
+  if (auf) {
+    teil('Doppel-Riemenscheibe (Abtrieb)', Object.assign({ s: 'Riemenscheibe Aufsitzmäher', info: INFO5.riemenscheibe_a, ex: [1.1, 0, 0] }, A), root, g => {
+      const r = new THREE.Group(); r.position.x = xU + .1; g.add(r); drehend.push({ obj: r, f: 1 });
+      M(lathe([[.05, -.1], [.3, -.1], [.33, -.06], [.3, -.02], [.36, 0], [.38, .04], [.36, .1], [.05, .1]], 48).rotateZ(-Math.PI / 2), MAT.stahlMatt, r);
+      M(zX(.05, .4, 16), MAT.stahl, r, .05, 0, 0);
+    });
+  } else {
+    teil('Messerkupplung mit Bremse', Object.assign({ s: 'Messerkupplung Rasenmäher', info: INFO5.messerkupplung, ex: [.8, 0, 0] }, A), root, g => {
+      M(zX(.24, .1, 48), MAT.dunkel, g, xU, 0, 0);
+      M(zX(.26, .03, 48), MAT.stahlMatt, g, xU + .06, 0, 0);
+    });
+    teil('Messerbalken', Object.assign({ s: 'Rasenmähermesser', info: INFO5.messer, ex: [1.4, 0, 0] }, A), root, g => {
+      const r = new THREE.Group(); r.position.x = xU + .14; g.add(r); drehend.push({ obj: r, f: 1 });
+      const s = new THREE.Shape(); s.moveTo(-.08, -1.3); s.lineTo(.08, -1.3); s.lineTo(.08, -.2); s.lineTo(.1, .2); s.lineTo(.08, 1.3); s.lineTo(-.08, 1.3); s.lineTo(-.08, .2); s.lineTo(-.1, -.2); s.closePath();
+      const geo = ext(s, .04, .004, 8); geo.translate(0, 0, -.02); geo.rotateY(Math.PI / 2); M(geo, MAT.stahl, r);
+      [-1.2, 1.2].forEach(z => M(box(.06, .03, .18), MAT.stahlMatt, r, -.03, 0, z));
+      M(zX(.04, .06, 6), MAT.stahl, r, .04, 0, 0);
+    });
+  }
+}
+
+/* Stromerzeuger: Generator auf der Kurbelwelle, Rahmen, Tank, Schalttafel */
+function extraGenerator(c) {
+  const { MAT, M, teil, root, drehend, baenke, xmin, xmax, xmid, YK, HB, lagerX, lagerLen } = c;
+  const G = { gruppe: 'Stromerzeuger: Generator & Rahmen' };
+  const { xS } = kleinmotorTeile(c, { gruppe: 'Stromerzeuger: Vergaser, Zündung & Starter' });
+  const xG = xmax + .45;
+  teil('Generatorgehäuse', Object.assign({ s: 'Generator Stromerzeuger', info: INFO5.generator_s, ex: [1.4, 0, 0], gehaeuse: true, ghostEx: true }, G), root, g => {
+    M(new THREE.CylinderGeometry(.44, .44, .7, 56, 1, true).rotateZ(Math.PI / 2), MAT.lack, g, xG, 0, 0);
+    M(extX(kreis(.44, .1), .05, .015, 56), MAT.lack, g, xG + .37, 0, 0);
+    for (let i = 0; i < 16; i++) { const a = i / 16 * TAU; M(box(.04, .04, .1), MAT.dunkel, g, xG + .4, Math.cos(a) * .3, Math.sin(a) * .3).rotation.x = a; }
+    M(box(.5, .22, .5), MAT.lack, g, xG, -.5, 0);
+  });
+  teil('Generator-Ständer mit Wicklung', Object.assign({ innen: true, s: 'Stator Generator', info: INFO5.generator_s }, G), root, g => {
+    M(extX(kreis(.4, .25), .5, 0, 48), MAT.stahlMatt, g, xG, 0, 0);
+    [-1, 1].forEach(s => M(ringX(.32, .05, 48), MAT.kupfer, g, xG + s * .28, 0, 0));
+  });
+  teil('Generator-Läufer', Object.assign({ innen: true, s: 'Rotor Generator', info: INFO5.avr, ex: [1.6, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xG; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(zX(.22, .5, 40), MAT.dunkel, r);
+    for (let i = 0; i < 4; i++) { const a = i / 4 * TAU; M(box(.44, .06, .1), MAT.kupfer, r, 0, Math.cos(a) * .19, Math.sin(a) * .19).rotation.x = a; }
+    M(zX(.05, 1.0, 16), MAT.stahl, r, -.1, 0, 0);
+  });
+  teil('Schalttafel', Object.assign({ s: 'Schalttafel Stromerzeuger', info: INFO5.schalttafel, ex: [1.2, 0, 1.2] }, G), root, g => {
+    M(box(.06, .6, .7), MAT.kunststoff, g, xG + .1, .1, .78);
+    [-.18, .18].forEach(z => M(zX(.08, .03, 32), MAT.weiss, g, xG + .14, .2, .78 + z));
+    M(box(.03, .12, .08), MAT.lackRot, g, xG + .14, -.1, .78);
+    M(zX(.06, .03, 24), MAT.weiss, g, xG + .14, -.1, .58);
+  });
+  teil('Kraftstofftank', Object.assign({ s: 'Tank Stromerzeuger', info: INFO5.tank_s, ex: [0, 1.5, 0] }, G), root, g => {
+    M(extY(rr(xmax - xmin + 1.5, 1.3, .12), .5, .05), MAT.lackRot, g, xmid + .2, 1.2, 0);
+    M(zY(.1, .06, 24), MAT.schwarz, g, xmid - .3, 1.72, .3);
+    M(zY(.04, .04, 16), MAT.weiss, g, xmid + .5, 1.72, 0);
+  });
+  teil('Rohrrahmen mit Gummipuffern', Object.assign({ s: 'Rahmen Stromerzeuger', info: INFO5.rahmen_s, ex: [0, -1.2, 0] }, G), root, g => {
+    const x0 = xS - .7, x1 = xG + .55, y = -.75, z = .9;
+    [[x0, y, z], [x0, y, -z], [x1, y, -z], [x1, y, z], [x0, y, z]].forEach((p, i, a) => { if (i) M(rohr([a[i - 1], p], .03, 2, 10), MAT.dunkel, g); });
+    [[x0, z], [x0, -z], [x1, z], [x1, -z]].forEach(([x, zz]) => { M(zY(.03, 2.4, 10), MAT.dunkel, g, x, y + 1.2, zz); M(zY(.08, .08, 16), MAT.gummi, g, x, y - .07, zz); });
+    [[x0, z], [x0, -z], [x1, z], [x1, -z]].forEach(([x, zz]) => M(zY(.03, 0, 10), MAT.dunkel, g, x, y, zz));
+    M(rohr([[x0, y + 2.4, z], [x0, y + 2.4, -z]], .03, 2, 10), MAT.dunkel, g); M(rohr([[x1, y + 2.4, z], [x1, y + 2.4, -z]], .03, 2, 10), MAT.dunkel, g);
+    M(rohr([[x0, y + 2.4, z], [x1, y + 2.4, z]], .03, 2, 10), MAT.dunkel, g); M(rohr([[x0, y + 2.4, -z], [x1, y + 2.4, -z]], .03, 2, 10), MAT.dunkel, g);
+  });
+}
+
+/* Baumaschine: Hydraulikpumpe am Nebenabtrieb */
+function extraBau(c) {
+  const { MAT, M, teil, root, drehend, xmax, xA } = c;
+  teil('Hydraulikpumpe (Nebenabtrieb)', { s: 'Hydraulikpumpe Baumaschine', info: INFO5.hydpumpe, ex: [1.4, -.4, 0], gruppe: 'Baumaschine: Nebenabtrieb' }, root, g => {
+    M(extX(rr(.5, .5, .12), .2, .03), MAT.guss, g, xA + .5, -.15, .35);
+    M(zX(.2, .5, 40), MAT.guss, g, xA + .85, -.15, .35);
+    M(zX(.12, .3, 32), MAT.guss, g, xA + 1.25, -.15, .35);
+    [-1, 1].forEach(s => M(zY(.06, .14, 20), MAT.stahlMatt, g, xA + .85, s > 0 ? .13 : -.43, .35));
+    M(rohr([[xA + .85, .2, .35], [xA + .7, .45, .6], [xA + .2, .7, .9]], .035, 20, 10), MAT.gummi, g);
+  });
+}
+
+/* Stationär-Diesel: Synchrongenerator am Schwungrad */
+function extraAggregat(c) {
+  const { MAT, M, teil, root, drehend, xmin, lagerX, lagerLen } = c;
+  const G = { gruppe: 'Stromaggregat: Generator' }, xS = lagerX[0] - lagerLen / 2 - .11, xG = xS - 1.1;
+  teil('Elastische Kupplung', Object.assign({ s: 'Kupplung Generator', info: INFO5.elastkupplung, ex: [-.8, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xS - .18; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(zX(.36, .1, 48), MAT.gummi, r);
+    for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; M(zX(.04, .14, 8), MAT.stahlMatt, r, 0, Math.cos(a) * .28, Math.sin(a) * .28); }
+  });
+  teil('Synchrongenerator', Object.assign({ s: 'Synchrongenerator', info: INFO5.syncgen, ex: [-1.9, 0, 0], gehaeuse: true, ghostEx: true }, G), root, g => {
+    M(new THREE.CylinderGeometry(.62, .62, 1.3, 64, 1, true).rotateZ(Math.PI / 2), MAT.lack, g, xG, 0, 0);
+    M(extX(kreis(.64, .14), .06, .02, 64), MAT.lack, g, xG - .65, 0, 0);
+    M(extX(kreis(.64, .5), .06, .02, 64), MAT.lack, g, xG + .65, 0, 0);
+    for (let i = 0; i < 20; i++) { const a = i / 20 * TAU; M(box(.05, .05, .1), MAT.dunkel, g, xG - .68, Math.cos(a) * .4, Math.sin(a) * .4).rotation.x = a; }
+    M(box(1.0, .3, .9), MAT.lack, g, xG, -.72, 0);
+    M(extY(rr(.5, .5, .06), .22, .02), MAT.lack, g, xG, .6, 0);
+  });
+  teil('Generator-Läufer', Object.assign({ innen: true, s: 'Rotor Synchrongenerator', info: INFO5.syncgen, ex: [-2.6, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xG; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(zX(.4, 1.0, 48), MAT.dunkel, r);
+    for (let i = 0; i < 4; i++) { const a = i / 4 * TAU; M(box(.9, .1, .22), MAT.kupfer, r, 0, Math.cos(a) * .35, Math.sin(a) * .35).rotation.x = a; }
+    M(zX(.08, 1.8, 24), MAT.stahl, r);
+  });
+  teil('Spannungsregler', Object.assign({ s: 'Spannungsregler Generator', info: INFO5.avr, ex: [-1.6, .9, 0] }, G), root, g => {
+    M(box(.3, .08, .26), MAT.gruen, g, xG, .84, 0);
+    M(box(.08, .08, .08), MAT.kunststoff, g, xG + .08, .92, .05);
+  });
+}
+
+/* Kolbenkompressor am Drehstrommotor (eextra des Elektromotors) */
+function extraKompressor(c) {
+  const { M, teil, root, drehend, MAT, R, L } = c;
+  const G = { gruppe: 'Kompressor: Verdichter & Druckluft' };
+  const zK = 1.65, xK = L / 2 + .32, yK = -.1;
+  teil('Riemenscheibe Motor', Object.assign({ s: 'Riemenscheibe Kompressor', info: INFO5.keilriemen, ex: [1.3, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = xK; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(lathe([[.08, -.08], [.2, -.08], [.23, -.05], [.21, -.01], [.23, .02], [.21, .06], [.08, .06]], 40).rotateZ(-Math.PI / 2), MAT.stahlMatt, r);
+  });
+  teil('Verdichterblock (V-Zylinder)', Object.assign({ s: 'Kompressor Verdichterblock', info: INFO5.kompblock, ex: [0, 0, 1.4], gehaeuse: true }, G), root, g => {
+    M(box(.6, .5, .6), MAT.guss, g, 0, yK, zK);
+    [-1, 1].forEach(s => {
+      const z = new THREE.Group(); z.position.set(0, yK + .2, zK); z.rotation.x = s * .7; g.add(z);
+      M(zY(.19, .44, 40), MAT.guss, z, 0, .22, 0);
+      for (let i = 0; i < 7; i++) M(extY(rr(.52, .52, .1), .014, .004), MAT.guss, z, 0, .08 + i * .06, 0);
+    });
+  });
+  teil('Ventilplatten', Object.assign({ innen: true, s: 'Ventilplatte Kompressor', info: INFO5.ventilplatte, ex: [0, .5, 1.4] }, G), root, g => {
+    [-1, 1].forEach(s => { const z = new THREE.Group(); z.position.set(0, yK + .2, zK); z.rotation.x = s * .7; g.add(z); M(extY(rr(.5, .5, .08), .03, .004), MAT.stahlMatt, z, 0, .45, 0); M(box(.1, .01, .34), MAT.stahl, z, .12, .49, 0); M(box(.1, .01, .34), MAT.stahl, z, -.12, .49, 0); });
+  });
+  teil('Zylinderköpfe', Object.assign({ s: 'Zylinderkopf Kompressor', info: INFO5.kompkopf, ex: [0, 1.0, 1.4], gehaeuse: true }, G), root, g => {
+    [-1, 1].forEach(s => { const z = new THREE.Group(); z.position.set(0, yK + .2, zK); z.rotation.x = s * .7; g.add(z); M(extY(rr(.54, .54, .08), .16, .02), MAT.guss, z, 0, .48, 0); for (let i = 0; i < 4; i++) M(extY(rr(.56, .56, .1), .012, .003), MAT.guss, z, 0, .5 + i * .04, 0); });
+  });
+  teil('Ansaugfilter', Object.assign({ s: 'Ansaugfilter Kompressor', info: INFO5.luftfilter_c, ex: [0, 1.4, 1.8] }, G), root, g => {
+    [-1, 1].forEach(s => { const z = new THREE.Group(); z.position.set(0, yK + .2, zK); z.rotation.x = s * .7; g.add(z); M(zY(.12, .14, 32), MAT.kunststoff, z, -.15, .74, 0); M(zY(.09, .04, 32), MAT.schwarz, z, -.15, .84, 0); });
+  });
+  teil('Schwungrad mit Lüfterflügeln', Object.assign({ s: 'Schwungrad Kompressor', info: INFO5.schwunglueft, ex: [1.3, 0, 1.4] }, G), root, g => {
+    const r = new THREE.Group(); r.position.set(xK, yK, zK); g.add(r); drehend.push({ obj: r, f: .45 });
+    M(ringX(.52, .05, 64), MAT.guss, r);
+    M(zX(.1, .14, 32), MAT.guss, r);
+    for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; M(box(.05, .45, .09), MAT.guss, r, 0, Math.cos(a) * .3, Math.sin(a) * .3).rotation.set(a, 0, 0); }
+  });
+  teil('Keilriemen', Object.assign({ s: 'Keilriemen Kompressor', info: INFO5.keilriemen, ex: [1.3, 0, .7] }, G), root, g => {
+    const rm = riemen([{ y: 0, z: 0, r: .22 }, { y: yK, z: zK, r: .54 }], .06, .02);
+    M(rm.geo, MAT.gummi, g, xK, 0, 0);
+  });
+  teil('Nachkühler-Rohr', Object.assign({ s: 'Nachkühler Kompressor', info: INFO5.nachkuehler, ex: [-.8, .8, 1.4] }, G), root, g => {
+    M(rohr([[.15, yK + .75, zK + .2], [-.2, yK + .95, zK + .1], [-.5, yK + .9, zK - .2], [-.6, yK + .5, zK - .4], [-.6, yK - .2, zK - .5]], .03, 40, 10), MAT.kupfer, g);
+  });
+  teil('Druckschalter mit Manometer', Object.assign({ s: 'Druckschalter Kompressor', info: INFO5.druckschalter, ex: [-1.4, .4, 1.4] }, G), root, g => {
+    M(box(.26, .26, .22), MAT.kunststoff, g, -.8, yK - .1, zK - .5);
+    M(zZ(.11, .06, 32), MAT.weiss, g, -.8, yK - .1, zK - .64);
+    M(zY(.05, .12, 16), MAT.gelb, g, -.8, yK + .1, zK - .5);
+    M(zX(.04, .3, 16), MAT.gelb, g, -1.0, yK - .3, zK - .5);
+  });
+}
+
+
+/* ===================================================== Elektrische Maschinen (Haushalt, Industrie, E-Antrieb) */
+const INFO6 = {
+  /* Universalmotor Waschmaschine */
+  feldpaket: 'Das Feldpaket aus geschichteten Elektroblechen trägt die beiden Feldspulen. Beim Universalmotor sind Feld- und Ankerwicklung in Reihe geschaltet – er läuft mit Wechsel- und Gleichstrom.',
+  anker: 'Der Anker (Rotor) trägt die Ankerwicklung in seinen Nuten. Über den Kollektor wird der Strom in die gerade aktiven Spulen geleitet.',
+  kollektor: 'Der Kollektor besteht aus vielen Kupferlamellen, die gegeneinander isoliert sind. Die Kohlebürsten gleiten darauf und schalten die Wicklung um.',
+  kohlen: 'Die Kohlebürsten übertragen den Strom auf den drehenden Kollektor. Sie sind das klassische Verschleißteil – abgenutzte Kohlen sind der häufigste Grund, wenn die Trommel stehen bleibt.',
+  tacho: 'Der Tachogenerator am Wellenende meldet der Elektronik die Drehzahl. Ohne sein Signal regelt die Maschine nicht und bricht den Schleudergang ab.',
+  riemenscheibe_w: 'Die kleine Motorriemenscheibe treibt über den Keilrippenriemen die große Trommelscheibe an – so wird die hohe Motordrehzahl auf die Trommel untersetzt.',
+  trommelscheibe: 'Die große Riemenscheibe sitzt auf der Trommelwelle. Riemen rutschen oder quietschen, wenn sie verschlissen oder die Scheibe locker ist.',
+  luefter_w: 'Das Lüfterrad auf der Welle kühlt Anker und Feldwicklung.',
+  halter_w: 'Der Motor hängt an zwei Haltern mit Gummidämpfern am Laugenbehälter.',
+  stecker_w: 'Über den Stecker ist der Motor mit der Steuerelektronik verbunden: Feld, Anker, Tacho und Thermoschutz.',
+  /* Direktantrieb */
+  dd_stator: 'Der Stator mit seinen vielen Einzelspulen ist am Laugenbehälter verschraubt. Er wird elektronisch kommutiert – ohne Bürsten, ohne Riemen.',
+  dd_rotor: 'Die Rotorglocke mit den Permanentmagneten sitzt außen um den Stator (Außenläufer) und direkt auf der Trommelwelle. Die Trommel dreht genau mit Motordrehzahl.',
+  dd_hall: 'Hallsensoren erfassen die Rotorlage, damit die Elektronik die Spulen im richtigen Moment bestromt.',
+  dd_flansch: 'Das Lagerkreuz mit der Trommelwelle trägt die Trommel. In seiner Nabe sitzen Trommellager und Wellendichtring.',
+  dd_lager: 'Zwei Trommellager führen die Welle. Rostwasser hinten am Laugenbehälter zeigt, dass die Dichtung undicht und das Lager fällig ist.',
+  dd_mutter: 'Die Rotormutter hält die Rotorglocke auf der Welle. Zum Tausch von Lager oder Dichtung muss sie zuerst ab.',
+  /* Servo */
+  servo_gehaeuse: 'Das Servogehäuse mit Vierkantflansch nimmt den Stator auf und führt die Wärme ab. Die Flanschgröße ist genormt.',
+  servo_stator: 'Die dreiphasige Statorwicklung erzeugt das Drehfeld. Beim Servo wird sie von einem Regler mit hoher Frequenz bestromt.',
+  servo_rotor: 'Der Rotor trägt Permanentmagnete aus Neodym und folgt dem Drehfeld synchron – ohne Schlupf, mit hoher Dynamik.',
+  servo_bremse: 'Die Haltebremse ist eine Federdruckbremse: Ohne Strom bremst sie, mit Strom lüftet sie. Sie hält Achsen bei abgeschaltetem Regler in Position.',
+  servo_geber: 'Der Drehgeber (Encoder oder Resolver) meldet Position und Drehzahl der Welle. Ohne ihn kann der Regler den Motor nicht kommutieren.',
+  servo_stecker: 'Zwei Rundsteckverbinder: einer für die Leistung, einer für das Geberkabel.',
+  welle_pf: 'Die Abtriebswelle mit Passfeder überträgt das Drehmoment an Kupplung oder Getriebe.',
+  lager_e: 'Rillenkugellager führen die Welle. Sie sind dauergeschmiert und werden bei Geräuschen getauscht.',
+  flansch: 'Mit dem Zentrierbund am Flansch wird der Motor exakt zur Maschine ausgerichtet.',
+  /* Schrittmotor */
+  schritt_stator: 'Der Stator trägt acht Polschuhe mit Spulen, die in zwei Phasen geschaltet sind. Jeder Stromschritt dreht den Rotor um einen festen Winkel – typisch 1,8°.',
+  schritt_rotor: 'Der Hybridrotor besteht aus zwei gezahnten Scheiben mit einem Permanentmagneten dazwischen. Die Zähne sind um eine halbe Zahnteilung versetzt.',
+  schritt_schild: 'Die Lagerschilde aus Aluminium tragen die Kugellager und bilden mit vier Zugschrauben das Gehäuse.',
+  schritt_kabel: 'Vier Litzen für die beiden Phasen – bei bipolarer Ansteuerung über eine Schrittmotor-Endstufe.',
+  schritt_welle: 'Die Welle mit Abflachung (D-Welle) nimmt Riemenscheibe, Kupplung oder Spindel auf.',
+  /* Spindel */
+  sp_gehaeuse: 'Das Spindelgehäuse führt Lager, Stator und den Kühlmantel. Es wird im Spindelstock oder Fräskopf gespannt.',
+  sp_stator: 'Der Stator wird vom Frequenzumrichter mit bis zu 1000 Hz versorgt – daher die hohen Drehzahlen der Frässpindel.',
+  sp_rotor: 'Rotor und Spindelwelle sind eine Einheit, fein gewuchtet für Drehzahlen bis über 24.000 min⁻¹.',
+  sp_lager: 'Hybrid-Spindellager mit Keramikkugeln sitzen paarweise vorgespannt vorn und hinten. Sie bestimmen Rundlauf und Lebensdauer.',
+  sp_zange: 'Die Spannzange hält das Werkzeug. Spannzange und Spannmutter müssen zum Schaftdurchmesser passen.',
+  sp_mutter: 'Die Spannmutter zieht die Spannzange in den Konus und klemmt das Werkzeug.',
+  sp_kuehl: 'Durch den Kühlmantel fließt Wasser aus dem Kühlaggregat und führt die Wärme von Stator und Lagern ab.',
+  sp_fraeser: 'Der Schaftfräser als Beispielwerkzeug: Der Schaft steckt in der Spannzange.',
+  sp_sensor: 'Der Temperatur- und Drehzahlsensor schützt die Spindel vor Überlast.',
+  /* Lüfter */
+  lu_stator: 'Der innen liegende Stator mit Wicklung ist fest mit dem Motorträger verbunden. Beim EC-Motor sitzt die Kommutierungselektronik direkt am Motor.',
+  lu_rotor: 'Beim Außenläufer dreht sich die Rotorglocke mit den Magneten außen um den Stator – das Laufrad sitzt direkt auf ihr.',
+  lu_laufrad: 'Die sichelförmigen Schaufeln des Axiallaufrads sind strömungsgünstig und leise. Durchmesser und Blattwinkel bestimmen Luftmenge und Druck.',
+  lu_elektronik: 'Die EC-Elektronik regelt die Drehzahl stufenlos über 0–10 V oder Modbus und braucht keine externe Steuerung.',
+  lu_gitter: 'Das Schutzgitter verhindert Berührung des Laufrads und hält Fremdkörper fern.',
+  lu_wandring: 'Der Wandring (Düse) führt die Luft zum Laufrad und trägt Motor und Gitter.',
+  lu_lager: 'Zwei Kugellager führen die Rotorglocke auf der feststehenden Achse.',
+  /* Pumpe */
+  pu_gehaeuse: 'Das Spiralgehäuse sammelt das vom Laufrad beschleunigte Wasser und leitet es zum Druckstutzen. Saugstutzen vorn, Druckstutzen oben.',
+  pu_laufrad: 'Das geschlossene Laufrad beschleunigt das Fördermedium nach außen. Verschleiß am Laufrad senkt Förderhöhe und Wirkungsgrad.',
+  pu_dichtung: 'Die Gleitringdichtung dichtet die drehende Welle gegen das Pumpengehäuse. Tropft es an der Laterne, ist sie fällig.',
+  pu_laterne: 'Die Laterne verbindet Motor und Pumpengehäuse und lässt Platz für Gleitringdichtung und Wellenkupplung.',
+  pu_welle: 'Die Pumpenwelle sitzt auf der Motorwelle und trägt das Laufrad.',
+  pu_deckel: 'Der Gehäusedeckel verschließt das Spiralgehäuse zur Motorseite und nimmt die Gleitringdichtung auf.',
+  /* Hydraulikmotor */
+  hy_gehaeuse: 'Das Gehäuse des Orbitalmotors mit Anschlussflansch und zwei Druckanschlüssen. Drehrichtung wechselt mit der Durchflussrichtung.',
+  hy_gerotor: 'Der Gerotorsatz: Ein Rotor mit sechs Zähnen rollt in einem Zahnring mit sieben Rollen ab. Das Öl drückt den Rotor Kammer für Kammer weiter.',
+  hy_kardan: 'Die Kardanwelle mit balligen Verzahnungen überträgt die taumelnde Rotorbewegung auf die Abtriebswelle.',
+  hy_ventil: 'Das Verteilerventil dreht mit und leitet das Öl in die richtigen Kammern des Gerotors.',
+  hy_welle: 'Die Abtriebswelle mit Keilverzahnung oder Passfeder treibt Rad, Winde oder Förderschnecke an.',
+  hy_dichtung: 'Der Wellendichtring hält das Öl im Motor. Bei hohem Rücklaufdruck wird er schnell undicht.',
+  hy_deckel: 'Der Enddeckel verschließt den Gerotor und wird mit sieben Schrauben verspannt.',
+  /* E-Bike */
+  eb_gehaeuse: 'Das Magnesiumgehäuse des Mittelmotors sitzt im Tretlager des Rahmens und trägt Motor, Getriebe und Sensorik.',
+  eb_motor: 'Der kompakte bürstenlose Motor dreht schnell und wird über ein Getriebe auf die Kurbeldrehzahl untersetzt.',
+  eb_getriebe: 'Das Planetengetriebe untersetzt die Motordrehzahl und bringt die Kraft auf die Tretlagerwelle.',
+  eb_welle: 'Die Tretlagerwelle trägt die Kurbeln. Der Motor unterstützt nur, wenn der Fahrer tritt.',
+  eb_sensor: 'Der Drehmomentsensor misst die Kraft des Fahrers; Trittfrequenz- und Geschwindigkeitssensor kommen dazu. Daraus berechnet die Steuerung die Unterstützung.',
+  eb_freilauf: 'Der Freilauf trennt den Motor beim Rollen und Treten ohne Unterstützung – so dreht die Kurbel ohne Widerstand.',
+  eb_kettenblatt: 'Das Kettenblatt mit Spider sitzt auf der Abtriebsseite des Motors.',
+  eb_elektronik: 'Die Steuerelektronik mit Leistungsstufe sitzt im Gehäuse und verbindet Akku, Display und Motor.',
+  eb_deckel: 'Der Gehäusedeckel verschließt die Getriebeseite; er wird beim Service abgenommen.',
+  /* E-Auto */
+  ea_gehaeuse: 'Das Motorgehäuse aus Aluminium hat einen Wassermantel: Das Kühlmittel umströmt den Stator.',
+  ea_stator: 'Stator mit Hairpin-Wicklung: Statt Runddraht werden rechteckige Kupferstäbe eingeschoben und an den Enden verschweißt – mehr Kupfer im gleichen Raum.',
+  ea_rotor: 'Der Rotor des permanenterregten Synchronmotors trägt vergrabene Magnete. Er dreht bis über 16.000 min⁻¹.',
+  ea_inverter: 'Der Inverter (Leistungselektronik) macht aus dem Gleichstrom der Batterie Drehstrom für den Motor und regelt Drehmoment und Rekuperation.',
+  ea_hv: 'Orange Hochvoltleitungen verbinden Batterie und Inverter. Arbeiten daran nur mit HV-Qualifikation.',
+  ea_getriebe: 'Das einstufige Untersetzungsgetriebe mit Differenzial bringt die hohe Motordrehzahl auf die Raddrehzahl – ein Schaltgetriebe ist nicht nötig.',
+  ea_resolver: 'Der Resolver erfasst die Rotorlage für die Kommutierung – robust gegen Hitze und Schwingungen.',
+  ea_antriebswellen: 'Die Abtriebsflansche nehmen die Antriebswellen zu den Rädern auf.',
+  ea_parksperre: 'Die Parksperre blockiert das Getriebe im Stand.',
+  /* E-Außenborder */
+  eab_pinne: 'Die Pinne mit Display zeigt Restreichweite und Leistung; der Drehgriff steuert Drehzahl und Richtung.',
+  eab_akku: 'Der Lithium-Akku sitzt oben auf dem Motor und lässt sich zum Laden abnehmen.',
+  eab_schaft: 'Im Schaft laufen nur Kabel – keine Antriebswelle, kein Getriebe.',
+  eab_pod: 'Der Antrieb sitzt direkt im Unterwasserteil: Der Motor ist im Pod vergossen und wird vom Wasser gekühlt.',
+  eab_stator: 'Stator mit Wicklung im wasserdichten Pod.',
+  eab_rotor: 'Der Permanentmagnet-Rotor treibt die Propellerwelle direkt an.',
+  eab_prop: 'Der große, langsam drehende Propeller ist auf hohen Wirkungsgrad ausgelegt – ein Vorteil des Direktantriebs.',
+  eab_finne: 'Die Finne schützt den Propeller und stabilisiert den Geradeauslauf.',
+  eab_halter: 'Die Spiegelhalterung mit Kippmechanik trägt den Motor am Heck.',
+  /* allgemein */
+  getr_gehaeuse: 'Das Stirnradgetriebe ist direkt an den Motor angeflanscht. Es untersetzt die Drehzahl und erhöht das Drehmoment.',
+  getr_raeder: 'Zwei Stirnradstufen: Das Ritzel auf der Motorwelle treibt über Zwischenrad und Abtriebsrad die langsame Abtriebswelle.',
+  getr_welle: 'Die Abtriebswelle mit Passfeder – als Vollwelle oder Hohlwelle zum Aufstecken.',
+  getr_oel: 'Ölschauglas und Entlüftungsschraube: Der Ölstand wird regelmäßig geprüft.'
+};
+
+function baueEMaschine(cfg, MAT) {
+  const root = new THREE.Group(), teile = [], drehend = [], geos = new Set();
+  function M(geo, mat, parent, x = 0, y = 0, z = 0) { geos.add(geo); const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m; }
+  function teil(name, o, parent, bau) {
+    const g = new THREE.Group(); parent.add(g); bau(g);
+    g.userData = Object.assign({}, o, { teil: true, name, key: o.key || name, ex: new THREE.Vector3(...(o.ex || [0, 0, 0])), heim: g.position.clone(), gehaeuse: !!o.gehaeuse, ghostEx: !!o.ghostEx });
+    teile.push(g); return g;
+  }
+  const dreh = (parent, x, f = 1, y = 0, z = 0) => { const r = new THREE.Group(); r.position.set(x, y, z); parent.add(r); drehend.push({ obj: r, f }); return r; };
+  const latheX = (pts, s = 64) => lathe(pts, s).rotateZ(-Math.PI / 2);
+  const doppel = m => { const k = m.clone(); k.side = THREE.DoubleSide; return k; };
+  const lager = (parent, x, R, r, o, G) => teil(o.name || 'Kugellager', Object.assign({ key: 'Kugellager', innen: true, s: 'Rillenkugellager', info: INFO6.lager_e, ex: o.ex || [0, 0, 0] }, G), parent, g => {
+    M(extX(kreis(R, R * .8), R * .5, 0, 40), MAT.stahl, g, x, 0, 0);
+    M(extX(kreis(r * 1.25, r), R * .5, 0, 40), MAT.stahlMatt, g, x, 0, 0);
+    const n = Math.max(7, Math.round(R * 18)), rm = (R * .8 + r * 1.25) / 2, rb = (R * .8 - r * 1.25) / 2 * .95;
+    for (let i = 0; i < n; i++) { const a = i / n * TAU; M(kugel(rb), MAT.stahl, g, x, Math.cos(a) * rm, Math.sin(a) * rm); }
+  });
+  const spulen = (parent, x, n, rIn, rOut, breite, tiefe, mat) => { for (let i = 0; i < n; i++) { const a = i / n * TAU; const rm = (rIn + rOut) / 2; const m = M(box(breite, rOut - rIn, tiefe), mat, parent, x, Math.cos(a) * rm, Math.sin(a) * rm); m.rotation.x = a; } };
+  const magnete = (parent, x, n, r, breite, dicke, hoehe) => { for (let i = 0; i < n; i++) { const a = i / n * TAU; const m = M(box(breite, dicke, hoehe), i % 2 ? MAT.graphit : MAT.stahlMatt, parent, x, Math.cos(a) * r, Math.sin(a) * r); m.rotation.x = a; } };
+  const art = cfg.art;
+
+  /* ---------------- Universalmotor Waschmaschine ---------------- */
+  if (art === 'wasch') {
+    const G = { gruppe: 'Universalmotor' }, A = { gruppe: 'Antrieb' };
+    teil('Feldpaket mit Feldspulen', Object.assign({ s: 'Feldwicklung Waschmaschinenmotor', info: INFO6.feldpaket, gehaeuse: true, ghostEx: true }, G), root, g => {
+      const s = rr(.9, .78, .16); bohrung(s, 0, 0, .33);
+      M(extX(s, .8, .01), MAT.stahlMatt, g);
+      [-1, 1].forEach(t => { M(box(.92, .16, .22), MAT.kupfer, g, 0, t * .36, 0); M(box(.2, .14, .5), MAT.kupfer, g, t * .5, 0, 0).rotation.x = 0; });
+      M(extX(kreis(.26, .24), .8, 0, 48), MAT.keramik, g);
+      for (let i = 0; i < 4; i++) M(zX(.02, 1.45, 6), MAT.stahlMatt, g, -.22, (i < 2 ? .33 : -.33), (i % 2 ? .33 : -.33));
+    });
+    teil('Anker mit Wicklung', Object.assign({ innen: true, s: 'Anker Waschmaschinenmotor', info: INFO6.anker, ex: [0, 1.2, 0] }, G), root, g => {
+      const r = dreh(g, 0);
+      M(zX(.3, .78, 48), MAT.dunkel, r);
+      for (let i = 0; i < 22; i++) { const a = i / 22 * TAU; M(box(.8, .025, .03), MAT.kupfer, r, 0, Math.cos(a) * .29, Math.sin(a) * .29).rotation.x = a; }
+      [-1, 1].forEach(s => M(zX(.22, .08, 32), MAT.kupfer, r, s * .43, 0, 0));
+      M(zX(.045, 2.1, 20), MAT.stahl, r, .1, 0, 0);
+    });
+    teil('Kollektor', Object.assign({ innen: true, s: 'Kollektor Waschmaschinenmotor', info: INFO6.kollektor, ex: [0, 1.2, 0] }, G), root, g => {
+      const r = dreh(g, 0);
+      M(zX(.12, .3, 24), MAT.kupfer, r, -.68, 0, 0);
+      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; M(box(.32, .006, .13), MAT.dunkel, r, -.68, Math.cos(a) * .12, Math.sin(a) * .12).rotation.x = a; }
+    });
+    teil('Kohlebürsten mit Haltern', Object.assign({ s: 'Kohlebürsten Waschmaschine', info: INFO6.kohlen, ex: [-.5, 0, 1.0] }, G), root, g => {
+      [-1, 1].forEach(s => { M(box(.16, .1, .24), MAT.kunststoff, g, -.68, 0, s * .3); M(box(.1, .06, .16), MAT.graphit, g, -.68, 0, s * .17); M(feder(.03, .08, 4, .006).rotateX(s * Math.PI / 2), MAT.stahl, g, -.68, 0, s * .32); M(rohr([[-.68, .05, s * .42], [-.6, .3, s * .45], [-.2, .5, .4]], .012, 12, 6), MAT.kupfer, g); });
+    });
+    teil('Tachogenerator', Object.assign({ s: 'Tachogenerator Waschmaschine', info: INFO6.tacho, ex: [-1.3, 0, 0] }, G), root, g => {
+      const r = dreh(g, 0); M(zX(.08, .08, 24), MAT.dunkel, r, -1.05, 0, 0);
+      M(ringX(.11, .03, 32), MAT.kupfer, g, -1.05, 0, 0);
+      M(box(.06, .06, .1), MAT.kunststoff, g, -1.05, .13, 0);
+    });
+    [['A', 1, .95], ['B', -1, -.92]].forEach(([n, s, x]) => {
+      teil('Lagerschild ' + n + '-Seite', Object.assign({ key: 'Lagerschild', s: 'Lagerschild Waschmaschinenmotor', info: 'Die Lagerschilde aus Aluminiumdruckguss tragen die Kugellager und sind über vier Zuganker mit dem Feldpaket verschraubt.', ex: [s * 1.0, 0, 0], gehaeuse: true }, G), root, g => {
+        const sh = rr(.92, .8, .18); bohrung(sh, 0, 0, .1); M(extX(sh, .05, .012), MAT.alu, g, x, 0, 0);
+        M(zX(.14, .12, 32), MAT.alu, g, x + s * .05, 0, 0);
+        for (let i = 0; i < 4; i++) M(box(.1, .05, .05), MAT.alu, g, x, (i < 2 ? .3 : -.3), (i % 2 ? .3 : -.3));
+        if (s < 0) for (let i = 0; i < 4; i++) { const a = i / 4 * TAU + Math.PI / 4; M(box(.45, .05, .05), MAT.alu, g, x + .22, Math.cos(a) * .36, Math.sin(a) * .36).rotation.x = a; }
+      });
+      lager(root, x + s * .07, .14, .045, { name: 'Kugellager ' + n + '-Seite', ex: [s * (n === 'A' ? 1.5 : 1.3), 0, 0] }, G);
+    });
+    teil('Lüfterrad', Object.assign({ s: 'Lüfterrad Waschmaschinenmotor', info: INFO6.luefter_w, ex: [.8, 0, 0] }, G), root, g => {
+      const r = dreh(g, .62); M(zX(.07, .06, 20), MAT.kunststoff, r);
+      for (let i = 0; i < 9; i++) { const a = i / 9 * TAU; M(box(.05, .2, .015), MAT.kunststoff, r, 0, Math.cos(a) * .16, Math.sin(a) * .16).rotation.x = a; }
+    });
+    teil('Motorriemenscheibe', Object.assign({ s: 'Riemenscheibe Waschmaschinenmotor', info: INFO6.riemenscheibe_w, ex: [1.5, 0, 0] }, A), root, g => {
+      const r = dreh(g, .9);
+      M(zX(.1, .14, 32), MAT.stahlMatt, r);
+      for (let i = 0; i < 5; i++) M(ringX(.1, .012, 32), MAT.dunkel, r, -.05 + i * .025, 0, 0);
+    });
+    teil('Keilrippenriemen', Object.assign({ s: 'Keilrippenriemen Waschmaschine', info: INFO6.riemenscheibe_w, ex: [1.5, .5, 0] }, A), root, g => {
+      const rm = riemen([{ y: 0, z: 0, r: .11 }, { y: 1.55, z: .3, r: .58 }], .12, .018);
+      M(rm.geo, MAT.gummi, g, .9, 0, 0);
+    });
+    teil('Trommelriemenscheibe', Object.assign({ s: 'Riemenscheibe Trommel Waschmaschine', info: INFO6.trommelscheibe, ex: [1.5, 1.0, 0] }, A), root, g => {
+      const r = dreh(g, .9, .19, 1.55, .3);
+      M(ringX(.56, .035, 72), MAT.alu, r);
+      M(zX(.1, .12, 24), MAT.alu, r);
+      for (let i = 0; i < 3; i++) { const a = i / 3 * TAU; M(box(.04, .46, .06), MAT.alu, r, 0, Math.cos(a) * .3, Math.sin(a) * .3).rotation.x = a; }
+      M(zX(.03, .12, 6), MAT.stahl, r);
+    });
+    teil('Motorhalter mit Gummidämpfern', Object.assign({ s: 'Motorhalter Waschmaschine', info: INFO6.halter_w, ex: [0, -1.0, 0] }, G), root, g => {
+      [-1, 1].forEach(s => { M(box(.14, .3, .12), MAT.stahlMatt, g, s * .35, -.55, 0); M(zX(.06, .12, 16), MAT.gummi, g, s * .35, -.7, 0); });
+      M(box(.9, .05, .14), MAT.stahlMatt, g, 0, -.44, 0);
+    });
+    teil('Anschlussstecker', Object.assign({ s: 'Stecker Waschmaschinenmotor', info: INFO6.stecker_w, ex: [0, .9, -.6] }, G), root, g => {
+      M(box(.2, .08, .28), MAT.weiss, g, -.2, .48, -.3);
+      for (let i = 0; i < 6; i++) M(box(.02, .03, .02), MAT.gelb, g, -.26 + i * .025, .53, -.3);
+      M(rohr([[-.2, .5, -.42], [-.3, .5, -.7], [-.6, .3, -.9]], .025, 16, 8), MAT.gummi, g);
+    });
+  }
+
+  /* ---------------- Direktantrieb Waschmaschine ---------------- */
+  if (art === 'dd') {
+    const G = { gruppe: 'Direktantrieb' };
+    const R = 1.05;
+    teil('Lagerkreuz mit Trommelwelle', Object.assign({ s: 'Lagerkreuz Waschmaschine', info: INFO6.dd_flansch, ex: [1.6, 0, 0] }, G), root, g => {
+      const r = dreh(g, .3, .25);
+      for (let i = 0; i < 3; i++) { const a = i / 3 * TAU; M(box(.08, .16, 1.1), MAT.alu, r, 0, Math.cos(a) * .55, Math.sin(a) * .55).rotation.set(a + Math.PI / 2, 0, 0); M(box(.16, .12, .12), MAT.alu, r, .04, Math.cos(a) * 1.08, Math.sin(a) * 1.08).rotation.x = a; }
+      M(zX(.16, .3, 32), MAT.alu, r);
+      M(zX(.05, 1.0, 20), MAT.stahl, r, -.4, 0, 0);
+      M(zX(.07, .25, 12), MAT.stahl, r, -.62, 0, 0);
+    });
+    lager(root, -.05, .14, .05, { name: 'Trommellager', ex: [.9, 0, 0] }, G);
+    teil('Wellendichtring', Object.assign({ innen: true, s: 'Wellendichtring Waschmaschine', info: INFO6.dd_lager, ex: [.6, 0, 0] }, G), root, g => { M(extX(kreis(.13, .055), .04, 0, 40), MAT.gummi, g, .1, 0, 0); });
+    teil('Stator mit Einzelspulen', Object.assign({ s: 'Stator Direktantrieb', info: INFO6.dd_stator, ex: [0, 0, 0] }, G), root, g => {
+      M(extX(kreis(.5, .18), .06, .01, 64), MAT.kunststoff, g, -.3, 0, 0);
+      for (let i = 0; i < 36; i++) { const a = i / 36 * TAU; const s = new THREE.Group(); s.rotation.x = a; s.position.x = -.3; g.add(s); M(box(.1, .5, .05), MAT.stahlMatt, s, 0, .7, 0); M(box(.14, .3, .11), MAT.kupfer, s, 0, .7, 0); }
+      for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; M(box(.06, .2, .08), MAT.kunststoff, g, -.3, Math.cos(a) * .42, Math.sin(a) * .42).rotation.x = a; M(zX(.02, .08, 6), MAT.stahlMatt, g, -.34, Math.cos(a) * .42, Math.sin(a) * .42); }
+    });
+    teil('Hallsensor-Platine', Object.assign({ s: 'Hallsensor Waschmaschinenmotor', info: INFO6.dd_hall, ex: [0, -1.3, 0] }, G), root, g => {
+      M(box(.04, .16, .3), MAT.gruen, g, -.4, -.55, 0);
+      M(rohr([[-.42, -.6, 0], [-.5, -.9, .2], [-.6, -1.3, .5]], .018, 14, 6), MAT.gummi, g);
+    });
+    teil('Rotorglocke mit Permanentmagneten', Object.assign({ s: 'Rotor Direktantrieb', info: INFO6.dd_rotor, ex: [-1.6, 0, 0], gehaeuse: true }, G), root, g => {
+      const r = dreh(g, -.3, .25);
+      M(latheX([[.07, -.22], [.3, -.22], [.5, -.18], [.9, -.18], [R, -.14], [R, .14], [R - .04, .14], [R - .04, -.1], [.5, -.12], [.3, -.16], [.07, -.16]], 72), doppel(MAT.kunststoff), r);
+      magnete(r, 0, 48, R - .07, .22, .03, .11);
+      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU + .07; M(box(.03, .3, .03), MAT.kunststoff, r, -.2, Math.cos(a) * .62, Math.sin(a) * .62).rotation.x = a; }
+    });
+    teil('Rotormutter', Object.assign({ s: 'Rotormutter Waschmaschine', info: INFO6.dd_mutter, ex: [-2.3, 0, 0] }, G), root, g => { M(zX(.09, .08, 6), MAT.stahl, g, -.56, 0, 0); });
+  }
+
+  /* ---------------- Servomotor ---------------- */
+  if (art === 'servo') {
+    const G = { gruppe: 'Servomotor' }, R = .36, L = 1.2;
+    teil('Gehäuse mit Vierkantflansch', Object.assign({ s: 'Servomotor Gehäuse', info: INFO6.servo_gehaeuse, gehaeuse: true, ghostEx: true }, G), root, g => {
+      M(extX(rr(.76, .76, .12), L, .02), MAT.schwarz, g);
+      M(extX(rr(.9, .9, .1), .1, .02), MAT.schwarz, g, L / 2 + .02, 0, 0);
+      for (let i = 0; i < 4; i++) M(zX(.045, .12, 24), MAT.dunkel, g, L / 2 + .02, (i < 2 ? .37 : -.37), (i % 2 ? .37 : -.37));
+    });
+    teil('Zentrierbund', Object.assign({ s: 'Flansch Servomotor', info: INFO6.flansch, ex: [1.1, 0, 0] }, G), root, g => { M(zX(.24, .06, 48), MAT.alu, g, L / 2 + .1, 0, 0); });
+    teil('Stator mit Wicklung', Object.assign({ innen: true, s: 'Stator Servomotor', info: INFO6.servo_stator }, G), root, g => {
+      M(extX(kreis(R, .22), .8, 0, 48), MAT.stahlMatt, g);
+      [-1, 1].forEach(s => M(ringX(.27, .05, 48), MAT.kupfer, g, s * .44, 0, 0));
+    });
+    teil('Rotor mit Permanentmagneten', Object.assign({ innen: true, s: 'Rotor Servomotor', info: INFO6.servo_rotor, ex: [0, 1.2, 0] }, G), root, g => {
+      const r = dreh(g, 0); M(zX(.17, .8, 40), MAT.dunkel, r); magnete(r, 0, 8, .18, .78, .025, .12);
+    });
+    teil('Welle mit Passfeder', Object.assign({ innen: true, s: 'Welle Servomotor', info: INFO6.welle_pf, ex: [0, 1.2, 0] }, G), root, g => {
+      const r = dreh(g, 0); M(zX(.06, L + 1.0, 24), MAT.stahl, r, .25, 0, 0); M(box(.3, .025, .03), MAT.stahlMatt, r, L / 2 + .45, .06, 0);
+    });
+    lager(root, L / 2 - .05, .13, .06, { name: 'Kugellager A-Seite', ex: [1.5, 0, 0] }, G);
+    lager(root, -L / 2 + .05, .11, .06, { name: 'Kugellager B-Seite', ex: [-1.0, 0, 0] }, G);
+    teil('Haltebremse', Object.assign({ innen: true, s: 'Haltebremse Servomotor', info: INFO6.servo_bremse, ex: [-1.6, 0, 0] }, G), root, g => {
+      M(extX(kreis(.3, .12), .14, .01, 48), MAT.dunkel, g, -L / 2 - .12, 0, 0);
+      M(ringX(.22, .05, 48), MAT.kupfer, g, -L / 2 - .12, 0, 0);
+      const r = dreh(g, -L / 2 - .22); M(extX(kreis(.26, .07), .025, 0, 48), MAT.stahlMatt, r);
+    });
+    teil('Drehgeber', Object.assign({ s: 'Drehgeber Servomotor', info: INFO6.servo_geber, ex: [-2.3, 0, 0] }, G), root, g => {
+      M(zX(.16, .14, 32), MAT.alu, g, -L / 2 - .36, 0, 0);
+      const r = dreh(g, -L / 2 - .3); M(extX(kreis(.12, .04), .01, 0, 32), MAT.keramik, r);
+      M(zX(.19, .08, 32), MAT.schwarz, g, -L / 2 - .46, 0, 0);
+    });
+    teil('Gehäusedeckel B-Seite', Object.assign({ s: 'Gehäusedeckel Servomotor', info: 'Der Deckel schützt Bremse und Drehgeber.', ex: [-2.9, 0, 0], gehaeuse: true }, G), root, g => {
+      M(extX(rr(.76, .76, .12), .5, .02), MAT.schwarz, g, -L / 2 - .25, 0, 0);
+    });
+    teil('Steckverbinder', Object.assign({ s: 'Steckverbinder Servomotor', info: INFO6.servo_stecker, ex: [0, 1.0, 0] }, G), root, g => {
+      [-.2, .2].forEach(z => { M(zY(.09, .18, 32), MAT.dunkel, g, -.35, .46, z); M(zY(.1, .04, 32), MAT.stahlMatt, g, -.35, .56, z); M(rohr([[-.35, .6, z], [-.45, .85, z], [-.9, 1.0, z]], .03, 14, 8), MAT.gummi, g); });
+    });
+  }
+
+  /* ---------------- Schrittmotor ---------------- */
+  if (art === 'schritt') {
+    const G = { gruppe: 'Hybrid-Schrittmotor' }, L = .9, R = .44;
+    teil('Statorgehäuse', Object.assign({ s: 'Stator Schrittmotor', info: INFO6.schritt_stator, gehaeuse: true, ghostEx: true }, G), root, g => {
+      M(extX(rr(R * 2, R * 2, .12), L, .01), MAT.graphit, g);
+    });
+    teil('Statorpole mit Spulen', Object.assign({ innen: true, s: 'Wicklung Schrittmotor', info: INFO6.schritt_stator }, G), root, g => {
+      M(extX(kreis(.4, .3), L - .04, 0, 48), MAT.stahlMatt, g);
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; const s = new THREE.Group(); s.rotation.x = a; g.add(s); M(box(L - .06, .1, .12), MAT.stahlMatt, s, 0, .25, 0); M(box(L - .1, .14, .2), i % 2 ? MAT.kupfer : MAT.bronze, s, 0, .26, 0); M(box(L - .06, .03, .18), MAT.stahlMatt, s, 0, .19, 0); }
+    });
+    teil('Hybridrotor (gezahnt)', Object.assign({ innen: true, s: 'Rotor Schrittmotor', info: INFO6.schritt_rotor, ex: [0, 1.0, 0] }, G), root, g => {
+      const r = dreh(g, 0);
+      const z = extX(zahnrad(50, .175, .16, .05), .3, .002, 4);
+      M(z, MAT.stahl, r, -.17, 0, 0); M(z, MAT.stahl, r, .17, 0, 0).rotation.x = TAU / 100;
+      M(zX(.15, .04, 40), MAT.graphit, r);
+    });
+    teil('Welle (D-Welle)', Object.assign({ innen: true, s: 'Welle Schrittmotor', info: INFO6.schritt_welle, ex: [0, 1.0, 0] }, G), root, g => {
+      const r = dreh(g, 0); M(zX(.05, L + .7, 24), MAT.stahl, r, .2, 0, 0); M(box(.3, .02, .05), MAT.stahlMatt, r, L / 2 + .35, .045, 0);
+    });
+    [['vorn', 1, 1.0], ['hinten', -1, -1.0]].forEach(([n, s, ex]) => {
+      teil('Lagerschild ' + n, Object.assign({ key: 'Lagerschild', s: 'Lagerschild Schrittmotor', info: INFO6.schritt_schild, ex: [ex * 1.2, 0, 0], gehaeuse: true }, G), root, g => {
+        M(extX(rr(R * 2, R * 2, .12), .1, .012), MAT.alu, g, s * (L / 2 + .05), 0, 0);
+        if (s > 0) M(zX(.19, .06, 40), MAT.alu, g, L / 2 + .12, 0, 0);
+        for (let i = 0; i < 4; i++) M(zX(.03, .06, 6), MAT.stahlMatt, g, s * (L / 2 + .11), (i < 2 ? .36 : -.36), (i % 2 ? .36 : -.36));
+      });
+      lager(root, s * (L / 2 + .02), .1, .05, { name: 'Kugellager ' + n, ex: [ex * .7, 0, 0] }, G);
+    });
+    teil('Anschlusslitzen', Object.assign({ s: 'Anschlusskabel Schrittmotor', info: INFO6.schritt_kabel, ex: [-.6, -.6, 0] }, G), root, g => {
+      [[MAT.lackRot, .03], [MAT.dunkel, .01], [MAT.lack, -.01], [MAT.gruen, -.03]].forEach(([m, z]) => M(rohr([[-L / 2 + .05, -.4, z], [-L / 2 - .1, -.6, z * 2], [-L / 2 - .3, -.95, z * 4]], .012, 14, 6), m, g));
+      M(box(.08, .06, .12), MAT.kunststoff, g, -L / 2 + .02, -.4, 0);
+    });
+  }
+
+  /* ---------------- Frässpindel ---------------- */
+  if (art === 'spindel') {
+    const G = { gruppe: 'Frässpindel' }, R = .4, L = 1.9;
+    teil('Spindelgehäuse', Object.assign({ s: 'Spindelgehäuse', info: INFO6.sp_gehaeuse, gehaeuse: true, ghostEx: true }, G), root, g => {
+      M(new THREE.CylinderGeometry(R, R, L, 72, 1, true).rotateZ(Math.PI / 2), doppel(MAT.aluBlank), g);
+      M(extX(kreis(R, .22), .06, .01, 72), MAT.aluBlank, g, L / 2 + .02, 0, 0);
+      M(extX(kreis(R, .1), .06, .01, 72), MAT.aluBlank, g, -L / 2 - .02, 0, 0);
+      M(extX(rr(.7, .2, .04), .5, .01), MAT.aluBlank, g, 0, -R - .08, 0);
+    });
+    teil('Kühlmantel', Object.assign({ innen: true, s: 'Kühlmantel Spindel', info: INFO6.sp_kuehl, ex: [0, 1.0, 0] }, G), root, g => {
+      M(new THREE.CylinderGeometry(R - .03, R - .03, L - .3, 64, 1, true).rotateZ(Math.PI / 2), doppel(MAT.alu), g);
+      for (let x = -.6; x <= .6; x += .12) M(ringX(R - .04, .025, 64), MAT.lack, g, x, 0, 0);
+      [-.2, .2].forEach(z => { M(zY(.045, .14, 16), MAT.alu, g, -.6, R + .03, z); M(zY(.035, .06, 16), MAT.dunkel, g, -.6, R + .12, z); });
+    });
+    teil('Stator mit Wicklung', Object.assign({ innen: true, s: 'Stator Spindelmotor', info: INFO6.sp_stator }, G), root, g => {
+      M(extX(kreis(R - .07, .19), .9, 0, 56), MAT.stahlMatt, g, -.1, 0, 0);
+      [-1, 1].forEach(s => M(ringX(.24, .045, 56), MAT.kupfer, g, -.1 + s * .49, 0, 0));
+    });
+    teil('Rotor mit Spindelwelle', Object.assign({ innen: true, s: 'Rotor Spindel', info: INFO6.sp_rotor, ex: [0, 1.0, 0] }, G), root, g => {
+      const r = dreh(g, 0);
+      M(zX(.16, .9, 48), MAT.dunkel, r, -.1, 0, 0);
+      for (let i = 0; i < 20; i++) { const a = i / 20 * TAU; M(box(.9, .015, .03), MAT.kupfer, r, -.1, Math.cos(a) * .155, Math.sin(a) * .155).rotation.x = a; }
+      M(zX(.09, L + .2, 32), MAT.stahl, r, .05, 0, 0);
+      M(latheX([[.09, L / 2 + .1], [.16, L / 2 + .1], [.16, L / 2 + .3], [.1, L / 2 + .45], [.0, L / 2 + .45]], 48), MAT.stahl, r);
+    });
+    teil('Spindellager vorn (Paar)', Object.assign({ key: 'Spindellager', innen: true, s: 'Spindellager', info: INFO6.sp_lager, ex: [1.0, 0, 0] }, G), root, g => {
+      [L / 2 - .12, L / 2 - .26].forEach(x => { M(extX(kreis(.2, .16), .1, 0, 48), MAT.stahl, g, x, 0, 0); M(extX(kreis(.12, .09), .1, 0, 48), MAT.stahlMatt, g, x, 0, 0); for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; M(kugel(.025), MAT.keramik, g, x, Math.cos(a) * .14, Math.sin(a) * .14); } });
+    });
+    teil('Spindellager hinten', Object.assign({ key: 'Spindellager', innen: true, s: 'Spindellager', info: INFO6.sp_lager, ex: [-.8, 0, 0] }, G), root, g => {
+      const x = -L / 2 + .14; M(extX(kreis(.17, .14), .08, 0, 48), MAT.stahl, g, x, 0, 0); M(extX(kreis(.11, .09), .08, 0, 48), MAT.stahlMatt, g, x, 0, 0); for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; M(kugel(.022), MAT.keramik, g, x, Math.cos(a) * .125, Math.sin(a) * .125); }
+    });
+    teil('Spannzange', Object.assign({ s: 'Spannzange ER', info: INFO6.sp_zange, ex: [1.7, 0, 0] }, G), root, g => {
+      const r = dreh(g, 0);
+      M(latheX([[.045, L / 2 + .2], [.13, L / 2 + .2], [.13, L / 2 + .36], [.08, L / 2 + .5], [.045, L / 2 + .5]], 32), MAT.stahlMatt, r);
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; M(box(.32, .006, .02), MAT.dunkel, r, L / 2 + .35, Math.cos(a) * .1, Math.sin(a) * .1).rotation.x = a; }
+    });
+    teil('Spannmutter', Object.assign({ s: 'Spannmutter ER', info: INFO6.sp_mutter, ex: [2.2, 0, 0] }, G), root, g => {
+      const r = dreh(g, 0);
+      M(latheX([[.08, L / 2 + .3], [.2, L / 2 + .3], [.2, L / 2 + .5], [.14, L / 2 + .56], [.08, L / 2 + .56]], 48), MAT.stahl, r);
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; M(box(.1, .03, .05), MAT.dunkel, r, L / 2 + .42, Math.cos(a) * .2, Math.sin(a) * .2).rotation.x = a; }
+    });
+    teil('Schaftfräser (Werkzeug)', Object.assign({ s: 'Schaftfräser', info: INFO6.sp_fraeser, ex: [2.8, 0, 0] }, G), root, g => {
+      const r = dreh(g, 0);
+      M(zX(.04, .9, 16), MAT.stahl, r, L / 2 + .7, 0, 0);
+      for (let i = 0; i < 4; i++) M(feder(.045, .45, 2, .012).rotateZ(-Math.PI / 2).rotateX(i / 4 * TAU), MAT.gelb, r, L / 2 + .75, 0, 0);
+    });
+    teil('Sensor und Anschlussdose', Object.assign({ s: 'Sensor Spindel', info: INFO6.sp_sensor, ex: [0, -1.0, 0] }, G), root, g => {
+      M(box(.3, .14, .3), MAT.dunkel, g, -.5, -R - .14, 0);
+      M(zX(.04, .3, 16), MAT.stahlMatt, g, -.8, -R - .14, 0);
+      M(rohr([[-.95, -R - .14, 0], [-1.3, -R - .2, .1], [-1.6, -R - .4, .3]], .03, 16, 8), MAT.gummi, g);
+    });
+  }
+
+  /* ---------------- EC-Außenläufer-Lüfter ---------------- */
+  if (art === 'luefter') {
+    const G = { gruppe: 'EC-Lüftermotor' }, A = { gruppe: 'Laufrad & Gehäuse' };
+    teil('Motorträger mit Achse', Object.assign({ s: 'Motorträger Lüfter', info: INFO6.lu_stator, ex: [-1.4, 0, 0] }, G), root, g => {
+      M(zX(.05, 1.0, 20), MAT.stahl, g, -.1, 0, 0);
+      M(zX(.2, .08, 40), MAT.alu, g, -.5, 0, 0);
+      for (let i = 0; i < 4; i++) { const a = i / 4 * TAU + Math.PI / 4; M(box(.06, 1.25, .05), MAT.alu, g, -.6, Math.cos(a) * .7, Math.sin(a) * .7).rotation.x = a; }
+    });
+    teil('Stator mit Wicklung', Object.assign({ innen: true, s: 'Stator Lüftermotor', info: INFO6.lu_stator }, G), root, g => {
+      M(extX(kreis(.3, .06), .36, 0, 48), MAT.stahlMatt, g);
+      spulen(g, 0, 12, .12, .31, .4, .1, MAT.kupfer);
+    });
+    lager(root, .22, .09, .05, { name: 'Kugellager vorn', ex: [.9, 0, 0] }, G);
+    lager(root, -.22, .09, .05, { name: 'Kugellager hinten', ex: [-.9, 0, 0] }, G);
+    teil('Rotorglocke mit Magneten', Object.assign({ s: 'Rotor Lüftermotor', info: INFO6.lu_rotor, ex: [.9, 0, 0], gehaeuse: true }, G), root, g => {
+      const r = dreh(g, 0);
+      M(latheX([[.06, .32], [.3, .32], [.38, .28], [.38, -.3], [.34, -.3], [.34, .24], [.06, .24]], 56), doppel(MAT.schwarz), r);
+      magnete(r, 0, 16, .33, .5, .02, .11);
+    });
+    teil('Axiallaufrad (Sichelflügel)', Object.assign({ s: 'Laufrad Axiallüfter', info: INFO6.lu_laufrad, ex: [1.8, 0, 0] }, A), root, g => {
+      const r = dreh(g, .1);
+      const bl = new THREE.Shape(); bl.moveTo(.38, -.1); bl.quadraticCurveTo(.8, .25, 1.45, .05); bl.quadraticCurveTo(1.5, .2, 1.4, .36); bl.quadraticCurveTo(.9, .45, .38, .2); bl.closePath();
+      const geo = ext(bl, .012, .004, 24); geo.rotateY(Math.PI / 2); geo.rotateX(Math.PI / 2);
+      for (let i = 0; i < 7; i++) { const pv = new THREE.Group(); pv.rotation.x = i / 7 * TAU; r.add(pv); const m = M(geo, MAT.kunststoff, pv); m.rotation.y = .55; }
+    });
+    teil('EC-Elektronik', Object.assign({ s: 'Elektronik EC-Lüfter', info: INFO6.lu_elektronik, ex: [-2.0, 0, 0] }, G), root, g => {
+      M(zX(.34, .18, 48), MAT.dunkel, g, -.72, 0, 0);
+      M(extX(kreis(.3), .01, 0, 40), MAT.gruen, g, -.62, 0, 0);
+      M(box(.12, .1, .2), MAT.kunststoff, g, -.72, -.2, .2);
+      M(rohr([[-.8, -.3, .2], [-1.0, -.5, .3], [-1.2, -.9, .5]], .025, 14, 8), MAT.gummi, g);
+    });
+    teil('Wandring (Düse)', Object.assign({ s: 'Wandring Lüfter', info: INFO6.lu_wandring, ex: [0, 0, 0], gehaeuse: true, ghostEx: true }, A), root, g => {
+      M(latheX([[1.62, .45], [1.56, .3], [1.55, -.2], [1.6, -.4]], 80), doppel(MAT.blech), g);
+      M(extX(rr(3.6, 3.6, .2), .04, .01), MAT.blech, g, -.42, 0, 0);
+    });
+    teil('Schutzgitter', Object.assign({ s: 'Schutzgitter Lüfter', info: INFO6.lu_gitter, ex: [1.2, 0, 0] }, A), root, g => {
+      [.3, .6, .9, 1.2, 1.5].forEach(r => M(ringX(r, .012, 72), MAT.stahlMatt, g, .55, 0, 0));
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; M(box(.012, 1.5, .012), MAT.stahlMatt, g, .55, Math.cos(a) * .8, Math.sin(a) * .8).rotation.x = a; }
+    });
+  }
+
+  /* ---------------- Orbital-Hydraulikmotor ---------------- */
+  if (art === 'hyd') {
+    const G = { gruppe: 'Orbitalmotor' };
+    teil('Gehäuse mit Anschlussflansch', Object.assign({ s: 'Hydraulikmotor Gehäuse', info: INFO6.hy_gehaeuse, gehaeuse: true, ghostEx: true }, G), root, g => {
+      M(latheX([[.12, .9], [.4, .9], [.44, .8], [.44, -1.0], [.4, -1.04]], 56), doppel(MAT.guss), g);
+      M(extX(rr(1.2, .5, .12), .12, .02), MAT.guss, g, .84, 0, 0);
+      [-1, 1].forEach(s => M(zX(.06, .14, 24), MAT.dunkel, g, .84, 0, s * .48));
+      [-1, 1].forEach(s => { M(box(.3, .3, .2), MAT.guss, g, .3, .35, s * .2); M(zY(.08, .06, 24), MAT.stahlMatt, g, .3, .53, s * .2); });
+    });
+    teil('Abtriebswelle', Object.assign({ s: 'Abtriebswelle Hydraulikmotor', info: INFO6.hy_welle, ex: [1.6, 0, 0] }, G), root, g => {
+      const r = dreh(g, 0, .5);
+      M(zX(.12, 1.2, 32), MAT.stahl, r, .7, 0, 0);
+      M(extX(zahnrad(12, .13, .115, .05), .3, .002, 4), MAT.stahl, r, 1.3, 0, 0);
+      M(extX(zahnrad(14, .14, .12, .04), .2, .002, 4), MAT.stahlMatt, r, .32, 0, 0);
+    });
+    teil('Wellendichtring', Object.assign({ innen: true, s: 'Wellendichtring Hydraulikmotor', info: INFO6.hy_dichtung, ex: [1.2, 0, 0] }, G), root, g => { M(extX(kreis(.17, .125), .05, 0, 40), MAT.gummi, g, .86, 0, 0); });
+    lager(root, .55, .22, .125, { name: 'Wellenlager', ex: [.9, 0, 0] }, G);
+    teil('Kardanwelle', Object.assign({ innen: true, s: 'Kardanwelle Hydraulikmotor', info: INFO6.hy_kardan, ex: [0, 1.0, 0] }, G), root, g => {
+      const r = dreh(g, 0, .5); M(zX(.07, .85, 20), MAT.stahl, r, -.15, 0, 0);
+      [.2, -.5].forEach(x => M(extX(zahnrad(12, .095, .08, .03), .14, .002, 4), MAT.stahlMatt, r, x, 0, 0));
+    });
+    teil('Verteilerventil', Object.assign({ innen: true, s: 'Verteilerventil Hydraulikmotor', info: INFO6.hy_ventil, ex: [-.6, 0, 0] }, G), root, g => {
+      const r = dreh(g, 0, .5); const s = kreis(.36, .1); for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; bohrung(s, .25 * Math.cos(a), .25 * Math.sin(a), .035); } M(extX(s, .08, .004, 48), MAT.bronze, r, -.6, 0, 0);
+    });
+    teil('Gerotorsatz (Zahnring und Rotor)', Object.assign({ innen: true, s: 'Gerotor Hydraulikmotor', info: INFO6.hy_gerotor, ex: [-1.3, 0, 0] }, G), root, g => {
+      const x = -.85;
+      const ring = kreis(.44, .36); M(extX(ring, .26, .004, 56), MAT.stahlMatt, g, x, 0, 0);
+      for (let i = 0; i < 7; i++) { const a = i / 7 * TAU; M(zX(.065, .26, 20), MAT.stahl, g, x, Math.cos(a) * .3, Math.sin(a) * .3); }
+      const r = dreh(g, x, .5, .04, 0);
+      const rot = new THREE.Shape(); for (let i = 0; i <= 120; i++) { const a = i / 120 * TAU, rr2 = .2 + .06 * Math.cos(6 * a); const p = [rr2 * Math.cos(a), rr2 * Math.sin(a)]; i ? rot.lineTo(...p) : rot.moveTo(...p); }
+      bohrung(rot, 0, 0, .08); M(extX(rot, .26, .004, 8), MAT.stahl, r);
+    });
+    teil('Enddeckel mit Schrauben', Object.assign({ s: 'Enddeckel Hydraulikmotor', info: INFO6.hy_deckel, ex: [-2.0, 0, 0], gehaeuse: true }, G), root, g => {
+      M(extX(kreis(.45), .1, .02, 56), MAT.guss, g, -1.08, 0, 0);
+      for (let i = 0; i < 7; i++) { const a = i / 7 * TAU; M(zX(.04, .08, 6), MAT.stahlMatt, g, -1.16, Math.cos(a) * .36, Math.sin(a) * .36); }
+    });
+  }
+
+  /* ---------------- E-Bike Mittelmotor ---------------- */
+  if (art === 'ebike') {
+    const G = { gruppe: 'Mittelmotor' };
+    const zT = .55; // Tretlagerachse (z) relativ zum Motor
+    teil('Motorgehäuse (Magnesium)', Object.assign({ s: 'Gehäuse E-Bike Mittelmotor', info: INFO6.eb_gehaeuse, gehaeuse: true, ghostEx: true }, G), root, g => {
+      const s = new THREE.Shape(); s.absarc(0, 0, .52, Math.PI * .1, Math.PI * 1.25, false); s.absarc(-.1, -.65, .42, Math.PI * 1.25, Math.PI * 2.1, false); s.closePath();
+      M(extX(s, .6, .04, 48), MAT.graphit, g);
+      [-1, 1].forEach(t => M(box(.2, .12, .12), MAT.graphit, g, 0, .55, t * .2));
+    });
+    teil('Stator mit Wicklung', Object.assign({ innen: true, s: 'Stator E-Bike Motor', info: INFO6.eb_motor }, G), root, g => {
+      M(extX(kreis(.42, .3), .3, 0, 48), MAT.stahlMatt, g, .05, 0, 0);
+      spulen(g, .05, 12, .28, .4, .34, .08, MAT.kupfer);
+    });
+    teil('Rotor mit Magneten', Object.assign({ innen: true, s: 'Rotor E-Bike Motor', info: INFO6.eb_motor, ex: [1.0, 0, 0] }, G), root, g => {
+      const r = dreh(g, .05, 1); M(zX(.24, .3, 40), MAT.dunkel, r); magnete(r, 0, 14, .25, .3, .02, .09); M(zX(.05, .5, 16), MAT.stahl, r);
+    });
+    teil('Planetengetriebe', Object.assign({ innen: true, s: 'Planetengetriebe E-Bike', info: INFO6.eb_getriebe, ex: [1.5, 0, 0] }, G), root, g => {
+      const x = -.22; M(extX(zahnrad(48, .3, .27, .25), .12, .002, 4), MAT.stahlMatt, g, x, 0, 0);
+      const t = dreh(g, x, -.33);
+      for (let i = 0; i < 3; i++) { const a = i / 3 * TAU; const p = dreh(t, 0, 0, Math.cos(a) * .16, Math.sin(a) * .16); M(extX(zahnrad(14, .1, .085, .02), .12, .002, 4), MAT.stahl, p); }
+      const s = dreh(g, x, 1); M(extX(zahnrad(10, .07, .055, .03), .12, .002, 4), MAT.stahl, s);
+    });
+    teil('Tretlagerwelle', Object.assign({ s: 'Tretlagerwelle E-Bike', info: INFO6.eb_welle, ex: [0, -1.4, 0] }, G), root, g => {
+      const r = dreh(g, 0, .12, -.65, -.1); M(zX(.06, 1.3, 20), MAT.stahl, r); [-1, 1].forEach(s => M(zX(.08, .12, 8), MAT.stahlMatt, r, s * .6, 0, 0));
+    });
+    teil('Drehmomentsensor', Object.assign({ innen: true, s: 'Drehmomentsensor E-Bike', info: INFO6.eb_sensor, ex: [-.8, -1.2, 0] }, G), root, g => {
+      M(extX(kreis(.16, .07), .14, .004, 40), MAT.stahlMatt, g, -.2, -.65, -.1); M(box(.14, .03, .1), MAT.gruen, g, -.2, -.47, -.1);
+    });
+    teil('Freilauf mit Abtrieb', Object.assign({ innen: true, s: 'Freilauf E-Bike Motor', info: INFO6.eb_freilauf, ex: [.9, -1.0, 0] }, G), root, g => {
+      const r = dreh(g, .2, .12, -.65, -.1); M(extX(zahnrad(36, .2, .18, .07), .1, .002, 4), MAT.stahl, r);
+    });
+    teil('Kettenblatt mit Spider', Object.assign({ s: 'Kettenblatt E-Bike', info: INFO6.eb_kettenblatt, ex: [1.6, -.8, 0] }, G), root, g => {
+      const r = dreh(g, .42, .12, -.65, -.1);
+      M(extX(zahnrad(38, .62, .58, .12), .025, .002, 4), MAT.dunkel, r);
+      for (let i = 0; i < 4; i++) { const a = i / 4 * TAU; M(box(.03, .46, .06), MAT.alu, r, 0, Math.cos(a) * .3, Math.sin(a) * .3).rotation.x = a; }
+    });
+    teil('Steuerelektronik', Object.assign({ s: 'Steuerelektronik E-Bike Motor', info: INFO6.eb_elektronik, ex: [-1.0, .5, 0] }, G), root, g => {
+      M(box(.04, .5, .36), MAT.gruen, g, -.33, .1, .05);
+      for (let i = 0; i < 6; i++) M(box(.04, .06, .06), MAT.kunststoff, g, -.37, -.1 + i * .08, .12);
+      M(rohr([[-.35, .32, .2], [-.5, .5, .3], [-.8, .9, .3]], .02, 14, 8), MAT.gummi, g);
+    });
+    teil('Gehäusedeckel', Object.assign({ s: 'Gehäusedeckel E-Bike Motor', info: INFO6.eb_deckel, ex: [1.0, 0, 0], gehaeuse: true }, G), root, g => {
+      const s = new THREE.Shape(); s.absarc(0, 0, .52, Math.PI * .1, Math.PI * 1.25, false); s.absarc(-.1, -.65, .42, Math.PI * 1.25, Math.PI * 2.1, false); s.closePath();
+      M(extX(s, .05, .02, 48), MAT.graphit, g, .34, 0, 0);
+      for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; M(zX(.02, .03, 6), MAT.stahlMatt, g, .38, Math.cos(a) * .4, Math.sin(a) * .4); }
+    });
+  }
+
+  /* ---------------- PKW-Elektroantrieb ---------------- */
+  if (art === 'eauto') {
+    const G = { gruppe: 'E-Maschine' }, E = { gruppe: 'Leistungselektronik' }, T = { gruppe: 'Getriebe & Abtrieb' };
+    const R = .5, L = 1.2, xG = -L / 2 - .5;
+    teil('Motorgehäuse mit Wassermantel', Object.assign({ s: 'Gehäuse E-Maschine', info: INFO6.ea_gehaeuse, gehaeuse: true, ghostEx: true }, G), root, g => {
+      M(new THREE.CylinderGeometry(R, R, L, 72, 1, true).rotateZ(Math.PI / 2), doppel(MAT.alu), g);
+      M(extX(kreis(R + .03, .12), .08, .02, 72), MAT.alu, g, L / 2 + .02, 0, 0);
+      for (let x = -.45; x <= .45; x += .15) M(ringX(R + .01, .02, 72), MAT.alu, g, x, 0, 0);
+      [-1, 1].forEach(s => { M(zY(.05, .2, 16), MAT.alu, g, s * .3, R + .05, -.3); M(zY(.035, .1, 16), MAT.dunkel, g, s * .3, R + .18, -.3); });
+      [-1, 1].forEach(s => M(box(.3, .2, .25), MAT.alu, g, s * .35, -R - .05, 0));
+    });
+    teil('Stator mit Hairpin-Wicklung', Object.assign({ innen: true, s: 'Stator E-Maschine', info: INFO6.ea_stator }, G), root, g => {
+      M(extX(kreis(R - .04, .3), .9, 0, 64), MAT.stahlMatt, g);
+      [-1, 1].forEach(s => { for (let i = 0; i < 48; i++) { const a = i / 48 * TAU; M(box(.14, .02, .03), MAT.kupfer, g, s * .52, Math.cos(a) * .37, Math.sin(a) * .37).rotation.set(a, 0, s * .5); } });
+      M(box(.3, .08, .1), MAT.kupfer, g, -.4, .38, .3);
+    });
+    teil('Rotor (PMSM) mit Welle', Object.assign({ innen: true, s: 'Rotor E-Maschine', info: INFO6.ea_rotor, ex: [1.8, 0, 0] }, G), root, g => {
+      const r = dreh(g, 0, 1); M(zX(.28, .9, 56), MAT.dunkel, r); magnete(r, 0, 16, .26, .88, .02, .1); M(zX(.07, L + .6, 24), MAT.stahl, r, -.2, 0, 0); M(extX(zahnrad(16, .09, .075, .03), .2, .002, 4), MAT.stahl, r, -L / 2 - .25, 0, 0);
+    });
+    lager(root, L / 2 - .04, .14, .07, { name: 'Kugellager A-Seite', ex: [1.1, 0, 0] }, G);
+    lager(root, -L / 2 + .04, .14, .07, { name: 'Kugellager B-Seite', ex: [-.4, .9, 0] }, G);
+    teil('Resolver', Object.assign({ s: 'Resolver E-Maschine', info: INFO6.ea_resolver, ex: [1.4, 0, 0] }, G), root, g => {
+      M(extX(kreis(.16, .08), .06, .004, 40), MAT.kupfer, g, L / 2 + .1, 0, 0); const r = dreh(g, L / 2 + .1, 1); M(zX(.075, .07, 24), MAT.stahlMatt, r);
+      M(extX(kreis(.26, .18), .05, .01, 48), MAT.alu, g, L / 2 + .14, 0, 0);
+    });
+    teil('Inverter (Leistungselektronik)', Object.assign({ s: 'Inverter Elektroauto', info: INFO6.ea_inverter, ex: [0, 1.3, 0], gehaeuse: true }, E), root, g => {
+      M(extY(rr(1.3, 1.0, .08), .38, .03), MAT.alu, g, -.1, R + .05, 0);
+      for (let i = 0; i < 8; i++) M(box(1.2, .03, .02), MAT.alu, g, -.1, R + .44, -.4 + i * .11);
+      M(box(.3, .1, .2), MAT.dunkel, g, .4, R + .45, .3);
+    });
+    teil('Hochvolt-Anschlüsse', Object.assign({ s: 'Hochvoltleitung', info: INFO6.ea_hv, ex: [0, 1.3, 1.0] }, E), root, g => {
+      [-.15, .15].forEach(x => { M(zZ(.06, .2, 24), MAT.orange, g, x, R + .25, .58); M(rohr([[x, R + .25, .66], [x, R + .3, 1.0], [x - .3, R + .1, 1.4]], .035, 16, 8), MAT.orange, g); });
+      M(box(.4, .14, .12), MAT.orange, g, 0, R + .25, .56);
+    });
+    teil('Reduktionsgetriebe mit Differenzial', Object.assign({ s: 'Reduktionsgetriebe Elektroauto', info: INFO6.ea_getriebe, ex: [-1.6, 0, 0], gehaeuse: true, ghostEx: true }, T), root, g => {
+      const s = new THREE.Shape(); s.absarc(0, 0, .42, -.5, Math.PI + .3, false); s.absarc(0, -.85, .62, Math.PI + .3, TAU - .5, false); s.closePath();
+      M(extX(s, .7, .04, 48), doppel(MAT.alu), g, xG, 0, 0);
+      M(zY(.05, .08, 12), MAT.dunkel, g, xG, .35, .2);
+    });
+    teil('Zahnräder (Stirnradstufe)', Object.assign({ innen: true, s: 'Getrieberad Elektroauto', info: INFO6.ea_getriebe, ex: [-1.6, 0, -1.0] }, T), root, g => {
+      const z1 = dreh(g, xG, .3, -.4, 0); M(extX(zahnrad(44, .36, .33, .08), .16, .002, 4), MAT.stahl, z1); M(extX(zahnrad(12, .11, .09, .05), .2, .002, 4), MAT.stahl, z1, .2, 0, 0);
+      const z2 = dreh(g, xG + .2, .1, -.85, 0); M(extX(zahnrad(60, .5, .47, .3), .16, .002, 4), MAT.stahlMatt, z2);
+    });
+    teil('Differenzial mit Abtriebsflanschen', Object.assign({ s: 'Differenzial Elektroauto', info: INFO6.ea_antriebswellen, ex: [-1.6, -1.3, 0] }, T), root, g => {
+      const d = dreh(g, xG + .2, .1, -.85, 0); M(zX(.28, .3, 40), MAT.guss, d); M(zX(.08, 2.2, 20), MAT.stahl, d);
+      [-1, 1].forEach(s => M(zX(.16, .08, 32), MAT.stahlMatt, d, s * 1.0, 0, 0));
+    });
+    teil('Parksperre', Object.assign({ innen: true, s: 'Parksperre Elektroauto', info: INFO6.ea_parksperre, ex: [-1.6, .9, 0] }, T), root, g => {
+      const p = dreh(g, xG - .2, .3, -.4, 0); M(extX(zahnrad(10, .2, .15, .06), .08, .002, 4), MAT.stahlMatt, p);
+      M(box(.06, .3, .08), MAT.stahl, g, xG - .2, -.05, .1).rotation.x = .4;
+    });
+  }
+
+  /* ---------------- Elektro-Außenborder (steht senkrecht) ---------------- */
+  if (art === 'eab') {
+    const G = { gruppe: 'Elektro-Außenborder' }, U = { gruppe: 'Unterwasserantrieb' };
+    const yT = 1.6, yP = -1.4;
+    teil('Pinne mit Display', Object.assign({ s: 'Pinne Elektro-Außenborder', info: INFO6.eab_pinne, ex: [-1.3, .6, 0] }, G), root, g => {
+      M(rohr([[-.2, yT + .1, 0], [-.7, yT + .18, 0], [-1.6, yT + .3, 0]], .05, 16, 14), MAT.dunkel, g);
+      M(zX(.06, .34, 24), MAT.gummi, g, -1.75, yT + .32, 0);
+      M(box(.3, .06, .2), MAT.kunststoff, g, -.9, yT + .26, 0); M(box(.22, .01, .14), MAT.lack, g, -.9, yT + .3, 0);
+    });
+    teil('Lithium-Akku', Object.assign({ s: 'Akku Elektro-Außenborder', info: INFO6.eab_akku, ex: [0, 1.4, 0], gehaeuse: true }, G), root, g => {
+      M(extY(rr(.9, .6, .14), .55, .05), MAT.kunststoff, g, .1, yT, 0);
+      M(box(.5, .05, .08), MAT.dunkel, g, .1, yT + .58, 0);
+      M(box(.12, .08, .1), MAT.lackRot, g, -.25, yT + .5, .2);
+    });
+    teil('Motorkopf (Elektronik)', Object.assign({ s: 'Motorkopf Elektro-Außenborder', info: INFO6.lu_elektronik, ex: [0, .7, 0], gehaeuse: true }, G), root, g => {
+      M(extY(rr(1.0, .7, .18), .4, .06), MAT.graphit, g, .1, yT - .42, 0);
+    });
+    teil('Spiegelhalterung', Object.assign({ s: 'Spiegelhalterung Elektro-Außenborder', info: INFO6.eab_halter, ex: [-1.2, 0, 0] }, G), root, g => {
+      const y0 = yT - .5;
+      [-1, 1].forEach(s => { const sh = new THREE.Shape(); sh.moveTo(0, 0); sh.lineTo(.24, 0); sh.lineTo(.24, -.7); sh.quadraticCurveTo(.1, -.82, -.05, -.72); sh.closePath(); const geo = ext(sh, .04, .01); geo.translate(0, 0, -.02); M(geo, MAT.alu, g, -.6, y0, s * .26); });
+      M(zZ(.06, .6, 24), MAT.stahl, g, -.5, y0, 0);
+      M(box(.04, .3, .2), MAT.stahl, g, -.62, y0 - .55, 0); M(zY(.03, .14, 10), MAT.stahl, g, -.72, y0 - .55, 0);
+    });
+    teil('Schaft', Object.assign({ s: 'Schaft Elektro-Außenborder', info: INFO6.eab_schaft, ex: [0, -.4, 0], gehaeuse: true }, G), root, g => {
+      M(extY(fluegel(.5, .5, -.2), yT - .6 - (yP + .25), .02), MAT.graphit, g, 0, yP + .25, 0);
+      M(rohr([[0, yT - .6, 0], [0, yP + .2, 0]], .012, 2, 6), MAT.lackRot, g);
+    });
+    teil('Pod-Gehäuse (Unterwasserteil)', Object.assign({ s: 'Pod Elektro-Außenborder', info: INFO6.eab_pod, gehaeuse: true, ghostEx: true }, U), root, g => {
+      M(latheX([[0, -.85], [.1, -.8], [.22, -.5], [.26, 0], [.24, .45], [.18, .62], [.1, .7]], 56), doppel(MAT.graphit), g, 0, yP, 0);
+    });
+    teil('Stator im Pod', Object.assign({ innen: true, s: 'Stator Elektro-Außenborder', info: INFO6.eab_stator }, U), root, g => {
+      const st = new THREE.Group(); st.position.y = yP; g.add(st); M(extX(kreis(.2, .09), .5, 0, 40), MAT.stahlMatt, st, -.05, 0, 0); spulen(st, -.05, 10, .1, .19, .5, .06, MAT.kupfer);
+    });
+    teil('Rotor mit Propellerwelle', Object.assign({ innen: true, s: 'Rotor Elektro-Außenborder', info: INFO6.eab_rotor, ex: [.9, 0, 0] }, U), root, g => {
+      const r = dreh(g, -.05, 1, yP, 0); M(zX(.07, .5, 32), MAT.dunkel, r); magnete(r, 0, 8, .075, .48, .015, .05); M(zX(.03, 1.4, 12), MAT.stahl, r, .3, 0, 0);
+    });
+    teil('Propeller', Object.assign({ s: 'Propeller Elektro-Außenborder', info: INFO6.eab_prop, ex: [1.6, 0, 0] }, U), root, g => {
+      const p = dreh(g, .9, 1, yP, 0); M(latheX([[0, .2], [.07, .17], [.1, 0], [.1, -.2], [0, -.2]], 32), MAT.kunststoff, p);
+      const bl = new THREE.Shape(); bl.moveTo(-.1, .08); bl.quadraticCurveTo(-.26, .35, -.16, .62); bl.quadraticCurveTo(-.04, .72, .1, .62); bl.quadraticCurveTo(.2, .35, .1, .08); bl.closePath();
+      const geo = ext(bl, .016, .006, 24); geo.rotateY(Math.PI / 2);
+      for (let i = 0; i < 3; i++) { const pv = new THREE.Group(); pv.rotation.x = i / 3 * TAU; p.add(pv); M(geo, MAT.kunststoff, pv).rotation.y = .5; }
+    });
+    teil('Finne', Object.assign({ s: 'Finne Elektro-Außenborder', info: INFO6.eab_finne, ex: [0, -.9, 0] }, U), root, g => {
+      const s = new THREE.Shape(); s.moveTo(-.4, 0); s.lineTo(.2, 0); s.lineTo(.0, -.4); s.lineTo(-.3, -.4); s.closePath();
+      const geo = ext(s, .025, .006); geo.translate(0, 0, -.0125); M(geo, MAT.graphit, g, 0, yP - .22, 0);
+    });
+  }
+
+  function stelle(theta) { drehend.forEach(d => { d.obj.rotation.x = theta * d.f; }); }
+  return { root, teile, stelle, geos, cfg };
+}
+
+/* Stirnradgetriebe am Drehstrommotor (eextra) */
+function extraGetriebe(c) {
+  const { M, teil, root, drehend, MAT, lack, R, L } = c;
+  const G = { gruppe: 'Stirnradgetriebe' }, x0 = L / 2 + .15;
+  teil('Getriebegehäuse', Object.assign({ s: 'Getriebegehäuse Getriebemotor', info: INFO6.getr_gehaeuse, ex: [1.6, 0, 0], gehaeuse: true, ghostEx: true }, G), root, g => {
+    const s = new THREE.Shape(); s.absarc(0, 0, .5, -.2, Math.PI + .2, false); s.absarc(0, -.7, .62, Math.PI + .2, TAU - .2, false); s.closePath();
+    M(extX(s, .9, .04, 48), lack, g, x0 + .45, 0, 0);
+    M(extX(kreis(.3, .14), .06, .01, 40), lack, g, x0 + .95, -.7, 0);
+    [-1, 1].forEach(t => M(box(.9, .2, .2), lack, g, x0 + .45, -1.28, t * .35));
+  });
+  teil('Ritzel auf der Motorwelle', Object.assign({ innen: true, s: 'Ritzel Getriebemotor', info: INFO6.getr_raeder, ex: [1.6, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = x0 + .2; g.add(r); drehend.push({ obj: r, f: 1 }); M(extX(zahnrad(13, .11, .09, .05), .2, .002, 4), MAT.stahl, r);
+  });
+  teil('Zwischenrad und Abtriebsrad', Object.assign({ innen: true, s: 'Zahnrad Getriebemotor', info: INFO6.getr_raeder, ex: [1.6, 0, -1.2] }, G), root, g => {
+    const z1 = new THREE.Group(); z1.position.set(x0 + .2, -.32, .03); g.add(z1); drehend.push({ obj: z1, f: -13 / 32 });
+    M(extX(zahnrad(32, .25, .22, .05), .2, .002, 4), MAT.stahl, z1); M(extX(zahnrad(11, .09, .075, .05), .2, .002, 4), MAT.stahl, z1, .22, 0, 0);
+    const z2 = new THREE.Group(); z2.position.set(x0 + .42, -.7, 0); g.add(z2); drehend.push({ obj: z2, f: 13 / 32 * 11 / 44 });
+    M(extX(zahnrad(44, .34, .31, .08), .2, .002, 4), MAT.stahlMatt, z2);
+  });
+  teil('Abtriebswelle mit Passfeder', Object.assign({ s: 'Abtriebswelle Getriebemotor', info: INFO6.getr_welle, ex: [2.2, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.set(x0 + .42, -.7, 0); g.add(r); drehend.push({ obj: r, f: 13 / 32 * 11 / 44 });
+    M(zX(.1, 1.5, 24), MAT.stahl, r, .35, 0, 0); M(box(.4, .025, .04), MAT.stahlMatt, r, .9, .1, 0);
+  });
+  teil('Ölschauglas und Entlüftung', Object.assign({ s: 'Ölschauglas Getriebe', info: INFO6.getr_oel, ex: [1.2, 0, 1.0] }, G), root, g => {
+    M(zZ(.07, .04, 24), MAT.keramik, g, x0 + .45, -.9, .62); M(zY(.04, .1, 12), MAT.gelb, g, x0 + .45, .5, 0);
+  });
+}
+
+/* Kreiselpumpe am Drehstrommotor (eextra) */
+function extraPumpe(c) {
+  const { M, teil, root, drehend, MAT, lack, R, L } = c;
+  const G = { gruppe: 'Kreiselpumpe' }, x0 = L / 2 + .15;
+  teil('Laterne', Object.assign({ s: 'Laterne Pumpe', info: INFO6.pu_laterne, ex: [.9, 0, 0], gehaeuse: true }, G), root, g => {
+    M(new THREE.CylinderGeometry(.42, .5, .5, 48, 1, true).rotateZ(Math.PI / 2), lack, g, x0 + .25, 0, 0);
+    [-1, 1].forEach(s => M(box(.5, .5, .12), lack, g, x0 + .25, -.1, s * .3));
+  });
+  teil('Pumpenwelle mit Kupplung', Object.assign({ innen: true, s: 'Pumpenwelle', info: INFO6.pu_welle, ex: [.9, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); g.add(r); drehend.push({ obj: r, f: 1 }); M(zX(.07, 1.2, 24), MAT.stahl, r, x0 + .5, 0, 0); M(zX(.14, .3, 24), MAT.stahlMatt, r, x0 + .2, 0, 0);
+  });
+  teil('Gleitringdichtung', Object.assign({ innen: true, s: 'Gleitringdichtung', info: INFO6.pu_dichtung, ex: [1.6, 0, 0] }, G), root, g => {
+    M(extX(kreis(.13, .075), .06, .004, 40), MAT.keramik, g, x0 + .56, 0, 0); M(extX(kreis(.12, .075), .05, .004, 40), MAT.graphit, g, x0 + .63, 0, 0); M(feder(.1, .1, 3, .008).rotateZ(-Math.PI / 2), MAT.stahl, g, x0 + .66, 0, 0);
+  });
+  teil('Gehäusedeckel', Object.assign({ s: 'Gehäusedeckel Pumpe', info: INFO6.pu_deckel, ex: [1.4, 0, 0], gehaeuse: true }, G), root, g => {
+    M(extX(kreis(.56, .15), .08, .015, 56), MAT.guss, g, x0 + .55, 0, 0);
+    for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; M(zX(.03, .06, 6), MAT.stahlMatt, g, x0 + .5, Math.cos(a) * .5, Math.sin(a) * .5); }
+  });
+  teil('Laufrad', Object.assign({ innen: true, s: 'Laufrad Pumpe', info: INFO6.pu_laufrad, ex: [2.2, 0, 0] }, G), root, g => {
+    const r = new THREE.Group(); r.position.x = x0 + .85; g.add(r); drehend.push({ obj: r, f: 1 });
+    M(extX(kreis(.4, .05), .03, .004, 48), MAT.bronze, r, -.1, 0, 0); M(extX(kreis(.4, .14), .03, .004, 48), MAT.bronze, r, .1, 0, 0);
+    for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; M(rohr([[0, .08 * Math.cos(a), .08 * Math.sin(a)], [0, .25 * Math.cos(a + .5), .25 * Math.sin(a + .5)], [0, .39 * Math.cos(a + 1.0), .39 * Math.sin(a + 1.0)]], .012, 12, 6), MAT.bronze, r); M(box(.17, .05, .02), MAT.bronze, r, 0, .22 * Math.cos(a + .45), .22 * Math.sin(a + .45)).rotation.x = a + .45 + .9; }
+    M(zX(.1, .2, 24), MAT.bronze, r, .14, 0, 0);
+  });
+  teil('Spiralgehäuse', Object.assign({ s: 'Spiralgehäuse Pumpe', info: INFO6.pu_gehaeuse, ex: [2.4, 0, 0], gehaeuse: true, ghostEx: true }, G), root, g => {
+    const s = new THREE.Shape(); for (let i = 0; i <= 96; i++) { const a = i / 96 * TAU, rr2 = .48 + .14 * a / TAU; const p = [rr2 * Math.cos(a), rr2 * Math.sin(a)]; i ? s.lineTo(...p) : s.moveTo(...p); } s.closePath();
+    M(extX(s, .5, .03, 8), MAT.guss, g, x0 + .9, 0, 0);
+    M(zX(.2, .4, 40), MAT.guss, g, x0 + 1.3, 0, 0); M(extX(kreis(.3), .05, .01, 40), MAT.guss, g, x0 + 1.5, 0, 0);
+    M(zY(.18, .5, 40), MAT.guss, g, x0 + .9, .6, .3); M(extY(kreis(.28), .05, .01), MAT.guss, g, x0 + .9, .85, .3);
+    [-1, 1].forEach(t => M(box(.5, .2, .16), MAT.guss, g, x0 + .9, -.58, t * .3));
+  });
 }
 
 /* ------------------------------------------------------------ Motor bauen */
@@ -1449,6 +2515,7 @@ function baueMotor(cfg, MAT) {
   if (cfg.typ === 'elektro') return baueEmotor(cfg, MAT);
   if (cfg.typ === 'aufzug_gl') return baueAufzugGL(cfg, MAT);
   if (cfg.typ === 'turbine') return baueTurbine(cfg, MAT);
+  if (cfg.typ === 'emaschine') return baueEMaschine(cfg, MAT);
   const P = Object.assign({ b: .40, rk: .21, L: .68, kh: .14, pitch: .50, zapfen: .17, wange: .065 }, cfg.mass || {});
   const { b, rk, L, kh } = P;
   const D = rk + L + kh + .03;          // Zylinderdeck (Bank-Koordinaten)
@@ -2416,7 +3483,7 @@ function starteStudio(opt) {
 
 /* ------------------------------------------- Ersatzteile direkt beim Hersteller
    Neutrale Verweise auf offizielle Herstellerseiten (meist Online-Katalog oder Händlersuche).
-   Keine Partnerschaften, keine Provision. Alle Domains am 13.11.2026 geprüft. */
+   Keine Partnerschaften, keine Provision. Alle Domains am 13.11.2026 geprüft (im Browser erreichbar). */
 const HERSTELLER = {
   mahle: ['MAHLE Aftermarket', 'https://www.mahle-aftermarket.com/'],
   motorservice: ['Motorservice (Kolbenschmidt, Pierburg)', 'https://www.ms-motorservice.com/'],
@@ -2493,7 +3560,60 @@ const HERSTELLER = {
   briggs: ['Briggs & Stratton', 'https://www.briggsandstratton.com/'],
   hondaeng: ['Honda Engines', 'https://www.honda-engines-eu.com/'],
   dellorto: ["Dell'Orto", 'https://www.dellorto.it/'],
-  tillotson: ['Tillotson', 'https://www.tillotson.ie/']
+  tillotson: ['Tillotson', 'https://www.tillotson.ie/'],
+  stihl: ['STIHL', 'https://www.stihl.de/'],
+  husqvarna: ['Husqvarna', 'https://www.husqvarna.com/de/'],
+  oregon: ['Oregon', 'https://www.oregonproducts.com/'],
+  walbro: ['Walbro', 'https://www.walbro.com/'],
+  kohler: ['Kohler Engines', 'https://www.kohlerpower.com/'],
+  kawasakieng: ['Kawasaki Engines', 'https://www.kawasaki-engines.eu/'],
+  echo: ['ECHO Motorgeräte', 'https://www.echo-motorgeraete.de/'],
+  makita: ['Makita (Dolmar)', 'https://www.makita.de/'],
+  mtd: ['MTD Products', 'https://www.mtdproducts.de/'],
+  nidec: ['Nidec', 'https://www.nidec.com/'],
+  askoll: ['Askoll', 'https://www.askoll.com/'],
+  miele: ['Miele', 'https://www.miele.de/'],
+  boschhome: ['Bosch Hausgeräte', 'https://www.bosch-home.de/'],
+  schunk: ['Schunk Carbon Technology', 'https://www.schunk-group.com/'],
+  mersen: ['Mersen', 'https://www.mersen.com/'],
+  optibelt: ['Optibelt', 'https://www.optibelt.com/'],
+  meccalte: ['Mecc Alte', 'https://www.meccalte.com/'],
+  leroysomer: ['Leroy-Somer (Nidec)', 'https://www.leroy-somer.com/'],
+  yamahapower: ['Yamaha Power Products', 'https://www.yamaha-motor.eu/de/de/products/power-products/'],
+  atlascopco: ['Atlas Copco', 'https://www.atlascopco.com/'],
+  schneiderair: ['Schneider Airsystems', 'https://www.schneider-airsystems.com/'],
+  abac: ['ABAC', 'https://www.abacaircompressors.com/'],
+  sew: ['SEW-EURODRIVE', 'https://www.sew-eurodrive.de/'],
+  lenze: ['Lenze', 'https://www.lenze.com/'],
+  rexroth: ['Bosch Rexroth', 'https://www.boschrexroth.com/'],
+  beckhoff: ['Beckhoff', 'https://www.beckhoff.com/'],
+  danfoss: ['Danfoss', 'https://www.danfoss.com/de-de/'],
+  eaton: ['Eaton', 'https://www.eaton.com/'],
+  parker: ['Parker Hannifin', 'https://www.parker.com/'],
+  baumueller: ['Baumüller', 'https://www.baumueller.com/'],
+  kollmorgen: ['Kollmorgen', 'https://www.kollmorgen.com/'],
+  nanotec: ['Nanotec', 'https://www.nanotec.com/'],
+  igus: ['igus', 'https://www.igus.de/'],
+  kessler: ['KESSLER', 'https://www.kessler-group.biz/'],
+  jaeger: ['Alfred Jäger', 'https://www.alfredjaeger.de/'],
+  gmn: ['GMN', 'https://www.gmn.de/'],
+  regofix: ['REGO-FIX', 'https://www.rego-fix.com/'],
+  ebmpapst: ['ebm-papst', 'https://www.ebmpapst.com/'],
+  rosenberg: ['Rosenberg Ventilatoren', 'https://www.rosenberg-gmbh.com/'],
+  grundfos: ['Grundfos', 'https://www.grundfos.com/'],
+  ksb: ['KSB', 'https://www.ksb.com/'],
+  wilo: ['Wilo', 'https://wilo.com/'],
+  freudenberg: ['Freudenberg Sealing Technologies', 'https://www.fst.com/'],
+  hydac: ['HYDAC', 'https://www.hydac.com/'],
+  boschebike: ['Bosch eBike Systems', 'https://www.bosch-ebike.com/'],
+  shimano: ['Shimano', 'https://bike.shimano.com/'],
+  brose: ['Brose E-Bike', 'https://www.brose-ebike.com/'],
+  bafang: ['Bafang', 'https://www.bafang-e.com/'],
+  boschmobility: ['Bosch Mobility', 'https://www.bosch-mobility.com/'],
+  valeogroup: ['Valeo', 'https://www.valeo.com/'],
+  zfgroup: ['ZF', 'https://www.zf.com/'],
+  torqeedo: ['Torqeedo', 'https://www.torqeedo.com/'],
+  epropulsion: ['ePropulsion', 'https://www.epropulsion.com/']
 };
 
 const TEILE_AUTO = {
@@ -2564,10 +3684,70 @@ const TEILE_AUFZUG = {
   'Welle': ['ziehl', 'montanari'], 'Lagerbock': ['ziehl', 'montanari'], 'Grundrahmen': ['montanari', 'ziehl', 'schindler']
 };
 const TEILE_ELEKTRO = { 'Wälzlager': ['skfind', 'schaefflerind'] };
+const KLEIN = ['stihl', 'husqvarna', 'echo'];
+const TEILE_GARTEN = {
+  'Membranvergaser': ['walbro', 'tillotson', 'stihl'], 'Luftfilter': ['stihl', 'husqvarna', 'echo'], 'Schalldämpfer': ['stihl', 'husqvarna', 'echo'],
+  'Schwungrad mit Lüfterflügeln': KLEIN, 'Zündmodul': KLEIN, 'Seilzugstarter mit Lüfterhaube': KLEIN, 'Fliehkraftkupplung': KLEIN, 'Kupplungstrommel mit Kettenrad': ['oregon', 'stihl', 'husqvarna'],
+  'Kettenölpumpe': KLEIN, 'Führungsschiene (Schwert)': ['oregon', 'stihl', 'husqvarna'], 'Sägekette': ['oregon', 'stihl', 'husqvarna'], 'Kettenraddeckel': KLEIN,
+  'Handschutz mit Kettenbremse': KLEIN, 'Bügelgriff': KLEIN, 'Griffgehäuse mit Tank': KLEIN, 'Kraftstofftank': KLEIN,
+  'Kupplungsglocke': KLEIN, 'Schaftrohr mit Antriebswelle': KLEIN, 'Winkelgetriebe': KLEIN, 'Dickichtmesser mit Schutz': ['oregon', 'stihl', 'husqvarna'],
+  'Motorblock (Kurbelgehäuse)': KLEIN, 'Kolben mit Ringen und Bolzen': ['stihl', 'husqvarna', 'mahle'], 'Kurbelwelle': KLEIN, 'Pleuel': KLEIN, 'Hauptlagerdeckel mit Lagerschalen': KLEIN,
+  'Zylinderkopf': KLEIN, 'Zylinderkopfdichtung': KLEIN, 'Zündkerzen': ['ngk', 'bosch', 'champion'], 'Abgaskrümmer': KLEIN
+};
+const MAEHER = ['briggs', 'hondaeng', 'kohler'];
+const TEILE_MAEHER = {
+  'Schwungrad mit Lüfter und Zahnkranz': MAEHER, 'Schwungradbremse': MAEHER, 'Lüfterhaube mit Seilzugstarter': MAEHER, 'Lüfterhaube': MAEHER, 'Elektrostarter': MAEHER, 'Anlasser': MAEHER,
+  'Kraftstofftank': MAEHER, 'Vergaser mit Luftfilter': ['briggs', 'hondaeng', 'walbro'], 'Vergaser mit Luftfilterkasten': ['briggs', 'kohler', 'kawasakieng'], 'Schalldämpfer': MAEHER,
+  'Doppel-Riemenscheibe (Abtrieb)': ['mtd', 'briggs', 'kawasakieng'], 'Messerkupplung mit Bremse': ['mtd', 'briggs', 'hondaeng'], 'Messerbalken': ['mtd', 'hondaeng', 'husqvarna'],
+  'Zündkerzen': ['ngk', 'bosch', 'champion'], 'Zündspulen': MAEHER, 'Ölfilter': MAEHER, '*': MAEHER
+};
+const TEILE_GENERATOR = {
+  'Generatorgehäuse': ['meccalte', 'leroysomer', 'hondaeng'], 'Generator-Ständer mit Wicklung': ['meccalte', 'leroysomer'], 'Generator-Läufer': ['meccalte', 'leroysomer'],
+  'Schalttafel': ['hondaeng', 'yamahapower', 'briggs'], 'Kraftstofftank': ['hondaeng', 'yamahapower', 'briggs'], 'Rohrrahmen mit Gummipuffern': ['hondaeng', 'yamahapower', 'briggs'],
+  'Membranvergaser': ['walbro', 'hondaeng', 'briggs'], 'Luftfilter': ['hondaeng', 'briggs', 'yamahapower'], 'Schalldämpfer': ['hondaeng', 'briggs', 'yamahapower'],
+  'Zündkerzen': ['ngk', 'bosch', 'champion'], '*': ['hondaeng', 'briggs', 'yamahapower']
+};
+const TEILE_KOMPRESSOR = {
+  'Riemenscheibe Motor': ['optibelt', 'conti', 'gates'], 'Keilriemen': ['optibelt', 'conti', 'gates'],
+  'Verdichterblock (V-Zylinder)': ['schneiderair', 'abac', 'atlascopco'], 'Ventilplatten': ['schneiderair', 'abac', 'atlascopco'], 'Zylinderköpfe': ['schneiderair', 'abac', 'atlascopco'],
+  'Ansaugfilter': ['schneiderair', 'abac', 'mann'], 'Schwungrad mit Lüfterflügeln': ['schneiderair', 'abac', 'atlascopco'], 'Nachkühler-Rohr': ['schneiderair', 'abac', 'atlascopco'],
+  'Druckschalter mit Manometer': ['schneiderair', 'abac', 'atlascopco']
+};
+const WASCH = ['nidec', 'askoll', 'miele'];
+const TEILE_WASCH = {
+  'Feldpaket mit Feldspulen': WASCH, 'Anker mit Wicklung': WASCH, 'Kollektor': WASCH, 'Kohlebürsten mit Haltern': ['schunk', 'mersen', 'miele'], 'Tachogenerator': WASCH,
+  'Lagerschild': WASCH, 'Kugellager': ['skfind', 'schaefflerind'], 'Lüfterrad': WASCH, 'Motorriemenscheibe': WASCH, 'Keilrippenriemen': ['optibelt', 'conti', 'gates'],
+  'Trommelriemenscheibe': ['miele', 'boschhome'], 'Motorhalter mit Gummidämpfern': ['miele', 'boschhome'], 'Anschlussstecker': WASCH,
+  'Lagerkreuz mit Trommelwelle': ['miele', 'boschhome'], 'Trommellager': ['skfind', 'schaefflerind'], 'Wellendichtring': ['freudenberg', 'corteco'], 'Stator mit Einzelspulen': ['nidec', 'askoll', 'boschhome'],
+  'Hallsensor-Platine': ['nidec', 'boschhome'], 'Rotorglocke mit Permanentmagneten': ['nidec', 'askoll', 'boschhome'], 'Rotormutter': ['boschhome', 'miele']
+};
+const IND = ['siemens', 'abb', 'weg'];
+const TEILE_INDUSTRIE = {
+  'Wälzlager': ['skfind', 'schaefflerind'], 'Kugellager': ['skfind', 'schaefflerind'],
+  'Getriebegehäuse': ['sew', 'nord', 'lenze'], 'Ritzel auf der Motorwelle': ['sew', 'nord', 'lenze'], 'Zwischenrad und Abtriebsrad': ['sew', 'nord', 'lenze'], 'Abtriebswelle mit Passfeder': ['sew', 'nord', 'lenze'], 'Ölschauglas und Entlüftung': ['sew', 'nord', 'lenze'],
+  'Gehäuse mit Vierkantflansch': ['siemens', 'beckhoff', 'baumueller'], 'Zentrierbund': ['siemens', 'beckhoff', 'baumueller'], 'Stator mit Wicklung': ['siemens', 'beckhoff', 'baumueller'], 'Rotor mit Permanentmagneten': ['siemens', 'beckhoff', 'baumueller'],
+  'Welle mit Passfeder': ['siemens', 'beckhoff', 'baumueller'], 'Haltebremse': ['mayr', 'kollmorgen', 'lenze'], 'Drehgeber': ['heidenhain', 'kuebler', 'siemens'], 'Gehäusedeckel B-Seite': ['siemens', 'beckhoff', 'baumueller'], 'Steckverbinder': ['siemens', 'beckhoff', 'lenze'],
+  'Statorgehäuse': ['nanotec', 'igus', 'beckhoff'], 'Statorpole mit Spulen': ['nanotec', 'igus', 'beckhoff'], 'Hybridrotor (gezahnt)': ['nanotec', 'igus', 'beckhoff'], 'Welle (D-Welle)': ['nanotec', 'igus'], 'Anschlusslitzen': ['nanotec', 'igus'],
+  'Spindelgehäuse': ['kessler', 'jaeger', 'gmn'], 'Kühlmantel': ['kessler', 'jaeger'], 'Rotor mit Spindelwelle': ['kessler', 'jaeger', 'gmn'], 'Spindellager': ['gmn', 'schaefflerind', 'skfind'], 'Spannzange': ['regofix', 'jaeger'], 'Spannmutter': ['regofix', 'jaeger'], 'Schaftfräser (Werkzeug)': ['regofix'], 'Sensor und Anschlussdose': ['kessler', 'jaeger'],
+  'Motorträger mit Achse': ['ebmpapst', 'ziehl', 'rosenberg'], 'Rotorglocke mit Magneten': ['ebmpapst', 'ziehl', 'rosenberg'], 'Axiallaufrad (Sichelflügel)': ['ebmpapst', 'ziehl', 'rosenberg'], 'EC-Elektronik': ['ebmpapst', 'ziehl', 'rosenberg'], 'Schutzgitter': ['ebmpapst', 'ziehl', 'rosenberg'], 'Wandring (Düse)': ['ebmpapst', 'ziehl', 'rosenberg'],
+  'Laterne': ['grundfos', 'ksb', 'wilo'], 'Pumpenwelle mit Kupplung': ['grundfos', 'ksb', 'wilo'], 'Gleitringdichtung': ['freudenberg', 'ksb', 'grundfos'], 'Gehäusedeckel': ['grundfos', 'ksb', 'wilo'], 'Laufrad': ['grundfos', 'ksb', 'wilo'], 'Spiralgehäuse': ['grundfos', 'ksb', 'wilo'],
+  'Gehäuse mit Anschlussflansch': ['danfoss', 'eaton', 'parker'], 'Abtriebswelle': ['danfoss', 'eaton', 'parker'], 'Wellendichtring': ['freudenberg', 'hydac', 'danfoss'], 'Kardanwelle': ['danfoss', 'eaton', 'parker'], 'Verteilerventil': ['danfoss', 'eaton', 'parker'], 'Gerotorsatz (Zahnring und Rotor)': ['danfoss', 'eaton', 'parker'], 'Enddeckel mit Schrauben': ['danfoss', 'eaton', 'parker'],
+  '*': IND
+};
+const EAUTO = ['boschmobility', 'zfgroup', 'valeogroup'];
+const TEILE_EMOB = {
+  'Motorgehäuse mit Wassermantel': EAUTO, 'Stator mit Hairpin-Wicklung': EAUTO, 'Rotor (PMSM) mit Welle': EAUTO, 'Kugellager': ['schaefflerind', 'skfind'], 'Resolver': EAUTO,
+  'Inverter (Leistungselektronik)': EAUTO, 'Hochvolt-Anschlüsse': EAUTO, 'Reduktionsgetriebe mit Differenzial': ['zfgroup', 'schaefflerind', 'borgwarner'], 'Zahnräder (Stirnradstufe)': ['zfgroup', 'schaefflerind', 'borgwarner'], 'Differenzial mit Abtriebsflanschen': ['zfgroup', 'schaefflerind', 'borgwarner'], 'Parksperre': ['zfgroup', 'schaefflerind'],
+  'Motorgehäuse (Magnesium)': ['boschebike', 'shimano', 'brose'], 'Stator mit Wicklung': ['boschebike', 'shimano', 'bafang'], 'Rotor mit Magneten': ['boschebike', 'shimano', 'bafang'], 'Planetengetriebe': ['boschebike', 'shimano', 'brose'], 'Tretlagerwelle': ['boschebike', 'shimano', 'brose'],
+  'Drehmomentsensor': ['boschebike', 'shimano', 'brose'], 'Freilauf mit Abtrieb': ['boschebike', 'shimano', 'brose'], 'Kettenblatt mit Spider': ['shimano', 'boschebike', 'bafang'], 'Steuerelektronik': ['boschebike', 'shimano', 'bafang'], 'Gehäusedeckel': ['boschebike', 'shimano', 'brose'],
+  'Pinne mit Display': ['torqeedo', 'epropulsion', 'mercury'], 'Lithium-Akku': ['torqeedo', 'epropulsion', 'mercury'], 'Motorkopf (Elektronik)': ['torqeedo', 'epropulsion', 'mercury'], 'Spiegelhalterung': ['torqeedo', 'epropulsion', 'mercury'], 'Schaft': ['torqeedo', 'epropulsion', 'mercury'],
+  'Pod-Gehäuse (Unterwasserteil)': ['torqeedo', 'epropulsion', 'mercury'], 'Stator im Pod': ['torqeedo', 'epropulsion'], 'Rotor mit Propellerwelle': ['torqeedo', 'epropulsion'], 'Propeller': ['torqeedo', 'epropulsion', 'mercury'], 'Finne': ['torqeedo', 'epropulsion']
+};
+const TEILE_NUTZ_EXTRA = { 'Hydraulikpumpe (Nebenabtrieb)': ['rexroth', 'danfoss', 'parker'], 'Elastische Kupplung': ['meccalte', 'leroysomer', 'zf'], 'Synchrongenerator': ['meccalte', 'leroysomer', 'abb'], 'Generator-Läufer': ['meccalte', 'leroysomer'], 'Spannungsregler': ['meccalte', 'leroysomer'] };
 const FALLBACK = {
   pkw: ['motorservice', 'mahle', 'elring'], nutz: ['mahle', 'motorservice', 'zf'], boot: ['mercury', 'volvopenta', 'yanmar'],
   moto: ['athena', 'jt', 'did'], kart: ['briggs', 'hondaeng', 'tillotson'], flug: ['lycoming', 'contaero', 'rotax'],
-  aufzug: ['montanari', 'ziehl', 'schindler'], elektro: ['siemens', 'abb', 'weg']
+  aufzug: ['montanari', 'ziehl', 'schindler'], industrie: ['siemens', 'abb', 'weg'], garten: KLEIN, haus: ['boschhome', 'miele', 'nidec'], emob: EAUTO
 };
 function herstellerFuer(key, motor) {
   if (!motor) return [];
@@ -2580,7 +3760,11 @@ function herstellerFuer(key, motor) {
   else if (kat === 'moto') ketten = [TEILE_MOTO];
   else if (kat === 'kart') ketten = [TEILE_KART];
   else if (kat === 'aufzug') ketten = [TEILE_AUFZUG, TEILE_ELEKTRO];
-  else if (kat === 'elektro') ketten = [TEILE_ELEKTRO];
+  else if (kat === 'industrie') ketten = [TEILE_INDUSTRIE, TEILE_ELEKTRO];
+  else if (kat === 'garten') ketten = [motor.id === 'kett1' || motor.id === 'frei1' ? TEILE_GARTEN : TEILE_MAEHER];
+  else if (kat === 'haus') ketten = [motor.id === 'gen1' ? TEILE_GENERATOR : motor.id === 'komp1' ? TEILE_KOMPRESSOR : TEILE_WASCH, TEILE_ELEKTRO, motor.id === 'komp1' ? { '*': IND } : {}];
+  else if (kat === 'emob') ketten = [TEILE_EMOB];
+  else if (kat === 'nutz') ketten = [TEILE_NUTZ_EXTRA, TEILE_AUTO];
   else ketten = [TEILE_AUTO];
   let ids = null;
   for (const k of ketten) { if (k[key]) { ids = k[key]; break; } if (k['*']) { ids = k['*']; break; } }
