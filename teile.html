@@ -235,7 +235,6 @@ main{padding:26px 0 8px}
 .studio{padding:34px 0 10px}
 .st-kopf{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:16px}
 .st-kopf .augenbraue{background:var(--light);border-color:#c9def3;color:var(--blue)}
-.st-kopf h2 .wein{color:#8e1f32}
 .st-kopf h2{margin:10px 0 6px;font-size:clamp(26px,3.2vw,38px);line-height:1.08;color:var(--dark);letter-spacing:-.02em;font-weight:800}
 .st-kopf p{margin:0;color:#5b7189;font-size:16px;line-height:1.55;max-width:640px}
 .st-kats{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
@@ -313,6 +312,16 @@ main{padding:26px 0 8px}
   .st-ex input{width:92px}
   .st-info{border-radius:16px}
 }
+
+.st-hst{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border)}
+.st-hst small{display:block;color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.st-hst-liste{display:grid;gap:6px}
+.st-hst-liste a{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--navy);text-decoration:none;background:#fff;transition:border-color .15s,background .15s}
+.st-hst-liste a:hover{border-color:var(--sky);background:var(--light)}
+.st-hst-liste b{font-size:14px;font-weight:600;flex:1;min-width:0}
+.st-hst-liste span{font-size:12px;color:var(--muted);white-space:nowrap}
+.st-hst-liste svg{flex:none;color:var(--blue2)}
+.st-hst p{margin:8px 0 0!important;font-size:11.5px!important;line-height:1.45!important;color:var(--muted)!important}
 </style>
 </head>
 <body>
@@ -2330,6 +2339,180 @@ function starteStudio(opt) {
 }
 
 
+/* ------------------------------------------- Ersatzteile direkt beim Hersteller
+   Neutrale Verweise auf offizielle Herstellerseiten (meist Online-Katalog oder Händlersuche).
+   Keine Partnerschaften, keine Provision. Alle Domains am 13.11.2026 geprüft. */
+const HERSTELLER = {
+  mahle: ['MAHLE Aftermarket', 'https://www.mahle-aftermarket.com/'],
+  motorservice: ['Motorservice (Kolbenschmidt, Pierburg)', 'https://www.ms-motorservice.com/'],
+  elring: ['Elring', 'https://www.elring.de/'],
+  reinz: ['Victor Reinz', 'https://www.victorreinz.com/'],
+  schaeffler: ['Schaeffler REPXPERT (LuK, INA)', 'https://www.repxpert.de/'],
+  zf: ['ZF Aftermarket (Lemförder, Sachs)', 'https://aftermarket.zf.com/'],
+  bosch: ['Bosch Automotive Aftermarket', 'https://www.boschaftermarket.com/'],
+  valeo: ['Valeo Service', 'https://www.valeoservice.com/'],
+  garrett: ['Garrett Motion', 'https://www.garrettmotion.com/'],
+  borgwarner: ['BorgWarner', 'https://www.borgwarner.com/'],
+  ngk: ['NGK (Niterra)', 'https://www.ngk.de/'],
+  denso: ['DENSO Aftermarket', 'https://www.denso-am.eu/'],
+  delphi: ['Delphi (PHINIA)', 'https://www.delphiautoparts.com/'],
+  conti: ['Continental (ContiTech)', 'https://www.continental-aftermarket.de/'],
+  gates: ['Gates', 'https://www.gates.com/'],
+  skf: ['SKF Fahrzeugteile', 'https://www.vsm.skf.com/'],
+  mann: ['MANN-FILTER', 'https://www.mann-filter.com/'],
+  hengst: ['Hengst', 'https://www.hengst.com/'],
+  febi: ['febi bilstein', 'https://www.febi.com/'],
+  corteco: ['Corteco', 'https://www.corteco.com/'],
+  bosal: ['Bosal', 'https://www.bosal.com/'],
+  hella: ['HELLA', 'https://www.hella.com/'],
+  mercury: ['Mercury Marine', 'https://www.mercurymarine.com/'],
+  yamahamarine: ['Yamaha Marine', 'https://www.yamaha-motor.eu/de/de/marine/'],
+  suzukimarine: ['Suzuki Marine', 'https://www.suzuki-marine.de/'],
+  volvopenta: ['Volvo Penta', 'https://www.volvopenta.com/'],
+  yanmar: ['Yanmar Marine', 'https://www.yanmar.com/eu/marine/'],
+  twindisc: ['Twin Disc (Technodrive)', 'https://www.twindisc.com/'],
+  johnsonpump: ['Johnson Pump (SPX FLOW)', 'https://www.spxflow.com/johnson-pump/'],
+  xylem: ['Jabsco (Xylem)', 'https://www.xylem.com/'],
+  tecnoseal: ['Tecnoseal', 'https://www.tecnoseal.com/'],
+  martyr: ['Martyr Anodes', 'https://www.martyranodes.com/'],
+  bowman: ['EJ Bowman', 'https://www.ej-bowman.com/'],
+  gori: ['Gori Propeller', 'https://gori-propeller.com/'],
+  flexofold: ['Flexofold', 'https://www.flexofold.com/'],
+  seadoo: ['Sea-Doo (BRP)', 'https://sea-doo.brp.com/'],
+  lycoming: ['Lycoming', 'https://www.lycoming.com/'],
+  contaero: ['Continental Aerospace Technologies', 'https://www.continental.aero/'],
+  rotax: ['Rotax Aircraft Engines', 'https://www.flyrotax.com/'],
+  hartzell: ['Hartzell Propeller', 'https://hartzellprop.com/'],
+  mtprop: ['MT-Propeller', 'https://www.mt-propeller.com/'],
+  sensenich: ['Sensenich Propeller', 'https://www.sensenich.com/'],
+  champion: ['Champion Aerospace', 'https://www.championaerospace.com/'],
+  rotec: ['Rotec Aerosport', 'https://www.rotecaerosport.com/'],
+  pw: ['Pratt & Whitney', 'https://www.prattwhitney.com/'],
+  pwc: ['Pratt & Whitney Canada', 'https://www.pwc.ca/'],
+  ge: ['GE Aerospace', 'https://www.geaerospace.com/'],
+  safran: ['Safran', 'https://www.safran-group.com/'],
+  rr: ['Rolls-Royce', 'https://www.rolls-royce.com/'],
+  mtu: ['MTU Aero Engines', 'https://www.mtu.de/'],
+  lht: ['Lufthansa Technik', 'https://www.lufthansa-technik.com/'],
+  ziehl: ['Ziehl-Abegg', 'https://www.ziehl-abegg.com/'],
+  montanari: ['Montanari Giulio', 'https://www.montanarigiulio.com/'],
+  mayr: ['mayr Antriebstechnik', 'https://www.mayr.com/'],
+  pfeifer: ['Pfeifer Seile', 'https://www.pfeifer.info/'],
+  gustavwolf: ['Gustav Wolf', 'https://www.gustav-wolf.de/'],
+  kuebler: ['Kübler', 'https://www.kuebler.com/'],
+  heidenhain: ['Heidenhain', 'https://www.heidenhain.de/'],
+  schindler: ['Schindler', 'https://www.schindler.com/'],
+  kone: ['KONE', 'https://www.kone.de/'],
+  tke: ['TK Elevator', 'https://www.tkelevator.com/'],
+  otis: ['Otis', 'https://www.otis.com/'],
+  siemens: ['Siemens', 'https://www.siemens.com/'],
+  abb: ['ABB Motoren', 'https://new.abb.com/motors-generators'],
+  weg: ['WEG', 'https://www.weg.net/'],
+  nord: ['NORD Drivesystems', 'https://www.nord.com/'],
+  skfind: ['SKF', 'https://www.skf.com/'],
+  schaefflerind: ['Schaeffler (FAG)', 'https://www.schaeffler.de/'],
+  athena: ['Athena', 'https://www.athena.eu/'],
+  jt: ['JT Sprockets', 'https://www.jtsprockets.com/'],
+  did: ['D.I.D', 'https://www.didchain.com/'],
+  renthal: ['Renthal', 'https://www.renthal.com/'],
+  briggs: ['Briggs & Stratton', 'https://www.briggsandstratton.com/'],
+  hondaeng: ['Honda Engines', 'https://www.honda-engines-eu.com/'],
+  dellorto: ["Dell'Orto", 'https://www.dellorto.it/'],
+  tillotson: ['Tillotson', 'https://www.tillotson.ie/']
+};
+
+const TEILE_AUTO = {
+  'Motorblock (Kurbelgehäuse)': ['motorservice', 'mahle', 'elring'],
+  'Hauptlagerdeckel mit Lagerschalen': ['motorservice', 'mahle', 'febi'],
+  'Kurbelwelle': ['mahle', 'motorservice', 'febi'],
+  'Kolben mit Ringen und Bolzen': ['mahle', 'motorservice'],
+  'Pleuel': ['mahle', 'motorservice', 'febi'],
+  'Schwungrad': ['schaeffler', 'zf', 'valeo'],
+  'Kupplungssatz': ['schaeffler', 'zf', 'valeo'],
+  'Ölwanne': ['elring', 'febi', 'reinz'],
+  'Ölfilter': ['mann', 'mahle', 'hengst'],
+  'Riemenscheibe (Schwingungsdämpfer)': ['schaeffler', 'corteco', 'febi'],
+  'Zylinderkopf': ['motorservice', 'mahle', 'elring'],
+  'Zylinderkopfdichtung': ['elring', 'reinz', 'corteco'],
+  'Ventile mit Federn und Stößeln': ['motorservice', 'mahle', 'schaeffler'],
+  'Nockenwellen': ['mahle', 'motorservice', 'schaeffler'],
+  'Ventildeckel': ['elring', 'reinz', 'febi'],
+  'Zündkerzen': ['ngk', 'bosch', 'denso'],
+  'Zündspulen': ['bosch', 'ngk', 'denso'],
+  'Injektoren': ['bosch', 'delphi', 'denso'],
+  'Common-Rail': ['bosch', 'delphi', 'denso'],
+  'Hochdruckpumpe': ['bosch', 'delphi', 'denso'],
+  'Ansaugbrücke (Saugrohr)': ['motorservice', 'mahle', 'febi'],
+  'Drosselklappe': ['motorservice', 'bosch', 'hella'],
+  'Abgaskrümmer': ['bosal', 'elring', 'febi'],
+  'Turbolader': ['garrett', 'borgwarner', 'mahle'],
+  'Ladeluftschlauch': ['gates', 'febi', 'mahle'],
+  'Steuertrieb': ['conti', 'gates', 'schaeffler'],
+  'Steuergehäusedeckel': ['elring', 'febi', 'reinz'],
+  'Keilrippenriemen': ['conti', 'gates', 'skf'],
+  'Lichtmaschine': ['bosch', 'valeo', 'denso'],
+  'Klimakompressor': ['denso', 'valeo', 'mahle'],
+  'Wasserpumpe': ['skf', 'schaeffler', 'gates'],
+  'Thermostatgehäuse': ['mahle', 'gates', 'febi'],
+  'Kühlmittelschlauch': ['gates', 'conti', 'febi'],
+  'Lüfter mit Visko-Kupplung': ['borgwarner', 'mahle', 'febi'],
+  'Anlasser': ['bosch', 'valeo', 'denso'],
+  'Motorlager mit Halter': ['zf', 'corteco', 'febi']
+};
+const AUSSEN = ['mercury', 'yamahamarine', 'suzukimarine'];
+const TEILE_BOOT = {
+  'Motorhaube': AUSSEN, 'Unterhaube': AUSSEN, 'Schaftgehäuse': AUSSEN, 'Antriebswelle': AUSSEN,
+  'Spiegelhalterung mit Trimm/Tilt': AUSSEN, 'Steuerpinne mit Gasgriff': AUSSEN,
+  'Unterwasserteil (Getriebegehäuse)': ['mercury', 'yamahamarine', 'volvopenta'], 'Kegelradgetriebe': ['mercury', 'yamahamarine', 'volvopenta'],
+  'Propeller': ['mercury', 'yamahamarine', 'volvopenta'], 'Faltpropeller': ['gori', 'flexofold'],
+  'Impeller-Wasserpumpe': ['johnsonpump', 'xylem', 'mercury'], 'Seewasserpumpe': ['johnsonpump', 'xylem', 'volvopenta'],
+  'Opferanode': ['tecnoseal', 'martyr'], 'Wärmetauscher': ['bowman', 'volvopenta', 'yanmar'],
+  'Wendegetriebe': ['twindisc', 'volvopenta', 'yanmar'], 'Schwungradgehäuse': ['volvopenta', 'yanmar'],
+  'Abgasknie (Mischkrümmer)': ['volvopenta', 'yanmar', 'mercury'],
+  'Kardanwelle mit Gelenken': ['mercury', 'volvopenta'], 'Spiegelplatte (Transom)': ['mercury', 'volvopenta'], 'Antriebsbein (Z-Antrieb)': ['mercury', 'volvopenta'],
+  'Saildrive-Getriebe': ['volvopenta', 'yanmar'],
+  'Antriebswelle zur Jetpumpe': ['seadoo', 'yamahamarine'], 'Jetpumpe mit Düse': ['seadoo', 'yamahamarine'], 'Impeller (Jetpumpe)': ['seadoo', 'yamahamarine']
+};
+const TEILE_MOTO = { 'Antriebsritzel': ['jt', 'renthal', 'did'], 'Kolben mit Ringen und Bolzen': ['athena'], 'Zylinderkopfdichtung': ['athena'], 'Zündkerzen': ['ngk', 'bosch', 'denso'], 'Ölfilter': ['mann', 'hengst'] };
+const TEILE_KART = { 'Vergaser mit Luftfilter': ['dellorto', 'tillotson'], 'Zündkerzen': ['ngk', 'bosch'] };
+const PROP = ['hartzell', 'mtprop', 'sensenich'];
+const TEILE_FLUG = {
+  'Luftschraube': PROP, 'Propellerhaube (Spinner)': PROP, 'Luftschraube (Verstellpropeller)': ['hartzell', 'mtprop'],
+  'Zündkerzen': ['champion'], 'Magnetzünder': ['champion'], 'Zündkabel (Zündgeschirr)': ['champion'],
+  'Propeller-Untersetzungsgetriebe': ['rotax']
+};
+const TEILE_AUFZUG = {
+  'Doppelbackenbremse': ['mayr', 'montanari', 'ziehl'], 'Sicherheitsbremse (Scheibenbremse)': ['mayr', 'ziehl', 'montanari'],
+  'Getriebegehäuse': ['montanari', 'schindler', 'kone'], 'Schnecke und Schneckenrad': ['montanari', 'schindler', 'kone'], 'Handrad (Notbetrieb)': ['montanari', 'schindler', 'kone'],
+  'Treibscheibe mit Tragseilen': ['pfeifer', 'gustavwolf', 'montanari'], 'Drehgeber': ['kuebler', 'heidenhain'],
+  'Motorgehäuse': ['ziehl', 'montanari'], 'Ständer mit Wicklung': ['ziehl', 'montanari'], 'Läufer mit Permanentmagneten': ['ziehl', 'montanari'],
+  'Welle': ['ziehl', 'montanari'], 'Lagerbock': ['ziehl', 'montanari'], 'Grundrahmen': ['montanari', 'ziehl', 'schindler']
+};
+const TEILE_ELEKTRO = { 'Wälzlager': ['skfind', 'schaefflerind'] };
+const FALLBACK = {
+  pkw: ['motorservice', 'mahle', 'elring'], nutz: ['mahle', 'motorservice', 'zf'], boot: ['mercury', 'volvopenta', 'yanmar'],
+  moto: ['athena', 'jt', 'did'], kart: ['briggs', 'hondaeng', 'tillotson'], flug: ['lycoming', 'contaero', 'rotax'],
+  aufzug: ['montanari', 'ziehl', 'schindler'], elektro: ['siemens', 'abb', 'weg']
+};
+function herstellerFuer(key, motor) {
+  if (!motor) return [];
+  const kat = motor.kat;
+  let ketten;
+  if (motor.typ === 'turbine') ketten = [motor.art === 'fan' ? { '*': ['ge', 'safran', 'pw', 'mtu'] } : { 'Luftschraube (Verstellpropeller)': ['hartzell', 'mtprop'], 'Propellerhaube (Spinner)': ['hartzell', 'mtprop'], '*': ['pwc', 'ge', 'lht'] }];
+  else if (motor.id === 'stern7') ketten = [TEILE_FLUG, { '*': ['rotec'] }];
+  else if (kat === 'flug') ketten = [TEILE_FLUG];
+  else if (kat === 'boot') ketten = [TEILE_BOOT, TEILE_AUTO];
+  else if (kat === 'moto') ketten = [TEILE_MOTO];
+  else if (kat === 'kart') ketten = [TEILE_KART];
+  else if (kat === 'aufzug') ketten = [TEILE_AUFZUG, TEILE_ELEKTRO];
+  else if (kat === 'elektro') ketten = [TEILE_ELEKTRO];
+  else ketten = [TEILE_AUTO];
+  let ids = null;
+  for (const k of ketten) { if (k[key]) { ids = k[key]; break; } if (k['*']) { ids = k['*']; break; } }
+  if (!ids) ids = FALLBACK[kat] || [];
+  return ids.filter(id => HERSTELLER[id]).map(id => ({ name: HERSTELLER[id][0], url: HERSTELLER[id][1], host: new URL(HERSTELLER[id][1]).hostname.replace(/^www\./, '') }));
+}
+
 /* ------------------------------------------------- Seite: 3D-Studio verbinden */
 (function () {
   const $ = s => document.querySelector(s);
@@ -2366,6 +2549,7 @@ function starteStudio(opt) {
   $('#st-motoren').addEventListener('click', e => { const b = e.target.closest('.st-motor'); if (b) zeige(b.dataset.m, true); });
 
   window.__studioZeige = id => zeige(id, true);
+  window.__1ateile = { herstellerFuer, S };
   function zeige(id, merken) {
     const m = motoren.find(x => x.id === id) || motoren[0];
     aktiv = m;
@@ -2398,10 +2582,17 @@ function starteStudio(opt) {
     }
     const q = e.s;
     box.innerHTML = '<small>' + esc(e.gruppe) + '</small><h3><span class="nr">' + e.nr + '</span>' + esc(e.key) + '</h3><p>' + esc(e.info || '') + '</p>' +
-      '<div class="st-akt"><a class="btn primaer" href="/suche?q=' + encodeURIComponent(q) + '">Angebote suchen</a></div>';
+      '<div class="st-akt"><a class="btn primaer" href="/suche?q=' + encodeURIComponent(q) + '">Angebote auf 1A Motor</a></div>' + herstellerBlock(e.key);
     const zeile = document.querySelector('.st-teil.an');
     if (zeile) { const l = $('#st-liste'); const o = zeile.offsetTop - l.offsetTop; if (o < l.scrollTop || o > l.scrollTop + l.clientHeight - 40) l.scrollTop = o - 60; }
     url();
+  }
+  function herstellerBlock(key) {
+    const h = herstellerFuer(key, aktiv);
+    if (!h.length) return '';
+    return '<div class="st-hst"><small>Ersatzteile direkt beim Hersteller</small><div class="st-hst-liste">' +
+      h.map(x => '<a href="' + esc(x.url) + '" target="_blank" rel="noopener nofollow"><b>' + esc(x.name) + '</b><span>' + esc(x.host) + '</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>').join('') +
+      '</div><p>Externe Herstellerseiten (meist Katalog oder Händlersuche) – keine Partnerschaft mit 1A Motor. Teilenummer immer mit deinem Motorcode abgleichen.</p></div>';
   }
   const tip = $('#st-tip');
   function beiHover(k, ev) {
