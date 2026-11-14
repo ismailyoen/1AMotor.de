@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Mein Konto – 1A Motor</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<!--
+  1A Motor – Kontobereich (konto.html) · v1 · 14.11.2026
+  Ersetzt: dashboard.html, meine-anzeigen.html, anfragen.html,
+  meine-anfragen.html, favoriten.html, profil.html (alle leiten hierher).
+  Bereiche über #uebersicht #anzeigen #anfragen #nachrichten #merkliste #einstellungen
+-->
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#fff; --border:#e4eaf1; --dark:#16202c; --navy:#1a3a52;
+    --blue:#2b6cb0; --sky:#72b6ff; --wein:#8e1f32; --text:#1f2937; --muted:#64748b;
+    --ok:#1d7a4c; --okbg:#e7f4ec; --warn:#b45309; --warnbg:#fdf2e3;
+    --blaubg:#e9f1fa; --rot:#b91c1c; --rotbg:#fdecec;
+    --radius:14px; --shadow:0 1px 3px rgba(22,32,44,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Outfit',-apple-system,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+  a{color:inherit;text-decoration:none;}
+  button{font:inherit;cursor:pointer;}
+  input,select,textarea{font:inherit;color:var(--text);width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,108,176,.12);}
+  textarea{min-height:96px;resize:vertical;}
+  svg.ic{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+
+  /* ── Kopfzeile ── */
+  .top{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--border);}
+  .top-in{max-width:1240px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;gap:16px;}
+  .logo{display:flex;align-items:center;gap:13px;font-weight:800;font-size:21px;color:var(--dark);letter-spacing:-.01em;isolation:isolate;}
+  .logo i{position:relative;font-style:normal;background:var(--dark);color:#fff;border-radius:9px;width:33px;height:33px;display:grid;place-items:center;font-size:13.5px;font-weight:800;}
+  .logo i::before{content:"";position:absolute;left:7px;top:7px;width:100%;height:100%;border-radius:9px;background:var(--wein);z-index:-1;}
+  .top-links{margin-left:auto;display:flex;align-items:center;gap:8px;}
+  .top-links .zur-seite{font-size:14px;font-weight:600;color:var(--muted);padding:9px 12px;border-radius:9px;}
+  .top-links .zur-seite:hover{color:var(--dark);background:var(--bg);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 16px;font-weight:600;font-size:14.5px;white-space:nowrap;transition:background .13s,border-color .13s,transform .1s;}
+  .btn:active{transform:translateY(1px);}
+  .btn.dunkel{background:var(--dark);color:#fff;}
+  .btn.dunkel:hover{background:#243348;}
+  .btn.hell{background:#fff;color:var(--dark);border:1px solid var(--border);}
+  .btn.hell:hover{border-color:var(--sky);}
+  .btn.blau{background:var(--blue);color:#fff;}
+  .btn.blau:hover{background:#255f9c;}
+  .btn.rot{background:var(--rotbg);color:var(--rot);}
+  .btn.rot:hover{background:#fbdfdf;}
+  .btn.klein{padding:8px 12px;font-size:13.5px;border-radius:9px;}
+  .btn[disabled]{opacity:.55;cursor:not-allowed;}
+
+  /* ── Grundgerüst ── */
+  .rahmen{max-width:1240px;margin:0 auto;padding:24px 20px 70px;display:grid;grid-template-columns:232px 1fr;gap:24px;align-items:start;}
+  .seite{min-width:0;}
+
+  /* ── Navigation ── */
+  .nav{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px;position:sticky;top:88px;display:flex;flex-direction:column;gap:2px;}
+  .nav a{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;font-size:14.5px;font-weight:600;color:#44546a;transition:background .12s,color .12s;}
+  .nav a:hover{background:var(--bg);color:var(--dark);}
+  .nav a.an{background:var(--dark);color:#fff;}
+  .nav a .zahl{margin-left:auto;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--wein);color:#fff;font-size:11.5px;font-weight:700;display:none;align-items:center;justify-content:center;}
+  .nav a .zahl.da{display:inline-flex;}
+  .nav a.an .zahl{background:#fff;color:var(--wein);}
+  .nav hr{border:0;border-top:1px solid var(--border);margin:8px 4px;}
+  .nav a.raus{color:var(--rot);}
+  .nav a.raus:hover{background:var(--rotbg);}
+
+  /* ── Bereiche ── */
+  section[data-view]{display:none;}
+  section[data-view].an{display:block;animation:auf .18s ease;}
+  @keyframes auf{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
+  .kopf{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+  .kopf h1{font-size:24px;font-weight:800;letter-spacing:-.4px;color:var(--dark);}
+  .kopf p{font-size:14px;color:var(--muted);margin-top:2px;}
+  .karte{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);}
+  .karte + .karte{margin-top:16px;}
+  .karte-kopf{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .karte-kopf h2{font-size:16px;font-weight:700;color:var(--dark);}
+  .karte-kopf .mehr{font-size:13.5px;font-weight:600;color:var(--blue);}
+  .karte-leib{padding:20px;}
+
+  /* Kacheln */
+  .kacheln{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+  .kachel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:8px;transition:border-color .13s;}
+  a.kachel:hover{border-color:var(--sky);}
+  .kachel .oben{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+  .kachel .oben svg.ic{width:18px;height:18px;color:#8fa2b8;}
+  .kachel b{font-size:26px;font-weight:800;color:var(--dark);letter-spacing:-.5px;}
+  .kachel span.unten{font-size:13px;color:var(--muted);}
+
+  /* Listen-Zeilen */
+  .zeile{display:flex;align-items:center;gap:14px;padding:13px 20px;border-top:1px solid var(--border);}
+  .zeile:first-child{border-top:0;}
+  .zeile .bild{width:62px;height:48px;border-radius:9px;background:#e9eef4 center/cover no-repeat;flex:none;display:grid;place-items:center;color:#9fb0c3;}
+  .zeile .mitte{flex:1;min-width:0;}
+  .zeile .titel{font-size:14.5px;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+  .zeile .titel:hover{color:var(--blue);}
+  .zeile .unterz{font-size:12.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .zeile .preis{font-weight:700;color:var(--dark);white-space:nowrap;font-size:14.5px;}
+  .zeile .tun{display:flex;gap:6px;flex:none;}
+  .ikbtn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;color:#5b6b80;transition:border-color .12s,color .12s,background .12s;}
+  .ikbtn:hover{border-color:var(--sky);color:var(--blue);}
+  .ikbtn.rot:hover{border-color:#f3b4b4;color:var(--rot);background:var(--rotbg);}
+  .ikbtn svg.ic{width:16.5px;height:16.5px;}
+
+  .pille{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;}
+  .pille.gruen{background:var(--okbg);color:var(--ok);}
+  .pille.blau{background:var(--blaubg);color:var(--blue);}
+  .pille.grau{background:#eef1f5;color:#5b6b80;}
+  .pille.gelb{background:var(--warnbg);color:var(--warn);}
+  .pille.rot{background:var(--rotbg);color:var(--rot);}
+  .pille.wein{background:#f7e9ec;color:var(--wein);}
+
+  .leer{padding:44px 20px;text-align:center;color:var(--muted);font-size:14.5px;}
+  .leer b{display:block;color:var(--dark);font-size:16px;margin-bottom:4px;font-weight:700;}
+  .leer .btn{margin-top:14px;}
+
+  /* Filterleiste */
+  .filter{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .filter .such{flex:1;min-width:200px;position:relative;}
+  .filter .such svg.ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#94a3b8;pointer-events:none;}
+  .filter .such input{padding-left:38px;}
+  .filter select{width:auto;min-width:150px;}
+
+  /* Anfragen / Nachrichten */
+  .anf-zeile{cursor:pointer;}
+  .anf-zeile:hover{background:#fafcfe;}
+  .anf-zeile .punkt{width:9px;height:9px;border-radius:50%;background:var(--wein);flex:none;}
+  .anf-zeile .punkt.aus{background:transparent;}
+  .faden{border-top:1px solid var(--border);background:#f8fafc;padding:16px 20px;display:none;}
+  .faden.auf{display:block;}
+  .blase{max-width:78%;padding:10px 14px;border-radius:13px;font-size:14px;margin-bottom:8px;white-space:pre-wrap;word-break:break-word;}
+  .blase.von-ihnen{margin-left:auto;background:var(--dark);color:#fff;border-bottom-right-radius:4px;}
+  .blase.von-anderen{background:#fff;border:1px solid var(--border);border-bottom-left-radius:4px;}
+  .blase .wann{display:block;font-size:11px;opacity:.65;margin-top:3px;}
+  .antwort{display:flex;gap:8px;margin-top:10px;}
+  .antwort textarea{min-height:44px;height:44px;}
+  .faden-tun{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+
+  /* Formulare */
+  .form-gitter{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .feld{display:flex;flex-direction:column;gap:5px;}
+  .feld.breit{grid-column:1 / -1;}
+  .feld label{font-size:13px;font-weight:600;color:#44546a;}
+  .feld .hinweis{font-size:12.5px;color:var(--muted);}
+  .form-fuss{margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .form-ok{font-size:13.5px;font-weight:600;color:var(--ok);display:none;}
+  .form-ok.da{display:inline;}
+  .form-fehl{font-size:13.5px;font-weight:600;color:var(--rot);display:none;}
+  .form-fehl.da{display:inline;}
+
+  /* Modal */
+  .modal-hg{position:fixed;inset:0;background:rgba(10,18,28,.5);z-index:80;display:none;place-items:center;padding:20px;}
+  .modal-hg.auf{display:grid;}
+  .modal{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.25);}
+  .modal h3{font-size:17px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+  .modal p{font-size:14px;color:var(--muted);margin-bottom:18px;}
+  .modal .modal-tun{display:flex;gap:10px;justify-content:flex-end;}
+
+  /* Toast */
+  #toast{position:fixed;right:18px;bottom:18px;z-index:90;display:flex;flex-direction:column;gap:8px;}
+  .toast{background:var(--dark);color:#fff;padding:12px 16px;border-radius:11px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:auf .2s ease;max-width:320px;}
+  .toast.rot{background:var(--rot);}
+
+  #laden{padding:60px 0;text-align:center;color:var(--muted);font-size:14.5px;}
+  #gast{max-width:430px;margin:70px auto;text-align:center;}
+  .mehr-laden{display:block;width:100%;padding:13px;border:0;border-top:1px solid var(--border);background:#fafcfe;color:var(--blue);font-weight:600;font-size:14px;border-radius:0 0 var(--radius) var(--radius);}
+  .mehr-laden:hover{background:#f1f6fb;}
+
+  @media(max-width:920px){
+    .rahmen{grid-template-columns:1fr;padding-top:14px;gap:14px;}
+    .nav{position:static;flex-direction:row;overflow-x:auto;padding:8px;scrollbar-width:none;}
+    .nav::-webkit-scrollbar{display:none;}
+    .nav a{flex:none;padding:9px 13px;font-size:13.5px;}
+    .nav hr{display:none;}
+    .nav a.raus{margin-left:auto;}
+    .kacheln{grid-template-columns:1fr 1fr;}
+    .form-gitter{grid-template-columns:1fr;}
+    .zeile{flex-wrap:wrap;}
+    .zeile .tun{margin-left:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="./"><i>1A</i><span>Motor</span></a>
+    <div class="top-links">
+      <a class="zur-seite" href="suche.html">Zur Suche</a>
+      <a class="btn dunkel" href="anzeige-erstellen.html">＋ Anzeige erstellen</a>
+    </div>
+  </div>
+</header>
+
+<div id="laden">Konto wird geladen …</div>
+
+<div id="gast" style="display:none;">
+  <div class="karte"><div class="karte-leib" style="padding:34px 28px;">
+    <div class="logo" style="justify-content:center;margin-bottom:16px;"><i>1A</i><span>Motor</span></div>
+    <b style="display:block;font-size:18px;color:var(--dark);margin-bottom:6px;">Bitte anmelden</b>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:18px;">Der Kontobereich ist nur mit Anmeldung erreichbar.</p>
+    <a class="btn dunkel" href="login.html" style="width:100%;">Zum Login</a>
+  </div></div>
+</div>
+
+<div class="rahmen" id="app" style="display:none;">
+
+  <nav class="nav" id="nav" aria-label="Kontobereich">
+    <a href="#uebersicht" data-ziel="uebersicht"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>Übersicht</a>
+    <a href="#anzeigen" data-ziel="anzeigen"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v4H4z"/><path d="M4 13h16v6H4z"/></svg>Meine Anzeigen</a>
+    <a href="#anfragen" data-ziel="anfragen"><svg class="ic" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-8 8H4l2.4-2.9A8 8 0 1 1 21 12z"/></svg>Anfragen<span class="zahl" id="zahl-anfragen"></span></a>
+    <a href="#nachrichten" data-ziel="nachrichten"><svg class="ic" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>Gesendet</a>
+    <a href="#merkliste" data-ziel="merkliste"><svg class="ic" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Merkliste</a>
+    <a href="#einstellungen" data-ziel="einstellungen"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.1-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.82-2.83l.06-.06a1.7 1.7 0 0 0 .33-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.82l.06.06a1.7 1.7 0 0 0 1.87.33h.01a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.82 2.83l-.06.06a1.7 1.7 0 0 0-.33 1.87v.01a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.56 1z"/></svg>Einstellungen</a>
+    <hr />
+    <a href="#" class="raus" id="abmelden"><svg class="ic" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Abmelden</a>
+  </nav>
+
+  <main class="seite">
+
+    <!-- ═══ ÜBERSICHT ═══ -->
+    <section data-view="uebersicht">
+      <div class="kopf">
+        <div><h1 id="gruss">Hallo!</h1><p id="gruss-sub">Schön, dass du da bist.</p></div>
+      </div>
+      <div class="kacheln">
+        <a class="kachel" href="#anzeigen">
+          <div class="oben">Aktive Inserate<svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v4H4z"/><path d="M4 13h16v6H4z"/></svg></div>
+          <b id="k-aktiv">–</b><span class="unten" id="k-aktiv-sub">&nbsp;</span>
+        </a>
+        <div class="kachel">
+          <div class="oben">Gesamtwert<svg class="ic" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+          <b id="k-wert">–</b><span class="unten" id="k-wert-sub">&nbsp;</span>
+        </div>
+        <a class="kachel" href="#anfragen">
+          <div class="oben">Offene Anfragen<svg class="ic" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-8 8H4l2.4-2.9A8 8 0 1 1 21 12z"/></svg></div>
+          <b id="k-anfragen">–</b><span class="unten" id="k-anfragen-sub">&nbsp;</span>
+        </a>
+        <a class="kachel" href="#merkliste">
+          <div class="oben">Merkliste<svg class="ic" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+          <b id="k-merk">–</b><span class="unten">gemerkte Inserate</span>
+        </a>
+      </div>
+      <div class="karte">
+        <div class="karte-kopf"><h2>Neueste Anfragen</h2><a class="mehr" href="#anfragen">Alle ansehen</a></div>
+        <div id="ueb-anfragen"><div class="leer">Wird geladen …</div></div>
+      </div>
+      <div class="karte">
+        <div class="karte-kopf"><h2>Zuletzt eingestellt</h2><a class="mehr" href="#anzeigen">Alle ansehen</a></div>
+        <div id="ueb-anzeigen"><div class="leer">Wird geladen …</div></div>
+      </div>
+    </section>
+
+    <!-- ═══ MEINE ANZEIGEN ═══ -->
+    <section data-view="anzeigen">
+      <div class="kopf">
+        <div><h1>Meine Anzeigen</h1><p id="anz-zahl"></p></div>
+        <a class="btn dunkel" href="anzeige-erstellen.html">＋ Neue Anzeige</a>
+      </div>
+      <div class="filter">
+        <div class="such"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="anz-suche" type="search" placeholder="Titel, Hersteller oder Motorcode suchen …" /></div>
+        <select id="anz-status">
+          <option value="">Alle Status</option>
+          <option value="Freigegeben">Freigegeben</option>
+          <option value="Entwurf">Entwurf</option>
+          <option value="Gesperrt">Gesperrt</option>
+        </select>
+      </div>
+      <div class="karte"><div id="anz-liste"><div class="leer">Wird geladen …</div></div></div>
+    </section>
+
+    <!-- ═══ ANFRAGEN (eingehend) ═══ -->
+    <section data-view="anfragen">
+      <div class="kopf">
+        <div><h1>Anfragen</h1><p>Nachrichten von Interessenten zu deinen Inseraten.</p></div>
+        <select id="anf-status" style="width:auto;">
+          <option value="">Alle</option>
+          <option value="Neu">Neu</option>
+          <option value="Gelesen">Gelesen</option>
+          <option value="Erledigt">Erledigt</option>
+        </select>
+      </div>
+      <div class="karte"><div id="anf-liste"><div class="leer">Wird geladen …</div></div></div>
+    </section>
+
+    <!-- ═══ GESENDET (eigene Anfragen) ═══ -->
+    <section data-view="nachrichten">
+      <div class="kopf">
+        <div><h1>Gesendete Anfragen</h1><p>Deine Nachrichten an andere Anbieter.</p></div>
+      </div>
+      <div class="karte"><div id="ges-liste"><div class="leer">Wird geladen …</div></div></div>
+    </section>
+
+    <!-- ═══ MERKLISTE ═══ -->
+    <section data-view="merkliste">
+      <div class="kopf">
+        <div><h1>Merkliste</h1><p id="merk-zahl"></p></div>
+      </div>
+      <div class="karte"><div id="merk-liste"><div class="leer">Wird geladen …</div></div></div>
+    </section>
+
+    <!-- ═══ EINSTELLUNGEN ═══ -->
+    <section data-view="einstellungen">
+      <div class="kopf"><div><h1>Einstellungen</h1><p>Anbieterprofil und Konto.</p></div></div>
+
+      <div class="karte">
+        <div class="karte-kopf"><h2>Anbieterprofil</h2><span class="pille grau" id="prof-hinweis">öffentlich sichtbar</span></div>
+        <div class="karte-leib">
+          <form id="form-profil" class="form-gitter" autocomplete="off">
+            <div class="feld"><label for="p-name">Anbietername / Firma</label><input id="p-name" type="text" maxlength="120" /></div>
+            <div class="feld"><label for="p-art">Unternehmensform</label>
+              <select id="p-art">
+                <option value="">– bitte wählen –</option>
+                <option>Privat</option><option>Einzelunternehmen</option><option>GmbH</option>
+                <option>GmbH &amp; Co. KG</option><option>UG</option><option>AG</option>
+                <option>OHG</option><option>KG</option><option>Sonstiges</option>
+              </select>
+            </div>
+            <div class="feld"><label for="p-kontakt">Ansprechpartner</label><input id="p-kontakt" type="text" maxlength="120" /></div>
+            <div class="feld"><label for="p-tel">Telefon</label><input id="p-tel" type="tel" maxlength="40" /></div>
+            <div class="feld"><label for="p-web">Website</label><input id="p-web" type="url" placeholder="https://…" maxlength="200" /></div>
+            <div class="feld"><label for="p-paypal">PayPal-E-Mail <span class="hinweis">(für den Kaufen-Button, optional)</span></label><input id="p-paypal" type="email" maxlength="160" /></div>
+            <div class="feld"><label for="p-strasse">Straße und Hausnummer</label><input id="p-strasse" type="text" maxlength="160" /></div>
+            <div class="feld"><label for="p-ust">USt-IdNr. <span class="hinweis">(optional)</span></label><input id="p-ust" type="text" maxlength="40" /></div>
+            <div class="feld"><label for="p-plz">PLZ</label><input id="p-plz" type="text" maxlength="12" /></div>
+            <div class="feld"><label for="p-ort">Ort</label><input id="p-ort" type="text" maxlength="120" /></div>
+            <div class="feld breit"><label for="p-land">Land</label><input id="p-land" type="text" maxlength="60" placeholder="DE" /></div>
+            <div class="feld breit"><label for="p-beschr">Über den Anbieter</label><textarea id="p-beschr" maxlength="2000"></textarea></div>
+          </form>
+          <div class="form-fuss">
+            <button class="btn blau" id="profil-speichern">Profil speichern</button>
+            <span class="form-ok" id="profil-ok">Gespeichert.</span>
+            <span class="form-fehl" id="profil-fehl"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="karte">
+        <div class="karte-kopf"><h2>E-Mail-Adresse</h2></div>
+        <div class="karte-leib">
+          <div class="form-gitter">
+            <div class="feld"><label>Aktuelle E-Mail</label><input id="k-mail-jetzt" type="email" disabled /></div>
+            <div class="feld"><label for="k-mail-neu">Neue E-Mail</label><input id="k-mail-neu" type="email" autocomplete="off" /></div>
+          </div>
+          <div class="form-fuss">
+            <button class="btn hell" id="mail-aendern">E-Mail ändern</button>
+            <span class="form-ok" id="mail-ok">Bestätigungs-Mail verschickt – bitte Postfach prüfen.</span>
+            <span class="form-fehl" id="mail-fehl"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="karte">
+        <div class="karte-kopf"><h2>Passwort ändern</h2></div>
+        <div class="karte-leib">
+          <form class="form-gitter" autocomplete="off" id="form-pw">
+            <div class="feld"><label for="k-pw1">Neues Passwort <span class="hinweis">(mindestens 8 Zeichen)</span></label><input id="k-pw1" type="password" minlength="8" autocomplete="new-password" /></div>
+            <div class="feld"><label for="k-pw2">Neues Passwort wiederholen</label><input id="k-pw2" type="password" minlength="8" autocomplete="new-password" /></div>
+          </form>
+          <div class="form-fuss">
+            <button class="btn blau" id="pw-aendern">Passwort speichern</button>
+            <span class="form-ok" id="pw-ok">Passwort geändert.</span>
+            <span class="form-fehl" id="pw-fehl"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Lösch-Modal -->
+<div class="modal-hg" id="modal-hg">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titel">
+    <h3 id="modal-titel">Anzeige löschen?</h3>
+    <p id="modal-text">Die Anzeige und alle zugehörigen Anfragen werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.</p>
+    <div class="modal-tun">
+      <button class="btn hell" id="modal-nein">Abbrechen</button>
+      <button class="btn rot" id="modal-ja">Endgültig löschen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var S = { user: null, seller: null, listings: null, anfragen: null, gesendet: null, merk: null,
+            anzGezeigt: 60, offenerFaden: null };
+  var $ = function (id) { return document.getElementById(id); };
+
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+  function euro(n) {
+    n = Number(n || 0);
+    return n > 0 ? n.toLocaleString("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }) : "Preis auf Anfrage";
+  }
+  function wann(iso) {
+    if (!iso) return "–";
+    var d = new Date(iso), diff = (Date.now() - d.getTime()) / 60000;
+    if (diff < 60) return "vor " + Math.max(1, Math.round(diff)) + " Min.";
+    if (diff < 60 * 24) return "vor " + Math.round(diff / 60) + " Std.";
+    return d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+  }
+  function toast(text, rot) {
+    var t = document.createElement("div");
+    t.className = "toast" + (rot ? " rot" : "");
+    t.textContent = text;
+    $("toast").appendChild(t);
+    setTimeout(function () { t.remove(); }, 4200);
+  }
+  function fehlerText(e) {
+    var m = (e && (e.message || e.error_description)) || "Unbekannter Fehler";
+    if (/Failed to fetch|NetworkError|network/i.test(m)) return "Keine Verbindung – bitte Internet prüfen.";
+    if (/least 8|password.*short|short.*password/i.test(m)) return "Das Passwort muss mindestens 8 Zeichen haben.";
+    if (/same.*password|different from the old/i.test(m)) return "Das neue Passwort darf nicht das alte sein.";
+    if (/rate limit/i.test(m)) return "Zu viele Versuche – bitte kurz warten.";
+    if (/invalid.*email|email.*invalid/i.test(m)) return "Das ist keine gültige E-Mail-Adresse.";
+    return m;
+  }
+
+  var IC = {
+    auge: '<svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+    stift: '<svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+    pause: '<svg class="ic" viewBox="0 0 24 24"><rect x="7" y="5" width="3.4" height="14" rx="1"/><rect x="13.6" y="5" width="3.4" height="14" rx="1"/></svg>',
+    los: '<svg class="ic" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></svg>',
+    muell: '<svg class="ic" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+    herzweg: '<svg class="ic" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/><path d="M4 4l16 16"/></svg>',
+    motor: '<svg class="ic" viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M5 8h5l2 2h5a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H3v-4h2z"/><path d="M9 8V5h6"/></svg>'
+  };
+
+  function statusPille(s) {
+    if (s === "Freigegeben") return '<span class="pille gruen">Freigegeben</span>';
+    if (s === "Entwurf") return '<span class="pille gelb">Entwurf</span>';
+    if (s === "Gesperrt") return '<span class="pille grau">Gesperrt</span>';
+    return '<span class="pille grau">' + esc(s || "–") + "</span>";
+  }
+  function anfPille(s) {
+    if (s === "Neu") return '<span class="pille wein">Neu</span>';
+    if (s === "Gelesen") return '<span class="pille blau">Gelesen</span>';
+    if (s === "Erledigt") return '<span class="pille gruen">Erledigt</span>';
+    return '<span class="pille grau">' + esc(s || "–") + "</span>";
+  }
+  function bildStil(l) {
+    var u = Array.isArray(l.image_urls) && l.image_urls[0];
+    return u ? ' style="background-image:url(\'' + esc(u) + '\')"' : "";
+  }
+
+  /* ── Navigation (Hash) ───────────────────────────────────────── */
+  var BEREICHE = ["uebersicht", "anzeigen", "anfragen", "nachrichten", "merkliste", "einstellungen"];
+  function zeige(ziel) {
+    if (BEREICHE.indexOf(ziel) < 0) ziel = "uebersicht";
+    document.querySelectorAll("section[data-view]").forEach(function (s) {
+      s.classList.toggle("an", s.getAttribute("data-view") === ziel);
+    });
+    document.querySelectorAll("#nav a[data-ziel]").forEach(function (a) {
+      a.classList.toggle("an", a.getAttribute("data-ziel") === ziel);
+    });
+    if (ziel === "anzeigen") ladeAnzeigen();
+    if (ziel === "anfragen") ladeAnfragen();
+    if (ziel === "nachrichten") ladeGesendet();
+    if (ziel === "merkliste") ladeMerkliste();
+    if (ziel === "uebersicht") { ladeAnzeigen(); ladeAnfragen(); ladeMerkliste(); }
+    window.scrollTo({ top: 0 });
+  }
+  window.addEventListener("hashchange", function () { zeige(location.hash.replace("#", "")); });
+
+  /* ── Daten laden ─────────────────────────────────────────────── */
+  async function ladeAlleListings() {
+    var alle = [], von = 0;
+    for (;;) {
+      var r = await supabaseClient.from("listings")
+        .select("id,title,manufacturer,model,condition,price,year,location,status,created_at,image_urls,external_source,categories(name)")
+        .eq("seller_id", S.seller.id)
+        .order("created_at", { ascending: false })
+        .range(von, von + 999);
+      if (r.error) throw r.error;
+      alle = alle.concat(r.data || []);
+      if (!r.data || r.data.length < 1000) break;
+      von += 1000;
+    }
+    return alle;
+  }
+
+  var ladePromises = {};
+  function einmal(name, fn) {
+    if (!ladePromises[name]) ladePromises[name] = fn().catch(function (e) {
+      delete ladePromises[name];
+      console.error(name, e);
+      toast(fehlerText(e), true);
+      throw e;
+    });
+    return ladePromises[name];
+  }
+
+  function ladeAnzeigen() {
+    return einmal("listings", async function () {
+      S.listings = await ladeAlleListings();
+      malAnzeigen(); malUebersicht();
+    });
+  }
+
+  function ladeAnfragen() {
+    return einmal("anfragen", async function () {
+      // Serverseitig über die Beziehung gefiltert – funktioniert auch bei 900+ Inseraten
+      var r = await supabaseClient.from("inquiries")
+        .select("id,listing_id,name,email,message,status,created_at,listings!inner(id,title,seller_id)")
+        .eq("listings.seller_id", S.seller.id)
+        .order("created_at", { ascending: false })
+        .limit(400);
+      if (r.error) throw r.error;
+      S.anfragen = r.data || [];
+      malAnfragen(); malUebersicht();
+    });
+  }
+
+  function ladeGesendet() {
+    return einmal("gesendet", async function () {
+      var r = await supabaseClient.from("inquiries")
+        .select("id,listing_id,name,message,status,created_at,listings(id,title,image_urls)")
+        .eq("buyer_user_id", S.user.id)
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (r.error) throw r.error;
+      S.gesendet = r.data || [];
+      malGesendet();
+    });
+  }
+
+  function ladeMerkliste() {
+    return einmal("merk", async function () {
+      var ids = [];
+      var r = await supabaseClient.from("favorites").select("listing_id").eq("user_id", S.user.id);
+      if (!r.error && r.data) ids = r.data.map(function (x) { return x.listing_id; });
+      try { // lokale Gast-Favoriten mit einbeziehen
+        JSON.parse(localStorage.getItem("1amotor-favs") || "[]").forEach(function (i) {
+          if (ids.indexOf(i) < 0) ids.push(i);
+        });
+      } catch (e) {}
+      if (!ids.length) { S.merk = []; malMerkliste(); malUebersicht(); return; }
+      var l = await supabaseClient.from("listings")
+        .select("id,title,manufacturer,price,status,image_urls,categories(name)")
+        .in("id", ids.slice(0, 200));
+      if (l.error) throw l.error;
+      S.merk = l.data || [];
+      malMerkliste(); malUebersicht();
+    });
+  }
+
+  /* ── Übersicht ───────────────────────────────────────────────── */
+  function malUebersicht() {
+    if (S.listings) {
+      var aktiv = S.listings.filter(function (l) { return l.status === "Freigegeben"; });
+      var wert = aktiv.reduce(function (s, l) { return s + Number(l.price || 0); }, 0);
+      $("k-aktiv").textContent = aktiv.length;
+      $("k-aktiv-sub").textContent = S.listings.length + " Anzeigen gesamt";
+      $("k-wert").textContent = euro(wert);
+      $("k-wert-sub").textContent = "über " + aktiv.length + (aktiv.length === 1 ? " freigegebenes Inserat" : " freigegebene Inserate");
+      $("ueb-anzeigen").innerHTML = S.listings.slice(0, 5).map(function (l) {
+        return '<div class="zeile">' +
+          '<a class="bild" href="listing-detail.html?id=' + esc(l.id) + '"' + bildStil(l) + ">" + (Array.isArray(l.image_urls) && l.image_urls[0] ? "" : IC.motor) + "</a>" +
+          '<div class="mitte"><a class="titel" href="listing-detail.html?id=' + esc(l.id) + '">' + esc(l.title || "Ohne Titel") + "</a>" +
+          '<div class="unterz">' + esc((l.categories && l.categories.name) || "") + " · " + wann(l.created_at) + "</div></div>" +
+          '<span class="preis">' + euro(l.price) + "</span>" + statusPille(l.status) + "</div>";
+      }).join("") || '<div class="leer"><b>Noch keine Anzeigen</b>Stell deine erste Anzeige ein.<br><a class="btn dunkel" href="anzeige-erstellen.html">＋ Anzeige erstellen</a></div>';
+    }
+    if (S.anfragen) {
+      var offen = S.anfragen.filter(function (a) { return a.status === "Neu"; }).length;
+      $("k-anfragen").textContent = offen;
+      $("k-anfragen-sub").textContent = S.anfragen.length + " Anfragen gesamt";
+      var z = $("zahl-anfragen");
+      z.textContent = offen > 99 ? "99+" : offen;
+      z.classList.toggle("da", offen > 0);
+      $("ueb-anfragen").innerHTML = S.anfragen.slice(0, 5).map(function (a) {
+        return '<a class="zeile" href="#anfragen">' +
+          '<div class="mitte"><span class="titel">' + esc(a.name || "Interessent") + " · " + esc((a.listings && a.listings.title) || "Anzeige") + "</span>" +
+          '<div class="unterz">' + esc((a.message || "").slice(0, 90)) + "</div></div>" +
+          '<span class="unterz" style="flex:none;">' + wann(a.created_at) + "</span>" + anfPille(a.status) + "</a>";
+      }).join("") || '<div class="leer"><b>Noch keine Anfragen</b>Sobald jemand zu einem Inserat schreibt, steht es hier.</div>';
+    }
+    if (S.merk) $("k-merk").textContent = S.merk.length;
+  }
+
+  /* ── Meine Anzeigen ──────────────────────────────────────────── */
+  function anzGefiltert() {
+    var q = ($("anz-suche").value || "").trim().toLowerCase();
+    var st = $("anz-status").value;
+    return (S.listings || []).filter(function (l) {
+      if (st && l.status !== st) return false;
+      if (!q) return true;
+      return ((l.title || "") + " " + (l.manufacturer || "") + " " + (l.model || "")).toLowerCase().indexOf(q) > -1;
+    });
+  }
+  function malAnzeigen() {
+    if (!S.listings) return;
+    var liste = anzGefiltert();
+    $("anz-zahl").textContent = liste.length + " von " + S.listings.length + " Anzeigen";
+    var teil = liste.slice(0, S.anzGezeigt);
+    $("anz-liste").innerHTML = (teil.map(function (l) {
+      var aktivToggle = l.status === "Freigegeben"
+        ? '<button class="ikbtn" data-tu="offline" data-id="' + esc(l.id) + '" title="Offline nehmen (als Entwurf)" aria-label="Offline nehmen">' + IC.pause + "</button>"
+        : '<button class="ikbtn" data-tu="online" data-id="' + esc(l.id) + '" title="Veröffentlichen" aria-label="Veröffentlichen">' + IC.los + "</button>";
+      return '<div class="zeile">' +
+        '<a class="bild" href="listing-detail.html?id=' + esc(l.id) + '"' + bildStil(l) + ">" + (Array.isArray(l.image_urls) && l.image_urls[0] ? "" : IC.motor) + "</a>" +
+        '<div class="mitte"><a class="titel" href="listing-detail.html?id=' + esc(l.id) + '">' + esc(l.title || "Ohne Titel") + "</a>" +
+        '<div class="unterz">' + esc((l.categories && l.categories.name) || "–") + " · " + wann(l.created_at) +
+        (l.external_source ? " · Partner: " + esc(l.external_source) : "") + "</div></div>" +
+        '<span class="preis">' + euro(l.price) + "</span>" + statusPille(l.status) +
+        '<div class="tun">' +
+          '<a class="ikbtn" href="listing-detail.html?id=' + esc(l.id) + '" title="Ansehen" aria-label="Ansehen">' + IC.auge + "</a>" +
+          '<a class="ikbtn" href="anzeige-erstellen.html?edit=' + esc(l.id) + '" title="Bearbeiten" aria-label="Bearbeiten">' + IC.stift + "</a>" +
+          aktivToggle +
+          '<button class="ikbtn rot" data-tu="loeschen" data-id="' + esc(l.id) + '" title="Löschen" aria-label="Löschen">' + IC.muell + "</button>" +
+        "</div></div>";
+    }).join("") || '<div class="leer"><b>Nichts gefunden</b>Kein Inserat passt zu Suche und Filter.</div>') +
+    (liste.length > S.anzGezeigt ? '<button class="mehr-laden" id="anz-mehr">Weitere ' + Math.min(60, liste.length - S.anzGezeigt) + " anzeigen</button>" : "");
+    var mehr = $("anz-mehr");
+    if (mehr) mehr.addEventListener("click", function () { S.anzGezeigt += 60; malAnzeigen(); });
+  }
+  $("anz-suche").addEventListener("input", function () { S.anzGezeigt = 60; malAnzeigen(); });
+  $("anz-status").addEventListener("change", function () { S.anzGezeigt = 60; malAnzeigen(); });
+
+  var loeschId = null;
+  $("anz-liste").addEventListener("click", async function (e) {
+    var b = e.target.closest("button[data-tu]");
+    if (!b) return;
+    var id = b.getAttribute("data-id"), tu = b.getAttribute("data-tu");
+    if (tu === "loeschen") { loeschId = id; $("modal-hg").classList.add("auf"); return; }
+    if (tu === "offline" || tu === "online") {
+      b.disabled = true;
+      var neu = tu === "online" ? "Freigegeben" : "Entwurf";
+      var r = await supabaseClient.from("listings").update({ status: neu }).eq("id", id);
+      if (r.error) { toast(fehlerText(r.error), true); b.disabled = false; return; }
+      S.listings.forEach(function (l) { if (l.id === id) l.status = neu; });
+      toast(neu === "Freigegeben" ? "Anzeige ist wieder online." : "Anzeige ist jetzt offline (Entwurf).");
+      malAnzeigen(); malUebersicht();
+    }
+  });
+  $("modal-nein").addEventListener("click", function () { loeschId = null; $("modal-hg").classList.remove("auf"); });
+  $("modal-hg").addEventListener("mousedown", function (e) { if (e.target === this) { loeschId = null; this.classList.remove("auf"); } });
+  $("modal-ja").addEventListener("click", async function () {
+    if (!loeschId) return;
+    var btn = this; btn.disabled = true; btn.textContent = "Wird gelöscht …";
+    try {
+      var inq = await supabaseClient.from("inquiries").select("id").eq("listing_id", loeschId);
+      var ids = (inq.data || []).map(function (i) { return i.id; });
+      if (ids.length) {
+        await supabaseClient.from("inquiry_messages").delete().in("inquiry_id", ids);
+        await supabaseClient.from("inquiries").delete().in("id", ids);
+      }
+      var r = await supabaseClient.from("listings").delete().eq("id", loeschId);
+      if (r.error) throw r.error;
+      S.listings = S.listings.filter(function (l) { return l.id !== loeschId; });
+      toast("Anzeige gelöscht.");
+      malAnzeigen(); malUebersicht();
+    } catch (e) { toast(fehlerText(e), true); }
+    loeschId = null; btn.disabled = false; btn.textContent = "Endgültig löschen";
+    $("modal-hg").classList.remove("auf");
+  });
+
+  /* ── Anfragen (eingehend) ────────────────────────────────────── */
+  function malAnfragen() {
+    if (!S.anfragen) return;
+    var st = $("anf-status").value;
+    var liste = st ? S.anfragen.filter(function (a) { return a.status === st; }) : S.anfragen;
+    $("anf-liste").innerHTML = liste.slice(0, 120).map(function (a) {
+      return '<div class="zeile anf-zeile" data-anf="' + esc(a.id) + '" role="button" tabindex="0">' +
+          '<span class="punkt' + (a.status === "Neu" ? "" : " aus") + '"></span>' +
+          '<div class="mitte"><span class="titel">' + esc(a.name || "Interessent") + "</span>" +
+          '<div class="unterz">' + esc((a.listings && a.listings.title) || "Anzeige") + " – " + esc((a.message || "").slice(0, 80)) + "</div></div>" +
+          '<span class="unterz" style="flex:none;">' + wann(a.created_at) + "</span>" + anfPille(a.status) + "</div>" +
+        '<div class="faden" data-faden="' + esc(a.id) + '"></div>';
+    }).join("") || '<div class="leer"><b>Keine Anfragen</b>' + (st ? "In diesem Status ist nichts." : "Sobald jemand zu einem Inserat schreibt, steht es hier.") + "</div>";
+  }
+  $("anf-status").addEventListener("change", malAnfragen);
+
+  async function oeffneFaden(wrap, anf, rolle) {
+    var offen = wrap.classList.contains("auf");
+    document.querySelectorAll(".faden.auf").forEach(function (f) { f.classList.remove("auf"); });
+    if (offen) return;
+    wrap.classList.add("auf");
+    wrap.innerHTML = '<div class="leer" style="padding:16px;">Verlauf wird geladen …</div>';
+    var r = await supabaseClient.from("inquiry_messages").select("*").eq("inquiry_id", anf.id).order("created_at", { ascending: true });
+    var msgs = r.data || [];
+    var meineSeite = rolle; // "seller" oder "buyer"
+    var html = '<div class="blase ' + (rolle === "buyer" ? "von-ihnen" : "von-anderen") + '">' + esc(anf.message || "") +
+      '<span class="wann">' + esc(anf.name || "") + " · " + wann(anf.created_at) + "</span></div>";
+    html += msgs.map(function (m) {
+      var vonMir = m.sender_type === meineSeite;
+      return '<div class="blase ' + (vonMir ? "von-ihnen" : "von-anderen") + '">' + esc(m.message || "") +
+        '<span class="wann">' + (m.sender_type === "seller" ? "Anbieter" : "Interessent") + " · " + wann(m.created_at) + "</span></div>";
+    }).join("");
+    html += '<div class="antwort"><textarea placeholder="Antwort schreiben …"></textarea><button class="btn dunkel" data-senden>Senden</button></div>';
+    if (rolle === "seller") {
+      html += '<div class="faden-tun">' +
+        (anf.email ? '<a class="btn hell klein" href="mailto:' + esc(anf.email) + '">Per E-Mail antworten</a>' : "") +
+        (anf.status !== "Erledigt" ? '<button class="btn hell klein" data-status="Erledigt">Als erledigt markieren</button>' : '<button class="btn hell klein" data-status="Gelesen">Wieder öffnen</button>') +
+        "</div>";
+    }
+    wrap.innerHTML = html;
+
+    wrap.querySelector("[data-senden]").addEventListener("click", async function () {
+      var ta = wrap.querySelector("textarea");
+      var text = (ta.value || "").trim();
+      if (!text) return;
+      this.disabled = true; this.textContent = "…";
+      var ins = await supabaseClient.from("inquiry_messages").insert([{ inquiry_id: anf.id, sender_type: rolle, sender_user_id: S.user.id, message: text }]);
+      if (ins.error) { toast(fehlerText(ins.error), true); this.disabled = false; this.textContent = "Senden"; return; }
+      wrap.classList.remove("auf");
+      oeffneFaden(wrap, anf, rolle);
+      toast("Antwort gesendet.");
+    });
+    wrap.querySelectorAll("[data-status]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        var neu = b.getAttribute("data-status");
+        var up = await supabaseClient.from("inquiries").update({ status: neu }).eq("id", anf.id);
+        if (up.error) { toast(fehlerText(up.error), true); return; }
+        anf.status = neu; malAnfragen(); malUebersicht();
+        toast(neu === "Erledigt" ? "Anfrage erledigt." : "Anfrage wieder geöffnet.");
+      });
+    });
+
+    // Neu -> Gelesen beim Öffnen
+    if (rolle === "seller" && anf.status === "Neu") {
+      var up = await supabaseClient.from("inquiries").update({ status: "Gelesen" }).eq("id", anf.id);
+      if (!up.error) { anf.status = "Gelesen"; malUebersicht();
+        var zeile = document.querySelector('.anf-zeile[data-anf="' + anf.id + '"]');
+        if (zeile) { zeile.querySelector(".punkt").classList.add("aus"); zeile.querySelector(".pille").outerHTML = anfPille("Gelesen"); }
+      }
+    }
+  }
+
+  $("anf-liste").addEventListener("click", function (e) {
+    if (e.target.closest(".faden")) return;
+    var z = e.target.closest(".anf-zeile");
+    if (!z) return;
+    var id = z.getAttribute("data-anf");
+    var anf = S.anfragen.filter(function (a) { return a.id === id; })[0];
+    var wrap = document.querySelector('#anf-liste .faden[data-faden="' + id + '"]');
+    if (anf && wrap) oeffneFaden(wrap, anf, "seller");
+  });
+
+  /* ── Gesendete Anfragen ──────────────────────────────────────── */
+  function malGesendet() {
+    if (!S.gesendet) return;
+    $("ges-liste").innerHTML = S.gesendet.map(function (a) {
+      var l = a.listings || {};
+      return '<div class="zeile anf-zeile" data-anf="' + esc(a.id) + '" role="button" tabindex="0">' +
+          '<a class="bild" href="listing-detail.html?id=' + esc(l.id || a.listing_id) + '"' + bildStil(l) + ">" + (Array.isArray(l.image_urls) && l.image_urls[0] ? "" : IC.motor) + "</a>" +
+          '<div class="mitte"><span class="titel">' + esc(l.title || "Anzeige") + "</span>" +
+          '<div class="unterz">' + esc((a.message || "").slice(0, 90)) + "</div></div>" +
+          '<span class="unterz" style="flex:none;">' + wann(a.created_at) + "</span>" + anfPille(a.status) + "</div>" +
+        '<div class="faden" data-faden="' + esc(a.id) + '"></div>';
+    }).join("") || '<div class="leer"><b>Noch nichts gesendet</b>Wenn du einem Anbieter über ein Inserat schreibst, findest du den Verlauf hier.<br><a class="btn dunkel" href="suche.html">Motoren ansehen</a></div>';
+  }
+  $("ges-liste").addEventListener("click", function (e) {
+    if (e.target.closest(".faden")) return;
+    var z = e.target.closest(".anf-zeile");
+    if (!z) return;
+    var id = z.getAttribute("data-anf");
+    var anf = S.gesendet.filter(function (a) { return a.id === id; })[0];
+    var wrap = document.querySelector('#ges-liste .faden[data-faden="' + id + '"]');
+    if (anf && wrap) oeffneFaden(wrap, anf, "buyer");
+  });
+
+  /* ── Merkliste ───────────────────────────────────────────────── */
+  function malMerkliste() {
+    if (!S.merk) return;
+    $("merk-zahl").textContent = S.merk.length + (S.merk.length === 1 ? " gemerktes Inserat" : " gemerkte Inserate");
+    $("merk-liste").innerHTML = S.merk.map(function (l) {
+      var weg = l.status !== "Freigegeben";
+      return '<div class="zeile">' +
+        '<a class="bild" href="listing-detail.html?id=' + esc(l.id) + '"' + bildStil(l) + ">" + (Array.isArray(l.image_urls) && l.image_urls[0] ? "" : IC.motor) + "</a>" +
+        '<div class="mitte"><a class="titel" href="listing-detail.html?id=' + esc(l.id) + '">' + esc(l.title || "Ohne Titel") + "</a>" +
+        '<div class="unterz">' + esc((l.categories && l.categories.name) || "–") + "</div></div>" +
+        (weg ? '<span class="pille grau">nicht mehr verfügbar</span>' : '<span class="preis">' + euro(l.price) + "</span>") +
+        '<div class="tun"><button class="ikbtn rot" data-weg="' + esc(l.id) + '" title="Von der Merkliste entfernen" aria-label="Entfernen">' + IC.herzweg + "</button></div></div>";
+    }).join("") || '<div class="leer"><b>Merkliste ist leer</b>Tipp beim Stöbern auf das Herz, um dir Inserate zu merken.<br><a class="btn dunkel" href="suche.html">Motoren ansehen</a></div>';
+  }
+  $("merk-liste").addEventListener("click", async function (e) {
+    var b = e.target.closest("button[data-weg]");
+    if (!b) return;
+    var id = b.getAttribute("data-weg");
+    b.disabled = true;
+    await supabaseClient.from("favorites").delete().eq("user_id", S.user.id).eq("listing_id", id);
+    try {
+      var lok = JSON.parse(localStorage.getItem("1amotor-favs") || "[]").filter(function (x) { return x !== id; });
+      localStorage.setItem("1amotor-favs", JSON.stringify(lok));
+    } catch (err) {}
+    S.merk = S.merk.filter(function (l) { return l.id !== id; });
+    malMerkliste(); malUebersicht();
+    toast("Von der Merkliste entfernt.");
+  });
+
+  /* ── Einstellungen ───────────────────────────────────────────── */
+  var PROFIL_FELDER = { "p-name": "company_name", "p-art": "company_type", "p-kontakt": "contact_name",
+    "p-tel": "phone", "p-web": "website", "p-paypal": "paypal_email", "p-strasse": "street",
+    "p-ust": "vat", "p-plz": "zip", "p-ort": "city", "p-land": "country", "p-beschr": "description" };
+
+  function fuelleProfil() {
+    Object.keys(PROFIL_FELDER).forEach(function (id) {
+      var el = $(id); if (el) el.value = S.seller[PROFIL_FELDER[id]] || "";
+    });
+    $("k-mail-jetzt").value = S.user.email || "";
+  }
+  function meldung(okId, fehlId, fehler) {
+    $(okId).classList.toggle("da", !fehler);
+    var f = $(fehlId);
+    f.classList.toggle("da", !!fehler);
+    if (fehler) f.textContent = fehler;
+    setTimeout(function () { $(okId).classList.remove("da"); }, 5000);
+  }
+
+  $("profil-speichern").addEventListener("click", async function () {
+    var btn = this; btn.disabled = true; btn.textContent = "Speichert …";
+    var daten = {};
+    Object.keys(PROFIL_FELDER).forEach(function (id) { daten[PROFIL_FELDER[id]] = ($(id).value || "").trim(); });
+    if (!daten.company_name) {
+      meldung("profil-ok", "profil-fehl", "Bitte einen Anbieternamen angeben.");
+      btn.disabled = false; btn.textContent = "Profil speichern"; return;
+    }
+    var r = await supabaseClient.from("seller_profiles").update(daten).eq("id", S.seller.id);
+    btn.disabled = false; btn.textContent = "Profil speichern";
+    if (r.error) { meldung("profil-ok", "profil-fehl", fehlerText(r.error)); return; }
+    Object.assign(S.seller, daten);
+    $("gruss").textContent = "Hallo, " + (S.seller.company_name || "") + "!";
+    meldung("profil-ok", "profil-fehl", null);
+  });
+
+  $("mail-aendern").addEventListener("click", async function () {
+    var neu = ($("k-mail-neu").value || "").trim();
+    if (!neu || neu.indexOf("@") < 1) { meldung("mail-ok", "mail-fehl", "Bitte eine gültige E-Mail eintragen."); return; }
+    var btn = this; btn.disabled = true;
+    var r = await supabaseClient.auth.updateUser({ email: neu });
+    btn.disabled = false;
+    if (r.error) { meldung("mail-ok", "mail-fehl", fehlerText(r.error)); return; }
+    $("k-mail-neu").value = "";
+    meldung("mail-ok", "mail-fehl", null);
+  });
+
+  $("pw-aendern").addEventListener("click", async function () {
+    var a = $("k-pw1").value, b = $("k-pw2").value;
+    if (a.length < 8) { meldung("pw-ok", "pw-fehl", "Das Passwort muss mindestens 8 Zeichen haben."); return; }
+    if (a !== b) { meldung("pw-ok", "pw-fehl", "Die Passwörter stimmen nicht überein."); return; }
+    var btn = this; btn.disabled = true; btn.textContent = "Speichert …";
+    var r = await supabaseClient.auth.updateUser({ password: a });
+    btn.disabled = false; btn.textContent = "Passwort speichern";
+    if (r.error) { meldung("pw-ok", "pw-fehl", fehlerText(r.error)); return; }
+    $("k-pw1").value = ""; $("k-pw2").value = "";
+    meldung("pw-ok", "pw-fehl", null);
+    toast("Passwort geändert.");
+  });
+
+  $("abmelden").addEventListener("click", async function (e) {
+    e.preventDefault();
+    await supabaseClient.auth.signOut();
+    location.href = "./";
+  });
+
+  /* ── Start ───────────────────────────────────────────────────── */
+  async function sellerLadenOderAnlegen(user) {
+    var r = await supabaseClient.from("seller_profiles").select("*").eq("user_id", user.id).maybeSingle();
+    if (r.error) throw r.error;
+    if (r.data) return r.data;
+    var meta = user.user_metadata || {};
+    var name = (meta.company && String(meta.company).trim()) || (meta.full_name && String(meta.full_name).trim()) ||
+      [meta.first_name, meta.last_name].filter(Boolean).join(" ").trim() || (user.email || "").split("@")[0] || "Privatanbieter";
+    var ins = await supabaseClient.from("seller_profiles")
+      .insert([{ user_id: user.id, email: user.email || "", company_name: name, city: "", country: "DE" }])
+      .select("*").single();
+    if (ins.error) {
+      var nochmal = await supabaseClient.from("seller_profiles").select("*").eq("user_id", user.id).maybeSingle();
+      if (nochmal.data) return nochmal.data;
+      throw ins.error;
+    }
+    return ins.data;
+  }
+
+  async function start() {
+    try {
+      var s = await supabaseClient.auth.getSession();
+      var user = s.data && s.data.session && s.data.session.user;
+      $("laden").style.display = "none";
+      if (!user) { $("gast").style.display = "block"; return; }
+      S.user = user;
+      S.seller = await sellerLadenOderAnlegen(user);
+      $("app").style.display = "grid";
+      $("gruss").textContent = "Hallo, " + (S.seller.company_name || "") + "!";
+      $("gruss-sub").textContent = "Hier ist der Stand deines Kontos.";
+      fuelleProfil();
+      zeige(location.hash.replace("#", "") || "uebersicht");
+    } catch (e) {
+      console.error(e);
+      $("laden").textContent = "Das Konto konnte nicht geladen werden – bitte Seite neu laden.";
+      $("laden").style.display = "block";
+      toast(fehlerText(e), true);
+    }
+  }
+  start();
+})();
+</script>
+</body>
+</html>
