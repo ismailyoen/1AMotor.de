@@ -1,4 +1,8 @@
-/* listing-detail-live.js – Stand 21.10.2026
+/* listing-detail-live.js – Stand 14.11.2026
+   NEU 14.11.2026: „Kaufen“-Button für Partner-Inserate (Spalte listings.external_url).
+   Führt in neuem Tab zum Originalangebot beim Anbieter (z. B. motorenshop.eu).
+   Wird getrennt nachgeladen – fehlt die Spalte, läuft die Seite normal weiter.
+   ---- Stand 21.10.2026
    Änderungen: SEO überlässt dem Cloudflare-Worker den Vorrang, saubere URLs,
    "Ähnliche Anzeigen" funktionieren wieder, Lieferadresse wird mitgeschickt,
    Preis 0 → "Preis auf Anfrage". */
@@ -50,7 +54,67 @@ document.addEventListener("DOMContentLoaded", async () => {
   fillListingData(listing);
   setupGallery(listing);
   setupContactForm(listing);
+  setupBuyButton(listing.id);
 });
+
+/* ─────────────────────────────────────────────────────────
+   KAUFEN-BUTTON (Partner-Inserate mit Originalangebot)
+───────────────────────────────────────────────────────── */
+async function setupBuyButton(listingId) {
+  let url = "";
+  try {
+    const { data, error } = await supabaseClient
+      .from("listings")
+      .select("external_url")
+      .eq("id", listingId)
+      .maybeSingle();
+    if (error || !data || !data.external_url) return;
+    url = String(data.external_url).trim();
+  } catch (e) { return; }
+
+  // Nur echte https-Adressen zulassen
+  let ziel;
+  try { ziel = new URL(url); } catch (e) { return; }
+  if (ziel.protocol !== "https:") return;
+  const shop = ziel.hostname.replace(/^www\./, "");
+
+  if (document.getElementById("buy-btn")) return;
+
+  const a = document.createElement("a");
+  a.id = "buy-btn";
+  a.href = ziel.href;
+  a.target = "_blank";
+  a.rel = "noopener";
+  a.textContent = "Kaufen";
+  a.setAttribute("aria-label", "Kaufen – öffnet das Angebot bei " + shop);
+  a.style.cssText = "display:block;width:100%;text-align:center;background:#7a1f2b;color:#fff;" +
+    "padding:15px 20px;border-radius:999px;font-weight:800;font-size:16px;letter-spacing:.01em;" +
+    "text-decoration:none;box-shadow:0 6px 18px rgba(122,31,43,.28);transition:background .15s;";
+  a.addEventListener("mouseenter", () => { a.style.background = "#5f1721"; });
+  a.addEventListener("mouseleave", () => { a.style.background = "#7a1f2b"; });
+
+  const note = document.createElement("div");
+  note.id = "buy-note";
+  note.textContent = "Du wirst zum Angebot bei " + shop + " weitergeleitet.";
+  note.style.cssText = "font-size:12px;color:#6b7280;text-align:center;margin-top:6px;";
+
+  const wrap = document.createElement("div");
+  wrap.id = "buy-wrap";
+  wrap.style.cssText = "margin:0 0 14px;";
+  wrap.appendChild(a);
+  wrap.appendChild(note);
+
+  // Platz: rechts in der Preis-Box, direkt über „Verkäufer kontaktieren“
+  const ctaRow = document.querySelector(".cta-row");
+  const priceEl = document.getElementById("listing-price");
+  const priceBlock = priceEl ? (priceEl.closest(".price-block") || priceEl.parentNode) : null;
+  if (ctaRow && ctaRow.parentNode) ctaRow.parentNode.insertBefore(wrap, ctaRow);
+  else if (priceBlock && priceBlock.parentNode) priceBlock.parentNode.insertBefore(wrap, priceBlock.nextSibling);
+  else {
+    const side = document.getElementById("kontakt");
+    if (side) side.insertBefore(wrap, side.firstChild);
+  }
+}
 
 /* ─────────────────────────────────────────────────────────
    LISTING DATA FÜLLEN
