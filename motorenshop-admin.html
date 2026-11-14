@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>1A Motor – Partner-Import motorenshop.eu</title>
+<!--
+  1A Motor – Admin-Import motorenshop.eu  (motorenshop-admin.html) · v1 · 14.11.2026
+  Lädt die Inserate aus daten.js (erzeugt vom Probelauf) in das Verkäuferkonto des Partners.
+  NICHT ins öffentliche Repo legen, NICHT auf den Server laden – nur lokal per Doppelklick öffnen.
+-->
+<style>
+  :root { --navy:#1b2d42; --blue:#2a4a6b; --sky:#4f8fc7; --dark:#0f1b29; --border:#dbe3ec; --bg:#f4f7fa; --wein:#7a1f2b; --ok:#1d7a4c; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Outfit, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--dark); line-height:1.45; }
+  header { background:linear-gradient(145deg, var(--navy), var(--blue)); color:#fff; padding:22px 28px; }
+  header h1 { margin:0; font-size:22px; font-weight:600; }
+  header p { margin:4px 0 0; opacity:.8; font-size:14px; }
+  main { max-width:1180px; margin:0 auto; padding:24px 20px 80px; display:grid; gap:18px; }
+  .karte { background:#fff; border:1px solid var(--border); border-radius:14px; padding:20px 22px; }
+  .karte h2 { margin:0 0 12px; font-size:16px; font-weight:600; display:flex; align-items:center; gap:10px; }
+  .nr { width:26px; height:26px; border-radius:50%; background:var(--navy); color:#fff; font-size:13px; display:inline-grid; place-items:center; flex:none; }
+  .nr.fertig { background:var(--ok); }
+  label { display:block; font-size:13px; color:#51606f; margin-bottom:4px; }
+  input[type=email], input[type=password], select { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:9px; font:inherit; background:#fff; }
+  .reihe { display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:end; }
+  button { font:inherit; font-weight:600; border:0; border-radius:9px; padding:11px 18px; cursor:pointer; background:var(--navy); color:#fff; }
+  button.gross { background:var(--wein); padding:14px 26px; font-size:16px; }
+  button.leise { background:#e9eef4; color:var(--navy); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .hinweis { font-size:13px; color:#51606f; margin:8px 0 0; }
+  .fehler { color:#a11; font-weight:500; }
+  .gut { color:var(--ok); font-weight:500; }
+  .zahlen { display:flex; gap:26px; flex-wrap:wrap; margin-bottom:12px; }
+  .zahlen div b { display:block; font-size:24px; font-weight:600; }
+  .zahlen div span { font-size:13px; color:#51606f; }
+  .werkzeug { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+  .werkzeug input[type=search] { flex:1; min-width:200px; padding:9px 12px; border:1px solid var(--border); border-radius:9px; font:inherit; }
+  .tabelle { max-height:520px; overflow:auto; border:1px solid var(--border); border-radius:10px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { position:sticky; top:0; background:#eef2f6; text-align:left; padding:9px 10px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:#51606f; }
+  td { padding:8px 10px; border-top:1px solid var(--border); vertical-align:middle; }
+  td img { width:72px; height:54px; object-fit:cover; border-radius:6px; background:#e9eef4; display:block; }
+  td.preis { white-space:nowrap; font-weight:600; text-align:right; }
+  td.preis s { display:block; font-weight:400; color:#8795a3; font-size:12px; }
+  td a { color:var(--blue); }
+  .status { font-size:12px; white-space:nowrap; }
+  progress { width:100%; height:14px; accent-color:var(--wein); }
+  #protokoll { margin-top:12px; max-height:220px; overflow:auto; background:var(--dark); color:#cfe0f0; border-radius:10px; padding:12px 14px; font:12px/1.5 ui-monospace, Menlo, monospace; white-space:pre-wrap; }
+  .versteckt { display:none !important; }
+  @media (max-width:720px) { .reihe { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Partner-Import · motorenshop.eu</h1>
+  <p>Inserate des Partners in sein Verkäuferkonto auf 1amotor.de laden – Preise und Texte unverändert.</p>
+</header>
+
+<main>
+  <section class="karte" id="k-daten">
+    <h2><span class="nr" id="nr1">1</span> Inserate aus dem Shop</h2>
+    <div id="daten-fehlt">
+      <p class="fehler">Noch keine Daten gefunden.</p>
+      <p class="hinweis">Zuerst im Terminal in diesem Ordner <b>node motorenshop-import.mjs</b> starten. Das liest den Shop aus und legt die Datei <b>daten.js</b> neben diese Seite. Danach diese Seite neu laden. Alternativ hier die Datei <b>vorschau.json</b> auswählen:</p>
+      <p><input type="file" id="datei" accept=".json,application/json"></p>
+    </div>
+    <div id="daten-da" class="versteckt">
+      <div class="zahlen">
+        <div><b id="z-alle">0</b><span>Inserate mit Bild und Preis</span></div>
+        <div><b id="z-marken">0</b><span>Marken</span></div>
+        <div><b id="z-wahl">0</b><span>ausgewählt</span></div>
+        <div><b id="z-raus">0</b><span>übersprungen (ohne Bild/Preis)</span></div>
+      </div>
+      <p class="hinweis" id="stand"></p>
+      <div class="werkzeug">
+        <input type="search" id="suche" placeholder="Suchen: Titel, Marke, Motorcode …">
+        <button class="leise" id="alle-an">Alle auswählen</button>
+        <button class="leise" id="alle-aus">Keine</button>
+      </div>
+      <div class="tabelle">
+        <table>
+          <thead><tr><th></th><th>Bild</th><th>Titel</th><th>Marke</th><th>Bilder</th><th style="text-align:right">Preis</th><th>Status</th></tr></thead>
+          <tbody id="zeilen"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="karte" id="k-login">
+    <h2><span class="nr" id="nr2">2</span> Mit dem Konto des Partners anmelden</h2>
+    <form class="reihe" id="login-form" autocomplete="off">
+      <div><label for="email">E-Mail des Partnerkontos</label><input type="email" id="email" required></div>
+      <div><label for="pw">Passwort</label><input type="password" id="pw" required></div>
+      <button type="submit" id="login-btn">Anmelden</button>
+    </form>
+    <p class="hinweis" id="login-info">Die Inserate werden genau in dem Konto angelegt, mit dem du dich hier anmeldest.</p>
+  </section>
+
+  <section class="karte" id="k-upload">
+    <h2><span class="nr" id="nr3">3</span> Hochladen</h2>
+    <div style="max-width:420px; margin-bottom:14px">
+      <label for="kategorie">Rubrik für alle Inserate</label>
+      <select id="kategorie" disabled><option>Erst anmelden …</option></select>
+    </div>
+    <button class="gross" id="start" disabled>Hochladen</button>
+    <button class="leise versteckt" id="stopp">Anhalten</button>
+    <p class="hinweis" id="upload-info">Schon vorhandene Inserate werden nicht doppelt angelegt, sondern nur bei Preis und Text aufgefrischt.</p>
+    <progress id="balken" value="0" max="1" class="versteckt"></progress>
+    <div id="protokoll" class="versteckt"></div>
+  </section>
+</main>
+
+<script src="daten.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ── Einstellungen ─────────────────────────────────────────────── */
+  var SUPABASE_URL = "https://xaqfptumjkmulobdbfid.supabase.co";
+  var PUB_KEY      = "sb_publishable_FK-FiDrd5gjFEj7LxVPZIg_5WXkNvgG";   // nur der öffentliche Schlüssel
+  var BUCKET       = "listing-images";
+  var SOURCE       = "motorenshop.eu";
+  // Nur in dieses Konto darf geladen werden (Auth-User-ID bzw. Profil-ID des Partners)
+  var ERLAUBT      = ["a5c6ff33-940d-4f2c-99fd-960d15d57565", "eb4134f9-8d49-4eb3-87cd-106b849797bc"];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var daten = null, sitzung = null, profil = null, laeuft = false, stopp = false;
+  var statusZellen = new Map(), haken = new Map();
+
+  /* ── 1 · Daten anzeigen ────────────────────────────────────────── */
+  function euro(n) { return Number(n).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"; }
+
+  function zeigeDaten(d) {
+    if (!d || !Array.isArray(d.inserate) || !d.inserate.length) return;
+    daten = d;
+    $("daten-fehlt").classList.add("versteckt");
+    $("daten-da").classList.remove("versteckt");
+    $("nr1").classList.add("fertig");
+    $("z-alle").textContent = d.inserate.length;
+    $("z-marken").textContent = new Set(d.inserate.map(function (p) { return p.marke; })).size;
+    $("z-raus").textContent = (d.uebersprungen || []).length;
+    $("stand").textContent = d.stand ? "Stand der Shop-Daten: " + new Date(d.stand).toLocaleString("de-DE") + " Uhr" : "";
+
+    var tb = $("zeilen"); tb.textContent = "";
+    d.inserate.forEach(function (p, i) {
+      var tr = document.createElement("tr");
+      tr.dataset.suche = (p.titel + " " + p.marke + " " + (p.motorcode || "")).toLowerCase();
+
+      var c0 = document.createElement("td"), cb = document.createElement("input");
+      cb.type = "checkbox"; cb.checked = true; cb.addEventListener("change", zaehle); c0.appendChild(cb); haken.set(i, cb);
+
+      var c1 = document.createElement("td"), img = document.createElement("img");
+      img.loading = "lazy"; img.alt = ""; img.referrerPolicy = "no-referrer";
+      img.src = String(p.bilder[0]).replace(/width=\d+&height=\d+/, "width=160&height=160"); c1.appendChild(img);
+
+      var c2 = document.createElement("td"), a = document.createElement("a");
+      a.href = p.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = p.titel; c2.appendChild(a);
+
+      var c3 = document.createElement("td"); c3.textContent = p.marke;
+      var c4 = document.createElement("td"); c4.textContent = p.bilder.length;
+
+      var c5 = document.createElement("td"); c5.className = "preis"; c5.textContent = euro(p.preis);
+      if (p.alterPreis) { var s = document.createElement("s"); s.textContent = euro(p.alterPreis); c5.appendChild(s); }
+
+      var c6 = document.createElement("td"); c6.className = "status"; c6.textContent = "bereit"; statusZellen.set(i, c6);
+
+      [c0, c1, c2, c3, c4, c5, c6].forEach(function (c) { tr.appendChild(c); });
+      tb.appendChild(tr);
+    });
+    zaehle(); pruefeStart();
+  }
+
+  function zaehle() {
+    var n = 0; haken.forEach(function (cb) { if (cb.checked) n++; });
+    $("z-wahl").textContent = n;
+  }
+  $("alle-an").addEventListener("click", function () { haken.forEach(function (cb) { if (!cb.closest("tr").classList.contains("versteckt")) cb.checked = true; }); zaehle(); });
+  $("alle-aus").addEventListener("click", function () { haken.forEach(function (cb) { if (!cb.closest("tr").classList.contains("versteckt")) cb.checked = false; }); zaehle(); });
+  $("suche").addEventListener("input", function () {
+    var q = this.value.trim().toLowerCase();
+    document.querySelectorAll("#zeilen tr").forEach(function (tr) { tr.classList.toggle("versteckt", q && tr.dataset.suche.indexOf(q) < 0); });
+  });
+  $("datei").addEventListener("change", function () {
+    var f = this.files[0]; if (!f) return;
+    f.text().then(function (t) { zeigeDaten(JSON.parse(t)); }).catch(function () { alert("Die Datei konnte nicht gelesen werden."); });
+  });
+
+  /* ── Supabase ──────────────────────────────────────────────────── */
+  function kopf(extra) {
+    var h = { apikey: PUB_KEY, Authorization: "Bearer " + (sitzung ? sitzung.access_token : PUB_KEY) };
+    for (var k in (extra || {})) h[k] = extra[k];
+    return h;
+  }
+  async function sb(pfad, opt) {
+    opt = opt || {};
+    await frischeSitzung();
+    var h = kopf({ "Content-Type": "application/json" }); for (var k in (opt.headers || {})) h[k] = opt.headers[k];
+    var res = await fetch(SUPABASE_URL + pfad, { method: opt.method || "GET", headers: h, body: opt.body });
+    var txt = await res.text(), d = null;
+    try { d = txt ? JSON.parse(txt) : null; } catch (e) { d = txt; }
+    if (!res.ok) throw new Error((d && (d.message || d.msg || d.error_description || d.error)) || ("Fehler " + res.status));
+    return d;
+  }
+  async function frischeSitzung() {
+    if (!sitzung || !sitzung.refresh_token) return;
+    if (sitzung.ablauf - Date.now() > 5 * 60 * 1000) return;
+    var res = await fetch(SUPABASE_URL + "/auth/v1/token?grant_type=refresh_token", {
+      method: "POST", headers: { apikey: PUB_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: sitzung.refresh_token }) });
+    if (!res.ok) throw new Error("Anmeldung abgelaufen – bitte Seite neu laden und erneut anmelden.");
+    setzeSitzung(await res.json());
+  }
+  function setzeSitzung(s) { s.ablauf = Date.now() + (s.expires_in || 3600) * 1000; sitzung = s; }
+
+  /* ── 2 · Anmelden ──────────────────────────────────────────────── */
+  $("login-form").addEventListener("submit", async function (ev) {
+    ev.preventDefault();
+    var info = $("login-info"); info.className = "hinweis"; info.textContent = "Anmeldung läuft …";
+    $("login-btn").disabled = true;
+    try {
+      var res = await fetch(SUPABASE_URL + "/auth/v1/token?grant_type=password", {
+        method: "POST", headers: { apikey: PUB_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ email: $("email").value.trim(), password: $("pw").value }) });
+      var d = await res.json();
+      if (!res.ok) throw new Error(d.error_description || d.msg || "E-Mail oder Passwort stimmt nicht.");
+      setzeSitzung(d); $("pw").value = "";
+
+      var uid = d.user.id;
+      var p = await sb("/rest/v1/seller_profiles?user_id=eq." + uid + "&select=id,user_id,company_name");
+      if (!p.length) {
+        p = await sb("/rest/v1/seller_profiles?select=id,user_id,company_name", { method: "POST", headers: { Prefer: "return=representation" },
+          body: JSON.stringify([{ user_id: uid, email: d.user.email, company_name: "Motorenshop.eu", city: "", country: "DE" }]) });
+      }
+      profil = p[0];
+      if (ERLAUBT.indexOf(uid) < 0 && ERLAUBT.indexOf(profil.id) < 0) {
+        sitzung = null; profil = null;
+        throw new Error("Das ist nicht das Partnerkonto von motorenshop.eu. Es wurde nichts hochgeladen – bitte mit dem richtigen Konto anmelden.");
+      }
+      info.className = "hinweis gut";
+      info.textContent = "Angemeldet als " + d.user.email + " · Anbieter: " + (profil.company_name || "(ohne Namen)");
+      $("nr2").classList.add("fertig");
+      $("email").disabled = true; $("pw").disabled = true;
+      await ladeKategorien();
+    } catch (e) {
+      info.className = "hinweis fehler"; info.textContent = e.message; $("login-btn").disabled = false;
+    }
+    pruefeStart();
+  });
+
+  async function ladeKategorien() {
+    var kats = await sb("/rest/v1/categories?select=id,name,slug&order=name.asc");
+    var sel = $("kategorie"); sel.textContent = "";
+    var leer = document.createElement("option"); leer.value = ""; leer.textContent = "Bitte wählen …"; sel.appendChild(leer);
+    var treffer = "";
+    kats.forEach(function (k) {
+      var o = document.createElement("option"); o.value = k.id; o.textContent = k.name + "  (" + k.slug + ")"; sel.appendChild(o);
+      if (!treffer && /(^|[^a-z])(pkw|kfz)([^a-z]|$)/i.test(k.slug + " " + k.name)) treffer = k.id;
+    });
+    sel.value = treffer; sel.disabled = false;
+    sel.addEventListener("change", pruefeStart);
+  }
+
+  function pruefeStart() { $("start").disabled = laeuft || !(daten && sitzung && profil && $("kategorie").value); }
+
+  /* ── 3 · Hochladen ─────────────────────────────────────────────── */
+  function schreib(t) { var p = $("protokoll"); p.classList.remove("versteckt"); p.textContent += t + "\n"; p.scrollTop = p.scrollHeight; }
+  function setStatus(i, t, klasse) { var c = statusZellen.get(i); c.textContent = t; c.className = "status " + (klasse || ""); }
+
+  // Bild in den eigenen Speicher legen; wenn der Shop das Kopieren im Browser nicht zulässt, Original-Adresse verwenden
+  async function bild(url, index) {
+    try {
+      var r = await fetch(url, { mode: "cors", referrerPolicy: "no-referrer" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      var blob = await r.blob();
+      if (!/^image\//.test(blob.type)) throw new Error("kein Bild");
+      var endung = blob.type.indexOf("png") > -1 ? "png" : blob.type.indexOf("webp") > -1 ? "webp" : "jpg";
+      var pfad = profil.user_id + "/" + Date.now() + "-" + index + "-" + Math.random().toString(36).slice(2, 8) + "." + endung;
+      await frischeSitzung();
+      var up = await fetch(SUPABASE_URL + "/storage/v1/object/" + BUCKET + "/" + pfad, {
+        method: "POST", headers: kopf({ "Content-Type": blob.type, "x-upsert": "true" }), body: blob });
+      if (!up.ok) throw new Error("Upload " + up.status);
+      return { url: SUPABASE_URL + "/storage/v1/object/public/" + BUCKET + "/" + pfad, kopiert: true };
+    } catch (e) {
+      return { url: url, kopiert: false };
+    }
+  }
+
+  $("stopp").addEventListener("click", function () { stopp = true; this.disabled = true; });
+
+  $("start").addEventListener("click", async function () {
+    var auswahl = []; haken.forEach(function (cb, i) { if (cb.checked) auswahl.push(i); });
+    if (!auswahl.length) { alert("Es ist kein Inserat ausgewählt."); return; }
+    var katText = $("kategorie").selectedOptions[0].textContent;
+    if (!confirm(auswahl.length + " Inserate in das Konto „" + (profil.company_name || "") + "“ laden?\nRubrik: " + katText + "\n\nSie sind danach sofort öffentlich sichtbar.")) return;
+
+    laeuft = true; stopp = false; pruefeStart();
+    $("stopp").classList.remove("versteckt"); $("stopp").disabled = false;
+    var balken = $("balken"); balken.classList.remove("versteckt"); balken.max = auswahl.length; balken.value = 0;
+    var neu = 0, akt = 0, fehler = 0, verlinkt = 0;
+
+    try {
+      try { await sb("/rest/v1/listings?select=external_url&limit=1"); }
+      catch (e) { throw new Error("In der Datenbank fehlt die Spalte external_url. Bitte zuerst motorenshop.sql im Supabase-SQL-Editor ausführen."); }
+
+      var vorhanden = await sb("/rest/v1/listings?seller_id=eq." + profil.id + "&external_url=not.is.null&select=id,external_url&limit=5000");
+      var schonDa = new Map(vorhanden.map(function (v) { return [v.external_url, v.id]; }));
+      schreib("Start · " + auswahl.length + " Inserate · bereits im Konto: " + schonDa.size);
+
+      for (var n = 0; n < auswahl.length; n++) {
+        if (stopp) { schreib("Angehalten nach " + n + " Inseraten."); break; }
+        var i = auswahl[n], p = daten.inserate[i];
+        setStatus(i, "lädt …");
+        try {
+          var basis = {
+            title: p.titel, manufacturer: p.marke, model: p.motorcode || null, condition: p.zustand || "Gebraucht",
+            price: p.preis, description: p.beschreibung || "", status: "Freigegeben",
+            listing_type: "Verkauf", price_type: "Festpreis", external_url: p.url, external_source: SOURCE
+          };
+          if (schonDa.has(p.url)) {
+            await sb("/rest/v1/listings?id=eq." + schonDa.get(p.url), { method: "PATCH", body: JSON.stringify(basis) });
+            akt++; setStatus(i, "aufgefrischt", "gut");
+          } else {
+            var urls = [];
+            for (var b = 0; b < p.bilder.length; b++) {
+              var r = await bild(p.bilder[b], b); urls.push(r.url); if (!r.kopiert) verlinkt++;
+            }
+            basis.seller_id = profil.id; basis.category_id = $("kategorie").value; basis.image_urls = urls;
+            await sb("/rest/v1/listings", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify([basis]) });
+            schonDa.set(p.url, true); neu++; setStatus(i, "online", "gut");
+          }
+        } catch (e) {
+          fehler++; setStatus(i, "Fehler", "fehler"); schreib("! " + p.titel + " – " + e.message);
+        }
+        balken.value = n + 1;
+      }
+      schreib("\nFertig. Neu: " + neu + " · aufgefrischt: " + akt + " · Fehler: " + fehler +
+        (verlinkt ? "\nHinweis: " + verlinkt + " Bilder werden direkt vom Shop geladen (Kopieren war im Browser nicht möglich)." : ""));
+      if (!fehler && !stopp) $("nr3").classList.add("fertig");
+    } catch (e) {
+      schreib("ABBRUCH: " + e.message);
+    }
+    laeuft = false; $("stopp").classList.add("versteckt"); pruefeStart();
+  });
+
+  window.addEventListener("beforeunload", function (ev) { if (laeuft) { ev.preventDefault(); ev.returnValue = ""; } });
+
+  /* ── Start ─────────────────────────────────────────────────────── */
+  if (window.MOTORENSHOP_DATEN) zeigeDaten(window.MOTORENSHOP_DATEN);
+})();
+</script>
+</body>
+</html>
