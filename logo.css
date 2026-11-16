@@ -1,0 +1,63 @@
+/* ═══════════════════════════════════════════════════════════════════
+   1A Motor – einheitliches Logo (16.11.2026)
+   Dunkles Quadrat „1A“ mit weinrotem Versatz-Schatten + „Motor“.
+   Eine Datei für alle Seiten: <link rel="stylesheet" href="/logo.css?v=1">
+   direkt vor </head>. Überschreibt alle alten Logo-Varianten (blau,
+   Navy-Verlauf, „<b>1A</b>“).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Helle Flächen: dunkles Quadrat, weinroter Schatten */
+.logo-mark,
+.logo > i,
+.sidebar-logo .logo-mark,
+.chooser-hdr-mark {
+  background: #16202c !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  box-shadow: 7px 7px 0 #8e1f32 !important;
+  width: 33px !important;
+  height: 33px !important;
+  min-width: 33px;
+  padding: 0 !important;
+  margin-right: 7px !important;
+  margin-bottom: 7px;
+  display: inline-grid !important;
+  place-items: center !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Dunkle Flächen (Footer, dunkle Kopfbereiche, Login, 404):
+   weißes Quadrat, dunkle Schrift, weinroter Schatten */
+.footer-logo-mark,
+.hm-brand-mark,
+.side-logo > b,
+.logo > b {
+  background: #fff !important;
+  color: #16202c !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  box-shadow: 7px 7px 0 #8e1f32 !important;
+  width: 33px !important;
+  height: 33px !important;
+  min-width: 33px;
+  padding: 0 !important;
+  margin-right: 7px !important;
+  margin-bottom: 7px;
+  display: inline-grid !important;
+  place-items: center !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Konto/1ATeile bauten den Schatten per ::before – jetzt macht das der
+   box-shadow oben, also ::before abschalten, damit nichts doppelt erscheint */
+.logo > i::before { display: none !important; }
