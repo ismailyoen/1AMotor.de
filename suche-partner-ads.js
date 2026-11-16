@@ -1,7 +1,18 @@
 /* ═══════════════════════════════════════════════════════════════════
    1A Motor – Partner-Inserate + Kategorie-Banner im Suchbereich
    ───────────────────────────────────────────────────────────────────
-   v4 · NEU: Kategorie-Banner (Abschnitt CATEGORY_BANNERS)
+   v5 · 05.11.2026 · Partner-Inserate (Maschinensucher) wieder AN –
+   jetzt live aus Supabase (Tabelle partner_listings), genau wie auf der
+   Startseite. Eine feste Liste im Code gibt es nicht mehr.
+   • Jedes Inserat verschwindet automatisch, sobald sein Ablaufdatum
+     (expires_at, 30 Tage) erreicht ist – auf Startseite UND Suche.
+   • Passt der Suchbegriff zu einem Partner-Inserat, steht es vorne.
+   • 0 Treffer bei 1A Motor? Dann erscheinen – klar als Werbung
+     gekennzeichnet – bis zu 6 passende Partner-Angebote.
+   • In Kategorien mit direkt gebuchtem Banner (Rotax, Suzuki) gibt es
+     keine Partner-Karten – die Fläche gehört dort dem Werbepartner.
+
+   v4 · Kategorie-Banner (Abschnitt CATEGORY_BANNERS)
    • Das Werbemotiv füllt den GANZEN Kategorie-Hero aus (ersetzt ihn),
      komplett anklickbar.
    • Erscheint, sobald genau
@@ -22,8 +33,7 @@
    • Nur auf suche.html eingebunden – NICHT auf index.html.
    • Nach jeder 6. echten Anzeige kommt 1 Partner-Karte (max. 4 je Seite),
      Reihenfolge rotiert alle 20 Minuten und je Seite.
-   • Jedes Inserat läuft nach 60 Tagen automatisch aus (added + 60 Tage).
-   Neue Inserate: einfach unten in PARTNER_ADS ergänzen.
+   • Laufzeit: seit v5 aus der Datenbank (siehe oben).
 ═══════════════════════════════════════════════════════════════════ */
 (function () {
   "use strict";
@@ -163,42 +173,101 @@
     tr: { label: "Reklam", price: "Fiyat sorunuz", cta: "Üreticiye git" }
   };
 
-  var PARTNER_CARDS_ON = false; // Maschinensucher-Karten im Raster: true = an
-  var EVERY_N = 6;          // nach jeder 6. echten Anzeige
-  var MAX_PER_PAGE = 4;     // höchstens 4 Partner-Karten pro Seite
-  var LIFETIME_DAYS = 60;   // Auto-Ablauf laut Partnerabsprache
-  var IMG_BASE = "https://cdn.machineseeker.com/data/listing/img/nds/ms/";
+  /* ══ Partner-Inserate (Maschinensucher) ═══════════════════════════
+     Kommen live aus Supabase (Tabelle partner_listings) – dieselbe
+     Quelle wie die Startseite. Jedes Inserat hat ein Ablaufdatum
+     (expires_at, 30 Tage); abgelaufene werden gar nicht erst geladen.
+     Neue Inserate also NICHT hier eintragen, sondern per SQL oder
+     Newsletter-Worker in die Tabelle.
+  ═══════════════════════════════════════════════════════════════════ */
+  var PARTNER_CARDS_ON = false; // Maschinensucher-Karten in der Suche: AUS seit 16.11.2026 (true = an)
+  var EVERY_N = 6;              // nach jeder 6. echten Anzeige
+  var MAX_PER_PAGE = 4;         // höchstens 4 Partner-Karten pro Seite
+  var EMPTY_MAX = 6;            // bei 0 Treffern: höchstens 6 passende Partner-Angebote
+  var MAX_LOAD = 200;           // höchstens so viele aus der Datenbank laden
+  var PARTNER_SOURCE = "maschinensucher";
   var LINK_UTM = "&utm_source=1amotor&utm_medium=referral&utm_campaign=partner_inserate";
 
-  // added = Datum, an dem das Inserat auf 1amotor ging (YYYY-MM-DD)
-  var PARTNER_ADS = [
-    { id: 22986846, img: "57/15", kat: "Fräsen für Alu-Fensterbau", title: "Rollenbahn", model: "Graule RO 2000", cc: "PL", loc: "Ostrożne", added: "2026-10-16" },
-    { id: 19948700, img: "39/62", kat: "Fräsmaschinen – universal NC/CNC", title: "Werkzeugfräsmaschine – Universal", model: "KNUTH WF 3.1", year: 2008, cc: "DE", loc: "Dreieich", sw: "Werkzeugfräsmaschine - Universal KNUTH WF 3.1", added: "2026-10-16" },
-    { id: 22986661, img: "55/15", kat: "Montagemaschinen", title: "Clipsetzer für Holz-Alufenster", model: "RUCHSER RU-CS-ST-Z", cc: "DE", loc: "Deutschland", sw: "Clipsetzer fuer Holz-Alufenster RUCHSER RU-CS-ST-Z", added: "2026-10-16" },
-    { id: 22979422, img: "95/14", kat: "Fräsen für Alu-Fensterbau", title: "Kantenfräsmaschine ASO 750, 38", model: "Assfalg ASO 750", cc: "PL", loc: "Wymysłów", sw: "Assfalg ASO 750, 38 Kantenfräsmaschine Assfalg ASO 750", added: "2026-10-16" },
-    { id: 21887898, img: "99/23", kat: "Leit-/Zugspindeldrehmaschinen", title: "Paralleldrehmaschine 205 x 1500 mm", model: "Norwik Orion C/6241", cc: "IT", loc: "Concordia Sagittaria", added: "2026-10-16" },
-    { id: 22979917, img: "99/14", kat: "Montagemaschinen", title: "Montage-/Einstellwerkzeug", model: "KOENIG EXPANDER® ExTool 040-2", cc: "PL", loc: "Wymysłów", sw: "Montagewerkzeug / Einstellwerkzeug KOENIG EXPANDER ExTool 040-2", added: "2026-10-16" },
-    { id: 22969337, img: "11/14", kat: "Fräsen für Alu-Fensterbau", title: "4-Achs-Bearbeitungszentrum", model: "Emmegi Comet", cc: "IT", loc: "Scerne", added: "2026-10-16" },
-    { id: 20587490, img: "62/15", kat: "Fräsmaschinen", title: "Bohr-Fräsmaschine", model: "OPTIMUM OptiMill MF 4V", year: 2017, cc: "DE", loc: "Deutschland", added: "2026-10-16" },
-    { id: 22199132, img: "92/49", kat: "Montagemaschinen", title: "Handarbeitsplatz Einpress-Montagesystem", model: "MDS A220-PD Autoriv", cc: "DE", loc: "Borken", sw: "MDS A220-PD Autoriv Handarbeitsplatz Einpress Montagesystem MDS A220-PD", added: "2026-10-16" },
-    { id: 22132097, img: "34/44", kat: "Fräsen für Alu-Fensterbau", title: "Zwei-Kopf-Schweißmaschine", model: "ELUMATEC ZS 720/00Lv", year: 2005, cc: "LT", loc: "Šiauliai", added: "2026-10-16" },
-    { id: 19247036, img: "91/03", kat: "Schnellradialbohrmaschinen", title: "Schnellradiale Bohrmaschine", model: "DONAU DR 32", year: 1976, cc: "DE", loc: "Bächingen an der Brenz", added: "2026-10-16" },
-    { id: 22070598, img: "21/39", kat: "Montagemaschinen", title: "Montagestation", model: "PROZAP EK0 Assembly line station", year: 2023, cc: "DE", loc: "Trittau", added: "2026-10-16" },
-    { id: 22132022, img: "33/44", kat: "Fräsen für Alu-Fensterbau", title: "Fräsmaschine", model: "ROTOX SDF 169", year: 2015, cc: "LT", loc: "Šiauliai", added: "2026-10-16" },
-    { id: 18302276, img: "18/25", kat: "CNC-Drehmaschinen", title: "Metalldrehbank (gebraucht)", model: "Elmag G-MEA50807R", cc: "AT", loc: "Laakirchen", sw: "Metalldrehbank Elmag gebraucht Elmag G-MEA50807R", added: "2026-10-16" },
-    { id: 22038083, img: "50/36", kat: "Montagemaschinen", title: "Montagemaschine", model: "Aumann Limbach-Oberfrohna GmbH", cc: "DE", loc: "Stuttgart", added: "2026-10-16" },
-    { id: 22107728, img: "31/42", kat: "Fräsen für Alu-Fensterbau", title: "4-Achs-Bearbeitungszentrum", model: "Emmegi Diamant", year: 2005, cc: "IT", loc: "Scerne", added: "2026-10-16" },
-    { id: 16419306, img: "27/68", kat: "Radialbohrmaschinen", title: "Radialbohrmaschine", model: "Stimin GR 820 H", cc: "DE", loc: "Kaufungen", added: "2026-10-16" },
-    { id: 21973363, img: "11/31", kat: "Montagemaschinen", title: "Pneumatische Eckpresse", model: "ITACA Alta Coop", year: 2011, cc: "BE", loc: "Harelbeke", added: "2026-10-16" },
-    { id: 22090178, img: "84/40", kat: "Fräsen für Alu-Fensterbau", title: "CNC-Fräsmaschine", model: "Mecal MC309 Nike", year: 2003, cc: "GB", loc: "Coventry", added: "2026-10-16" },
-    { id: 22273542, img: "12/56", kat: "Leit-/Zugspindeldrehmaschinen", title: "Schwerdrehmaschine (gebraucht)", model: "Kraft BV-40160", cc: "DE", loc: "Nürnberg", sw: "Schwerdrehmaschine gebrauchtü Kraft BV-40160", added: "2026-10-16" },
-    { id: 21973293, img: "10/31", kat: "Montagemaschinen", title: "CNC-gesteuerte Eckenpresse", model: "ITACA Alta coop", year: 2021, cc: "BE", loc: "Harelbeke", added: "2026-10-16" },
-    { id: 22042643, img: "88/36", kat: "Fräsen für Alu-Fensterbau", title: "Ausklinkfräse", model: "Elumatec AF 223", cc: "DE", loc: "Gütersloh", sw: "Ausklinkfräse Elumatec AF 223 Elumatec AF 223", added: "2026-10-16" },
-    { id: 21953503, img: "45/29", kat: "Bearbeitungszentren vertikal", title: "Bearbeitungszentrum – Vertikal", model: "MORI SEIKI MV 40B mit kompl. Werkstatt", year: 1988, cc: "DE", loc: "Deutschland", sw: "Bearbeitungszentrum - Vertikal MORI SEIKI MV 40B mit kompl. Werkstatt/with compl.tool shop", added: "2026-10-16" },
-    { id: 21972873, img: "07/31", kat: "Montagemaschinen", title: "CNC-gesteuerte Eckenpresse", model: "ITACA Alta coop", year: 2022, cc: "BE", loc: "Harelbeke", added: "2026-10-16" }
-  ];
+  var COUNTRY = { DE: "Deutschland", PL: "Polen", IT: "Italien", LT: "Litauen", LV: "Lettland", EE: "Estland", AT: "Österreich", BE: "Belgien", GB: "Großbritannien", NL: "Niederlande", CZ: "Tschechien", TR: "Türkei", FR: "Frankreich", CH: "Schweiz", ES: "Spanien" };
 
-  var COUNTRY = { DE: "Deutschland", PL: "Polen", IT: "Italien", LT: "Litauen", AT: "Österreich", BE: "Belgien", GB: "Großbritannien" };
+  var PA_TEXT = {
+    de: { pill: "Unbezahlte Werbung", src: "Partner-Angebot · maschinensucher.de", price: "Preis auf Anfrage", cta: "Zum Angebot", year: "Bj.", video: "Video",
+          aria: "Unbezahlte Werbung: {t} bei Maschinensucher", emptyHead: "Passende Angebote bei unserem Partner",
+          emptySub: "Externe Inserate von maschinensucher.de – Kauf und Abwicklung laufen direkt dort." },
+    en: { pill: "Unpaid ad", src: "Partner offer · maschinensucher.de", price: "Price on request", cta: "View offer", year: "Year", video: "Video",
+          aria: "Unpaid ad: {t} at Maschinensucher", emptyHead: "Matching offers from our partner",
+          emptySub: "External listings from maschinensucher.de – purchase and processing take place there." },
+    fr: { pill: "Publicité non rémunérée", src: "Offre partenaire · maschinensucher.de", price: "Prix sur demande", cta: "Voir l’offre", year: "Année", video: "Vidéo",
+          aria: "Publicité non rémunérée : {t} chez Maschinensucher", emptyHead: "Offres correspondantes chez notre partenaire",
+          emptySub: "Annonces externes de maschinensucher.de – achat et traitement directement sur ce site." },
+    tr: { pill: "Reklam (ücretsiz)", src: "İş ortağı teklifi · maschinensucher.de", price: "Fiyat talep üzerine", cta: "Teklife git", year: "Yıl", video: "Video",
+          aria: "Reklam: {t} – Maschinensucher", emptyHead: "İş ortağımızdan uygun teklifler",
+          emptySub: "maschinensucher.de üzerindeki harici ilanlar – satın alma doğrudan orada yapılır." }
+  };
+  function paText() { return PA_TEXT[pageLang()] || PA_TEXT.de; }
+
+  var PARTNER_POOL = [];
+  function sbClient() {
+    try { if (typeof supabaseClient !== "undefined" && supabaseClient) return supabaseClient; } catch (e) {}
+    return window.supabaseClient || null;
+  }
+  function toAd(r) {
+    return {
+      id: String(r.external_id || ""),
+      model: r.title || "",              // z. B. "Tekna TK 266 SB"
+      title: r.type || "",               // z. B. "Bördelmaschine"
+      kat: r.category || "",
+      year: r.year || null,
+      cc: r.country || "",
+      loc: r.location || "",
+      img: r.image_url || "",
+      sw: r.search_word || "",
+      video: !!r.has_video,
+      exp: r.expires_at ? Date.parse(r.expires_at) : 0
+    };
+  }
+  function loadPartnerAds() {
+    if (!PARTNER_CARDS_ON) return Promise.resolve([]);
+    var sb = sbClient();
+    if (!sb) return Promise.resolve([]);
+    try {
+      return Promise.resolve(
+        sb.from("partner_listings")
+          .select("external_id,title,type,category,year,country,location,image_url,search_word,has_video,expires_at")
+          .eq("source", PARTNER_SOURCE)
+          .gt("expires_at", new Date().toISOString())
+          .order("created_at", { ascending: false })
+          .limit(MAX_LOAD)
+      ).then(function (res) {
+        if (!res || res.error) {
+          if (res && res.error) console.warn("[Partner] Laden fehlgeschlagen:", res.error.message || res.error);
+          return [];
+        }
+        return (res.data || []).map(toAd).filter(function (a) { return a.id && a.model; });
+      }, function () { return []; });
+    } catch (e) {
+      return Promise.resolve([]);
+    }
+  }
+
+  /* Suchbegriff → passende Partner-Inserate zuerst */
+  var STOPWORDS = ["und", "mit", "der", "die", "das", "fuer", "von", "motor", "motoren", "gebraucht", "neu", "the", "and"];
+  function fold(v) {
+    var s = String(v || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss");
+    try { s = s.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
+    return s;
+  }
+  function queryWords() {
+    var q = new URLSearchParams(location.search).get("q") || "";
+    return fold(q).split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 3 && STOPWORDS.indexOf(w) === -1; });
+  }
+  function relevance(ad, words) {
+    if (!words.length) return 0;
+    var hay = fold([ad.model, ad.title, ad.kat, ad.sw].join(" "));
+    var n = 0;
+    words.forEach(function (w) { if (hay.indexOf(w) > -1) n++; });
+    return n;
+  }
 
   /* ══ Linien-Icons statt Emojis (gleicher Satz wie auf der Startseite) ══ */
   var ICON_PATHS = {
@@ -226,7 +295,8 @@
     check: '<path d="M20 6L9 17l-5-5"/>',
     star: '<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>',
-    ext: '<path d="M14 4h6v6"/><path d="M10 14L20 4"/><path d="M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/>'
+    ext: '<path d="M14 4h6v6"/><path d="M10 14L20 4"/><path d="M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/>',
+    play: '<path d="M7 5l12 7-12 7z"/>'
   };
   var EMOJI_ICON = {
     "🚗": "car", "🚘": "car", "🚙": "car", "🏎": "car", "🚕": "car",
@@ -306,14 +376,21 @@
       ".pa-cat{position:absolute;top:12px;left:12px;z-index:3;max-width:calc(100% - 175px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(13,27,42,.78);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}",
       ".pa-pill{position:absolute;top:12px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:5px;background:#fff;color:#0d1b2a;font-size:11px;font-weight:700;line-height:1.3;padding:5px 10px 5px 8px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.18)}",
       ".pa-pill .ic{width:13px;height:13px;stroke-width:2.2}",
-      ".pa-src{font-size:12px;font-weight:600;color:#8ba2ba;margin-top:-2px}",
+      ".pa-src{font-size:12px;font-weight:600;color:#5b7590;margin-top:-2px}",
       ".pa-card .se-card-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}",
       ".pa-card .se-loc-row .ic{width:13px;height:13px}",
       ".pa-card .pa-price{font-size:17px}",
-      ".pa-cta{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#7cc0ff}",
+      ".pa-cta{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#2176c7;white-space:nowrap}",
       ".pa-cta .ic{width:12px;height:12px;stroke-width:2.4}",
       ".se-grid.list .se-card.pa-card .se-card-img{min-height:150px}",
+      ".pa-video{position:absolute;right:10px;bottom:10px;z-index:3;display:inline-flex;align-items:center;gap:4px;background:rgba(13,27,42,.78);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}",
+      ".pa-video .ic{width:10px;height:10px;fill:currentColor;stroke-width:0}",
+      ".pa-empty-head{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 2px 0}",
+      ".pa-empty-head .pa-pill{position:static;flex-shrink:0;box-shadow:none;border:1px solid #e0e9f2}",
+      ".pa-empty-title{font-size:17px;font-weight:800;color:#0d1b2a;line-height:1.3}",
+      ".pa-empty-sub{font-size:12.5px;color:#5b7590;margin-top:2px}",
       "@media(max-width:900px){.pa-cat{display:none}.pa-pill{top:8px;right:8px;left:8px;justify-content:center;padding:3px 8px;font-size:10px}.pa-pill .ic{display:none}.pa-card .pa-price{font-size:15px}}",
+      "@media(max-width:768px){.pa-card .pa-pill{left:auto;top:10px;right:10px;padding:4px 10px 4px 8px;font-size:11px}.pa-card .pa-pill .ic{display:inline-block}.pa-cat{display:block;top:10px;left:10px;max-width:calc(100% - 190px)}}",
       /* Kategorie-Banner (Inserat im Querformat unter dem Hero) */
       ".cb-card{position:relative;display:grid;grid-template-columns:300px minmax(0,1fr) auto;margin:6px 0 0;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;color:inherit;text-decoration:none;transition:transform .16s,border-color .16s,box-shadow .16s}",
       ".cb-card:hover{transform:translateY(-2px);border-color:rgba(77,166,255,.45);box-shadow:0 14px 34px rgba(0,0,0,.4)}",
@@ -379,16 +456,13 @@
 
   /* ── Helfer ── */
   function esc(v) { return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-  function active(ad) {
-    var start = new Date(ad.added + "T00:00:00");
-    return !isNaN(start) && (Date.now() - start.getTime()) < LIFETIME_DAYS * 864e5;
-  }
+  function active(ad) { return !ad.exp || ad.exp > Date.now(); }   // abgelaufen = weg (auch bei lange offener Seite)
   function link(ad) {
-    var sw = ad.sw || (ad.title + " " + ad.model);
+    var sw = ad.sw || ((ad.title ? ad.title + " " : "") + ad.model);
     return "https://www.maschinensucher.de/main/search/index?search-word=" + encodeURIComponent(sw) +
-      "&first-listing-id=" + ad.id + LINK_UTM;
+      "&first-listing-id=" + encodeURIComponent(ad.id) + LINK_UTM + "&utm_content=suche_" + encodeURIComponent(ad.id);
   }
-  function img(ad) { return IMG_BASE + ad.img + "/" + ad.id + "-01.jpg"; }
+  function img(ad) { return ad.img || ""; }
   function mulberry32(seed) {
     return function () {
       seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
@@ -405,23 +479,32 @@
   function currentPage() { return Math.max(1, parseInt(new URLSearchParams(location.search).get("page"), 10) || 1); }
 
   /* ── Native Partner-Karte (gleiches Raster wie echte Ergebnisse) ── */
+  function placeOf(ad) {
+    var country = COUNTRY[ad.cc] || ad.cc || "";
+    if (!ad.loc) return country;
+    if (!ad.cc || ad.loc === country) return ad.loc;
+    return ad.loc + ", " + country;
+  }
   function cardHtml(ad) {
-    var specs = '<span class="se-spec">' + esc(ad.kat) + '</span>' + (ad.year ? '<span class="se-spec">Bj. ' + ad.year + '</span>' : '');
-    var place = ad.loc === "Deutschland" || ad.loc === COUNTRY[ad.cc] ? (COUNTRY[ad.cc] || ad.loc) : ad.loc + ", " + (COUNTRY[ad.cc] || ad.cc);
+    var tx = paText();
+    var label = ((ad.title ? ad.title + " " : "") + ad.model).trim();
+    var specs = (ad.kat ? '<span class="se-spec">' + esc(ad.kat) + '</span>' : '') +
+                (ad.year ? '<span class="se-spec">' + esc(tx.year) + ' ' + esc(ad.year) + '</span>' : '');
     return '' +
-      '<a class="se-card pa-card" href="' + esc(link(ad)) + '" target="_blank" rel="sponsored noopener" data-partner-ad="' + ad.id + '"' +
-        ' aria-label="Unbezahlte Werbung: ' + esc(ad.title + " " + ad.model) + ' bei Maschinensucher">' +
+      '<a class="se-card pa-card" href="' + esc(link(ad)) + '" target="_blank" rel="sponsored noopener" data-partner-ad="' + esc(ad.id) + '"' +
+        ' aria-label="' + esc(tx.aria.replace("{t}", label)) + '">' +
         '<div class="se-card-img">' + svg("factory", "ic se-ph-ico") +
-          '<img class="pa-photo" src="' + esc(img(ad)) + '" alt="' + esc(ad.title + " " + ad.model) + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()" />' +
-          '<span class="pa-cat">' + esc(ad.title) + '</span>' +
-          '<span class="pa-pill">' + svg("info") + 'Unbezahlte Werbung</span>' +
+          (img(ad) ? '<img class="pa-photo" src="' + esc(img(ad)) + '" alt="' + esc(label) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()" />' : '') +
+          (ad.title ? '<span class="pa-cat">' + esc(ad.title) + '</span>' : '') +
+          '<span class="pa-pill">' + svg("info") + esc(tx.pill) + '</span>' +
+          (ad.video ? '<span class="pa-video">' + svg("play") + esc(tx.video) + '</span>' : '') +
         '</div>' +
         '<div class="se-card-body">' +
-          '<div class="se-card-title">' + esc(ad.model) + ' – ' + esc(ad.title) + '</div>' +
-          '<div class="pa-src">Partner-Angebot · maschinensucher.de</div>' +
-          '<div class="se-specs">' + specs + '</div>' +
-          '<div class="se-loc-row">' + svg("pin") + '<span>' + esc(place) + '</span></div>' +
-          '<div class="se-card-foot"><span class="se-card-price pa-price">Preis auf Anfrage</span><span class="pa-cta">Zum Angebot' + svg("ext") + '</span></div>' +
+          '<div class="se-card-title">' + esc(ad.model) + (ad.title ? ' – ' + esc(ad.title) : '') + '</div>' +
+          '<div class="pa-src">' + esc(tx.src) + '</div>' +
+          (specs ? '<div class="se-specs">' + specs + '</div>' : '') +
+          '<div class="se-loc-row">' + svg("pin") + '<span>' + esc(placeOf(ad)) + '</span></div>' +
+          '<div class="se-card-foot"><span class="se-card-price pa-price">' + esc(tx.price) + '</span><span class="pa-cta">' + esc(tx.cta) + svg("ext") + '</span></div>' +
         '</div>' +
       '</a>';
   }
@@ -601,19 +684,58 @@
   }
 
   /* ── Einfügen in das Ergebnis-Raster ── */
+  // Kategorien mit direkt gebuchtem Banner (Rotax, Suzuki) bleiben frei von Partner-Karten
+  function bannerCategoryActive() {
+    var cats = selectedCategories();
+    if (cats.length !== 1) return false;
+    var c = cats[0].toLowerCase();
+    return CATEGORY_BANNERS.some(function (b) { return bannerRunning(b) && b.category.toLowerCase() === c; });
+  }
+  function removePartner(grid) {
+    Array.prototype.forEach.call(grid.querySelectorAll("[data-partner-ad]"), function (n) {
+      if (n.parentNode) n.parentNode.removeChild(n);
+    });
+  }
+  // gemischt (alle 20 Min. und je Seite anders), Treffer zum Suchbegriff zuerst
+  function orderedPool(pool, words, seed) {
+    var mixed = shuffled(pool, seed);
+    if (!words.length) return mixed;
+    return mixed
+      .map(function (ad, i) { return { ad: ad, s: relevance(ad, words), i: i }; })
+      .sort(function (a, b) { return b.s - a.s || a.i - b.i; })
+      .map(function (x) { return x.ad; });
+  }
   function inject(grid) {
     cleanPage(grid);
-    if (grid.querySelector("[data-partner-ad]")) return;            // schon drin
-    var organic = grid.querySelectorAll(".se-card:not(.pa-card)");
-    if (!organic.length) return;                                    // Laden / keine Treffer
-    var pool = PARTNER_ADS.filter(active);
-    if (!pool.length) return;
+    if (bannerCategoryActive()) { removePartner(grid); return; }
+    if (grid.querySelector("[data-partner-ad]")) return;              // schon drin
+    var pool = PARTNER_POOL.filter(active);
+    if (!pool.length) return;                                         // (noch) nichts geladen
 
+    var words = queryWords();
     var page = currentPage();
     var seed = Math.floor(Date.now() / (20 * 60 * 1000)) * 31 + page;
-    var picks = shuffled(pool, seed);
-    var slots = Math.min(MAX_PER_PAGE, Math.max(1, Math.floor(organic.length / EVERY_N)), picks.length);
+    var picks = orderedPool(pool, words, seed);
+    var organic = grid.querySelectorAll(".se-card:not(.pa-card):not(.rp-card)");
 
+    if (!organic.length) {
+      // 0 Treffer: passende Partner-Angebote zeigen – nur wenn der Suchbegriff wirklich passt
+      if (!words.length || !grid.querySelector(".se-empty")) return;   // Laden / Fehler / kein Suchbegriff
+      var hits = picks.filter(function (ad) { return relevance(ad, words) > 0; }).slice(0, EMPTY_MAX);
+      if (!hits.length) return;
+      var tx = paText();
+      var box = document.createElement("div");
+      box.innerHTML =
+        '<div class="pa-empty-head" data-partner-ad="head">' +
+          '<span class="pa-pill">' + svg("info") + esc(tx.pill) + '</span>' +
+          '<div><div class="pa-empty-title">' + esc(tx.emptyHead) + '</div>' +
+          '<div class="pa-empty-sub">' + esc(tx.emptySub) + '</div></div>' +
+        '</div>' + hits.map(cardHtml).join("");
+      while (box.firstChild) grid.appendChild(box.firstChild);
+      return;
+    }
+
+    var slots = Math.min(MAX_PER_PAGE, Math.max(1, Math.floor(organic.length / EVERY_N)), picks.length);
     for (var i = 0; i < slots; i++) {
       var anchorIdx = Math.min((i + 1) * EVERY_N, organic.length) - 1;
       var tmp = document.createElement("div");
@@ -628,12 +750,19 @@
     // suche.html rendert per innerHTML neu (Filter, Sortierung, Seiten) –
     // danach Partner-Karten jedes Mal wieder einsetzen.
     var timer = null;
-    if (grid && PARTNER_CARDS_ON) {
+    if (grid) {   // Icons immer; Partner-Karten nur, wenn PARTNER_CARDS_ON = true
       new MutationObserver(function () {
         clearTimeout(timer);
         timer = setTimeout(function () { inject(grid); }, 20);
       }).observe(grid, { childList: true });
-      inject(grid);
+      inject(grid);                       // Icons sofort, Partner-Karten sobald geladen
+      loadPartnerAds().then(function (list) {
+        PARTNER_POOL = list;
+        if (list.length) inject(grid);
+      });
+      // Sprachwechsel: Partner-Karten neu aufbauen (Observer setzt sie wieder ein)
+      new MutationObserver(function () { removePartner(grid); })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
     }
 
     // Kategorie-Banner: reagiert auf Kategorie-Wechsel (Hero wird neu gebaut)
@@ -644,7 +773,7 @@
       for (var i = 0; i < list.length; i++) {
         var t = list[i].target;
         if (t && t.closest && t.closest("#cb-take, .rp-card")) continue;
-        if (t && t.id === "se-grid" && list[i].addedNodes.length && Array.prototype.every.call(list[i].addedNodes, function (n) { return n.classList && n.classList.contains("rp-card"); })) continue;  // eigene Änderungen ignorieren
+        if (t && t.id === "se-grid" && list[i].addedNodes.length && Array.prototype.every.call(list[i].addedNodes, function (n) { return n.classList && (n.classList.contains("rp-card") || n.classList.contains("pa-card") || n.classList.contains("pa-empty-head")); })) continue;  // eigene Änderungen ignorieren
         scheduleBanner(); return;
       }
     }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "style"] });
