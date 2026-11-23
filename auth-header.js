@@ -409,3 +409,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderAll(actionsEl, currentUser, currentSeller);
   });
 });
+// Website-Statistik laden (1AMotor Warenwirtschaft)
+(function () { if (document.querySelector('script[src*="statistik.js"]')) return; var s = document.createElement('script'); s.src = '/statistik.js?v=2'; s.defer = true; document.head.appendChild(s); })();
