@@ -20,11 +20,13 @@
     url: 'https://xaqfptumjkmulobdbfid.supabase.co',
     key: 'sb_publishable_FK-FiDrd5gjFEj7LxVPZIg_5WXkNvgG',
     // Woran ein einzelnes Inserat zu erkennen ist (Pfad + Parameter mit der ID)
-    inseratPfad: /\/(inserat|anzeige|angebot|listing|motor-detail|detail)(\.html)?\/?$/i,
+    inseratPfad: /\/(listing-detail|inserat|anzeige|angebot|listing|motor-detail|detail)(\.html)?\/?$/i,
     inseratParam: ['id', 'inserat', 'listing', 'anzeige'],
     // Parameter, in denen der Suchbegriff steht
     suchParam: ['q', 'suche', 'such', 's', 'query', 'search', 'begriff'],
-    rubrikParam: ['kategorie', 'rubrik', 'category', 'kat', 'cat'],
+    rubrikParam: ['category', 'kategorie', 'rubrik', 'kat', 'cat'],
+    // Wo die Seite die Gesamtzahl der Treffer anzeigt (1amotor.de: „123 Ergebnisse“ in #se-title)
+    trefferElement: '#se-title, [data-stat-treffer]',
     seiteParam: ['seite', 'page', 'p'],
     // Knöpfe auf der Inseratseite, die als Kontakt zählen
     kontaktText: /kaufen|zum angebot|zum shop|anfrage|anfragen|nachricht|kontaktieren|anrufen|whatsapp|e-?mail schreiben|rückruf/i
@@ -137,10 +139,11 @@
     if (karte) { ereignis('klick', karte.getAttribute('data-stat-inserat'), karte.getAttribute('data-stat-quelle') || hierArt); return; }
     // 3) Link auf eine Inseratseite
     var href = el.getAttribute('href');
-    if (href) { var id = inseratAusUrl(href); if (id) { ereignis('klick', id, hierArt); return; } }
+    if (href && href.charAt(0) !== '#') { var id = inseratAusUrl(href); if (id && id !== aktuellesInserat()) { ereignis('klick', id, hierArt); return; } }
     // 4) Kontakt auf der Inseratseite (Kaufen, Anfrage, Telefon, WhatsApp, Weiterleitung zum Händler)
     if (hierArt === 'inserat' && !imKopfOderFuss(el)) {
       var eigenes = aktuellesInserat(); if (!eigenes) return;
+      if (href && href.charAt(0) === '#') return; // nur Sprung zum Formular – gezählt wird erst das Absenden
       var text = (el.textContent || '') + ' ' + (el.getAttribute('aria-label') || '') + ' ' + (el.getAttribute('title') || '');
       var extern = false;
       if (href) { try { var u = new URL(href, location.href); extern = /^(tel|mailto|sms):/.test(href) || /wa\.me|whatsapp/.test(u.hostname) || (/^https?:$/.test(u.protocol) && u.hostname.replace(/^www\./, '') !== location.hostname.replace(/^www\./, '')); } catch (x) {} }
@@ -149,9 +152,19 @@
   }, true);
 
   // ---------- Suche ----------
+  // Gesamtzahl der Treffer, wie die Seite sie anzeigt; null = (noch) nicht erkennbar
+  function trefferGesamt() {
+    var t = document.querySelector(CFG.trefferElement);
+    if (t) {
+      var roh = t.getAttribute('data-stat-treffer') || t.textContent || '';
+      var m = roh.match(/(\d[\d.\s]*)\s*(Ergebnis|Treffer|Anzeige|Inserat|result)/i) || (t.hasAttribute('data-stat-treffer') ? roh.match(/(\d[\d.]*)/) : null);
+      if (m) return parseInt(m[1].replace(/\D/g, ''), 10);
+    }
+    if (/keine passenden anzeigen|keine treffer|nichts gefunden|no results/i.test((function (m) { return m.innerText || m.textContent || ''; })(document.querySelector('main') || document.body))) return 0;
+    return null;
+  }
   function trefferAufSeite() {
-    var t = document.querySelector('[data-stat-treffer]');
-    if (t) { var n = parseInt(String(t.getAttribute('data-stat-treffer') || t.textContent).replace(/\D/g, ''), 10); return isNaN(n) ? null : n; }
+    var g = trefferGesamt(); if (g !== null) return g;
     var ids = {};
     document.querySelectorAll('[data-stat-inserat]').forEach(function (k) { ids[k.getAttribute('data-stat-inserat')] = 1; });
     document.querySelectorAll('main a[href], #ergebnisse a[href], .ergebnisse a[href], .results a[href], body a[href]').forEach(function (a) {
@@ -163,13 +176,35 @@
     var begriff = param(qs, CFG.suchParam); if (!begriff) return;
     var seite = parseInt(param(qs, CFG.seiteParam), 10); if (seite > 1) return; // Blättern zählt nicht als neue Suche
     var rubrik = param(qs, CFG.rubrikParam);
-    var fertig = function () {
-      var n = trefferAufSeite();
-      if (n === 0) { setTimeout(function () { suche(begriff, trefferAufSeite(), rubrik); }, 2500); return; }
-      suche(begriff, n, rubrik);
-    };
-    if (document.readyState === 'complete') setTimeout(fertig, 1500); else window.addEventListener('load', function () { setTimeout(fertig, 1500); });
+    sucheWennFertig(begriff, rubrik);
   }
+  // wartet, bis die Seite ihre Trefferzahl zeigt (Ergebnisse kommen per JavaScript), höchstens 8 Sekunden
+  function sucheWennFertig(begriff, rubrik) {
+    var start = Date.now();
+    (function pruefen() {
+      var g = trefferGesamt(), dauer = Date.now() - start;
+      if (g > 0) return suche(begriff, g, rubrik);
+      if (dauer >= 1500 && g === 0) return suche(begriff, 0, rubrik);
+      if (dauer >= 1500 && !document.querySelector(CFG.trefferElement)) return suche(begriff, trefferAufSeite(), rubrik);
+      if (dauer > 8000) return suche(begriff, trefferAufSeite(), rubrik);
+      setTimeout(pruefen, 300);
+    })();
+  }
+  // Suche ohne Seitenwechsel, die nur die Adresse ändert (1amotor.de: Suchfeld auf suche.html)
+  var letzteAdresseQ = param(qs, CFG.suchParam);
+  function adresseGeaendert() {
+    var p = new URLSearchParams(location.search), q = param(p, CFG.suchParam);
+    if (!q || q === letzteAdresseQ) { letzteAdresseQ = q; return; }
+    letzteAdresseQ = q;
+    if (parseInt(param(p, CFG.seiteParam), 10) > 1) return;
+    clearTimeout(adresseGeaendert.t);
+    adresseGeaendert.t = setTimeout(function () { sucheWennFertig(q, param(p, CFG.rubrikParam)); }, 600);
+  }
+  ['pushState', 'replaceState'].forEach(function (fn) {
+    var orig = history[fn]; if (!orig) return;
+    history[fn] = function () { var r = orig.apply(this, arguments); try { adresseGeaendert(); } catch (e) {} return r; };
+  });
+  window.addEventListener('popstate', adresseGeaendert);
   // Suchfelder ohne Seitenwechsel (Suche per JavaScript)
   document.addEventListener('submit', function (e) {
     var f = e.target; if (!f || !f.querySelector) return;
@@ -178,7 +213,7 @@
     setTimeout(function () {
       if (!e.defaultPrevented) return; // Seite wechselt – wird dort über die Adresse gezählt
       var begriff = feld.value; if (!begriff) return;
-      setTimeout(function () { suche(begriff, trefferAufSeite(), param(qs, CFG.rubrikParam)); }, 1500);
+      setTimeout(function () { sucheWennFertig(begriff, param(qs, CFG.rubrikParam)); }, 300);
     }, 0);
   });
 
